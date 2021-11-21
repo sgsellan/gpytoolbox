@@ -1,6 +1,15 @@
 import numpy as np
 
 def regular_square_mesh(gs):
+    # Generates a regular mesh of a one by one square
+    #
+    # Input:
+    #       gs int number of vertices on each side
+    #
+    # Output:
+    #       V #V by d numpy array of mesh vertex positions
+    #       F #F by d+1 int numpy array of mesh face indeces into V
+    
     x, y = np.meshgrid(np.linspace(0,1,gs),np.linspace(0,1,gs))
     v = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)
 

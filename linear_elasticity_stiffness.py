@@ -4,6 +4,27 @@ import igl
 
 
 def linear_elasticity_stiffness(V,F,K=1.75,mu=0.0115,volumes=np.array([]),mass=np.array([])):
+    # Returns the linear elastic stiffness and strain matrices for a given shape and 
+    # material parameters
+    #
+    # Note: This only works for 2D (d=2) meshes currently
+    # TO-DO: Code tet mesh version of this
+    #
+    # Inputs:
+    #       V  #V by d numpy array of vertex positions 
+    #       F  #F by d+1 integer numpy array of element indeces into V
+    #       Optional:
+    #           K bulk modulus
+    #           mu material shear modulus
+    #           volumes an #F numpy array with the volumes (if d=3) or areas (if d=2) of each mesh element
+    #           mass the shape's #V by #V scipy sparse mass matrix (will be computed otherwise)
+    # Outputs:
+    #       K  #V*d by #V*d scipy csr sparse stiffness matrix
+    #       C  #F**(d*(d+1)/2) by #F**(d*(d+1)/2) scipy csr sparse constituitive model matrix 
+    #       strain  #F*(d*(d+1)/2) by #V*d scipy csr sparse strain matrix
+    #       A  #F*(d*(d+1)/2) by #F*(d*(d+1)/2) scipy csr sparse diagonal element area matrix
+    #       M  #V*d by #V*d scipy csr sparse sparse mass matrix
+
     l = K - (2/3)*mu
     Z = csr_matrix((F.shape[0],V.shape[0]))
     dim = V.shape[1]
