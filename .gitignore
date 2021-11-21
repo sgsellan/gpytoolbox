@@ -1,3 +1,4 @@
 *.ini
 *.inc
 *.pyc
+*.code-workspace
