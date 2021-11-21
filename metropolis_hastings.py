@@ -10,19 +10,16 @@ def metropolis_hastings(unnorm_distr, next_sample, x0 , num_samples=100):
     #           which is proportional to the desired distribution density
     #               Inputs:
     #                       x #dim numpy array of sample being considered
-    #                       ??
     #               Outputs:
     #                       f float function value
-    #                       ??
     # 
     #       next_sample function returning a candidate next sample from the current
     #           sample x; for example, a Gaussian centered at x
     #               Inputs:
     #                       x #dim numpy array of previous sample point
-    #                       ??
     #               Outputs:
     #                       x1 #dim numpy array of next candidate sample
-    #                       ?? 
+    #
     #       num_sample int number of samples in output (this will be *more* than the total number
     #           of considered samples or evaluations of unnorm_distr)
     #
