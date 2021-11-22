@@ -43,3 +43,5 @@ plt.pause(200)
 
 plt.close(plot1)
 plt.close(plot2)
+
+print("Unit test passed, all asserts passed")

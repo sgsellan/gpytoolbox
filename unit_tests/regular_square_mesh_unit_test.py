@@ -17,7 +17,7 @@ for n in range(10,200,5):
     normals = np.cross( V[F[:,1],:] - V[F[:,0],:] , V[F[:,2],:] - V[F[:,0],:] , axis=1)
     assert((normals>0).all())
     
-print("Unit test successful")
+print("Unit test passed, all asserts passed")
 
 # To visualize
 # import polyscope as ps

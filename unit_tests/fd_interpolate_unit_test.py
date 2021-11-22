@@ -34,3 +34,5 @@ fP = 3.0*P[:,0] + 5.0*P[:,1]
 fgrid = 3.0*V[:,0] + 5.0*V[:,1]
 finterp = W @ fgrid
 assert((np.isclose(fP,finterp)).all())
+
+print("Unit test passed, all asserts passed")
