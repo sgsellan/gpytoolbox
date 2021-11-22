@@ -1,5 +1,4 @@
 import numpy as np
-from numpy.core.function_base import linspace
 from scipy.sparse.linalg import spsolve
 from fd_grad import fd_grad
 from fd_interpolate import fd_interpolate
