@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse.linalg import spsolve
-from fd_grad import fd_grad
-from fd_interpolate import fd_interpolate
+from . fd_grad import fd_grad
+from . fd_interpolate import fd_interpolate
 
 def poisson_surface_reconstruction(P,N,gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),corner=np.array([0.0,0.0])):
     # Given an oriented pointcloud on a volume's surface, return the values on a regular grid of an implicit function

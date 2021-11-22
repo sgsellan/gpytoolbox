@@ -5,3 +5,4 @@ from . linear_elasticity import linear_elasticity
 from . signed_distance_polygon import signed_distance_polygon
 from . metropolis_hastings import metropolis_hastings
 from . ray_polyline_intersect import ray_polyline_intersect
+from . poisson_surface_reconstruction import poisson_surface_reconstruction

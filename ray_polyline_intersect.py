@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.linalg import solve
-from edge_indeces import edge_indeces
+from . edge_indeces import edge_indeces
 
 def ray_polyline_intersect(position, direction, polyline_vertices, max_distance = 100.0, EC=np.empty(0)):
     # Calculates the intersection point between a ray and a given polyline in 2D
