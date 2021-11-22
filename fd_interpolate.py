@@ -9,6 +9,7 @@ def fd_interpolate(P,gs=10,h=(1/9.0),corner=np.array([0.0,0.0])):
     # and a list of points, construct a sparse matrix of bilinear interpolation weights so that P = W @ x
     #
     # Note: This only works in 2D for now
+    # Note: Ordering in output is consistent with regular_square_mesh
     #
     # Input:
     #       P #P by dim numpy array with interpolated point coordinates
@@ -19,6 +20,8 @@ def fd_interpolate(P,gs=10,h=(1/9.0),corner=np.array([0.0,0.0])):
     #
     # Output:
     #       W scipy csr sparse matrix such that if x are the grid nodes, P = W @ x
+    #       
+    #
     # n = floor((P - corner)/h)
     indeces = np.floor( (P - np.tile(corner,(P.shape[0],1)))/h ).astype(int)
     indeces_vectorized = indeces[:,0] + gs*indeces[:,1]
@@ -26,14 +29,18 @@ def fd_interpolate(P,gs=10,h=(1/9.0),corner=np.array([0.0,0.0])):
     #I = np.kron(I,np.array([1,1,1,1]))
     I = np.concatenate((I,I,I,I))
     J = np.concatenate(( indeces_vectorized,indeces_vectorized+gs,indeces_vectorized+1,indeces_vectorized+1+gs ))
-    # Position in the bottom left corner
     
+    # Position in the bottom left corner
     vij = np.tile(corner,(P.shape[0],1)) + indeces*h
+    # Normalized position inside cell
     vij = (P - vij)/h
-    coeff_00 = (1-vij[:,1])*(1-vij[:,0])
-    coeff_10 = (1-vij[:,1])*vij[:,0]
-    coeff_01 = vij[:,1]*(1-vij[:,0])
-    coeff_11 = vij[:,1]*vij[:,0]
-    vals = np.concatenate((coeff_00,coeff_01,coeff_10,coeff_11))
+    # Coefficients wrt to each corner of cell
+    coeff_00 = (1-vij[:,1])*(1-vij[:,0]) # bottom left
+    coeff_01 = (1-vij[:,1])*vij[:,0] # bottom right
+    coeff_10 = vij[:,1]*(1-vij[:,0]) # top left
+    coeff_11 = vij[:,1]*vij[:,0] # top right
+    # concatenate (watch that order is consistent with J!!)
+    vals = np.concatenate((coeff_00,coeff_10,coeff_01,coeff_11))
+    # Build scipy matrix
     W = csr_matrix((vals,(I,J)),shape=(P.shape[0],gs*gs))
     return W
