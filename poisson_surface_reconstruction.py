@@ -2,9 +2,13 @@ import numpy as np
 from scipy.sparse.linalg import spsolve
 from fd_grad import fd_grad
 from fd_interpolate import fd_interpolate
+from scipy.ndimage.filters import gaussian_filter
+
+
+
 
 def poisson_surface_reconstruction(P,N,gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),corner=np.array([0.0,0.0])):
-    # Given an oriented pointcloud on a volume's surface, return the values on a regular grid of an implicit function
+    # Given an oriented point cloud on a volume's surface, return the values on a regular grid of an implicit function
     # that represents the volume enclosed by the surface.
     #
     # Note: This only works in 2D
@@ -28,7 +32,14 @@ def poisson_surface_reconstruction(P,N,gs=np.array([10,10]),h=np.array([1/9.0,1/
     G = fd_grad(gs=gs,h=h)
     # Interpolator in main grid
     W = fd_interpolate(P,gs=gs,h=h,corner=corner)
-    
+    # First: estimate sampling density and weigh normals by it:
+    image = W.T @ np.ones((N.shape[0],1))
+    # for debug only
+    x, y = np.meshgrid(np.linspace(0,1,gs[0]),np.linspace(0,1,gs[1]),indexing='ij')
+    image_blurred = gaussian_filter(np.reshape(image,(gs[0],gs[1]),order='F'),sigma=7)
+    image_blurred_vectorized = np.reshape(image_blurred,(gs[0]*gs[1],1),order='F')
+    weights = W @ image_blurred_vectorized
+    N = N/np.hstack((weights,weights))
     # Build staggered grids
     corner_x = corner + np.array([0.5*h[0],0.0])
     corner_y = corner + np.array([0.0,0.5*h[1]])
@@ -40,12 +51,11 @@ def poisson_surface_reconstruction(P,N,gs=np.array([10,10]),h=np.array([1/9.0,1/
     Wy = fd_interpolate(P,gs=gs_y,h=h,corner=corner_y)
     Nx = Wx.T @ N[:,0]
     Ny = Wy.T @ N[:,1]
-    distributed_normals = np.hstack([Nx,Ny])
-    #print(distributed_normals)
     v = np.concatenate((Nx,Ny))
     rhs = G.T @ v # right hand side in linear equation
     lhs = G.T @ G # left hand side in linear equation
     g = spsolve(lhs,rhs)
     # Good isovalue
-    sigma = np.sum(W @ g) / P.shape[0]
+    weights = np.squeeze(weights)
+    sigma = np.sum((W @ g)*(1/weights) ) / np.sum(1/weights)
     return g, sigma
