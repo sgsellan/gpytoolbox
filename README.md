@@ -6,6 +6,7 @@ and for which I have found no equivalence in existing libraries. Feel free to co
 
 ## To Do
 
+- Clean up imports
 - Implement 3D version of `linear_elasticity_stiffness.py`
 - Implement 3D version of `linear_elasticity.py`
 - Implement 3D version of `regular_square_mesh.py`
