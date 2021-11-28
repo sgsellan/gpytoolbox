@@ -46,8 +46,8 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.em
     # We don't have linear equality constraints, but we need to define them to mqwf
     Aeq = csr_matrix((0, 0), dtype=np.float64)
     Beq = np.array([], dtype=np.float64)
-
-    U = igl.min_quad_with_fixed(A,-2*np.squeeze(B),bb,bc,Aeq,Beq,True)
+    # PYTHON MIN QUAD WITH FIXED USES DIFFERENT CONVENTION FOR QUADRATIC TERM THAN MATLAB'S!!
+    U = igl.min_quad_with_fixed(A,-1.0*np.squeeze(B),bb,bc,Aeq,Beq,True)
     # https://en.m.wikipedia.org/wiki/Von_Mises_yield_criterion
     face_stress_vec = C*strain*U[1]
     if V.shape[1]==2:
