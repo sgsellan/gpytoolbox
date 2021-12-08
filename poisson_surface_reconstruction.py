@@ -7,7 +7,7 @@ from scipy.ndimage.filters import gaussian_filter
 
 
 
-def poisson_surface_reconstruction(P,N,gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),corner=np.array([0.0,0.0])):
+def poisson_surface_reconstruction(P,N,gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),corner=np.array([0.0,0.0]),screened=False):
     # Given an oriented point cloud on a volume's surface, return the values on a regular grid of an implicit function
     # that represents the volume enclosed by the surface.
     #
@@ -34,8 +34,6 @@ def poisson_surface_reconstruction(P,N,gs=np.array([10,10]),h=np.array([1/9.0,1/
     W = fd_interpolate(P,gs=gs,h=h,corner=corner)
     # First: estimate sampling density and weigh normals by it:
     image = W.T @ np.ones((N.shape[0],1))
-    # for debug only
-    x, y = np.meshgrid(np.linspace(0,1,gs[0]),np.linspace(0,1,gs[1]),indexing='ij')
     image_blurred = gaussian_filter(np.reshape(image,(gs[0],gs[1]),order='F'),sigma=7)
     image_blurred_vectorized = np.reshape(image_blurred,(gs[0]*gs[1],1),order='F')
     weights = W @ image_blurred_vectorized
@@ -53,7 +51,10 @@ def poisson_surface_reconstruction(P,N,gs=np.array([10,10]),h=np.array([1/9.0,1/
     Ny = Wy.T @ N[:,1]
     v = np.concatenate((Nx,Ny))
     rhs = G.T @ v # right hand side in linear equation
-    lhs = G.T @ G # left hand side in linear equation
+    if screened:
+        lhs = G.T @ G  +  4.0*W.T @ W # left hand side in linear equation
+    else:
+        lhs = G.T @ G # left hand side in linear equation
     g = spsolve(lhs,rhs)
     # Good isovalue
     weights = np.squeeze(weights)

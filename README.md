@@ -13,3 +13,4 @@ and for which I have found no equivalence in existing libraries. Feel free to co
 - Implement 3D version of `fd_grad.py`
 - Implement 3D version of `fd_interpolate.py`
 - Implement 3D version of `fd_partial_derivative.py`
+- Write clear screened vs un-screened PSR test

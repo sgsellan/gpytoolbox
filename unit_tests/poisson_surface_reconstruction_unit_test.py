@@ -17,7 +17,7 @@ corner = np.array([-1.5,-1.5])
 gs = np.array([305, 302])
 h = np.array([0.01,0.01])
 
-g, sigma = poisson_surface_reconstruction(P,N,gs=gs,h=h,corner=corner)
+g, sigma = poisson_surface_reconstruction(P,N,gs=gs,h=h,corner=corner,screened=True)
 
 #print(sigma)
 
@@ -65,7 +65,7 @@ corner = np.array([-1.5,-1.5])
 gs = np.array([305, 302])
 h = np.array([0.01,0.01])
 
-g, sigma = poisson_surface_reconstruction(P,N,gs=gs,h=h,corner=corner)
+g, sigma = poisson_surface_reconstruction(P,N,gs=gs,h=h,corner=corner,screened=True)
 
 #print(sigma)
 
