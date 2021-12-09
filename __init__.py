@@ -9,3 +9,4 @@ from . poisson_surface_reconstruction import poisson_surface_reconstruction
 from . fd_interpolate import fd_interpolate
 from . fd_grad import fd_grad
 from . fd_partial_derivative import fd_partial_derivative
+from . png2poly import png2poly
