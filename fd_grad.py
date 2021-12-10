@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.sparse import vstack
-from fd_partial_derivative import fd_partial_derivative
+from .fd_partial_derivative import fd_partial_derivative
 
 def fd_grad(gs=np.array([10,10]),h=np.array([1/9.0,1/9.0])):
     # Given a regular finite-difference grid described by the number of nodes 

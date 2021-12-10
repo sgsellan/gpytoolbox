@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse.linalg import spsolve
-from fd_grad import fd_grad
-from fd_interpolate import fd_interpolate
+from .fd_grad import fd_grad
+from .fd_interpolate import fd_interpolate
 from scipy.ndimage.filters import gaussian_filter
 
 
