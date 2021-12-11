@@ -42,7 +42,7 @@ bug, by expanding existing functionality or by adding new functionality.
   `unit_tests/fd_partial_derivative_unit_test.py` for commenting and
   documentation standards. It may be that you need to load some data (like a
   mesh, or an image) to properly test your new function. In that case, add all
-  necessary data files to `unit_tests/unit_tests_data/`. Then, validate that all the checks in
+  necessary data files to `unit_tests/unit_tests_data/`. Finally, add a line saying `from .new_func import new_func` to `gpytoolbox/__init__.py`. Then, validate that all the checks in
   `new_func_unit_test.py` are passed and add, commit and submit a pull request.
   If you want new functionality to be added but you don't want or know how to
   add it yourself, please [submit an
