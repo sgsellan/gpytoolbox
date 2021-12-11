@@ -1,12 +1,9 @@
 import matplotlib.pyplot as plt
-import sys
-
-sys.path.append("..")
-from png2poly import png2poly
+from context import gpytoolbox
 
 # Test 1: Image from the internet
 filename = "unit_tests_data/poly.png"
-poly = png2poly(filename)
+poly = gpytoolbox.png2poly(filename)
 # There should be two contours: one for each transition
 assert(len(poly)==2)
 plt.plot(poly[0][:,0],poly[0][:,1])
@@ -17,7 +14,7 @@ plt.close()
 
 # Test 2: Image from Adobe Illustrator
 filename = "unit_tests_data/illustrator.png"
-poly = png2poly(filename)
+poly = gpytoolbox.png2poly(filename)
 # There should be four contours: one for each transition in each component
 assert(len(poly)==4)
 plt.plot(poly[0][:,0],poly[0][:,1])

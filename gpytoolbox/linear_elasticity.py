@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse import csr_matrix, diags, identity, hstack, vstack, block_diag
 import igl
-from linear_elasticity_stiffness import linear_elasticity_stiffness
+from .linear_elasticity_stiffness import linear_elasticity_stiffness
 
 def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.empty((0,1), dtype=np.float64)
     ,Ud0=np.array([]),fext=np.array([]),K=1.75,mu=0.0115,volumes=np.array([]),mass=np.array([])):

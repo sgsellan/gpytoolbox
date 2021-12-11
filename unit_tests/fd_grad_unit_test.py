@@ -1,8 +1,5 @@
 import numpy as np
-import sys
-
-sys.path.append("..")
-from fd_grad import fd_grad
+from context import gpytoolbox
 
 # This test is basically the same as fd_partial_derivative
 
@@ -22,7 +19,7 @@ x, y = np.meshgrid(np.linspace(0,1,gs[0]),np.linspace(0,1,gs[1]-1))
 Vy = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)
 
 # Compute gradient
-G = fd_grad(gs=gs,h=h)
+G = gpytoolbox.fd_grad(gs=gs,h=h)
 
 
 # all rows must sum up to zero (i.e. a constant function has zero derivative)
@@ -56,7 +53,7 @@ for power in range(3,13,1):
     x, y = np.meshgrid(np.linspace(0,1,gs[0]),np.linspace(0,1,gs[1]-1))
     Vy = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)
     # Build derivative matrices
-    G = fd_grad(gs=gs,h=h)
+    G = gpytoolbox.fd_grad(gs=gs,h=h)
     # Build non-linear function
     f = np.cos(V[:,0]) + np.sin(V[:,1])
     # Derivatives on staggered grids

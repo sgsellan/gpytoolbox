@@ -1,10 +1,6 @@
 import numpy as np
 from scipy.stats import multivariate_normal
-import matplotlib.pyplot as plt
-import sys
-sys.path.append("..")
-from fd_interpolate import fd_interpolate
-from regular_square_mesh import regular_square_mesh
+from context import gpytoolbox
 
 # Choose grid size
 gs = np.array([19,15])
@@ -26,7 +22,7 @@ for iter in range(1,100,1):
     P = P + np.tile(corner,(P.shape[0],1))
     V = V + np.tile(corner,(V.shape[0],1))
 
-    W = fd_interpolate(P,gs=gs,h=h,corner=corner)
+    W = gpytoolbox.fd_interpolate(P,gs=gs,h=h,corner=corner)
     # all rows must sum up to one
     assert((np.isclose(W.sum(axis=1),np.ones((W.shape[0],1)))).all())
 

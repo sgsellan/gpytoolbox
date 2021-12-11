@@ -1,8 +1,5 @@
 import numpy as np
-import sys
-
-sys.path.append("..")
-from fd_partial_derivative import fd_partial_derivative
+from context import gpytoolbox
 
 
 # Choose grid size
@@ -21,8 +18,8 @@ x, y = np.meshgrid(np.linspace(0,1,gs[0]),np.linspace(0,1,gs[1]-1))
 Vy = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)
 
 # Build partial derivative matrices
-Dx = fd_partial_derivative(gs=gs,h=h,direction=0)
-Dy = fd_partial_derivative(gs=gs,h=h,direction=1)
+Dx = gpytoolbox.fd_partial_derivative(gs=gs,h=h,direction=0)
+Dy = gpytoolbox.fd_partial_derivative(gs=gs,h=h,direction=1)
 
 # all rows must sum up to zero (i.e. a constant function has zero derivative)
 assert((np.isclose(Dx.sum(axis=1),np.zeros((Dx.shape[0],1)))).all())
@@ -56,8 +53,8 @@ for power in range(3,13,1):
     Vy = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)
 
     # Build partial derivative matrices
-    Dx = fd_partial_derivative(gs=gs,h=h,direction=0)
-    Dy = fd_partial_derivative(gs=gs,h=h,direction=1)
+    Dx = gpytoolbox.fd_partial_derivative(gs=gs,h=h,direction=0)
+    Dy = gpytoolbox.fd_partial_derivative(gs=gs,h=h,direction=1)
     # Build non-linear function
     f = np.cos(V[:,0]) + np.sin(V[:,1])
     # Derivatives on staggered grids
