@@ -46,6 +46,8 @@ bug, by expanding existing functionality or by adding new functionality.
   add it yourself, please [submit an
   issue](https://github.com/sgsellan/gpytoolbox/issues) instead.
 
+If you contribute to this repo in any of the above listed ways, you will be
+properly credited both in this page and in the individual files.
 
 ## To Do
 
