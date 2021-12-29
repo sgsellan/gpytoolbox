@@ -1,5 +1,6 @@
 from .edge_indeces import edge_indeces
 from .regular_square_mesh import regular_square_mesh
+from .regular_cube_mesh import regular_cube_mesh
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
 from .linear_elasticity import linear_elasticity
 from .signed_distance_polygon import signed_distance_polygon
