@@ -11,3 +11,4 @@ from .fd_grad import fd_grad
 from .fd_partial_derivative import fd_partial_derivative
 from .png2poly import png2poly
 from .random_points_on_polyline import random_points_on_polyline
+from .normalize_points import normalize_points

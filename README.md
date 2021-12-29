@@ -61,6 +61,5 @@ properly credited both in this page and in the individual files.
 - Implement 3D version of `fd_interpolate.py`
 - Implement 3D version of `fd_partial_derivative.py`
 - Write clear screened vs un-screened PSR test
-- Normalize mesh
 - Random points on mesh (wrapper?)
 - Visualize volumetric sdf-like function 
