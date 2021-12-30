@@ -61,6 +61,5 @@ def regular_cube_mesh(gs,type='rotationally-symmetric'):
         t6 = np.hstack((v1,v2,v8,v6))
         T = np.vstack((t1,t2,t3,t4,t5,t6))
     elif mesh_type==3: # hex mesh (polyscope's ordering convention)
-        T = np.hstack((v1,v2,v3,v4,v5,v6,v7,v8))
-        # to-do: check that this indeed follows polyscope's convention
+        T = np.hstack((v1,v2,v4,v3,v5,v6,v8,v7))
     return V,T
