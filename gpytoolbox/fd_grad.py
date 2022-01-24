@@ -21,6 +21,10 @@ def fd_grad(gs=np.array([10,10]),h=np.array([1/9.0,1/9.0])):
     #           gs(gs-1) rows are d/dx, while the latter gs(gs-1) are d/dy
     # 
     # 
+    dim = gs.shape[0]
     Dx =  fd_partial_derivative(gs=gs,h=h,direction=0)
     Dy =  fd_partial_derivative(gs=gs,h=h,direction=1)
+    if dim==3:
+        Dz =  fd_partial_derivative(gs=gs,h=h,direction=2)
+        return vstack((Dx,Dy,Dz))
     return vstack((Dx,Dy))
