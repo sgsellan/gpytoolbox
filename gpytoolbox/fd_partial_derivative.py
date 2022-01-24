@@ -22,46 +22,37 @@ def fd_partial_derivative(gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),directi
     #           then W @ f contains the directional derivative on a staggered grid
     # 
     #  
+
+    dim = gs.shape[0]
+    new_grid = gs.copy()
+   
     if direction==0:
-        # First, get the indeces of all possible bottom-left corners
-        # which are 1:(gs-2) + gs*(1:(gs-2))
-        # One of these is a kron prod, the other is a repetition
-        horizontal_indeces = linspace(0,gs[0]-2,gs[0]-1,dtype=int)
-        vertical_indeces = linspace(0,gs[1]-1,gs[1],dtype=int)
-        #print(horizontal_indeces) 
-        #print(vertical_indeces) 
-        horizontal_indeces_rep = np.tile(horizontal_indeces,gs[1])
-        vertical_indeces_rep = np.kron(vertical_indeces,np.ones((gs[0]-1),dtype=int))
-        #print(horizontal_indeces_rep) 
-        #print(vertical_indeces_rep) 
-        vectorized_indeces = horizontal_indeces_rep + gs[0]*vertical_indeces_rep
-        #print(vectorized_indeces)
-        J = np.concatenate((vectorized_indeces,vectorized_indeces+1))
-        I = np.concatenate((linspace(0,(gs[0]-1)*gs[1] - 1,(gs[0]-1)*gs[1],dtype=int),linspace(0,(gs[0]-1)*gs[1] - 1,(gs[0]-1)*gs[1],dtype=int)))
-        vals = np.concatenate(( -np.ones(((gs[0]-1)*gs[1])), np.ones(((gs[0]-1)*gs[1]))  ))
-        # Build scipy matrix
-        #print(I)
-        #print(J)
-        #print(vals)
-        D = csr_matrix((vals,(I,J)),shape=(gs[1]*(gs[0]-1),gs[0]*gs[1]))/h[0]
+        new_grid[0] = new_grid[0]-1
+        next_ind = 1
     elif direction==1:
-        # First, get the indeces of all possible bottom-left corners
-        # which are 1:(gs-2) + gs*(1:(gs-2))
-        # One of these is a kron prod, the other is a repetition
-        vertical_indeces = linspace(0,gs[1]-2,gs[1]-1,dtype=int)
-        horizontal_indeces = linspace(0,gs[0]-1,gs[0],dtype=int)
-        #print(horizontal_indeces) 
-        #print(vertical_indeces) 
-        horizontal_indeces_rep = np.tile(horizontal_indeces,gs[1]-1)
-        vertical_indeces_rep = np.kron(vertical_indeces,np.ones((gs[0]),dtype=int))
-        #print(horizontal_indeces_rep) 
-        #print(vertical_indeces_rep) 
-        vectorized_indeces = horizontal_indeces_rep + gs[0]*vertical_indeces_rep
-        #print(vectorized_indeces)
-        J = np.concatenate((vectorized_indeces,vectorized_indeces+gs[0]))
-        I = np.concatenate((linspace(0,(gs[1]-1)*gs[0] - 1,(gs[1]-1)*gs[0],dtype=int),linspace(0,(gs[1]-1)*gs[0] - 1,(gs[1]-1)*gs[0],dtype=int)))
-        vals = np.concatenate(( -np.ones((gs[0]*(gs[1]-1))), np.ones((gs[0]*(gs[1]-1)))  ))
-        # Build scipy matrix
-        D = csr_matrix((vals,(I,J)),shape=(gs[0]*(gs[1]-1),gs[0]*gs[1]))/h[1]   
+        new_grid[1] = new_grid[1]-1
+        next_ind = gs[0]
+    elif direction==2:
+        new_grid[2] = new_grid[2]-1
+        next_ind = gs[0]*gs[1]
+    
+    num_vertices = np.prod(new_grid)
+
+    # dimension-dependent part
+    if dim==2:
+        xi, yi = np.meshgrid(linspace(0,new_grid[0]-1,new_grid[0],dtype=int),linspace(0,new_grid[1]-1,new_grid[1],dtype=int))
+        vectorized_indeces = np.reshape(xi,(-1, 1)) + gs[0]*np.reshape(yi,(-1, 1))
+    elif dim==3:
+        xi, yi, zi = np.meshgrid(linspace(0,new_grid[0]-1,new_grid[0],dtype=int),linspace(0,new_grid[1]-1,new_grid[1],dtype=int),linspace(0,new_grid[2]-1,new_grid[2],dtype=int),indexing='ij')
+        vectorized_indeces = np.reshape(xi,(-1, 1),order='F') + gs[0]*(np.reshape(yi,(-1, 1),order='F') +gs[1]* np.reshape(zi,(-1, 1),order='F'))
+
+    J = np.squeeze(np.concatenate((vectorized_indeces,vectorized_indeces+next_ind)))
+    I = np.concatenate((linspace(0,num_vertices - 1,num_vertices,dtype=int),linspace(0,num_vertices - 1,num_vertices,dtype=int)))
+
+
+    vals = np.concatenate(( -np.ones((num_vertices)), np.ones((num_vertices))))
+
+    D = csr_matrix((vals,(I,J)),shape=(num_vertices,np.prod(gs)))/h[direction]
+
 
     return D
