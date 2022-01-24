@@ -56,9 +56,5 @@ properly credited both in this page and in the individual files.
 - Clean up imports
 - Implement 3D version of `linear_elasticity_stiffness.py`
 - Implement 3D version of `linear_elasticity.py`
-- Implement 3D version of `fd_grad.py`
-- Implement 3D version of `fd_interpolate.py`
-- Implement 3D version of `fd_partial_derivative.py`
-- Write clear screened vs un-screened PSR test
 - Random points on mesh (wrapper?)
 - Write dependencies
