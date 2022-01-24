@@ -23,24 +23,44 @@ def fd_interpolate(P,gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),corner=np.ar
     #       
     #
     # n = floor((P - corner)/h)
+    dim = P.shape[1]
+
     indeces = np.floor( (P - np.tile(corner,(P.shape[0],1)))/np.tile(h,(P.shape[0],1)) ).astype(int)
-    indeces_vectorized = indeces[:,0] + gs[0]*indeces[:,1]
     I = linspace(0,P.shape[0]-1,P.shape[0],dtype=int)
-    #I = np.kron(I,np.array([1,1,1,1]))
-    I = np.concatenate((I,I,I,I))
-    J = np.concatenate(( indeces_vectorized,indeces_vectorized+gs[0],indeces_vectorized+1,indeces_vectorized+1+gs[0] ))
+    if dim==2:
+        indeces_vectorized = indeces[:,0] + gs[0]*indeces[:,1]
+        I = np.concatenate((I,I,I,I))
+        J = np.concatenate(( indeces_vectorized,indeces_vectorized+gs[0],indeces_vectorized+1,indeces_vectorized+1+gs[0] ))
+    else:
+        indeces_vectorized = (indeces[:,1] + gs[1]*indeces[:,2])*gs[0] + indeces[:,0]
+        I = np.concatenate((I,I,I,I,I,I,I,I))
+        J = np.concatenate(( indeces_vectorized,indeces_vectorized+gs[0],indeces_vectorized+1,indeces_vectorized+1+gs[0], indeces_vectorized+(gs[1]*gs[0]),indeces_vectorized+gs[0]+(gs[1]*gs[0]),indeces_vectorized+1+(gs[1]*gs[0]),indeces_vectorized+1+gs[0]+(gs[1]*gs[0]) ))
     
     # Position in the bottom left corner
     vij = np.tile(corner,(P.shape[0],1)) + indeces*np.tile(h,(P.shape[0],1))
     # Normalized position inside cell
     vij = (P - vij)/np.tile(h,(P.shape[0],1))
     # Coefficients wrt to each corner of cell
-    coeff_00 = (1-vij[:,1])*(1-vij[:,0]) # bottom left
-    coeff_01 = (1-vij[:,1])*vij[:,0] # bottom right
-    coeff_10 = vij[:,1]*(1-vij[:,0]) # top left
-    coeff_11 = vij[:,1]*vij[:,0] # top right
-    # concatenate (watch that order is consistent with J!!)
-    vals = np.concatenate((coeff_00,coeff_10,coeff_01,coeff_11))
+    if dim==2:
+        coeff_00 = (1-vij[:,1])*(1-vij[:,0]) # bottom left
+        coeff_01 = (1-vij[:,1])*vij[:,0] # bottom right
+        coeff_10 = vij[:,1]*(1-vij[:,0]) # top left
+        coeff_11 = vij[:,1]*vij[:,0] # top right
+        # concatenate (watch that order is consistent with J!!)
+        vals = np.concatenate((coeff_00,coeff_10,coeff_01,coeff_11))
+        mat_dim = gs[0]*gs[1]
+    else:
+        coeff_000 = (1-vij[:,1])*(1-vij[:,0])*(1-vij[:,2]) # bottom left
+        coeff_010 = (1-vij[:,1])*vij[:,0]*(1-vij[:,2]) # bottom right
+        coeff_100 = vij[:,1]*(1-vij[:,0])*(1-vij[:,2]) # top left
+        coeff_110 = vij[:,1]*vij[:,0]*(1-vij[:,2]) # top right
+        coeff_001 = (1-vij[:,1])*(1-vij[:,0])*vij[:,2] # bottom left
+        coeff_011 = (1-vij[:,1])*vij[:,0]*vij[:,2] # bottom right
+        coeff_101 = vij[:,1]*(1-vij[:,0])*vij[:,2] # top left
+        coeff_111 = vij[:,1]*vij[:,0]*vij[:,2] # top right
+        # concatenate (watch that order is consistent with J!!)
+        vals = np.concatenate((coeff_000,coeff_100,coeff_010,coeff_110,coeff_001,coeff_101,coeff_011,coeff_111))
+        mat_dim = gs[0]*gs[1]*gs[2]
     # Build scipy matrix
-    W = csr_matrix((vals,(I,J)),shape=(P.shape[0],gs[0]*gs[1]))
+    W = csr_matrix((vals,(I,J)),shape=(P.shape[0],mat_dim))
     return W
