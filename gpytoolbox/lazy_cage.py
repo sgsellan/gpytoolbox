@@ -2,7 +2,7 @@ import numpy as np
 import igl
 from skimage.measure import marching_cubes
 
-import pymesh as pm
+#import pymesh as pm
 
 def lazy_cage(V,F,m,grid_size=50):
 #    given target # faces m
@@ -17,8 +17,6 @@ def lazy_cage(V,F,m,grid_size=50):
     
 #    decimate mesh to m faces
     decimated_vertices,decimated_faces,J,I,flag = igl.decimate(vertices,faces,m)
-    mesh = pm.form_mesh(decimated_vertices, decimated_faces)
-    clear_mesh = pm.boolean(mesh, mesh, operation="union", engine="igl")
 #    "self union" to remove self-intersections
 
 #    if intersects input

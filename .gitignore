@@ -3,3 +3,4 @@
 *.inc
 *.pyc
 *.code-workspace
+build/
