@@ -74,5 +74,6 @@ properly credited both in this page and in the individual files.
 - Clean up imports
 - Implement 3D version of `linear_elasticity_stiffness.py`
 - Implement 3D version of `linear_elasticity.py`
-- Random points on mesh (wrapper?)
+- Proper mesh boolean unit test
+- Proper lazy cage unit test
 - Write dependencies
