@@ -14,3 +14,12 @@ from .png2poly import png2poly
 from .random_points_on_polyline import random_points_on_polyline
 from .normalize_points import normalize_points
 from .lazy_cage import lazy_cage
+
+
+# Bindings using C++ and Eigen:
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
+from gpytoolbox_eigen_bindings import mesh_union
+from gpytoolbox_eigen_bindings import mesh_difference
+from gpytoolbox_eigen_bindings import mesh_intersection

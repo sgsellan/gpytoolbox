@@ -9,6 +9,24 @@ existing libraries. If you find yourself in need of new functionality that is
 not in this library, I encourage you to contribute by submitting a pull request
 (see below).
 
+## Installation
+
+`gpyoolbox` uses C++ bindings for certain functionality. Before you use this library, make sure to run
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+This step may take a few minutes. Once it has completed successfully, you are free to use all `gpytoolbox` functionality in your personal projects by adding to the python path and importing. For example,
+```python
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../ext/gpytoolbox')))
+from gpytoolbox import regular_square_mesh
+v, f = regular_square_mesh(10)
+```
+
+
+
 ## How to contribute?
 
 There are three ways in which you can contribute to this library: by fixing a
