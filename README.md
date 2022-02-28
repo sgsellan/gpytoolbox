@@ -75,5 +75,6 @@ properly credited both in this page and in the individual files.
 - Implement 3D version of `linear_elasticity_stiffness.py`
 - Implement 3D version of `linear_elasticity.py`
 - Proper mesh boolean unit test
+- Fix upper envelope to not flip tets
 - Proper lazy cage unit test
 - Write dependencies
