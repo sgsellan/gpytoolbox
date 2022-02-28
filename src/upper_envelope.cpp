@@ -8,10 +8,7 @@
 #include <igl/extract_manifold_patches.h>
 #include <igl/remove_unreferenced.h>
 #include <igl/is_vertex_manifold.h>
-#include <igl/readDMAT.h>
-#include <igl/writeDMAT.h>
 #include <igl/volume.h>
-#include <ctime>
 
 typedef Eigen::Array<bool, Eigen::Dynamic, Eigen::Dynamic> ArrayXb;
 
