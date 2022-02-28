@@ -18,11 +18,22 @@ include(numpyeigen)
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 include(libigl)
 
+add_library(cpytoolbox
+	SHARED
+	# Headers
+	src/upper_envelope.h
+	# Source
+	src/upper_envelope.cpp
+	)
+
+target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal)
+
+
 npe_add_module(gpytoolbox_eigen_bindings
 	BINDING_SOURCES
 	src/bindings.cpp
 )
 
-target_link_libraries(gpytoolbox_eigen_bindings PUBLIC igl::core igl_copyleft::cgal)
+target_link_libraries(gpytoolbox_eigen_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
 
 target_include_directories(gpytoolbox_eigen_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")

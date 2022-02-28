@@ -23,3 +23,4 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../b
 from gpytoolbox_eigen_bindings import mesh_union
 from gpytoolbox_eigen_bindings import mesh_difference
 from gpytoolbox_eigen_bindings import mesh_intersection
+from gpytoolbox_eigen_bindings import upper_envelope

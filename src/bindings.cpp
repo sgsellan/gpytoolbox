@@ -3,6 +3,7 @@
 #include <igl/copyleft/cgal/mesh_boolean.h>
 #include <igl/copyleft/cgal/intersect_other.h>
 #include <igl/copyleft/cgal/RemeshSelfIntersectionsParam.h>
+#include <upper_envelope.h>
 
 npe_function(mesh_union)
 npe_arg(va, dense_double)
@@ -87,5 +88,21 @@ npe_begin_code()
     Eigen::VectorXd S;
     igl::offset_surface(VA,FA,iso,grid_size,igl::SIGNED_DISTANCE_TYPE_FAST_WINDING_NUMBER,VB,FB,GV,side,S);
     return std::make_tuple(npe::move(VB),npe::move(FB));
+npe_end_code()
+
+// void upper_envelope(const Eigen::MatrixXd VT, const Eigen::MatrixXi FT, const Eigen::MatrixXd DT, Eigen::MatrixXd & UT, Eigen::MatrixXi & GT, Eigen::MatrixXd LT);
+npe_function(upper_envelope)
+npe_arg(vt, dense_double)
+npe_arg(ft, dense_int)
+npe_arg(dt, dense_double)
+npe_begin_code()
+    Eigen::MatrixXd VT(vt);
+    Eigen::MatrixXi FT(ft);
+    Eigen::MatrixXd DT(dt);
+    Eigen::MatrixXd UT;
+    Eigen::Array<bool, Eigen::Dynamic, Eigen::Dynamic> LT;
+    Eigen::MatrixXi GT;
+    upper_envelope(VT,FT,DT,UT,GT,LT);
+    return std::make_tuple(npe::move(UT),npe::move(GT),npe::move(LT));
 npe_end_code()
 
