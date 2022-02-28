@@ -338,8 +338,7 @@ void propogate_split_func(Eigen::MatrixXd &inV, int &idxV, Eigen::MatrixXi &inF,
 void upper_envelope(Eigen::MatrixXd & VT, Eigen::MatrixXi & FT,  Eigen::MatrixXd & DT, Eigen::MatrixXd & UT, Eigen::MatrixXi & GT, ArrayXb & LT)
 {
 
-Eigen::VectorXd vols;
-igl::volume(VT,FT,vols);
+
   LT.setConstant(FT.rows(), DT.cols(), true);
 
 
