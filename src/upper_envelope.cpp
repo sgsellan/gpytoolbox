@@ -1,4 +1,3 @@
-// ALGORITHM AND IMPLEMENTATION PROPERTY OF RINAT ABDRASHITOV
 #include <igl/nchoosek.h>
 #include <igl/mat_max.h>
 #include <igl/slice_mask.h>
@@ -11,6 +10,7 @@
 #include <igl/is_vertex_manifold.h>
 #include <igl/readDMAT.h>
 #include <igl/writeDMAT.h>
+#include <igl/volume.h>
 #include <ctime>
 
 typedef Eigen::Array<bool, Eigen::Dynamic, Eigen::Dynamic> ArrayXb;
@@ -162,8 +162,6 @@ void remove_unused_material2(const Eigen::MatrixXd& DT, const Eigen::MatrixXi& F
 
 void propogate_split_func(Eigen::MatrixXd &inV, int &idxV, Eigen::MatrixXi &inF, int &idxF,const Eigen::VectorXd& inD, Eigen::MatrixXd &allD, ArrayXb &inL, Eigen::SparseMatrix<double> &uE2V,
     int tetid, const Eigen::Vector2i& mpair, const double iso, const double threshold) {
-
-
     auto tet_contains_edge = [&](const Eigen::RowVectorXi& t, const Eigen::RowVectorXi& e) {
         return (t.array() == e(0)).any() && (t.array() == e(1)).any();
     };
@@ -311,13 +309,24 @@ void propogate_split_func(Eigen::MatrixXd &inV, int &idxV, Eigen::MatrixXi &inF,
 
     }
 
-
     Eigen::MatrixXi tt;
     split_2_edge_array(F, E, vids, tt);
 
     Eigen::RowVectorXi appendFids = Eigen::RowVectorXi::LinSpaced(tt.rows()-1, idxF, idxF+tt.rows()-2);
     Eigen::RowVectorXi aa(appendFids.cols()+1);
     aa << tetid, appendFids;
+    Eigen::MatrixXd vols_tt;
+    igl::volume(inV,tt,vols_tt);
+    for (int i = 0; i < tt.rows(); i++)
+    {
+        if (vols_tt(i)<0)
+        {
+            Eigen::RowVector4i tet = tt.row(i);
+            tt.row(i) << tet(0),tet(1),tet(3),tet(2);
+        }
+        
+    }
+    
     inF.row(tetid) = tt.row(0);
     inF.block(idxF, 0, tt.rows()-1, inF.cols()) = tt.block(1, 0, tt.rows()-1, tt.cols());
     //std::cout << "inF block" << std::endl << inF.block(idxF, 0, tt.rows()-1, inF.cols()) << std::endl;
@@ -326,12 +335,14 @@ void propogate_split_func(Eigen::MatrixXd &inV, int &idxV, Eigen::MatrixXi &inF,
     //std::cout << "inL block" << std::endl << inL.block(idxF, 0, tt.rows()-1, inL.cols());
 
     idxF = idxF + tt.rows() - 1;
-
+    
 }
 
 void upper_envelope(Eigen::MatrixXd & VT, Eigen::MatrixXi & FT,  Eigen::MatrixXd & DT, Eigen::MatrixXd & UT, Eigen::MatrixXi & GT, ArrayXb & LT)
 {
 
+Eigen::VectorXd vols;
+igl::volume(VT,FT,vols);
   LT.setConstant(FT.rows(), DT.cols(), true);
 
 
@@ -352,6 +363,7 @@ void upper_envelope(Eigen::MatrixXd & VT, Eigen::MatrixXi & FT,  Eigen::MatrixXd
   }
   //end = clock();
   //std::cout << "Quick remove unused materials takes: " << (double)(end-start)/CLOCKS_PER_SEC << "s" << std::endl;
+
 
   assert(LT.cast<int>().rowwise().sum().cast<bool>().count() == LT.rows());
 
@@ -424,7 +436,6 @@ void upper_envelope(Eigen::MatrixXd & VT, Eigen::MatrixXi & FT,  Eigen::MatrixXd
     //std::cout << "VT:" << std::endl << VT << std::endl;
     //std::cout << "FT:" << std::endl << FT << std::endl;
     //std::cout << "DT:" << std::endl << DT << std::endl;
-
     Eigen::MatrixXi CFT;
     carve_out_material(FT, idxF, LT, DT, mid, material_threshold, CFT);
     
