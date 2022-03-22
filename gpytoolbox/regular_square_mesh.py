@@ -14,7 +14,7 @@ def regular_square_mesh(gs):
     #
     #
     #
-    x, y = np.meshgrid(np.linspace(0,1,gs),np.linspace(0,1,gs))
+    x, y = np.meshgrid(np.linspace(-1,1,gs),np.linspace(-1,1,gs))
     v = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)
 
     f = np.zeros((2*(gs-1)*(gs-1),3),dtype=int)
