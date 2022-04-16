@@ -77,3 +77,4 @@ properly credited both in this page and in the individual files.
 - Proper mesh boolean unit test
 - Proper lazy cage unit test
 - Write dependencies
+- Vectorize `write_ply.py`
