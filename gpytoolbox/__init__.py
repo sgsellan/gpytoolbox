@@ -14,6 +14,7 @@ from .png2poly import png2poly
 from .random_points_on_polyline import random_points_on_polyline
 from .normalize_points import normalize_points
 from .lazy_cage import lazy_cage
+from .write_ply import write_ply
 
 
 # Bindings using C++ and Eigen:
