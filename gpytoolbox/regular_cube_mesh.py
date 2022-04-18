@@ -22,11 +22,10 @@ def regular_cube_mesh(gs,type='rotationally-symmetric'):
     'hex' : 3
     }
     mesh_type = dictionary.get(type,-1)
-
     # Ordering is different from matlab
     z, x, y = np.meshgrid(np.linspace(0,1,gs),np.linspace(0,1,gs),np.linspace(0,1,gs),indexing='ij')
-    idx = np.reshape(np.linspace(0,gs*gs*gs-1,gs*gs*gs,dtype=int),(gs,gs,gs))
-    V = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1)),np.reshape(z,(-1, 1))),axis=1)
+    idx = np.reshape(np.linspace(0,gs*gs*gs-1,gs*gs*gs,dtype=int),(gs,gs,gs),order='F')
+    V = np.concatenate((np.reshape(x,(-1, 1),order='F'),np.reshape(y,(-1, 1),order='F'),np.reshape(z,(-1, 1),order='F')),axis=1)
     # Indexing is different here, careful
     v1 = np.reshape(idx[0:gs-1,0:gs-1,0:gs-1],(-1,1))
     v2 = np.reshape(idx[0:gs-1,1:gs,0:gs-1],(-1,1))
