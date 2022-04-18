@@ -25,3 +25,4 @@ from gpytoolbox_eigen_bindings import mesh_union
 from gpytoolbox_eigen_bindings import mesh_difference
 from gpytoolbox_eigen_bindings import mesh_intersection
 from gpytoolbox_eigen_bindings import upper_envelope
+from gpytoolbox_eigen_bindings import ray_mesh_intersect

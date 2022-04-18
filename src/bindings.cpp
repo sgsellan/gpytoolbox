@@ -1,8 +1,11 @@
 #include <npe.h>
+#include <pybind11/stl.h>
 #include <igl/offset_surface.h>
 #include <igl/copyleft/cgal/mesh_boolean.h>
 #include <igl/copyleft/cgal/intersect_other.h>
 #include <igl/copyleft/cgal/RemeshSelfIntersectionsParam.h>
+#include <igl/ray_mesh_intersect.h>
+#include <igl/Hit.h>
 #include <upper_envelope.h>
 
 npe_function(mesh_union)
@@ -89,6 +92,28 @@ npe_begin_code()
     igl::offset_surface(VA,FA,iso,grid_size,igl::SIGNED_DISTANCE_TYPE_FAST_WINDING_NUMBER,VB,FB,GV,side,S);
     return std::make_tuple(npe::move(VB),npe::move(FB));
 npe_end_code()
+
+
+
+npe_function(ray_mesh_intersect)
+npe_arg(cam_pos, dense_double)
+npe_arg(cam_dir, dense_double)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_begin_code()
+    Eigen::VectorXd CAM_POS(cam_pos);
+    Eigen::VectorXd CAM_DIR(cam_dir);
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    std::vector<igl::Hit> hits;
+    igl::ray_mesh_intersect(cam_pos,cam_dir,V,F,hits);
+    std::vector<std::tuple<int, int, float, float, float>> hits_res;
+    for(const auto &h : hits)
+        hits_res.emplace_back(h.id, h.gid, h.u, h.v, h.t);
+    return hits_res;
+npe_end_code()
+
+
 
 // void upper_envelope(const Eigen::MatrixXd VT, const Eigen::MatrixXi FT, const Eigen::MatrixXd DT, Eigen::MatrixXd & UT, Eigen::MatrixXi & GT, Eigen::MatrixXd LT);
 npe_function(upper_envelope)
