@@ -16,17 +16,20 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_MODULE_PATH ${EXT_DIR}/numpyeigen/cmake)
 include(numpyeigen)
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
+option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
 
 add_library(cpytoolbox
 	SHARED
 	# Headers
 	src/upper_envelope.h
+	src/ray_mesh_intersect_aabb.h
 	# Source
 	src/upper_envelope.cpp
+	src/ray_mesh_intersect_aabb.cpp
 	)
 
-target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal)
+target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
 
 
 npe_add_module(gpytoolbox_eigen_bindings
