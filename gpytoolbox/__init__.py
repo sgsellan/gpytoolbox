@@ -1,3 +1,14 @@
+# Bindings using C++ and Eigen:
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build-linux/')))
+from gpytoolbox_eigen_bindings import mesh_union
+from gpytoolbox_eigen_bindings import mesh_difference
+from gpytoolbox_eigen_bindings import mesh_intersection
+from gpytoolbox_eigen_bindings import upper_envelope
+from gpytoolbox_eigen_bindings import ray_mesh_intersect
+# Other stuff
 from .edge_indeces import edge_indeces
 from .regular_square_mesh import regular_square_mesh
 from .regular_cube_mesh import regular_cube_mesh
@@ -17,12 +28,3 @@ from .lazy_cage import lazy_cage
 from .write_ply import write_ply
 
 
-# Bindings using C++ and Eigen:
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
-from gpytoolbox_eigen_bindings import mesh_union
-from gpytoolbox_eigen_bindings import mesh_difference
-from gpytoolbox_eigen_bindings import mesh_intersection
-from gpytoolbox_eigen_bindings import upper_envelope
-from gpytoolbox_eigen_bindings import ray_mesh_intersect
