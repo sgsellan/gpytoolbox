@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def write_ply(filename,vertices,faces,colors=None):
+def write_ply(filename,vertices,faces=None,colors=None):
     # Writes a triangle mesh with colors into ply file format,
     # in a way consistent with, e.g., importing to Blender 
     # 
@@ -23,7 +23,10 @@ def write_ply(filename,vertices,faces,colors=None):
         f.write("property uchar green\n")
         f.write("property uchar blue\n")
         f.write("property uchar alpha\n")
-    f.write("element face {}\n".format(faces.shape[0]))
+    if (faces is not None):
+        f.write("element face {}\n".format(faces.shape[0]))
+    else:
+        f.write("element face 0\n")
     f.write("property list int int vertex_indices\n")
     f.write("end_header\n")
     # write_vert_str = "{} {} {}\n" * vertices.shape[0]
@@ -44,6 +47,7 @@ def write_ply(filename,vertices,faces,colors=None):
         for i in range(vertices.shape[0]):
             f.write("{} {} {} {} {} {} 255\n".format(vertices[i,0],vertices[i,1],vertices[i,2],int(C[i,0]),int(C[i,1]),int(C[i,2])))
     # This should be vectorized
-    for i in range(faces.shape[0]):
-        f.write("3 {} {} {}\n".format(faces[i,0],faces[i,1],faces[i,2]))
+    if (faces is not None):
+        for i in range(faces.shape[0]):
+            f.write("3 {} {} {}\n".format(faces[i,0],faces[i,1],faces[i,2]))
     f.close()
