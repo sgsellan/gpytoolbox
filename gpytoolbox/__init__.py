@@ -22,6 +22,7 @@ from .poisson_surface_reconstruction import poisson_surface_reconstruction
 from .fd_interpolate import fd_interpolate
 from .fd_grad import fd_grad
 from .fd_partial_derivative import fd_partial_derivative
+from .fd_partial_derivative_octree import fd_partial_derivative_octree
 from .png2poly import png2poly
 from .random_points_on_polyline import random_points_on_polyline
 from .normalize_points import normalize_points

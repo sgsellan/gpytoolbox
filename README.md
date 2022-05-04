@@ -72,6 +72,7 @@ properly credited both in this page and in the individual files.
 ## To Do
 
 - Clean up imports
+- Comment and clarify all octree code
 - Implement 3D version of `linear_elasticity_stiffness.py`
 - Implement 3D version of `linear_elasticity.py`
 - Proper mesh boolean unit test
