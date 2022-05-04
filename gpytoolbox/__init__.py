@@ -21,6 +21,7 @@ from .ray_polyline_intersect import ray_polyline_intersect
 from .poisson_surface_reconstruction import poisson_surface_reconstruction
 from .fd_interpolate import fd_interpolate
 from .fd_grad import fd_grad
+from .fd_grad_octree import fd_grad_octree
 from .fd_partial_derivative import fd_partial_derivative
 from .fd_partial_derivative_octree import fd_partial_derivative_octree
 from .png2poly import png2poly
@@ -31,4 +32,3 @@ from .write_ply import write_ply
 from .libigl_hex_to_polyscope_hex import libigl_hex_to_polyscope_hex
 from .massmatrix_octree import massmatrix_octree
 from .volumes_octree import volumes_octree
-
