@@ -30,14 +30,14 @@ Octree::Octree(Eigen::MatrixXd P){
             Eigen::RowVector3d min_corner = CN.row(i) - 0.5*W(i)*Eigen::RowVector3d(1,1,1);
             Eigen::RowVector3d max_corner = CN.row(i) + 0.5*W(i)*Eigen::RowVector3d(1,1,1);
             int n = v_list.size();
-            v_list.push_back({min_corner(0),min_corner(1),min_corner(2)});
-            v_list.push_back({min_corner(0),max_corner(1),min_corner(2)});
-            v_list.push_back({max_corner(0),min_corner(1),min_corner(2)});
-            v_list.push_back({max_corner(0),max_corner(1),min_corner(2)});
-            v_list.push_back({max_corner(0),min_corner(1),max_corner(2)});
-            v_list.push_back({max_corner(0),max_corner(1),max_corner(2)});
-            v_list.push_back({min_corner(0),min_corner(1),max_corner(2)});
-            v_list.push_back({min_corner(0),max_corner(1),max_corner(2)});
+            v_list.push_back({min_corner(0),min_corner(1),min_corner(2)});// 0
+            v_list.push_back({min_corner(0),max_corner(1),min_corner(2)});// 1
+            v_list.push_back({max_corner(0),min_corner(1),min_corner(2)});// 2
+            v_list.push_back({max_corner(0),max_corner(1),min_corner(2)});// 3
+            v_list.push_back({max_corner(0),min_corner(1),max_corner(2)});// 4
+            v_list.push_back({max_corner(0),max_corner(1),max_corner(2)});// 5
+            v_list.push_back({min_corner(0),min_corner(1),max_corner(2)});// 6
+            v_list.push_back({min_corner(0),max_corner(1),max_corner(2)});// 7
             q_list.push_back({n+0,n+1,n+2,n+3,n+4,n+5,n+6,n+7});
         }
         igl::list_to_matrix(v_list,all_verts);
