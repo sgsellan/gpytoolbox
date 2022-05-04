@@ -36,7 +36,7 @@ for power in range(2,6,1):
     P = np.random.rand(2**(2*power),3)
     v, q = gpytoolbox.build_octree_as_hex_mesh(P)
     print("Octree with",str(q.shape[0]),"cells")
-    v, SVI, SVJ, q = igl.remove_duplicate_vertices(v,q,1e-5)
+    v, SVI, SVJ, q = igl.remove_duplicate_vertices(v,q,1e-7)
     t = gpytoolbox.libigl_hex_to_polyscope_hex(q)
 
     # Build partial derivative matrices

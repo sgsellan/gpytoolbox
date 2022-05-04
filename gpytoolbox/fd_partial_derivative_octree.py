@@ -1,5 +1,4 @@
 import numpy as np
-from numpy.core.function_base import linspace
 from scipy.sparse import csr_matrix
 
 
@@ -25,13 +24,9 @@ def fd_partial_derivative_octree(V,Q,direction=0):
     I2 = np.tile(np.linspace(0,E.shape[0]-1,E.shape[0],dtype=int)[:,None],(1,2))
     vals2 = np.hstack((-edge_lengths,edge_lengths))
     staggered = (V[E[:,0],:] + V[E[:,1],:])/2
-    # print(vals2)
     J = np.reshape(E,(-1,1),order='F').squeeze()
     I = np.reshape(I2,(-1,1),order='F').squeeze()
     vals = 1/np.reshape(vals2,(-1,1),order='F').squeeze()
-    # print(I)
-    # print(J)
-    # print(vals)
     D = csr_matrix((vals,(I,J)),shape=(E.shape[0],V.shape[0]))
 
 
