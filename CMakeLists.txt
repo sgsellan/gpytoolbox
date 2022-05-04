@@ -24,9 +24,11 @@ add_library(cpytoolbox
 	# Headers
 	src/upper_envelope.h
 	src/ray_mesh_intersect_aabb.h
+	src/octree.h
 	# Source
 	src/upper_envelope.cpp
 	src/ray_mesh_intersect_aabb.cpp
+	src/octree.cpp
 	)
 
 target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)

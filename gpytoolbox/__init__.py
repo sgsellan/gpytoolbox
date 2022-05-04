@@ -8,6 +8,7 @@ from gpytoolbox_eigen_bindings import mesh_difference
 from gpytoolbox_eigen_bindings import mesh_intersection
 from gpytoolbox_eigen_bindings import upper_envelope
 from gpytoolbox_eigen_bindings import ray_mesh_intersect
+from gpytoolbox_eigen_bindings import build_octree_as_hex_mesh
 # Other stuff
 from .edge_indeces import edge_indeces
 from .regular_square_mesh import regular_square_mesh
