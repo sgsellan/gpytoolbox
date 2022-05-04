@@ -38,7 +38,7 @@ def write_ply(filename,vertices,faces=None,colors=None):
     else:
         if (colors.ndim==1 or colors.shape[1]==1): # color is scalar values
         # to-do: make this different
-            colors = plt.cm.viridis((np.clip(colors,np.min(colors),np.max(colors))-np.min(colors))/(np.max(colors) - np.min(colors)))
+            colors = plt.cm.plasma((np.clip(colors,np.min(colors),np.max(colors))-np.min(colors))/(np.max(colors) - np.min(colors)))
         if np.max(colors)<=1:
             C = np.round(colors*255)
         else:
