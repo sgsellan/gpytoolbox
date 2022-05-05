@@ -9,9 +9,13 @@
 // Eigen::VectorXd W;  // length of box
 
 Octree::Octree(Eigen::MatrixXd P){
-    igl::octree(P,point_indeces,CH,CN,W);
-    // Eigen::MatrixXi all_quads;
-    // Eigen::MatrixXd all_verts;
+    Eigen::RowVector3d min_box, max_box;
+    min_box << P.col(0).minCoeff()-0.1, P.col(1).minCoeff()-0.1, P.col(2).minCoeff()-0.1;
+    max_box << P.col(0).maxCoeff()+0.1, P.col(1).maxCoeff()+0.1, P.col(2).maxCoeff()+0.1;
+    Eigen::MatrixXd Q;
+    Q.resize(P.rows()+2,3);
+    Q << P, min_box, max_box;
+    igl::octree(Q,point_indeces,CH,CN,W);
     std::vector<std::vector<double> >  v_list;
     std::vector<std::vector<int> > q_list;
     for (int i = 0; i < CN.rows(); i++)
