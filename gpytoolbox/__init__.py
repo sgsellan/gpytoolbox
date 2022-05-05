@@ -9,6 +9,7 @@ from gpytoolbox_eigen_bindings import mesh_intersection
 from gpytoolbox_eigen_bindings import upper_envelope
 from gpytoolbox_eigen_bindings import ray_mesh_intersect
 from gpytoolbox_eigen_bindings import build_octree_as_hex_mesh
+from gpytoolbox_eigen_bindings import in_element_aabb
 # Other stuff
 from .edge_indeces import edge_indeces
 from .regular_square_mesh import regular_square_mesh
@@ -32,3 +33,4 @@ from .write_ply import write_ply
 from .libigl_hex_to_polyscope_hex import libigl_hex_to_polyscope_hex
 from .massmatrix_octree import massmatrix_octree
 from .volumes_octree import volumes_octree
+from .interpolate_octree import interpolate_octree

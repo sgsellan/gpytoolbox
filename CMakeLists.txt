@@ -25,10 +25,12 @@ add_library(cpytoolbox
 	src/upper_envelope.h
 	src/ray_mesh_intersect_aabb.h
 	src/octree.h
+	src/in_element_aabb.h
 	# Source
 	src/upper_envelope.cpp
 	src/ray_mesh_intersect_aabb.cpp
 	src/octree.cpp
+	src/in_element_aabb.cpp
 	)
 
 target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)

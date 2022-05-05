@@ -9,6 +9,7 @@
 #include <upper_envelope.h>
 #include <octree.h>
 #include <ray_mesh_intersect_aabb.h>
+#include <in_element_aabb.h>
 
 npe_function(mesh_union)
 npe_arg(va, dense_double)
@@ -143,5 +144,18 @@ npe_begin_code()
     V = oct.all_verts;
     Q = oct.all_quads;
     return std::make_tuple(npe::move(V),npe::move(Q));
+npe_end_code()
+
+npe_function(in_element_aabb)
+npe_arg(queries, dense_double)
+npe_arg(vt, dense_double)
+npe_arg(ft, dense_int)
+npe_begin_code()
+    Eigen::MatrixXd P(queries);
+    Eigen::MatrixXd V(vt);
+    Eigen::MatrixXi F(ft);
+    Eigen::VectorXi I;
+    in_element_aabb(P,V,F,I);
+    return npe::move(I);
 npe_end_code()
 
