@@ -7,7 +7,6 @@
 #include <igl/ray_mesh_intersect.h>
 #include <igl/Hit.h>
 #include <upper_envelope.h>
-#include <octree.h>
 #include <ray_mesh_intersect_aabb.h>
 #include <in_element_aabb.h>
 
@@ -131,19 +130,6 @@ npe_begin_code()
     Eigen::MatrixXi GT;
     upper_envelope(VT,FT,DT,UT,GT,LT);
     return std::make_tuple(npe::move(UT),npe::move(GT),npe::move(LT));
-npe_end_code()
-
-
-npe_function(build_octree_as_hex_mesh)
-npe_arg(pts, dense_double)
-npe_begin_code()
-    Eigen::MatrixXd P(pts);
-    Eigen::MatrixXd V;
-    Eigen::MatrixXi Q;
-    Octree oct(P);
-    V = oct.all_verts;
-    Q = oct.all_quads;
-    return std::make_tuple(npe::move(V),npe::move(Q));
 npe_end_code()
 
 npe_function(in_element_aabb)
