@@ -1,14 +1,20 @@
 # Bindings using C++ and Eigen:
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build-linux/')))
-from gpytoolbox_eigen_bindings import mesh_union
-from gpytoolbox_eigen_bindings import mesh_difference
-from gpytoolbox_eigen_bindings import mesh_intersection
-from gpytoolbox_eigen_bindings import upper_envelope
-from gpytoolbox_eigen_bindings import ray_mesh_intersect
-from gpytoolbox_eigen_bindings import in_element_aabb
+try:
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build-linux/')))
+    from gpytoolbox_eigen_bindings import mesh_union
+    from gpytoolbox_eigen_bindings import mesh_difference
+    from gpytoolbox_eigen_bindings import mesh_intersection
+    from gpytoolbox_eigen_bindings import upper_envelope
+    from gpytoolbox_eigen_bindings import ray_mesh_intersect
+    from gpytoolbox_eigen_bindings import in_element_aabb
+    from .lazy_cage import lazy_cage
+except:
+    print("-------------------------------------------------------------------")
+    print("WARNING: You are using only the pure-python gpytoolbox functionality. Some functions will be unavailable. \n See https://github.com/sgsellan/gpytoolbox for full installation instructions.")
+    print("-------------------------------------------------------------------")
 # Other stuff
 from .edge_indeces import edge_indeces
 from .regular_square_mesh import regular_square_mesh
@@ -25,5 +31,4 @@ from .fd_partial_derivative import fd_partial_derivative
 from .png2poly import png2poly
 from .random_points_on_polyline import random_points_on_polyline
 from .normalize_points import normalize_points
-from .lazy_cage import lazy_cage
 from .write_ply import write_ply
