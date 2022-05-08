@@ -32,3 +32,6 @@ from .png2poly import png2poly
 from .random_points_on_polyline import random_points_on_polyline
 from .normalize_points import normalize_points
 from .write_ply import write_ply
+from .initialize_quadtree import initialize_quadtree
+from .bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree
+from .subdivide_quad import subdivide_quad
