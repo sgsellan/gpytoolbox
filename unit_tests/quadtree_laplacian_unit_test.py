@@ -8,10 +8,6 @@ np.random.seed(0)
 th = 2*np.pi*np.random.rand(100,1)
 P = 0.5*np.concatenate((np.cos(th),np.sin(th)),axis=1)
 
-# testing natural bc
-C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=3,min_depth=3,vmin=np.array([-1,-1]),vmax=np.array([1,1]))
-L, stored_at = gpytoolbox.quadtree_laplacian(C,W,CH,D,A)
-
 
 C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=6,min_depth=2,vmin=np.array([-1,-1]),vmax=np.array([1,1]))
 V,Q = gpytoolbox.bad_quad_mesh_from_quadtree(C,W,CH)
