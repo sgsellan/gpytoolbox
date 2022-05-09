@@ -35,3 +35,6 @@ from .write_ply import write_ply
 from .initialize_quadtree import initialize_quadtree
 from .bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree
 from .subdivide_quad import subdivide_quad
+from .in_quadtree import in_quadtree
+from .quadtree_gradient import quadtree_gradient
+from .quadtree_laplacian import quadtree_laplacian
