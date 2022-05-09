@@ -70,3 +70,4 @@ bb = ((stored_at[:,0]>0.8) | (stored_at[:,0]<-0.8) | (stored_at[:,1]>0.8) | (sto
 bc = gt_fun[bb]
 u = igl.min_quad_with_fixed(L,-1.0*lap_fun,bb,bc,Aeq,Beq,False)[1]
 assert(np.isclose(np.max(np.abs(u-gt_fun)),0.0))
+print("Unit test passed, all asserts passed")
