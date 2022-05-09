@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import csr_matrix
+from scipy.sparse import csr_matrix, diags
 
 def quadtree_laplacian(C,W,CH,D,A):
     # Builds a finite difference laplacian on a quadtree following a centered 
@@ -92,10 +92,6 @@ def quadtree_laplacian(C,W,CH,D,A):
                 num_dirs = num_dirs + 1
             
         
-        new_I.append(i)
-        new_J.append(i)
-        new_vals.append(1.0)
-        new_dirs.append(5)
             
         # At this point, we have to divide by the edge-lengths and add sign
         for s in range(len(new_dirs)):
@@ -107,8 +103,6 @@ def quadtree_laplacian(C,W,CH,D,A):
                 new_vals[s] = new_vals[s]/(l[3]*(l[3]+l[4]))
             elif new_dirs[s]==4:
                 new_vals[s] = new_vals[s]/(l[4]*(l[3]+l[4]))
-            elif new_dirs[s]==5:
-                new_vals[s] = (1/(l[1]*l[2])) + (1/(l[3]*l[4]))
     
         # And add them to the big sparse Laplacian construction vectors
         I.extend(new_I)
@@ -118,6 +112,7 @@ def quadtree_laplacian(C,W,CH,D,A):
     
     # THE LAPLACIAN IS NEGATIVE SEMI DEFINITE!
     L = -2*csr_matrix((vals,(I,J)),(children.shape[0],children.shape[0]))
+    L = L - diags(np.array(L.sum(axis=1)).squeeze(),0)
     stored_at = C[children,:]
     return L, stored_at
     
