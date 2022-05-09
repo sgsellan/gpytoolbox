@@ -75,6 +75,7 @@ properly credited both in this page and in the individual files.
 
 ## To Do
 
+- Output map from cells to quadtree children as a new function or something
 - Implement 3D version of `linear_elasticity_stiffness.py`
 - Implement 3D version of `linear_elasticity.py`
 - Proper mesh boolean unit test
