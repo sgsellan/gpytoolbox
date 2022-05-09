@@ -51,7 +51,7 @@ def initialize_quadtree(P,max_depth=8,min_depth=1,graded=False,vmin=None,vmax=No
     CH = np.array([[-1,-1,-1,-1]],dtype=int) # for now it's leaf node
     D = np.array([1],dtype=int)
     A = csr_matrix((1,1))
-    PAR = np.array([-11],dtype=int) # supreme Neanderthal ancestral node
+    PAR = np.array([-1],dtype=int) # supreme Neanderthal ancestral node
 
 
     # Now, we will loop

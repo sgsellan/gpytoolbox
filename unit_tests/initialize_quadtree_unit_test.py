@@ -10,6 +10,6 @@ C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=8,vmin=n
 V,Q = gpytoolbox.bad_quad_mesh_from_quadtree(C,W,CH)
 
 ps.init()
-ps.register_surface_mesh("test quadtree",V,Q)
+ps.register_surface_mesh("test quadtree",V,Q,edge_width=1)
 ps.set_navigation_style('planar')
 ps.show()
