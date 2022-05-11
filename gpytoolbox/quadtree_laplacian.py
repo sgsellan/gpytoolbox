@@ -26,14 +26,15 @@ def quadtree_laplacian(C,W,CH,D,A):
     #   stored_at #num_children by 3 matrix of child cell centers, where the
     #       values of L are stored
     
-    
+    dim = C.shape[1]
+    num_faces_per_cell = 2*dim
     # We will store Laplacian values at
     # child cell indeces
     children = np.nonzero(CH[:,1]==-1)[0]
     # map from all cells to children
     cell_to_children = -np.ones(W.shape[0],dtype=int)
     cell_to_children[children] = np.linspace(0,children.shape[0]-1,children.shape[0],dtype=int)
-    
+
     # Vectors for constructing the Laplacian
     I = []
     J = []
@@ -43,7 +44,7 @@ def quadtree_laplacian(C,W,CH,D,A):
         new_I = []
         new_J = []
         new_vals = []
-        l = [1,1,1,1,1]
+        l = [0,0,0,0,0]
         new_dirs = []
         child = children[i]
         d = D[child]
@@ -53,7 +54,7 @@ def quadtree_laplacian(C,W,CH,D,A):
         # So, let's look for the value to the j direction. To do this, we seek the
         # lowest-depth neighbor to the j direction. As a reminder the octree
         # adjacency convention is i->j (1:left-2:right-3:bottom-4:top)
-        for j in range(1,5):
+        for j in range(1,num_faces_per_cell+1):
             j_neighbors = (A[child,:]==j).nonzero()[1]
             if len(j_neighbors)>0:
                 depths_j_neighbors = D[j_neighbors]
@@ -96,13 +97,26 @@ def quadtree_laplacian(C,W,CH,D,A):
         # At this point, we have to divide by the edge-lengths and add sign
         for s in range(len(new_dirs)):
             if new_dirs[s]==1:
-                new_vals[s] = new_vals[s]/(l[1]*(l[1]+l[2]))
+                if l[2]==0:
+                    new_vals[s] = new_vals[s]/(l[1]*(l[1]+l[1]))
+                else:
+                    new_vals[s] = new_vals[s]/(l[1]*(l[1]+l[2]))
             elif new_dirs[s]==2:
-                new_vals[s] = new_vals[s]/(l[2]*(l[1]+l[2]))
+                if l[1]==0:
+                    new_vals[s] = new_vals[s]/(l[2]*(l[2]+l[2]))
+                else:
+                    new_vals[s] = new_vals[s]/(l[2]*(l[1]+l[2]))
             elif new_dirs[s]==3:
-                new_vals[s] = new_vals[s]/(l[3]*(l[3]+l[4]))
+                if l[4]==0:
+                    new_vals[s] = new_vals[s]/(l[3]*(l[3]+l[3]))
+                else:
+                    new_vals[s] = new_vals[s]/(l[3]*(l[3]+l[4]))
             elif new_dirs[s]==4:
-                new_vals[s] = new_vals[s]/(l[4]*(l[3]+l[4]))
+                if l[3]==0:
+                    new_vals[s] = new_vals[s]/(l[4]*(l[4]+l[4]))
+                else:
+                    new_vals[s] = new_vals[s]/(l[4]*(l[3]+l[4]))
+            
     
         # And add them to the big sparse Laplacian construction vectors
         I.extend(new_I)
@@ -115,5 +129,4 @@ def quadtree_laplacian(C,W,CH,D,A):
     L = L - diags(np.array(L.sum(axis=1)).squeeze(),0)
     stored_at = C[children,:]
     return L, stored_at
-    
     
