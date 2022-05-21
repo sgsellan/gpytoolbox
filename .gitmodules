@@ -1,3 +1,0 @@
-[submodule "ext/numpyeigen"]
-	path = ext/numpyeigen
-	url = git@github.com:fwilliams/numpyeigen.git
