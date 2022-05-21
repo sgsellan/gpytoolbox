@@ -7,7 +7,7 @@ th = 2*np.pi*np.random.rand(100,1)
 P = 0.5*np.concatenate((np.cos(th),np.sin(th)),axis=1)
 
 C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=6,vmin=np.array([-1,-1]),vmax=np.array([1,1]))
-V,Q = gpytoolbox.bad_quad_mesh_from_quadtree(C,W,CH)
+V,Q,_ = gpytoolbox.bad_quad_mesh_from_quadtree(C,W,CH)
 
 
 G, stored_at = gpytoolbox.quadtree_gradient(C,W,CH,D,A)
@@ -20,3 +20,20 @@ assert(np.all(np.isclose(Gx @ stored_at[:,0],1.0)))
 assert(np.isclose(np.median(np.abs(Gy @ stored_at[:,0])),0.0))
 print("Unit test passed, all asserts passed")
 
+
+
+C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=8,min_depth=5,vmin=np.array([-1,-1]),vmax=np.array([1,1]))
+V,Q,_ = gpytoolbox.bad_quad_mesh_from_quadtree(C,W,CH)
+
+
+G, stored_at = gpytoolbox.quadtree_gradient(C,W,CH,D,A)
+Gx = G[0:stored_at.shape[0],:]
+Gy = G[stored_at.shape[0]:(2*stored_at.shape[0]),:]
+fun = stored_at[:,0]**2.0
+dx = 2*stored_at[:,0]
+
+ps.init()
+quadtree = ps.register_surface_mesh("test quadtree",V,Q,edge_width=1)
+quadtree.add_scalar_quantity("numeric solve",Gx @ fun,defined_on='faces')
+quadtree.add_scalar_quantity("groundtruth",dx,defined_on='faces')
+ps.show()

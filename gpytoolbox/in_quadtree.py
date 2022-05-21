@@ -20,7 +20,7 @@ def in_quadtree(point,C,W,CH):
     others = []
     queue = [0]
     i = -1 # by default it's nowhere
-    
+    dim = C.shape[1]
     
     while len(queue)>0:
         # Pop from queue
@@ -41,6 +41,11 @@ def in_quadtree(point,C,W,CH):
                 queue.append(CH[q,1])
                 queue.append(CH[q,2])
                 queue.append(CH[q,3])
+                if dim==3:
+                    queue.append(CH[q,4])
+                    queue.append(CH[q,5])
+                    queue.append(CH[q,6])
+                    queue.append(CH[q,7])
     return i, others
             
         
@@ -51,8 +56,11 @@ def in_quadtree(point,C,W,CH):
 
 
 
-# This just checks if a point is in a square
 def is_in_quad(queries,center,width):
-    max_corner = center + width*np.array([0.5,0.5])
-    min_corner = center - width*np.array([0.5,0.5])
-    return ( (queries[:,0]>=min_corner[0]) & (queries[:,1]>=min_corner[1])    & (queries[:,0]<=max_corner[0]) & (queries[:,1]<=max_corner[1]) )
+    dim = queries.shape[1]
+    max_corner = center + width*np.tile(np.array([0.5]),dim)
+    min_corner = center - width*np.tile(np.array([0.5]),dim)
+    b = np.ones(queries.shape[0],dtype=bool)
+    for dd in range(dim):
+        b = (b & (queries[:,dd]>=min_corner[dd]) & (queries[:,dd]<=max_corner[dd]))
+    return b

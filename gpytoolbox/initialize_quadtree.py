@@ -40,6 +40,7 @@ def initialize_quadtree(P,max_depth=8,min_depth=1,graded=False,vmin=None,vmax=No
 
 
     # We start with a bounding box
+    dim = P.shape[1]
     if (vmin is None):
         vmin = np.amin(P,axis=0)
     if (vmax is None):
@@ -48,7 +49,7 @@ def initialize_quadtree(P,max_depth=8,min_depth=1,graded=False,vmin=None,vmax=No
     C = C[None,:]
     #print(C)
     W = np.array([np.amax(vmax-vmin)])
-    CH = np.array([[-1,-1,-1,-1]],dtype=int) # for now it's leaf node
+    CH = np.tile(np.array([[-1]],dtype=int),(1,2**dim)) # for now it's leaf node
     D = np.array([1],dtype=int)
     A = csr_matrix((1,1))
     PAR = np.array([-1],dtype=int) # supreme Neanderthal ancestral node
@@ -72,6 +73,10 @@ def initialize_quadtree(P,max_depth=8,min_depth=1,graded=False,vmin=None,vmax=No
 
 # This just checks if a point is in a square
 def is_in_quad(queries,center,width):
-    max_corner = center + width*np.array([0.5,0.5])
-    min_corner = center - width*np.array([0.5,0.5])
-    return ( (queries[:,0]>=min_corner[0]) & (queries[:,1]>=min_corner[1])    & (queries[:,0]<=max_corner[0]) & (queries[:,1]<=max_corner[1]) )
+    dim = queries.shape[1]
+    max_corner = center + width*np.tile(np.array([0.5]),dim)
+    min_corner = center - width*np.tile(np.array([0.5]),dim)
+    b = np.ones(queries.shape[0],dtype=bool)
+    for dd in range(dim):
+        b = (b & (queries[:,dd]>=min_corner[dd]) & (queries[:,dd]<=max_corner[dd]))
+    return b

@@ -21,25 +21,48 @@ def bad_quad_mesh_from_quadtree(C,W,CH):
     #
     #
     # See also: initialize_quadtree
-
+    dim = C.shape[1]
     is_child = (CH[:,1]==-1)
     W = W[is_child][:,None]
     C = C[is_child,:]
+    H = None
     # translate this
-    V = np.vstack((
-        C + 0.5*np.tile(W,(1,2))*np.tile(np.array([[-1,-1]]),(W.shape[0],1)),
-        C + 0.5*np.tile(W,(1,2))*np.tile(np.array([[-1,1]]),(W.shape[0],1)),
-        C + 0.5*np.tile(W,(1,2))*np.tile(np.array([[1,1]]),(W.shape[0],1)),
-        C + 0.5*np.tile(W,(1,2))*np.tile(np.array([[1,-1]]),(W.shape[0],1)),
-        ))
     Q = np.linspace(0,W.shape[0]-1,W.shape[0],dtype=int)[:,None]
-    Q = np.hstack((
-        Q,
-        Q + W.shape[0],
-        Q + 2*W.shape[0],
-        Q + 3*W.shape[0]
-    ))
-
+    if dim==2:
+        V = np.vstack((
+            C + 0.5*np.tile(W,(1,2))*np.tile(np.array([[-1,-1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,2))*np.tile(np.array([[-1,1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,2))*np.tile(np.array([[1,1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,2))*np.tile(np.array([[1,-1]]),(W.shape[0],1)),
+            ))
+        Q = np.hstack((
+            Q,
+            Q + W.shape[0],
+            Q + 2*W.shape[0],
+            Q + 3*W.shape[0]
+        ))
+    else:
+        V = np.vstack((
+            C + 0.5*np.tile(W,(1,3))*np.tile(np.array([[-1,-1,-1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,3))*np.tile(np.array([[-1,1,-1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,3))*np.tile(np.array([[1,1,-1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,3))*np.tile(np.array([[1,-1,-1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,3))*np.tile(np.array([[-1,-1,1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,3))*np.tile(np.array([[-1,1,1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,3))*np.tile(np.array([[1,1,1]]),(W.shape[0],1)),
+            C + 0.5*np.tile(W,(1,3))*np.tile(np.array([[1,-1,1]]),(W.shape[0],1))
+            ))
+        H = np.hstack((Q + 0*W.shape[0],Q + 1*W.shape[0], Q + 2*W.shape[0],Q + 3*W.shape[0],Q + 4*W.shape[0],Q + 5*W.shape[0], Q + 6*W.shape[0],Q + 7*W.shape[0])) # polyscope convention
+        Q = np.vstack((
+            np.hstack((Q + 0*W.shape[0],Q + W.shape[0], Q + 2*W.shape[0],Q + 3*W.shape[0])),
+            np.hstack((Q + 4*W.shape[0],Q + 5*W.shape[0], Q + 6*W.shape[0],Q + 7*W.shape[0])),
+            np.hstack((Q + 2*W.shape[0],Q + 1*W.shape[0], Q + 5*W.shape[0],Q + 6*W.shape[0])),
+            np.hstack((Q + 3*W.shape[0],Q + 0*W.shape[0], Q + 4*W.shape[0],Q + 7*W.shape[0])),
+            np.hstack((Q + 1*W.shape[0],Q + 0*W.shape[0], Q + 4*W.shape[0],Q + 5*W.shape[0])),
+            np.hstack((Q + 3*W.shape[0],Q + 2*W.shape[0], Q + 6*W.shape[0],Q + 7*W.shape[0])),
+            ))
+        
     # remap faces
-    V, _, _, Q = igl.remove_duplicate_vertices(V,Q,np.amin(W)/100)
-    return V,Q
+    V, _, SVJ, Q = igl.remove_duplicate_vertices(V,Q,np.amin(W)/100)
+    H = SVJ[H]
+    return V,Q,H

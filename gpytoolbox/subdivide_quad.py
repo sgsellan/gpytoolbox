@@ -1,5 +1,7 @@
+from shutil import which
 import numpy as np
-from scipy.sparse import csr_matrix, vstack, hstack
+from scipy.sparse import csr_matrix, vstack, hstack, eye
+from torch import square
 
 def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded1):
     # Subdivides the ind-th cell of a given octree, maintaining all the #
@@ -30,8 +32,64 @@ def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded1):
     #       (i,j) entry means that node j is to the a-th direction of i
     #       (a=1: left;  a=2: right;  a=3: bottom;  a=4: top).
     #
+
+
+    # If quad A lays to the <lookup[:,1]> of quad B, then children
+    # <lookup[:,2:end]> resulting from subdividing A will still be
+    # neighbors of quad B
+    # legend for <lookup[:,1]> is left, right, bottom, top, (back, front)
+    # children legend is 1: back bottom left, 2: back bottom right, 3: back top
+    # left, 4: back top right, 5: front bottom left, 6: front bottom right, 7: front
+    # top left, 8: front top right
+    lookup_a = np.array([[1,2,4,8,6], # A to the left of B, so we add all right children of A
+                        [2,1,3,5,7],
+                        [3,3,4,7,8],
+                        [4,1,2,5,6],
+                        [5,5,6,7,8],
+                        [6,1,2,3,4]],dtype=int) 
+                        
+    # (reminder 2:end columns are 1-indexed)
+    lookup_a[:,1:5] = lookup_a[:,1:5] - 1
+    
+    # If quad A lays to the <lookup_b[:,1]> of quad B, and we subdivide both,
+    # then child <lookup_b[:,2]> of quad B will have child <lookup_b[:,3]> of
+    # quad A as a new neighbor:
+    lookup_b = np.array([[1,1,2],
+                        [1,3,4],
+                        [1,5,6],
+                        [1,7,8],
+                        [2,2,1],
+                        [2,4,3],
+                        [2,6,5],
+                        [2,8,7],
+                        [3,1,3],
+                        [3,2,4],
+                        [3,5,7],
+                        [3,6,8],
+                        [4,3,1],
+                        [4,4,2],
+                        [4,7,5],
+                        [4,8,6],
+                        [5,3,7],
+                        [5,4,8],
+                        [5,1,5],
+                        [5,2,6],
+                        [6,7,3],
+                        [6,8,4],
+                        [6,5,1],
+                        [6,6,2]],dtype=int) 
+                        
+    # (reminder 2:end columns are 1-indexed)
+    lookup_b[:,1:3] = lookup_b[:,1:3] - 1
+
+
+
+
+
     assert(CH1[ind,1]==-1) # can't subdivide if not a leaf node
     # For simplicity:
+    dim1 = C1.shape[1]
+    ncp = 2**dim1 #number of children per parent for dim-agnostic
     w = W1[ind]
     c = C1[ind,:]
     d = D1[ind]
@@ -40,27 +98,44 @@ def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded1):
     num_quads = C1.shape[0]
     # Easy part: add four cells new cell centers order: bottom-left,
     # bottom-right, top-left, top-right
-    C2 = np.vstack(
-        (
-            C1,
-            c[None,:] + 0.25*w*np.array([[-1,-1]]),
-            c[None,:] + 0.25*w*np.array([[1,-1]]),
-            c[None,:] + 0.25*w*np.array([[-1,1]]),
-            c[None,:] + 0.25*w*np.array([[1,1]])
+    if dim1==2:
+        C2 = np.vstack(
+            (
+                C1,
+                c[None,:] + 0.25*w*np.array([[-1,-1]]),
+                c[None,:] + 0.25*w*np.array([[1,-1]]),
+                c[None,:] + 0.25*w*np.array([[-1,1]]),
+                c[None,:] + 0.25*w*np.array([[1,1]])
+            )
         )
-     )
+    else:
+        C2 = np.vstack(
+            (
+                C1,
+                c[None,:] + 0.25*w*np.array([[-1,-1,-1]]),
+                c[None,:] + 0.25*w*np.array([[1,-1,-1]]),
+                c[None,:] + 0.25*w*np.array([[-1,1,-1]]),
+                c[None,:] + 0.25*w*np.array([[1,1,-1]]),
+                c[None,:] + 0.25*w*np.array([[-1,-1,1]]),
+                c[None,:] + 0.25*w*np.array([[1,-1,1]]),
+                c[None,:] + 0.25*w*np.array([[-1,1,1]]),
+                c[None,:] + 0.25*w*np.array([[1,1,1]])
+            )
+        )
+    
     # New widths
-    W2 = np.concatenate((W1,np.array([0.5*w,0.5*w,0.5*w,0.5*w])))
+    W2 = np.concatenate((W1,np.tile(np.array([0.5*w]),ncp)))
     # New depths
-    D2 = np.concatenate((D1,np.array([d+1,d+1,d+1,d+1],dtype=int)))
+    D2 = np.concatenate((D1,np.tile(np.array([d+1],dtype=int),ncp)))
     # Keep track of child indeces
     CH2 = np.vstack((
         CH1,
-        np.tile(np.array([[-1,-1,-1,-1]]),(4,1))
+        np.tile(np.array([[-1]]),(ncp,ncp))
     ))
-    CH2[ind,:] = num_quads + np.array([0,1,2,3],dtype=int)
+    CH2[ind,:] = num_quads + np.linspace(0,ncp-1,ncp,dtype=int)
+    #np.array([0,1,2,3],dtype=int)
     # And parent indeces
-    PAR2 = np.concatenate((PAR1,np.array([ind,ind,ind,ind],dtype=int)))
+    PAR2 = np.concatenate((PAR1,np.tile(np.array([ind],dtype=int),ncp)))
     # Now the hard part, which is the adjacency Reminder:
     # (left-right-bottom-top) Effectively we are concatenating [A , B;  "-B", C]
     # C is always the same square 4 by 4 matrix
@@ -70,7 +145,12 @@ def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded1):
         [3,0,0,2],
         [0,3,1,0]
     ]))
-    rect_mat = csr_matrix((num_quads,4))
+    if dim1==3:
+        square_mat = vstack((
+            hstack((square_mat,6*eye(4))),
+            hstack((5*eye(4),square_mat))
+        ))
+    rect_mat = csr_matrix((num_quads,ncp))
     # We will loop over all neighbors of ind print("A1") print(A1.toarray())
     neighbors_ind = a_ind.nonzero()[0]
     # print("a_ind") print(a_ind) print("neighbors_ind") print(neighbors_ind)
@@ -89,19 +169,12 @@ def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded1):
         # Let's start with the easy case: neighbor depth is low
         if neighbor_depth<=d:
             # J will always be the same (neighbor_ind will gain two neighbors)
-            J = np.array([neighbor_ind,neighbor_ind])
+            num_new_nb = 2**(dim1-1)
+            J = np.tile(np.array([neighbor_ind]),num_new_nb)
             # Orientation will also be the same that it was
-            vals = np.array([neighbor_where,neighbor_where])
-            # The tricky bit is *which* are the new neighbors order:
-            # bottom-left, bottom-right, top-left, top-right
-            if neighbor_where==1: # if ind_quad is to the left of neighbor_ind
-                I = np.array([1,3]) # right indeces
-            elif neighbor_where==2: # if ind_quad is to the right of neighbor_ind
-                I = np.array([0,2]) # left indeces
-            elif neighbor_where==3: # if ind_quad is to the bottom of neighbor_ind
-                I = np.array([2,3]) # top indeces
-            elif neighbor_where==4: # if ind_quad is to the top of neighbor_ind
-                I = np.array([0,1]) # bottom indeces
+            vals = np.tile(np.array([neighbor_where]),num_new_nb)
+
+            I = lookup_a[lookup_a[:,0]==neighbor_where,1:(num_new_nb+1)].squeeze()
         else:
             # neighbor depth is high. We need to traverse the tree to find out
             # which of the four d + 1 depth children this neighbor comes from
@@ -127,34 +200,10 @@ def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded1):
             # print(n_ind) print(CH1[n_par,:])
             assert(d==D1[n_par])
             # Reminder: bottom-left, bottom-right, top-left, top-right
-            if which_child==0: # it comes from the bottom left bit of the depth-d neighbor
-                # Then there are two options, either ind_quad is to its left or
-                # to its bottom
-                if neighbor_where==1: # if ind_quad is to the left of neighbor_ind
-                    I = np.array([1]) # then this is the bottom right of neighbor_ind
-                elif neighbor_where==3: # if ind_quad is to the bottom of neighbor_ind
-                    I = np.array([2]) # then this is the top left
-            elif which_child==1: # it comes from the BOTTOM RIGHT bit of the depth-d neighbor
-                # Then there are two options, either ind_quad is to its right or
-                # to its bottom
-                if neighbor_where==2: # right
-                    I = np.array([0]) # bottom left
-                elif neighbor_where==3: # bottom
-                    I = np.array([3]) # top right
-            elif which_child==2: # it comes from the TOP LEFT bit of the depth-d neighbor
-                # two option: top or left
-                if neighbor_where==1: # left
-                    I = np.array([3]) # top right
-                elif neighbor_where==4: # top
-                    I = np.array([0]) # bottom left
-            elif which_child==3: # it comes from the TOP RIGHT bit
-                # two options: top or right
-                if neighbor_where==4: # top
-                    I = np.array([1]) # bottom right
-                elif neighbor_where==2:
-                    I = np.array([2])
-            # ...phew. Again, that should be a lookup table
-        rect_mat = rect_mat + csr_matrix((vals,(J,I)),shape=(num_quads,4))
+
+            lookup_row = ((lookup_b[:,0]==neighbor_where) & (lookup_b[:,1]==which_child))
+            I = lookup_b[lookup_row,2]
+        rect_mat = rect_mat + csr_matrix((vals,(J,I)),shape=(num_quads,ncp))
     A2 = csr_matrix(vstack((
         hstack((A1,rect_mat)),
         hstack((transpose_orientation(rect_mat),square_mat))
@@ -182,4 +231,7 @@ def transpose_orientation(L):
     # Move top to bottom
     R[L.transpose()==3] = 4
     R[L.transpose()==4] = 3
+    # front to back
+    R[L.transpose()==5] = 6
+    R[L.transpose()==6] = 5
     return R
