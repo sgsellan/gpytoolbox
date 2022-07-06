@@ -1,7 +1,6 @@
 from shutil import which
 import numpy as np
 from scipy.sparse import csr_matrix, vstack, hstack, eye
-from torch import square
 
 def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded1):
     # Subdivides the ind-th cell of a given octree, maintaining all the #
