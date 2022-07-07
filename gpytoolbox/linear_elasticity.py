@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import csr_matrix, diags, identity, hstack, vstack, block_diag
+from scipy.sparse import csr_matrix
 import igl
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
 

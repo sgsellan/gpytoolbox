@@ -1,6 +1,5 @@
 import numpy as np
 import igl
-from skimage.measure import marching_cubes
 
 # Bindings using C++ and Eigen:
 import sys
