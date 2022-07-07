@@ -1,5 +1,10 @@
 import numpy as np
-import igl
+# Bindings using Eigen and libigl:
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
+from gpytoolbox_eigen_bindings import remove_duplicate_vertices
+
 
 def bad_quad_mesh_from_quadtree(C,W,CH):
     # BAD_QUAD_MESH_FROM_QUADTREE
@@ -16,6 +21,7 @@ def bad_quad_mesh_from_quadtree(C,W,CH):
     # Outputs:
     #   V #V by 3 matrix of vertex positions
     #   Q #Q by 4 matrix of quad indeces into V
+    #   H is None if dimension is 2, contains hex indeces if dimension is 3
     #
     # Example:
     #
@@ -63,6 +69,6 @@ def bad_quad_mesh_from_quadtree(C,W,CH):
             ))
         
     # remap faces
-    V, _, SVJ, Q = igl.remove_duplicate_vertices(V,Q,np.amin(W)/100)
+    V, _, SVJ, Q = remove_duplicate_vertices(V,Q.astype(np.int32),np.amin(W)/100)
     H = SVJ[H]
     return V,Q,H

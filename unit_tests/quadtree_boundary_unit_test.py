@@ -9,7 +9,7 @@ th = 2*np.pi*np.random.rand(100,1)
 P = 2*np.random.rand(100,2) - 1
 
 C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=8,min_depth=2,vmin=np.array([-1,-1]),vmax=np.array([1,1]))
-V,Q = gpytoolbox.bad_quad_mesh_from_quadtree(C,W,CH)
+V,Q,_ = gpytoolbox.bad_quad_mesh_from_quadtree(C,W,CH)
 bd_children, bd_all = gpytoolbox.quadtree_boundary(CH,A)
 
 

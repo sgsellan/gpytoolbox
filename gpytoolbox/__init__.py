@@ -11,6 +11,7 @@ try:
     from gpytoolbox_eigen_bindings import ray_mesh_intersect
     from gpytoolbox_eigen_bindings import in_element_aabb
     from gpytoolbox_eigen_bindings import remove_duplicate_vertices
+    from gpytoolbox_eigen_bindings import decimate
     from .lazy_cage import lazy_cage
 except:
     print("-------------------------------------------------------------------")
@@ -19,7 +20,6 @@ except:
 
 # Things that do not need my bindings
 # These functions require igl official bindings (and they shouldn't)
-from .bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
 from .linear_elasticity import linear_elasticity
 
@@ -46,3 +46,4 @@ from .in_quadtree import in_quadtree
 from .quadtree_gradient import quadtree_gradient
 from .quadtree_laplacian import quadtree_laplacian
 from .quadtree_boundary import quadtree_boundary
+from .bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree

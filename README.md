@@ -28,6 +28,8 @@ from gpytoolbox import regular_square_mesh
 v, f = regular_square_mesh(10)
 ```
 
+If you want to build a project using `gpytoolbox`, you can use [our
+template](https://github.com/sgsellan/python-project-with-gpytoolbox).
 
 
 ## How to contribute?

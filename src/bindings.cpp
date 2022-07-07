@@ -7,6 +7,7 @@
 #include <igl/copyleft/cgal/RemeshSelfIntersectionsParam.h>
 #include <igl/ray_mesh_intersect.h>
 #include <igl/Hit.h>
+#include <igl/decimate.h>
 #include <upper_envelope.h>
 #include <ray_mesh_intersect_aabb.h>
 #include <in_element_aabb.h>
@@ -157,7 +158,23 @@ npe_begin_code()
     Eigen::MatrixXd SV;
     Eigen::MatrixXi SF;
     Eigen::VectorXi SVI, SVJ;
-    remove_duplicate_vertices(V,F,eps,SV,SVI,SVJ,eps);
-    return std::make_tuple(npe::move(SV),npe::move(SVI),npe::move(SVJ),npe::move(SF))
+    igl::remove_duplicate_vertices(V,F,eps,SV,SVI,SVJ,SF);
+    return std::make_tuple(npe::move(SV),npe::move(SVI),npe::move(SVJ),npe::move(SF));
+npe_end_code()
+
+
+// decimated_vertices,decimated_faces,J,I = igl.decimate(vertices,faces,num_faces)
+npe_function(decimate)
+npe_arg(vt, dense_double)
+npe_arg(ft, dense_int)
+npe_arg(num_faces, int)
+npe_begin_code()
+    Eigen::MatrixXd V(vt);
+    Eigen::MatrixXi F(ft);
+    Eigen::MatrixXd SV;
+    Eigen::MatrixXi SF;
+    Eigen::VectorXi J, I;
+    igl::decimate(V,F,num_faces,SV,SF,I,J);
+    return std::make_tuple(npe::move(SV),npe::move(SF),npe::move(I),npe::move(J));
 npe_end_code()
 
