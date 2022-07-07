@@ -10,6 +10,7 @@ try:
     from gpytoolbox_eigen_bindings import upper_envelope
     from gpytoolbox_eigen_bindings import ray_mesh_intersect
     from gpytoolbox_eigen_bindings import in_element_aabb
+    from gpytoolbox_eigen_bindings import remove_duplicate_vertices
     from .lazy_cage import lazy_cage
 except:
     print("-------------------------------------------------------------------")

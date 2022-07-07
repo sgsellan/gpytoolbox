@@ -1,6 +1,7 @@
 #include <npe.h>
 #include <pybind11/stl.h>
 #include <igl/offset_surface.h>
+#include <igl/remove_duplicate_vertices.h>
 #include <igl/copyleft/cgal/mesh_boolean.h>
 #include <igl/copyleft/cgal/intersect_other.h>
 #include <igl/copyleft/cgal/RemeshSelfIntersectionsParam.h>
@@ -143,5 +144,20 @@ npe_begin_code()
     Eigen::VectorXi I;
     in_element_aabb(P,V,F,I);
     return npe::move(I);
+npe_end_code()
+
+// remove_duplicate_vertices(V,Q,np.amin(W)/100)
+npe_function(remove_duplicate_vertices)
+npe_arg(vt, dense_double)
+npe_arg(ft, dense_int)
+npe_arg(eps, double)
+npe_begin_code()
+    Eigen::MatrixXd V(vt);
+    Eigen::MatrixXi F(ft);
+    Eigen::MatrixXd SV;
+    Eigen::MatrixXi SF;
+    Eigen::VectorXi SVI, SVJ;
+    remove_duplicate_vertices(V,F,eps,SV,SVI,SVJ,eps);
+    return std::make_tuple(npe::move(SV),npe::move(SVI),npe::move(SVJ),npe::move(SF))
 npe_end_code()
 
