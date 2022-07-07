@@ -82,3 +82,8 @@ properly credited both in this page and in the individual files.
 - Proper lazy cage unit test
 - Write dependencies
 - Vectorize `write_ply.py`
+- Write `remove_duplicate_vertices`
+- Write quadratic solver with fixed points and linear constraints
+- Write `decimate` functionality
+- Remove all dependency on igl official bindings
+- Explore exactly which part of png2poly's dependencies we need
