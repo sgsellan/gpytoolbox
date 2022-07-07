@@ -1,4 +1,3 @@
-from shutil import which
 import numpy as np
 from scipy.sparse import csr_matrix, vstack, hstack, eye
 
