@@ -21,8 +21,7 @@ def fd_interpolate(P,gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),corner=np.ar
     # Output:
     #       W scipy csr sparse matrix such that if x are the grid nodes, P = W @ x
     #       
-    #
-    # n = floor((P - corner)/h)
+
     dim = P.shape[1]
 
     indeces = np.floor( (P - np.tile(corner,(P.shape[0],1)))/np.tile(h,(P.shape[0],1)) ).astype(int)

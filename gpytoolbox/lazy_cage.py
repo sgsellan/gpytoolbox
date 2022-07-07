@@ -1,6 +1,4 @@
 import numpy as np
-import igl
-
 # Bindings using C++ and Eigen:
 import sys
 import os
