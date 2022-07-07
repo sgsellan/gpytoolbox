@@ -2,6 +2,11 @@ import numpy as np
 from scipy.sparse import csr_matrix
 import igl
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
+from gpytoolbox_eigen_bindings import mqwf
+
 
 def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.empty((0,1), dtype=np.float64)
     ,Ud0=np.array([]),fext=np.array([]),K=1.75,mu=0.0115,volumes=np.array([]),mass=np.array([])):
@@ -47,9 +52,12 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.em
     Aeq = csr_matrix((0, 0), dtype=np.float64)
     Beq = np.array([], dtype=np.float64)
     # PYTHON MIN QUAD WITH FIXED USES DIFFERENT CONVENTION FOR QUADRATIC TERM THAN MATLAB'S!!
-    U = igl.min_quad_with_fixed(A,-1.0*np.squeeze(B),bb,bc,Aeq,Beq,True)
+    #U = igl.min_quad_with_fixed(A,-1.0*np.squeeze(B),bb,bc,Aeq,Beq,True)
+    #print(U[1])
+    U = mqwf(A,-1.0*np.squeeze(B),bb,bc,Aeq,Beq)
+    #print(U)
     # https://en.m.wikipedia.org/wiki/Von_Mises_yield_criterion
-    face_stress_vec = C*strain*U[1]
+    face_stress_vec = C*strain*U
     if V.shape[1]==2:
         sigma_11 = face_stress_vec[0:F.shape[0]]
         sigma_22 = face_stress_vec[F.shape[0]:(2*F.shape[0])]
@@ -57,4 +65,4 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.em
         sigma_v = np.sqrt(0.5*(sigma_11*sigma_11 - sigma_11*sigma_22 + sigma_22*sigma_22 + 3*sigma_12*sigma_12))
     elif V.shape[1]==3:
         print("TET MESHES UNSUPPORTED")
-    return U[1], sigma_v
+    return U, sigma_v

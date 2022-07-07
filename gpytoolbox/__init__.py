@@ -12,6 +12,7 @@ try:
     from gpytoolbox_eigen_bindings import in_element_aabb
     from gpytoolbox_eigen_bindings import remove_duplicate_vertices
     from gpytoolbox_eigen_bindings import decimate
+    from gpytoolbox_eigen_bindings import mqwf
     from .lazy_cage import lazy_cage
 except:
     print("-------------------------------------------------------------------")

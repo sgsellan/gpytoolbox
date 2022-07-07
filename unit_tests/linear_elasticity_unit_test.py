@@ -5,6 +5,7 @@ from context import gpytoolbox
 
 # Build very small mesh
 V, F = gpytoolbox.regular_square_mesh(3)
+V = (V + 1.)/2.
 # Initial conditions
 fext = 0*V
 Ud0 = 0*V
@@ -27,6 +28,9 @@ U_groundtruth = np.array([  [-0.3660,    0.1304],
                             [-0.3660,   -0.1304],
                             [-0.0000,   -0.1304],
                             [0.3660,   -0.1304]])
+
+print(np.reshape(U,(-1,2),order='F'))
+print(U_groundtruth)
 
 # Check python output matches Matlab groundtruth
 assert(isclose(np.reshape(U,(-1,2),order='F'),U_groundtruth,atol=1e-4).all())

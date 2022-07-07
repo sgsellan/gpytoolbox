@@ -2,6 +2,7 @@
 #include <pybind11/stl.h>
 #include <igl/offset_surface.h>
 #include <igl/remove_duplicate_vertices.h>
+#include <igl/min_quad_with_fixed.h>
 #include <igl/copyleft/cgal/mesh_boolean.h>
 #include <igl/copyleft/cgal/intersect_other.h>
 #include <igl/copyleft/cgal/RemeshSelfIntersectionsParam.h>
@@ -178,3 +179,22 @@ npe_begin_code()
     return std::make_tuple(npe::move(SV),npe::move(SF),npe::move(I),npe::move(J));
 npe_end_code()
 
+
+npe_function(mqwf)
+npe_arg(A, sparse_double)
+npe_arg(B, dense_double)
+npe_arg(known, dense_int)
+npe_arg(Y, npe_matches(B))
+npe_arg(Aeq, npe_matches(A))
+npe_arg(Beq, npe_matches(B))
+npe_begin_code()
+    Eigen::SparseMatrix<double> A_copy(A);
+    Eigen::SparseMatrix<double> Aeq_copy(Aeq);
+    Eigen::MatrixXd B_copy(B);
+    Eigen::MatrixXd Y_copy(Y);
+    Eigen::MatrixXd Beq_copy(Beq);
+    Eigen::MatrixXd sol;
+    bool is_A_pd = true;
+    bool ok = igl::min_quad_with_fixed(A_copy, B_copy, known, Y_copy, Aeq_copy, Beq_copy, is_A_pd, sol);
+    return npe::move(sol);
+npe_end_code()
