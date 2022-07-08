@@ -50,6 +50,7 @@ jobs:
           python -m pip install tetgen
           python -m pip install scikit-image
           conda install -c conda-forge scikit-sparse
+          sudo apt-get update
           sudo apt-get install \
               libblas-dev \
               libglu1-mesa-dev \
