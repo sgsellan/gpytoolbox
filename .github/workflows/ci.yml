@@ -34,4 +34,4 @@ jobs:
         shell: bash -l {0}
         run: |
           cd $GITHUB_WORKSPACE
-          python -m unittest -v
+          python -m unittest -v test/test_regular_square_mesh.py
