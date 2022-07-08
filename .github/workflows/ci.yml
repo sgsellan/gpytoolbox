@@ -53,15 +53,8 @@ jobs:
           sudo apt-get update
           sudo apt-get upgrade
           sudo apt-get install \
-              libblas-dev \
-              libglu1-mesa-dev \
-              liblapack-dev \
-              xorg-dev \
-              ccache \
               libmpfr-dev \
               libgmp-dev \
-              libcgal-dev \
-              libcgal-demo
       - name: Install c++ bindings
         shell: bash -l {0}
         run: |
