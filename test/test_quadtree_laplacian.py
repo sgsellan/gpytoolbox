@@ -72,3 +72,6 @@ class TestQuadtreeLaplacian(unittest.TestCase):
         bc = gt_fun[bb]
         u = igl.min_quad_with_fixed(L,-1.0*lap_fun,bb,bc,Aeq,Beq,False)[1]
         self.assertTrue(np.isclose(np.max(np.abs(u-gt_fun)),0.0))
+
+if __name__ == '__main__':
+    unittest.main()

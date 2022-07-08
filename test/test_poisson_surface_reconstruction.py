@@ -98,3 +98,6 @@ class TestPoissonSurfaceReconstruction(unittest.TestCase):
         # #plt.clf()
         # plt.close()
         # print("Unit test passed, all self.assertTrues passed")
+
+if __name__ == '__main__':
+    unittest.main()
