@@ -30,6 +30,7 @@ jobs:
           conda install -c conda-forge igl
           python -m pip install --upgrade pip
           python -m pip install polyscope
+          python -m pip install scikit-image
           conda install -c conda-forge scikit-sparse
       - name: Run unit tests
         shell: bash -l {0}
