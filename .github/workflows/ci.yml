@@ -18,11 +18,9 @@ jobs:
           python-version: 3.9
       - name: Install dependencies
         run: |
+          cd $GITHUB_WORKSPACE
           python -m pip install --upgrade pip
-          conda install numpy
-          conda install -c anaconda scipy
+          python -m pip install -r requirements.txt
           conda install -c conda-forge igl
-          python -m pip install polyscope
-          conda install -c conda-forge scikit-sparse
       - name: Run tests with pytest
         run: python -m unittest
