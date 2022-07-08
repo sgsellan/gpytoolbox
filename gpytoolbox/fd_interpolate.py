@@ -62,8 +62,8 @@ def fd_interpolate(P,gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),corner=np.ar
         mat_dim = gs[0]*gs[1]*gs[2]
     # Build scipy matrix
     # to-do: maybe add warning if this happens?
-    I = I[(J>0)*(J<mat_dim)]
-    vals = vals[(J>0)*(J<mat_dim)]
-    J = J[(J>0)*(J<mat_dim)]
+    I = I[(J>=0)*(J<mat_dim)]
+    vals = vals[(J>=0)*(J<mat_dim)]
+    J = J[(J>=0)*(J<mat_dim)]
     W = csr_matrix((vals,(I,J)),shape=(P.shape[0],mat_dim))
     return W

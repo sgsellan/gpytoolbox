@@ -22,12 +22,13 @@ except:
 # Things that do not need my bindings
 # These functions require igl official bindings (and they shouldn't)
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
-from .linear_elasticity import linear_elasticity
+
 
 # This function depends on skimage and imageio (should it?)
 from .png2poly import png2poly
 
 # These functions depend ONLY on numpy and scipy and each other
+from .linear_elasticity import linear_elasticity
 from .edge_indeces import edge_indeces
 from .regular_square_mesh import regular_square_mesh
 from .regular_cube_mesh import regular_cube_mesh
