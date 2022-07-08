@@ -30,6 +30,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install polyscope
           conda install -c conda-forge scikit-sparse
-      - name: Conda list
-        shell: pwsh
-        run: conda list
+      - name: Run unit tests
+        shell: bash -l {0}
+        run: |
+          cd $GITHUB_WORKSPACE
+          python -m unittest -v
