@@ -34,4 +34,5 @@ jobs:
         shell: bash -l {0}
         run: |
           pwd
+          ls
           # python -m unittest -v test/test_regular_square_mesh.py
