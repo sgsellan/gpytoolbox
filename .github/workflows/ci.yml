@@ -36,8 +36,8 @@ jobs:
           python -m pip install tetgen
           python -m pip install scikit-image
           conda install -c conda-forge scikit-sparse
-        - if: matrix.os == 'ubuntu-latest'
-          run: |
+        if: matrix.os == 'ubuntu-latest'
+        run: |
           sudo apt-get install libmpfr-dev libmpfr-doc libmpfr4 libmpfr4-dbg
       - name: Install c++ bindings
         shell: bash -l {0}
