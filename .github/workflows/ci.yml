@@ -21,9 +21,15 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-      - name: Conda info
+      - name: Install dependencies
         shell: bash -l {0}
-        run: conda info
+        run: |
+          conda info
+          conda install numpy
+          conda install -c conda-forge igl
+          python -m pip install --upgrade pip
+          python -m pip install polyscope
+          conda install -c conda-forge scikit-sparse
       - name: Conda list
         shell: pwsh
         run: conda list
