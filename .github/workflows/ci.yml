@@ -1,4 +1,4 @@
-name: Unit Tests
+name: Full build
 on:
   push:
     branches:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   example-1:
-    name: Ex1 (${{ matrix.os }})
+    name: Full build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
