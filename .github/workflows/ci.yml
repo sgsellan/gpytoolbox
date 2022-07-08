@@ -9,7 +9,7 @@ on:
 
 jobs:
   example-1:
-    name: Ex1 (${{ matrix.python-version }}, ${{ matrix.os }})
+    name: Ex1 (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -24,8 +24,9 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Install dependencies (MacOS)
         shell: bash -l {0}
+        if: matrix.os == 'macos-latest'
         run: |
           conda info
           conda install numpy
@@ -36,18 +37,31 @@ jobs:
           python -m pip install tetgen
           python -m pip install scikit-image
           conda install -c conda-forge scikit-sparse
-        # if: matrix.os == 'ubuntu-latest'
-        # run: |
-        #   sudo apt-get install libmpfr-dev libmpfr-doc libmpfr4 libmpfr4-dbg
+      - name: Install dependencies (Ubuntu)
+        shell: bash -l {0}
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          conda info
+          conda install numpy
+          conda install -c conda-forge igl
+          conda install -c conda-forge matplotlib 
+          python -m pip install --upgrade pip
+          python -m pip install polyscope
+          python -m pip install tetgen
+          python -m pip install scikit-image
+          conda install -c conda-forge scikit-sparse
+          sudo apt-get install libmpfr-dev libmpfr-doc libmpfr4 libmpfr4-dbg
       - name: Install c++ bindings
         shell: bash -l {0}
         run: |
           mkdir build
           cd build
           cmake ..
-          make -j8
+          make -j
           cd .. 
       - name: Run unit tests
         shell: bash -l {0}
         run: |
           python -m unittest -v
+
+# see https://github.com/libigl/libigl/blob/main/.github/workflows/continuous.yml
