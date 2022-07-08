@@ -1,5 +1,7 @@
 # A *Python* Geometry Processing Toolbox
 
+![unit tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/ci.yml/badge.svg)
+
 This repo is a work in progress and contains general utility functions I have
 needed to code while trying to work on geometry processing research in python.
 Most of them will be one-to-one correspondences with
