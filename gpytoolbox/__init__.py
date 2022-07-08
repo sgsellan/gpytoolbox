@@ -15,6 +15,7 @@ try:
     from gpytoolbox_eigen_bindings import mqwf
     from .lazy_cage import lazy_cage
     from .linear_elasticity import linear_elasticity
+    from .bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree
 except:
     print("-------------------------------------------------------------------")
     print("WARNING: You are using only the pure-python gpytoolbox functionality. Some functions will be unavailable. \n See https://github.com/sgsellan/gpytoolbox for full installation instructions.")
@@ -49,4 +50,3 @@ from .in_quadtree import in_quadtree
 from .quadtree_gradient import quadtree_gradient
 from .quadtree_laplacian import quadtree_laplacian
 from .quadtree_boundary import quadtree_boundary
-from .bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree
