@@ -61,7 +61,7 @@ jobs:
           mkdir build
           cd build
           cmake ..
-          make -j
+          make -j2
           cd .. 
       - name: Run unit tests
         shell: bash -l {0}
