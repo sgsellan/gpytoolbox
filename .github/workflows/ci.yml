@@ -55,7 +55,11 @@ jobs:
               libglu1-mesa-dev \
               liblapack-dev \
               xorg-dev \
-              ccache
+              ccache \
+              libmprf-dev \
+              libgmp-dev \
+              libcgal-dev \
+              libcgal-demo
       - name: Install c++ bindings
         shell: bash -l {0}
         run: |
