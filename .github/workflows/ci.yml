@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["ubuntu-latest", "macos-latest"]
         python-version: [ "3.7" ]
     steps:
       - uses: actions/checkout@v3
@@ -36,6 +36,9 @@ jobs:
           python -m pip install tetgen
           python -m pip install scikit-image
           conda install -c conda-forge scikit-sparse
+        - if: matrix.os == 'ubuntu-latest'
+          run: |
+          sudo apt-get install libmpfr-dev libmpfr-doc libmpfr4 libmpfr4-dbg
       - name: Install c++ bindings
         shell: bash -l {0}
         run: |
