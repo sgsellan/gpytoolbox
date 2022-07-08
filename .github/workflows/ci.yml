@@ -31,11 +31,18 @@ jobs:
           conda install -c conda-forge matplotlib 
           python -m pip install --upgrade pip
           python -m pip install polyscope
+          python -m pip install tetgen
           python -m pip install scikit-image
           conda install -c conda-forge scikit-sparse
+      - name: Install c++ bindings
+        shell: bash -l {0}
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make -j8
+          cd .. 
       - name: Run unit tests
         shell: bash -l {0}
         run: |
-          pwd
-          ls
           python -m unittest -v
