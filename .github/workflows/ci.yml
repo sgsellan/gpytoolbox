@@ -58,7 +58,7 @@ jobs:
               liblapack-dev \
               xorg-dev \
               ccache \
-              libmprf-dev \
+              libmpfr-dev \
               libgmp-dev \
               libcgal-dev \
               libcgal-demo
