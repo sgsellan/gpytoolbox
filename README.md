@@ -153,3 +153,4 @@ properly credited both in this page and in the individual files.
 - Fix template to use https instead of ssh
 - Write `quadtree_children.py`
 - Write unit test for `signed_distance_polygon.py`
+- Write python-only build test action
