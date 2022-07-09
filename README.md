@@ -150,3 +150,4 @@ properly credited both in this page and in the individual files.
 - Explore exactly which part of png2poly's dependencies we need
 - Fix argument conventions
 - Fix template to use https instead of ssh
+- Write `quadtree_children`
