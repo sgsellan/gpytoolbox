@@ -1,4 +1,3 @@
-from sklearn import neighbors
 from .context import gpytoolbox
 from .context import unittest
 from .context import numpy as np
