@@ -138,16 +138,17 @@ properly credited both in this page and in the individual files.
 - Proper lazy cage unit test
 - Write dependencies
 - Vectorize `write_ply.py`
-- Write `remove_duplicate_vertices`
-- Write `grad`
-- Write `massmatrix`
-- Write `doublearea`
-- Write `volumes`
+- Write `read_ply.py`
+- Write `remove_duplicate_vertices.py`
+- Write `grad.py`
+- Write `massmatrix.py`
+- Write `doublearea.py`
+- Write `volumes.py`
 - Write quadratic solver with fixed points and linear constraints
-- Write `boundary_loop`
-- Write `decimate` functionality
+- Write `boundary_loop.py`
+- Write `decimate.py` functionality
 - Remove all dependency on igl official bindings
 - Explore exactly which part of png2poly's dependencies we need
 - Fix argument conventions
 - Fix template to use https instead of ssh
-- Write `quadtree_children`
+- Write `quadtree_children.py`
