@@ -1,6 +1,4 @@
 import numpy as np
-from scipy.sparse import csr_matrix
-
 from gpytoolbox.edge_indeces import edge_indeces
 
 

@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.sparse import csr_matrix, diags, identity, hstack, vstack, block_diag
-import igl
 from gpytoolbox.grad import grad
 from gpytoolbox.doublearea import doublearea
 from gpytoolbox.massmatrix import massmatrix
