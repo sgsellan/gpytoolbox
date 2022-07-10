@@ -53,3 +53,4 @@ from .quadtree_boundary import quadtree_boundary
 from .quadtree_children import quadtree_children
 from .grad import grad
 from .doublearea import doublearea
+from .massmatrix import massmatrix

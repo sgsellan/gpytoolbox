@@ -131,9 +131,10 @@ properly credited both in this page and in the individual files.
 
 ## To Do
 
-- Implement 3D version of `linear_elasticity_stiffness.py`
-- Implement 3D version of `linear_elasticity.py`
+- Implement tet mesh version of `linear_elasticity_stiffness.py`
+- Implement tet mesh version of `linear_elasticity.py`
 - Proper mesh boolean unit test
+- Proper png2poly unit test
 - Proper lazy cage unit test
 - Write dependencies
 - Vectorize `write_ply.py`
@@ -146,7 +147,6 @@ properly credited both in this page and in the individual files.
 - Write `decimate.py` functionality
 - Remove all dependency on igl official bindings
 - Explore exactly which part of png2poly's dependencies we need
-- Fix argument conventions
-- Fix template to use https instead of ssh
+- Fix argument conventions (None vs empty array)
 - Write unit test for `signed_distance_polygon.py`
 - Write python-only build test action

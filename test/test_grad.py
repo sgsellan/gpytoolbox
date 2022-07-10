@@ -1,4 +1,3 @@
-from gpytoolbox.edge_indeces import edge_indeces
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest

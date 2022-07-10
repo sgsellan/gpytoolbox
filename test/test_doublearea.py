@@ -1,9 +1,7 @@
-from gpytoolbox.edge_indeces import edge_indeces
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
 import igl
-from scipy.sparse import csr_matrix
 
 class TestGrad(unittest.TestCase):
     def test_polyline_lengths(self):
