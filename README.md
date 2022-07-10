@@ -131,7 +131,6 @@ properly credited both in this page and in the individual files.
 
 ## To Do
 
-- Output map from cells to quadtree children as a new function or something
 - Implement 3D version of `linear_elasticity_stiffness.py`
 - Implement 3D version of `linear_elasticity.py`
 - Proper mesh boolean unit test
@@ -140,7 +139,6 @@ properly credited both in this page and in the individual files.
 - Vectorize `write_ply.py`
 - Write `read_ply.py`
 - Write `remove_duplicate_vertices.py`
-- Write `grad.py`
 - Write `massmatrix.py`
 - Write `doublearea.py`
 - Write `volumes.py`
@@ -151,6 +149,5 @@ properly credited both in this page and in the individual files.
 - Explore exactly which part of png2poly's dependencies we need
 - Fix argument conventions
 - Fix template to use https instead of ssh
-- Write `quadtree_children.py`
 - Write unit test for `signed_distance_polygon.py`
 - Write python-only build test action
