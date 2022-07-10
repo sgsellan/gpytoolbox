@@ -1,5 +1,6 @@
 import numpy as np
 from gpytoolbox.edge_indeces import edge_indeces
+from gpytoolbox.halfedge_lengths import halfedge_lengths
 
 
 def doublearea(V,F=None):
@@ -7,7 +8,7 @@ def doublearea(V,F=None):
     #
     # Input:
     #       V #V by 3 numpy array of mesh vertex positions
-    #       F #F by 3 int numpy array of face/edge vertex indeces into V
+    #       F #F by 3 int numpy array of face/edge vertex indices into V
     #
     # Output:
     #       A #F vector of twice the (unsigned) area/length 
@@ -29,14 +30,11 @@ def doublearea(V,F=None):
         if dim==2:
             V = np.hstack((V,np.zeros((V.shape[0],1))))
 
-        i0 = F[:,0]
-        i1 = F[:,1]
-        i2 = F[:,2]
+        l = halfedge_lengths(V,F)
 
-        v21 = V[i2,:] - V[i1,:]
-        v02 = V[i0,:] - V[i2,:]
-
-        n = np.cross(v21,v02,axis=1)
-        dblA = np.linalg.norm(n,axis=1)
+        # Using Kahan's formula
+        # https://people.eecs.berkeley.edu/~wkahan/Triangle.pdf
+        a,b,c = l[:,0], l[:,1], l[:,2]
+        dblA = 0.5 * np.sqrt((a+(b+c)) * (c-(a-b)) * (c+(a-b)) * (a+(b-c)))
 
     return dblA
