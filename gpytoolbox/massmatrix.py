@@ -14,13 +14,12 @@ def massmatrix(V,F=None):
     #       F #F by 3 int numpy array of face/edge vertex indeces into V
     #
     # Output:
-    #       M #V by #V diagonal matrix of vertex areas
+    #       M #V by #V diagonal matrix of barycentric vertex areas
 
     # if you didn't pass an F then this is a ordered polyline
     if (F is None):
         F = edge_indeces(V.shape[0])
 
-    dim = V.shape[1]
     simplex_size = F.shape[1]
     # Option 1: simplex size is two
     if simplex_size==2:
