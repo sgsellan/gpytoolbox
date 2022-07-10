@@ -2,6 +2,8 @@ from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
 
+# This is currently only testing the barycentric mass matrix, not the Voronoi one. It would be nice to add Voronoi mass matrix checks here
+
 class TestMassmatrix(unittest.TestCase):
     def test_polyline_integral(self):
         # This is a cube, centered at the origin, with side length 1
