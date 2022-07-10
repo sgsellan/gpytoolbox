@@ -49,13 +49,7 @@ def linear_elasticity_stiffness(V,F,K=1.75,mu=0.0115,volumes=np.array([]),mass=n
             A = diags(volumes)
         A = block_diag((A,A,A))
         if mass.shape[0]==0:
-            # print(igl.massmatrix(V,F))
-            # print(massmatrix(V,F))
-            # print(igl.doublearea(V,F))
-            # print(doublearea(V,F))
-            #print(igl.massmatrix(V,F) - massmatrix(V,F))
-            # Must use igl for now because ours is barycentric not Voronoi...
-            M = igl.massmatrix(V,F)
+            M = massmatrix(V,F,'voronoi')
         else:
             M = mass
         
