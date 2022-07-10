@@ -140,7 +140,6 @@ properly credited both in this page and in the individual files.
 - Write `read_ply.py`
 - Write `remove_duplicate_vertices.py`
 - Write `massmatrix.py`
-- Write `doublearea.py`
 - Write `volumes.py`
 - Write quadratic solver with fixed points and linear constraints
 - Write `boundary_loop.py`
