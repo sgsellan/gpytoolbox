@@ -131,26 +131,20 @@ properly credited both in this page and in the individual files.
 
 ## To Do
 
-- Output map from cells to quadtree children as a new function or something
-- Implement 3D version of `linear_elasticity_stiffness.py`
-- Implement 3D version of `linear_elasticity.py`
+- Implement tet mesh version of `linear_elasticity_stiffness.py`
+- Implement tet mesh version of `linear_elasticity.py`
 - Proper mesh boolean unit test
+- Proper png2poly unit test
 - Proper lazy cage unit test
 - Write dependencies
 - Vectorize `write_ply.py`
 - Write `read_ply.py`
 - Write `remove_duplicate_vertices.py`
-- Write `grad.py`
-- Write `massmatrix.py`
-- Write `doublearea.py`
 - Write `volumes.py`
 - Write quadratic solver with fixed points and linear constraints
 - Write `boundary_loop.py`
 - Write `decimate.py` functionality
-- Remove all dependency on igl official bindings
 - Explore exactly which part of png2poly's dependencies we need
-- Fix argument conventions
-- Fix template to use https instead of ssh
-- Write `quadtree_children.py`
+- Fix argument conventions (None vs empty array)
 - Write unit test for `signed_distance_polygon.py`
 - Write python-only build test action

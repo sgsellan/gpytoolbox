@@ -50,3 +50,7 @@ from .in_quadtree import in_quadtree
 from .quadtree_gradient import quadtree_gradient
 from .quadtree_laplacian import quadtree_laplacian
 from .quadtree_boundary import quadtree_boundary
+from .quadtree_children import quadtree_children
+from .grad import grad
+from .doublearea import doublearea
+from .massmatrix import massmatrix
