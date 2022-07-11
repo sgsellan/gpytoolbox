@@ -3,7 +3,8 @@
 ![unit
 tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/ci.yml/badge.svg)
 
-*Author:* [Silvia Sellán](https://www.silviasellan.com), University of Toronto
+*Authors:* [Silvia Sellán](https://www.silviasellan.com), University of Toronto
+and [Oded Stein](https://odedstein.com), Massachusetts Institute of Technology
 
 This repo is a work in progress and contains general utility functions I have
 needed to code while trying to work on geometry processing research in Python
