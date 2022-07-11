@@ -61,3 +61,7 @@ from .boundary_loops import boundary_loops
 from .boundary_edges import boundary_edges
 from .halfedge_lengths import halfedge_lengths
 from .halfedge_lengths_squared import halfedge_lengths_squared
+from .cotangent_laplacian_intrinsic import cotangent_laplacian_intrinsic
+from .cotangent_laplacian import cotangent_laplacian
+from .cotangent_weights_intrinsic import cotangent_weights_intrinsic
+from .cotangent_weights import cotangent_weights
