@@ -6,6 +6,7 @@ from .context import unittest
 
 class TestPoissonSurfaceReconstruction(unittest.TestCase):
     def test_indicator(self):
+        np.random.seed(0)
         # First test: "uniform" sampling density
         # Sample points on a circle
         th = 2*np.pi*np.random.rand(500,1)
