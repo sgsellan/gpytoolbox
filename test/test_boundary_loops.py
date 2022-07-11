@@ -3,7 +3,7 @@ from .context import numpy as np
 from .context import unittest
 import igl
 
-class TestGrad(unittest.TestCase):
+class TestBoundaryLoops(unittest.TestCase):
 
     def test_single_triangle(self):
         f = np.array([[0,1,2]],dtype=int)

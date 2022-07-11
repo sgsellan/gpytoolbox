@@ -3,7 +3,7 @@ from .context import numpy as np
 from .context import unittest
 import igl
 
-class TestGrad(unittest.TestCase):
+class TestHalfedgeLengths(unittest.TestCase):
 
     def test_single_triangle(self):
         v = np.array([[0.0,0.0],[1.0,0.0],[0.0,1.0]])

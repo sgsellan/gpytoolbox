@@ -3,7 +3,7 @@ from .context import numpy as np
 from .context import unittest
 import igl
 
-class TestGrad(unittest.TestCase):
+class TestHalfedges(unittest.TestCase):
     # There is not much to test here that goes beyond just inputting the
     # definition of the function, but we can make sure that a few conditions
     # are fulfilled.
