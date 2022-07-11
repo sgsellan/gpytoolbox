@@ -142,9 +142,9 @@ properly credited both in this page and in the individual files.
 - Write `remove_duplicate_vertices.py`
 - Write `volumes.py`
 - Write quadratic solver with fixed points and linear constraints
-- Write `boundary_loop.py`
 - Write `decimate.py` functionality
 - Explore exactly which part of png2poly's dependencies we need
 - Fix argument conventions (None vs empty array)
 - Write unit test for `signed_distance_polygon.py`
 - Write python-only build test action
+- Package as conda package for easy installation
