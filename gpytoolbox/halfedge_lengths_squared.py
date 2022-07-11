@@ -4,7 +4,7 @@ from gpytoolbox.halfedges import halfedges
 def halfedge_lengths_squared(V,F):
     # Given a triangle mesh V,F, returns the lengths of all halfedges, squared.
     # The reason to work with squared lengths instead of just lengths is that
-    # lengths are computed ase squared lengths, and then often used as squared
+    # lengths are computed as squared lengths, and then often used as squared
     # lengths, and thus keeping track of the squared lengths circumvents a
     # lossy square root followed by a square.
     #
