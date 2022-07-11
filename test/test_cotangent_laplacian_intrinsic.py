@@ -3,7 +3,7 @@ from .context import numpy as np
 from .context import unittest
 import igl
 
-class TestCotangentWeightsIntrinsic(unittest.TestCase):
+class TestCotangentLaplacianIntrinsic(unittest.TestCase):
 
     def test_uniform_triangle(self):
         c = np.random.default_rng().random() + 0.1
