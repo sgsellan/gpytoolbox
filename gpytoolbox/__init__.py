@@ -53,6 +53,7 @@ from .quadtree_boundary import quadtree_boundary
 from .quadtree_children import quadtree_children
 from .grad import grad
 from .doublearea import doublearea
+from .doublearea_intrinsic import doublearea_intrinsic
 from .massmatrix import massmatrix
 from .halfedges import halfedges
 from .edges import edges

@@ -3,7 +3,7 @@ from .context import numpy as np
 from .context import unittest
 import igl
 
-class TestGrad(unittest.TestCase):
+class TestDoublearea(unittest.TestCase):
     def test_polyline_lengths(self):
         # This is a cube, centered at the origin, with side length 1
         # v,f = igl.read_triangle_mesh("test/unit_tests_data/cube.obj")
