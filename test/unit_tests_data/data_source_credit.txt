@@ -1,0 +1,8 @@
+Credits for data in this folder:
+
+The bunny (and modified versions of it) comes from the Stanford 3D Scanning Repository (https://graphics.stanford.edu/data/3Dscanrep/).
+
+The mountain is by lastloginname via Thingiverse, released under CC BY 4.0 (https://www.thingiverse.com/thing:991578).
+
+The airplane is by YahooJAPAN via Thingivese, released under CC BY 3.0 (https://www.thingiverse.com/thing:182252).
+Modifications are by Oded Stein.

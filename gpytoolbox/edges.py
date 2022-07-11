@@ -1,0 +1,67 @@
+import numpy as np
+from gpytoolbox.halfedges import halfedges
+
+def edges(F,
+    return_boundary_indices=False,
+    return_interior_indices=False,
+    return_nonmanifold_indices=False):
+    # Given a triangle mesh with face indices F, returns all unique unoriented
+    # edges as indices into the vertex array.
+    # There is no particular ordering convention for edges.
+    # Boundary edges are guaranteed to be oriented as in F.
+    #
+    # NOTE: "nonmanifold edges" here specifically mean edges that correspond to
+    # 3 or more halfedges, not any complex-destroying edge in general.
+    #
+    # Inputs:
+    #       F  #F by 3 face index list of a triangle mesh
+    #       Optional:
+    #                return_boundary_indices  whether to return a list of
+    #                                         indices into E denoting the
+    #                                         boundary edges
+    #                return_interior_indices  whether to return a list of
+    #                                         indices into E denoting the
+    #                                         interior edges
+    #                return_nonmanifold_indices  whether to return a list of
+    #                                            indices into E denoting the
+    #                                            nonmanifold edges
+    # Outputs:
+    #       E  #E by 2 indices of edges into the vertex array
+    #       Optional:
+    #                boundary_indices  list of indices into E of boundary edges
+    #                interior_indices  list of indices into E of interior edges
+    #                nonmanifold_indices  list of indices into E of nonmanifold
+    #                                     edges
+
+    assert F.shape[0] > 0
+    assert F.shape[1] == 3
+
+    #Sort halfedges. Remove duplicates.
+    he = halfedges(F)
+    flat_he = np.block([[he[:,0,:]],[he[:,1,:]],[he[:,2,:]]])
+    sorted_he = np.sort(flat_he, axis=1)
+    unique_he, unique_indices, unique_count = np.unique(sorted_he, axis=0,
+        return_index=True, return_counts=True)
+
+    #Construct edge arrays by preserving the unique indices of boundary and
+    # picking sorted orientation for interior edges.
+    #Boundary edges have only one halfedge.
+    bdry_edges = flat_he[unique_indices[unique_count==1],:]
+    #Interior edges have two ore more halfedges.
+    interior_edges = unique_he[unique_count>1,:]
+    E = np.block([[bdry_edges],[interior_edges]])
+    assert E.shape == unique_he.shape
+
+    if return_boundary_indices or return_interior_indices or return_nonmanifold_indices:
+        retval = [E]
+        if return_boundary_indices:
+            retval.append(np.arange(0, bdry_edges.shape[0]))
+        if return_interior_indices:
+            retval.append(np.where(unique_count>1)[0])
+        if return_nonmanifold_indices:
+            #Nonmanifold edges have three or more halfedges.
+            retval.append(np.where(unique_count>2)[0])
+        return retval
+    else:
+        return E
+

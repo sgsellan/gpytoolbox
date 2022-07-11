@@ -54,3 +54,9 @@ from .quadtree_children import quadtree_children
 from .grad import grad
 from .doublearea import doublearea
 from .massmatrix import massmatrix
+from .halfedges import halfedges
+from .edges import edges
+from .boundary_loops import boundary_loops
+from .boundary_edges import boundary_edges
+from .halfedge_lengths import halfedge_lengths
+from .halfedge_lengths_squared import halfedge_lengths_squared
