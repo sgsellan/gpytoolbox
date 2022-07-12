@@ -134,6 +134,7 @@ properly credited both in this page and in the individual files.
 
 - Implement tet mesh version of `linear_elasticity_stiffness.py`
 - Implement tet mesh version of `linear_elasticity.py`
+- Proper bad quad mesh from quadtree unit test
 - Proper mesh boolean unit test
 - Proper png2poly unit test
 - Proper lazy cage unit test
