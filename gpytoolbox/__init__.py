@@ -65,3 +65,4 @@ from .cotangent_laplacian_intrinsic import cotangent_laplacian_intrinsic
 from .cotangent_laplacian import cotangent_laplacian
 from .cotangent_weights_intrinsic import cotangent_weights_intrinsic
 from .cotangent_weights import cotangent_weights
+from .remove_duplicate_vertices import remove_duplicate_vertices
