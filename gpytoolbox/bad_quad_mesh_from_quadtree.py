@@ -68,6 +68,6 @@ def bad_quad_mesh_from_quadtree(C,W,CH):
             ))
         
     # remap faces
-    V, _, SVJ, Q = remove_duplicate_vertices(V,Q.astype(np.int32),np.amin(W)/100)
+    V, _, SVJ, Q = remove_duplicate_vertices(V,faces=Q,epsilon=np.amin(W)/100)
     H = SVJ[H]
     return V,Q,H
