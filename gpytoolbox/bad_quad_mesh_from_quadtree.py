@@ -2,8 +2,7 @@ import numpy as np
 # Bindings using Eigen and libigl:
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
-from gpytoolbox_eigen_bindings import remove_duplicate_vertices
+from .remove_duplicate_vertices import remove_duplicate_vertices
 
 
 def bad_quad_mesh_from_quadtree(C,W,CH):
