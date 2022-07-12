@@ -136,13 +136,15 @@ properly credited both in this page and in the individual files.
 - Implement tet mesh version of `linear_elasticity.py`
 - Proper bad quad mesh from quadtree unit test
 - Proper mesh boolean unit test
+- Port remesher
+- Port fracture modes code
 - Proper png2poly unit test
 - Proper lazy cage unit test
 - Write dependencies
 - Vectorize `write_ply.py`
 - Write `read_ply.py`
-- Write `remove_duplicate_vertices.py`
 - Write `volumes.py`
+- Write `subdivide_triangles.py` and `subdivide_tets.py`
 - Write quadratic solver with fixed points and linear constraints
 - Write `decimate.py` functionality
 - Explore exactly which part of png2poly's dependencies we need

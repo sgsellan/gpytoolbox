@@ -148,22 +148,6 @@ npe_begin_code()
     return npe::move(I);
 npe_end_code()
 
-// remove_duplicate_vertices(V,Q,np.amin(W)/100)
-npe_function(remove_duplicate_vertices)
-npe_arg(vt, dense_double)
-npe_arg(ft, dense_int)
-npe_arg(eps, double)
-npe_begin_code()
-    Eigen::MatrixXd V(vt);
-    Eigen::MatrixXi F(ft);
-    Eigen::MatrixXd SV;
-    Eigen::MatrixXi SF;
-    Eigen::VectorXi SVI, SVJ;
-    igl::remove_duplicate_vertices(V,F,eps,SV,SVI,SVJ,SF);
-    return std::make_tuple(npe::move(SV),npe::move(SVI),npe::move(SVJ),npe::move(SF));
-npe_end_code()
-
-
 // decimated_vertices,decimated_faces,J,I = igl.decimate(vertices,faces,num_faces)
 npe_function(decimate)
 npe_arg(vt, dense_double)

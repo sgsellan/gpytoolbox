@@ -10,12 +10,10 @@ try:
     from gpytoolbox_eigen_bindings import upper_envelope
     from gpytoolbox_eigen_bindings import ray_mesh_intersect
     from gpytoolbox_eigen_bindings import in_element_aabb
-    from gpytoolbox_eigen_bindings import remove_duplicate_vertices
     from gpytoolbox_eigen_bindings import decimate
     from gpytoolbox_eigen_bindings import mqwf
     from .lazy_cage import lazy_cage
     from .linear_elasticity import linear_elasticity
-    from .bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree
 except:
     print("-------------------------------------------------------------------")
     print("WARNING: You are using only the pure-python gpytoolbox functionality. Some functions will be unavailable. \n See https://github.com/sgsellan/gpytoolbox for full installation instructions.")
@@ -65,3 +63,5 @@ from .cotangent_laplacian_intrinsic import cotangent_laplacian_intrinsic
 from .cotangent_laplacian import cotangent_laplacian
 from .cotangent_weights_intrinsic import cotangent_weights_intrinsic
 from .cotangent_weights import cotangent_weights
+from .remove_duplicate_vertices import remove_duplicate_vertices
+from .bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree
