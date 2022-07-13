@@ -21,14 +21,23 @@ except:
 
 # Things that do not need my bindings
 # These functions require igl official bindings (and they shouldn't)
-from .linear_elasticity_stiffness import linear_elasticity_stiffness
-
+try:
+    from .linear_elasticity_stiffness import linear_elasticity_stiffness
+except:
+    print("-------------------------------------------------------------------")
+    print("WARNING: You have not installed igl bindings, and can not use linear_elasticity_stiffness.")
+    print("-------------------------------------------------------------------")
 
 # This function depends on skimage and imageio (should it?)
-from .png2poly import png2poly
+try:
+    from .png2poly import png2poly
+except:
+    print("-------------------------------------------------------------------")
+    print("WARNING: You have not installed the necessary libraries to use png2poly.")
+    print("-------------------------------------------------------------------")
 
-# These functions depend ONLY on numpy and scipy and each other
 
+# These functions depend ONLY on numpy, scipy and each other
 from .edge_indeces import edge_indeces
 from .regular_square_mesh import regular_square_mesh
 from .regular_cube_mesh import regular_cube_mesh
@@ -57,9 +66,14 @@ from .halfedges import halfedges
 from .edges import edges
 from .boundary_loops import boundary_loops
 from .boundary_edges import boundary_edges
+from .boundary_vertices import boundary_vertices
+from .min_quad_with_fixed import min_quad_with_fixed
+from .min_quad_with_fixed import min_quad_with_fixed_precompute
 from .halfedge_lengths import halfedge_lengths
 from .halfedge_lengths_squared import halfedge_lengths_squared
 from .cotangent_laplacian_intrinsic import cotangent_laplacian_intrinsic
+from .tip_angles import tip_angles
+from .tip_angles_intrinsic import tip_angles_intrinsic
 from .cotangent_laplacian import cotangent_laplacian
 from .cotangent_weights_intrinsic import cotangent_weights_intrinsic
 from .cotangent_weights import cotangent_weights

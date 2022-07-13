@@ -18,6 +18,7 @@ def cotangent_laplacian_intrinsic(l_sq,F,n=None):
 
     assert F.shape[1] == 3
     assert l_sq.shape == F.shape
+    assert np.all(l_sq>=0)
 
     if n==None:
         n = np.max(F)+1

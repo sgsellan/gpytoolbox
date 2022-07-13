@@ -20,6 +20,7 @@ def cotangent_weights_intrinsic(l_sq,F):
 
     assert F.shape[1] == 3
     assert l_sq.shape == F.shape
+    assert np.all(l_sq>=0)
 
     a,b,c = l_sq[:,0], l_sq[:,1], l_sq[:,2]
     A = doublearea_intrinsic(l_sq, F)
