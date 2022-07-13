@@ -1,4 +1,3 @@
-import numpy as np
 from gpytoolbox.edges import edges
 
 def boundary_edges(F):
