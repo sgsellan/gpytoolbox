@@ -19,15 +19,6 @@ except:
     print("WARNING: You are using only the pure-python gpytoolbox functionality. Some functions will be unavailable. \n See https://github.com/sgsellan/gpytoolbox for full installation instructions.")
     print("-------------------------------------------------------------------")
 
-# Things that do not need my bindings
-# These functions require igl official bindings (and they shouldn't)
-try:
-    from .linear_elasticity_stiffness import linear_elasticity_stiffness
-except:
-    print("-------------------------------------------------------------------")
-    print("WARNING: You have not installed igl bindings, and can not use linear_elasticity_stiffness.")
-    print("-------------------------------------------------------------------")
-
 # This function depends on skimage and imageio (should it?)
 try:
     from .png2poly import png2poly
@@ -38,6 +29,7 @@ except:
 
 
 # These functions depend ONLY on numpy, scipy and each other
+from .linear_elasticity_stiffness import linear_elasticity_stiffness
 from .edge_indeces import edge_indeces
 from .regular_square_mesh import regular_square_mesh
 from .regular_cube_mesh import regular_cube_mesh
