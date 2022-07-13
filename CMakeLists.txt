@@ -25,10 +25,22 @@ add_library(cpytoolbox
 	src/upper_envelope.h
 	src/ray_mesh_intersect_aabb.h
 	src/in_element_aabb.h
+	src/remesher/collapse_edges.h
+	src/remesher/equalize_valences.h
+	src/remesher/remesh_botsch.h
+	src/remesher/split_edges_until_bound.h
+	src/remesher/split_edges.h
+	src/remesher/tangential_relaxation.h
 	# Source
 	src/upper_envelope.cpp
 	src/ray_mesh_intersect_aabb.cpp
 	src/in_element_aabb.cpp
+	src/remesher/collapse_edges.cpp
+	src/remesher/equalize_valences.cpp
+	src/remesher/remesh_botsch.cpp
+	src/remesher/split_edges_until_bound.cpp
+	src/remesher/split_edges.cpp
+	src/remesher/tangential_relaxation.cpp
 	)
 
 target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
