@@ -12,6 +12,7 @@ try:
     from gpytoolbox_eigen_bindings import in_element_aabb
     from gpytoolbox_eigen_bindings import decimate
     from gpytoolbox_eigen_bindings import mqwf
+    from gpytoolbox_eigen_bindings import remesh_botsch
     from .lazy_cage import lazy_cage
     from .linear_elasticity import linear_elasticity
 except:

@@ -12,6 +12,7 @@
 #include <upper_envelope.h>
 #include <ray_mesh_intersect_aabb.h>
 #include <in_element_aabb.h>
+#include <remesher/remesh_botsch.h>
 
 npe_function(mesh_union)
 npe_arg(va, dense_double)
@@ -182,3 +183,124 @@ npe_begin_code()
     bool ok = igl::min_quad_with_fixed(A_copy, B_copy, known, Y_copy, Aeq_copy, Beq_copy, is_A_pd, sol);
     return npe::move(sol);
 npe_end_code()
+
+
+
+
+// Remesher
+npe_function(remesh_botsch)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_arg(t, dense_double)
+npe_arg(i, int)
+npe_arg(ft, dense_int)
+npe_arg(project, bool)
+npe_begin_code()
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    Eigen::VectorXd target(t);
+    Eigen::VectorXi feature(ft);
+    remesh_botsch(V, F, target, i, feature, project);
+    return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+
+npe_function(remesh_botsch)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_arg(t, dense_double)
+npe_arg(i, int)
+npe_arg(ft, dense_int)
+npe_begin_code()
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    Eigen::VectorXd target(t);
+    Eigen::VectorXi feature(ft);
+    remesh_botsch(V, F, target, i, feature, false);
+    return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+
+npe_function(remesh_botsch)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_arg(target, dense_double)
+npe_arg(i, int)
+npe_begin_code()
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    Eigen::VectorXd t(target);
+    remesh_botsch(V, F, t, i);
+    return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+
+npe_function(remesh_botsch)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_arg(target, dense_double)
+npe_arg(i, int)
+npe_arg(project, bool)
+npe_begin_code()
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    Eigen::VectorXd t(target);
+    remesh_botsch(V, F, t, i, project);
+    return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+
+npe_function(remesh_botsch)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_arg(target, dense_double)
+npe_begin_code()
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    Eigen::VectorXd t(target);
+    remesh_botsch(V, F, t);
+    return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+
+npe_function(remesh_botsch)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_arg(i, int)
+npe_arg(h, double)
+npe_begin_code()
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    remesh_botsch(V, F, h, i);
+    return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+
+npe_function(remesh_botsch)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_arg(i, int)
+npe_arg(h, double)
+npe_arg(project, bool)
+npe_begin_code()
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    remesh_botsch(V, F, h, i, project);
+    return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+
+npe_function(remesh_botsch)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_arg(h, double)
+npe_begin_code()
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    remesh_botsch(V, F, h);
+    return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+
+npe_function(remesh_botsch)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_begin_code()
+    Eigen::MatrixXd V(v);
+    Eigen::MatrixXi F(f);
+    remesh_botsch(V, F);
+    return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+///
