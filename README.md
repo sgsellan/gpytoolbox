@@ -144,7 +144,6 @@ properly credited both in this page and in the individual files.
 - Vectorize `write_ply.py`
 - Fix number type thing in c++ bindings
 - Write `read_ply.py`
-- Write `volumes.py`
 - Write `subdivide_triangles.py` and `subdivide_tets.py`
 - Write quadratic solver with fixed points and linear constraints
 - Write `decimate.py` functionality
