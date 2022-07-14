@@ -50,8 +50,6 @@ def massmatrix(V,F=None,type='barycentric'):
             l02 = np.linalg.norm(V[i0,:] - V[i2,:],axis=1)[:,None]
             l10 = np.linalg.norm(V[i1,:] - V[i0,:],axis=1)[:,None]
             l = np.hstack(( l21, l02, l10 ))
-            print((l[:,2]**2.+l[:,1]**2.-l[:,0]**2.0))
-            print((2*l[:,1]*l[:,2]))
             cosines = np.hstack(( 
             ((l[:,2]**2.+l[:,1]**2.-l[:,0]**2.0)/(2*l[:,1]*l[:,2]))[:,None] ,
             ((l[:,0]**2.+l[:,2]**2.-l[:,1]**2.)/(2.*l[:,0]*l[:,2]))[:,None],
