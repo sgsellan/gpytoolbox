@@ -153,7 +153,6 @@ properly credited both in this page and in the individual files.
 - Fix argument conventions (None vs empty array)
 - Write unit test for `signed_distance_polygon.py`
 - Write python-only build test action
-- `massmatrix_intrinsic.py`
 - `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`
 - Package as conda package for easy installation

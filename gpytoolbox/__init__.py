@@ -56,6 +56,7 @@ from .doublearea import doublearea
 from .doublearea_intrinsic import doublearea_intrinsic
 from .volume import volume
 from .massmatrix import massmatrix
+from .massmatrix_intrinsic import massmatrix_intrinsic
 from .halfedges import halfedges
 from .edges import edges
 from .boundary_loops import boundary_loops
