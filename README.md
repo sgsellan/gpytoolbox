@@ -32,6 +32,7 @@ and install all dependencies
 conda install numpy
 conda install -c conda-forge igl
 conda install -c conda-forge matplotlib 
+conda install -c conda-forge scipy
 conda install -c conda-forge scikit-sparse
 python -m pip install --upgrade pip
 python -m pip install polyscope
@@ -144,12 +145,17 @@ properly credited both in this page and in the individual files.
 - Vectorize `write_ply.py`
 - Fix number type thing in c++ bindings
 - Write `read_ply.py`
-- Write `volumes.py`
 - Write `subdivide_triangles.py` and `subdivide_tets.py`
+- Write `loop.py` for loop subdivision (returning sparse mapping matrix)
 - Write quadratic solver with fixed points and linear constraints
 - Write `decimate.py` functionality
 - Explore exactly which part of png2poly's dependencies we need
 - Fix argument conventions (None vs empty array)
 - Write unit test for `signed_distance_polygon.py`
 - Write python-only build test action
+- `massmatrix_intrinsic.py`
+- `per_face_normals.py` and `per_vertex_normals.py`
+- `angle_defect.py` (which is **zero** at boundary vertices!)
+- `dihedral_angles.py`
 - Package as conda package for easy installation
+- Automatic documentation generation from function comments so our docs look as pretty as numpy's

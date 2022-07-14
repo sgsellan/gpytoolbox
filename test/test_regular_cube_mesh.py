@@ -1,5 +1,5 @@
 import numpy as np
-from igl import adjacency_matrix, connected_components, volume, boundary_facets
+from igl import adjacency_matrix, connected_components, boundary_facets
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
@@ -11,7 +11,7 @@ class TestRegularCubeMesh(unittest.TestCase):
         for n in range(10,50,5):
             V,T = gpytoolbox.regular_cube_mesh(n)   
             #print(T)
-            vols = volume(V,T)
+            vols = gpytoolbox.volume(V,T)
             # self.assertTrue all volumes are positive
             self.assertTrue(np.all(vols>0))
             # Check that all tets are combinatorially connected
@@ -23,7 +23,7 @@ class TestRegularCubeMesh(unittest.TestCase):
         for n in range(10,50,5):
             V,T = gpytoolbox.regular_cube_mesh(n,type='five')   
             #print(T)
-            vols = volume(V,T)
+            vols = gpytoolbox.volume(V,T)
             # self.assertTrue all volumes are positive
             self.assertTrue(np.all(vols>0))
             # Check that all tets are combinatorially connected
@@ -33,7 +33,7 @@ class TestRegularCubeMesh(unittest.TestCase):
         for n in range(10,50,5):
             V,T = gpytoolbox.regular_cube_mesh(n,type='reflectionally-symmetric')   
             #print(T)
-            vols = volume(V,T)
+            vols = gpytoolbox.volume(V,T)
             # self.assertTrue all volumes are positive
             self.assertTrue(np.all(vols>0))
             # Check that all tets are combinatorially connected
