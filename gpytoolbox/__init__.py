@@ -73,3 +73,5 @@ from .cotangent_weights_intrinsic import cotangent_weights_intrinsic
 from .cotangent_weights import cotangent_weights
 from .remove_duplicate_vertices import remove_duplicate_vertices
 from .bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree
+from .per_face_normals import per_face_normals
+from .per_vertex_normals import per_vertex_normals
