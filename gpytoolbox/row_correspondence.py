@@ -42,8 +42,12 @@ def row_correspondence(A,B):
     #             f[a] = b
 
     # Convert each row to bytes, intersect byte arrays in 1d
-    bytesA = np.apply_along_axis(np.ndarray.tobytes, 1, A)
-    bytesB = np.apply_along_axis(np.ndarray.tobytes, 1, B.astype(A.dtype))
+    def to_byte_array(x):
+        # Adapted from https://stackoverflow.com/a/54683422
+        dt = np.dtype('S{:d}'.format(x.shape[1] * x.dtype.itemsize))
+        return np.frombuffer(x.tobytes(), dtype=dt)
+    bytesA = to_byte_array(A)
+    bytesB = to_byte_array(B.astype(A.dtype))
     f = array_correspondence(bytesA,bytesB)
 
     return f
