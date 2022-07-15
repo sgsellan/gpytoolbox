@@ -38,7 +38,7 @@ def edges(F,
 
     #Sort halfedges. Remove duplicates.
     he = halfedges(F)
-    flat_he = np.block([[he[:,0,:]],[he[:,1,:]],[he[:,2,:]]])
+    flat_he = np.concatenate([he[:,0,:],he[:,1,:],he[:,2,:]], axis=0)
     sorted_he = np.sort(flat_he, axis=1)
     unique_he, unique_indices, unique_count = np.unique(sorted_he, axis=0,
         return_index=True, return_counts=True)
@@ -49,7 +49,7 @@ def edges(F,
     bdry_edges = flat_he[unique_indices[unique_count==1],:]
     #Interior edges have two ore more halfedges.
     interior_edges = unique_he[unique_count>1,:]
-    E = np.block([[bdry_edges],[interior_edges]])
+    E = np.concatenate([bdry_edges,interior_edges], axis=0)
     assert E.shape == unique_he.shape
 
     if return_boundary_indices or return_interior_indices or return_nonmanifold_indices:
