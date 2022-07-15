@@ -1,6 +1,6 @@
 import numpy as np
 from gpytoolbox.halfedges import halfedges
-from gpytoolbox.row_correspondence import row_correspondence
+from gpytoolbox.array_correspondence import array_correspondence
 
 def triangle_triangle_adjacency(F):
     # Given a manifold triangle mesh with face indices F, computes adjacency
@@ -29,7 +29,7 @@ def triangle_triangle_adjacency(F):
     he_flat = np.concatenate((he[:,0,:], he[:,1,:], he[:,2,:]), axis=0)
     he_flip_flat = np.flip(he_flat, axis=-1)
 
-    map_to_flip = row_correspondence(he_flat,he_flip_flat)
+    map_to_flip = array_correspondence(he_flat,he_flip_flat,axis=1)
     TT = np.reshape(np.where(map_to_flip<0, -1, map_to_flip % m), F.shape, order='F')
     TTi = np.reshape(np.where(map_to_flip<0, -1, map_to_flip // m), F.shape, order='F')
 

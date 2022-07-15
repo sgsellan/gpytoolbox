@@ -1,6 +1,6 @@
 import numpy as np
 from gpytoolbox.halfedges import halfedges
-from gpytoolbox.row_correspondence import row_correspondence
+from gpytoolbox.array_correspondence import array_correspondence
 
 def halfedge_edge_map(F, assume_manifold=True):
     # Computes unique edge indices, and a unique map from halfedges to edges,
@@ -66,9 +66,9 @@ def halfedge_edge_map(F, assume_manifold=True):
             E_to_he[0:n_b,0,:] = unflat_he(bdry_E_to_flat_he)
         if n_i>0:
             E_to_he[n_b:(n_b+n_i),0,:] = \
-            unflat_he(row_correspondence(interior_E,flat_he))
+            unflat_he(array_correspondence(interior_E,flat_he,axis=1))
             E_to_he[n_b:(n_b+n_i),1,:] = \
-            unflat_he(row_correspondence(interior_E,np.flip(flat_he, axis=-1)))
+            unflat_he(array_correspondence(interior_E,np.flip(flat_he, axis=-1),axis=1))
     else:
         E_to_he = []
         bdry_E_to_he = unflat_he(bdry_E_to_flat_he)
