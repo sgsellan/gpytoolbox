@@ -70,7 +70,18 @@ class TestHalfedgeEdgeMap(unittest.TestCase):
                 self.assertTrue(np.all(np.sort(he[he_ind_valid], axis=-1) == np.sort(E[e,:], axis=-1)))
         else:
             self.assertTrue(all([np.all(np.sort(he[E_to_he[e][:,0],E_to_he[e][:,1],:], axis=-1) == np.sort(E[e,:], axis=-1)) for e in range(len(E_to_he))]))
-
+        # Test reversibility
+        for i in range(he_to_E.shape[0]):
+            for j in range(3):
+                e = he_to_E[i,j]
+                if (E_to_he[e][0,:]==np.array([i,j])).all():
+                    self.assertTrue(E_to_he[e].shape==(1,2) or
+                        (E_to_he[e][1,:]==np.array([-1,-1])).all() or
+                        he_to_E[E_to_he[e][1,0],E_to_he[e][1,1]]==e)
+                else:
+                    self.assertTrue((E_to_he[e][1,:]==np.array([i,j])).all())
+                    self.assertTrue((E_to_he[e][0,:]==np.array([-1,-1])).all() or
+                        he_to_E[E_to_he[e][0,0],E_to_he[e][0,1]]==e)
 
 if __name__ == '__main__':
     unittest.main()
