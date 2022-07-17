@@ -145,8 +145,7 @@ properly credited both in this page and in the individual files.
 - Vectorize `write_ply.py`
 - Fix number type thing in c++ bindings
 - Write `read_ply.py`
-- Write `subdivide_triangles.py` and `subdivide_tets.py`
-- Write `loop.py` for loop subdivision (returning sparse mapping matrix)
+- Add tets to `subdivide.py`
 - Write quadratic solver with fixed points and linear constraints
 - Write `decimate.py` functionality
 - Explore exactly which part of png2poly's dependencies we need
