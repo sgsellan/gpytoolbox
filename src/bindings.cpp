@@ -13,6 +13,9 @@
 #include <ray_mesh_intersect_aabb.h>
 #include <in_element_aabb.h>
 #include <remesher/remesh_botsch.h>
+#include <read_obj.h>
+#include <write_obj.h>
+
 
 npe_function(mesh_union)
 npe_arg(va, dense_double)
@@ -302,5 +305,31 @@ npe_begin_code()
     Eigen::MatrixXi F(f);
     remesh_botsch(V, F);
     return std::make_tuple(npe::move(V), npe::move(F));
+npe_end_code()
+
+npe_function(_read_obj_cpp_impl)
+npe_arg(file, std::string)
+npe_arg(return_UV, bool)
+npe_arg(return_N, bool)
+npe_begin_code()
+    Eigen::MatrixXd V, UV, N;
+    Eigen::MatrixXi F, Ft, Fn;
+    int err = read_obj(file, return_UV, return_N,
+        V, F, UV, Ft, N, Fn);
+    return std::make_tuple(err, V, F, UV, Ft, N, Fn);
+npe_end_code()
+
+npe_function(_write_obj_cpp_impl)
+npe_arg(file, std::string)
+npe_arg(v, dense_double)
+npe_arg(f, dense_int)
+npe_arg(uv, dense_double)
+npe_arg(ft, dense_int)
+npe_arg(n, dense_double)
+npe_arg(fn, dense_int)
+npe_begin_code()
+    Eigen::MatrixXd V(v), UV(uv), N(n);
+    Eigen::MatrixXi F(f), Ft(ft), Fn(fn);
+    return write_obj(file, V, F, UV, Ft, N, Fn);
 npe_end_code()
 ///

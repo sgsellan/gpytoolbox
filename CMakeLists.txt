@@ -9,11 +9,11 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_BUILD_TYPE "Release")
 #set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(EXT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ext")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 
-list(APPEND CMAKE_MODULE_PATH ${EXT_DIR}/numpyeigen/cmake)
+list(APPEND CMAKE_MODULE_PATH "${EXT_DIR}/numpyeigen/cmake")
 include(numpyeigen)
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
@@ -25,6 +25,8 @@ add_library(cpytoolbox
 	src/upper_envelope.h
 	src/ray_mesh_intersect_aabb.h
 	src/in_element_aabb.h
+	src/read_obj.h
+	src/write_obj.h
 	src/remesher/collapse_edges.h
 	src/remesher/equalize_valences.h
 	src/remesher/remesh_botsch.h
@@ -35,6 +37,8 @@ add_library(cpytoolbox
 	src/upper_envelope.cpp
 	src/ray_mesh_intersect_aabb.cpp
 	src/in_element_aabb.cpp
+	src/read_obj.cpp
+	src/write_obj.cpp
 	src/remesher/collapse_edges.cpp
 	src/remesher/equalize_valences.cpp
 	src/remesher/remesh_botsch.cpp
