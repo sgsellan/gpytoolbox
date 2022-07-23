@@ -80,3 +80,5 @@ from .triangle_triangle_adjacency import triangle_triangle_adjacency
 from .halfedge_edge_map import halfedge_edge_map
 from .array_correspondence import array_correspondence
 from .subdivide import subdivide
+from .compactly_supported_normal import compactly_supported_normal
+from .quadtree_fem_laplacian import quadtree_fem_laplacian
