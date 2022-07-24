@@ -10,8 +10,6 @@ def write_mesh(file,
     N=None,
     Fn=None,
     fmt=None,
-    return_UV=False,
-    return_N=False,
     writer=None):
     # Writes a mesh to a file.
     #

@@ -27,14 +27,14 @@ npe_arg(cam_dir, dense_double)
 npe_arg(v, dense_double)
 npe_arg(f, dense_int)
 npe_begin_code()
-    Eigen::MatrixXd CAM_POS(cam_pos);
-    Eigen::MatrixXd CAM_DIR(cam_dir);
-    Eigen::MatrixXd V(v);
-    Eigen::MatrixXi F(f);
+    // Eigen::MatrixXd CAM_POS(cam_pos);
+    // Eigen::MatrixXd CAM_DIR(cam_dir);
+    // Eigen::MatrixXd V(v);
+    // Eigen::MatrixXi F(f);
     Eigen::VectorXi ids;
     Eigen::VectorXd ts;
     Eigen::MatrixXd lambdas;
-    ray_mesh_intersect_aabb(CAM_POS, CAM_DIR, V, F, ts, ids, lambdas);
+    ray_mesh_intersect_aabb(cam_pos, cam_dir, v, f, ts, ids, lambdas);
     return std::make_tuple(npe::move(ts),npe::move(ids),npe::move(lambdas));
 npe_end_code()
 
