@@ -52,7 +52,15 @@ target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
 
 npe_add_module(gpytoolbox_eigen_bindings
 	BINDING_SOURCES
-	src/bindings.cpp
+	src/binding_offset_surface.cpp
+  	src/binding_booleans.cpp
+	src/binding_ray_mesh_intersect.cpp
+	src/binding_upper_envelope.cpp
+	src/binding_in_element_aabb.cpp
+	src/binding_decimate.cpp
+	src/binding_remesher_botsch.cpp
+	src/binding_write_obj.cpp
+	src/binding_read_obj.cpp
 )
 
 target_link_libraries(gpytoolbox_eigen_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)

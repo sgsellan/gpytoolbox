@@ -11,10 +11,8 @@ try:
     from gpytoolbox_eigen_bindings import ray_mesh_intersect
     from gpytoolbox_eigen_bindings import in_element_aabb
     from gpytoolbox_eigen_bindings import decimate
-    from gpytoolbox_eigen_bindings import mqwf
     from gpytoolbox_eigen_bindings import remesh_botsch
     from .lazy_cage import lazy_cage
-    from .linear_elasticity import linear_elasticity
 except:
     print("-------------------------------------------------------------------")
     print("WARNING: You are using only the pure-python gpytoolbox functionality. Some functions will be unavailable. \n See https://github.com/sgsellan/gpytoolbox for full installation instructions.")
@@ -30,6 +28,7 @@ except:
 
 
 # These functions depend ONLY on numpy, scipy and each other
+from .linear_elasticity import linear_elasticity
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
 from .edge_indeces import edge_indeces
 from .regular_square_mesh import regular_square_mesh

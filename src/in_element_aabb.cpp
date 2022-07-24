@@ -4,7 +4,7 @@
 #include <igl/in_element.h>
 
 
-void in_element_aabb(Eigen::MatrixXd & queries, Eigen::MatrixXd & V, Eigen::MatrixXi & F, Eigen::VectorXi & I)
+void in_element_aabb(const Eigen::MatrixXd& queries, const Eigen::MatrixXd& V, const Eigen::MatrixXi& F, Eigen::VectorXi & I)
 {
     std::vector<Eigen::Triplet<double> > ijv;
     Eigen::MatrixXd bb_mins;
