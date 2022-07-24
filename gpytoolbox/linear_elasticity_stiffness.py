@@ -42,12 +42,12 @@ def linear_elasticity_stiffness(V,F,K=1.75,mu=0.0115,volumes=np.array([]),mass=n
         strain2 = hstack((G1, G0))
         strain = vstack((strain0,strain1,strain2))
         C = vstack(( hstack(( (l+2*mu)*I,l*I,0*I )),hstack(( l*I,(l+2*mu)*I,0*I )),hstack(( 0*I, 0*I, mu*I )) ) )
-        if volumes.shape[0]==0:
+        if (volumes is None):
             A = diags(doublearea(V,F)*0.5)
         else:
             A = diags(volumes)
         A = block_diag((A,A,A))
-        if mass.shape[0]==0:
+        if (mass is None):
             M = massmatrix(V,F,'voronoi')
         else:
             M = mass

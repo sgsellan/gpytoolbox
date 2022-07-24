@@ -8,8 +8,8 @@ import os
 from .min_quad_with_fixed import min_quad_with_fixed
 
 
-def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.empty((0,1), dtype=np.float64)
-    ,Ud0=np.array([]),fext=np.array([]),K=1.75,mu=0.0115,volumes=np.array([]),mass=np.array([])):
+def linear_elasticity(V,F,U0,dt=0.1,bb=None,bc = None
+    ,Ud0=None,fext=None,K=1.75,mu=0.0115,volumes=None,mass=None):
     # Compute the deformation of a 2D solid object according to the usual linear elasticity model 
     #
     # Note: This only works for 2D (d=2) meshes currently
@@ -33,11 +33,11 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.em
     #       U  #V by d numpy array of new displacements
     #       sigma_v #F numpy array of Von Mises stresses
 
-    if Ud0.shape[0]==0:
+    if (Ud0 is None):
         Ud0 = 0*V
-    if fext.shape[0]==0:
+    if (fext is None):
         fext = 0*V
-    if bb.shape[0]>0:
+    if (bb is not None):
         # THIS ASSUMES 2D
         bb = np.concatenate((bb,bb+V.shape[0]))
         bc = np.concatenate((bc[:,0],bc[:,1]))
@@ -48,12 +48,6 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.em
     A = M + (dt**2)*K
     B = M*((dt**2)*np.reshape(fext,(-1, 1),order='F') + np.reshape(U0,(-1, 1),order='F') + dt*np.reshape(Ud0,(-1, 1),order='F'))
 
-    # We don't have linear equality constraints, but we need to define them to mqwf
-    Aeq = csr_matrix((0, 0), dtype=np.float64)
-    Beq = np.array([], dtype=np.float64)
-    # PYTHON MIN QUAD WITH FIXED USES DIFFERENT CONVENTION FOR QUADRATIC TERM THAN MATLAB'S!!
-    #U = igl.min_quad_with_fixed(A,-1.0*np.squeeze(B),bb,bc,Aeq,Beq,True)
-    #print(U[1])
     U = min_quad_with_fixed(A,c=-1.0*np.squeeze(B),k=bb,y=bc)
     #print(U)
     # https://en.m.wikipedia.org/wiki/Von_Mises_yield_criterion
