@@ -1,10 +1,11 @@
 import numpy as np
 from scipy.sparse import csr_matrix
+
+import gpytoolbox
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
-from gpytoolbox_eigen_bindings import mqwf
+from .min_quad_with_fixed import min_quad_with_fixed
 
 
 def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.empty((0,1), dtype=np.float64)
@@ -53,7 +54,7 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=np.empty((0,1),dtype=np.int32),bc = np.em
     # PYTHON MIN QUAD WITH FIXED USES DIFFERENT CONVENTION FOR QUADRATIC TERM THAN MATLAB'S!!
     #U = igl.min_quad_with_fixed(A,-1.0*np.squeeze(B),bb,bc,Aeq,Beq,True)
     #print(U[1])
-    U = mqwf(A,-1.0*np.squeeze(B),bb,bc,Aeq,Beq)
+    U = min_quad_with_fixed(A,c=-1.0*np.squeeze(B),k=bb,y=bc)
     #print(U)
     # https://en.m.wikipedia.org/wiki/Von_Mises_yield_criterion
     face_stress_vec = C*strain*U
