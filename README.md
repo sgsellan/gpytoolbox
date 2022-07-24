@@ -136,12 +136,13 @@ properly credited both in this page and in the individual files.
 - Implement tet mesh version of `linear_elasticity_stiffness.py`
 - Implement tet mesh version of `linear_elasticity.py`
 - Write proper BVH structure and efficient signed distances
+- Write wrappers for all bindings
+- Use eigen templating so that inputs to bindings can be different types
 - Proper bad quad mesh from quadtree unit test
 - Proper mesh boolean unit test
 - Port fracture modes code
 - Proper png2poly unit test
 - Proper lazy cage unit test
-- Write dependencies
 - Vectorize `write_ply.py`
 - Fix number type thing in c++ bindings
 - Write `read_ply.py`
