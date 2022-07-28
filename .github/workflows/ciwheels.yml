@@ -43,7 +43,7 @@ jobs:
 
     env:
       CIBW_BUILD_VERBOSITY: 3
-      CIBW_BEFORE_BUILD_LINUX : "yum remove -y cmake && python -m pip install cmake"
+      CIBW_BEFORE_BUILD_LINUX : "yum remove -y cmake && python -m pip install \ cmake && sudo apt-get install libmpfr-dev libgmp-dev"
 
     steps:
       - uses: actions/checkout@v3
