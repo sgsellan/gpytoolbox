@@ -44,6 +44,7 @@ class CMakeBuild(build_ext):
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable]
 
+        os.system("python -m pip install numpy")
 
         print("=----------------------------=")
         print(cmake_args)
