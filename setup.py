@@ -44,7 +44,13 @@ class CMakeBuild(build_ext):
         cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable]
 
+
+        # This is horrible, I don't know other way of installing dependencies on the wheel dependencies
         os.system("python -m pip install numpy")
+        if platform.system() == "Linux":
+            os.system("apt-get install \
+              libmpfr-dev \
+              libgmp-dev")
 
         print("=----------------------------=")
         print(platform.system())
