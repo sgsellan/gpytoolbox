@@ -43,7 +43,7 @@ jobs:
 
     env:
       CIBW_BUILD_VERBOSITY: 3
-      CIBW_BEFORE_BUILD_LINUX : "yum remove -y cmake && python -m pip install\ cmake && yum -y install libgmp-devel mpfr-devel"
+      CIBW_BEFORE_BUILD_LINUX : "yum remove -y cmake && python -m pip install\ cmake && yum makecache --refresh && yum -y install gmp-devel\ mpfr-devel"
       CIBW_BEFORE_BUILD: "python -m pip install numpy"
 
     steps:
