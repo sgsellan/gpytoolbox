@@ -22,16 +22,16 @@ jobs:
     strategy:
       matrix:
         include:
-          # - runs-on: ubuntu-latest
-          #   cibw-arch: manylinux_x86_64
-          # - runs-on: ubuntu-latest
-          #   cibw-arch: manylinux_i686
+          - runs-on: ubuntu-latest
+            cibw-arch: manylinux_x86_64
+          - runs-on: ubuntu-latest
+            cibw-arch: manylinux_i686
           - runs-on: macos-latest
             cibw-arch: macosx_x86_64
-          # - runs-on: macos-latest
-          #   cibw-arch: macosx_arm64
-          # - runs-on: macos-latest
-          #   cibw-arch: macosx_universal2
+          - runs-on: macos-latest
+            cibw-arch: macosx_arm64
+          - runs-on: macos-latest
+            cibw-arch: macosx_universal2
           # - runs-on: windows-latest
           #   cibw-arch: win_amd64
           # - runs-on: windows-latest
@@ -73,10 +73,20 @@ jobs:
           echo "CIBW_BUILD=*-${{ matrix.cibw-arch }}" >> $GITHUB_ENV
           echo "CIBW_ENVIRONMENT_MACOS=CMAKE_OSX_ARCHITECTURES=\"$CMAKE_OSX_ARCHITECTURES\"" >> $GITHUB_ENV
 
-      # - name: Package source distribution
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     python setup.py sdist -d wheelhouse --formats=gztar 
+      - name: Install dependencies (Ubuntu)
+        shell: bash -l {0}
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get upgrade
+          sudo apt-get install \
+              libmpfr-dev \
+              libgmp-dev \
+
+      - name: Package source distribution
+        if: runner.os == 'Linux'
+        run: |
+          python setup.py sdist -d wheelhouse --formats=gztar 
 
       - name: Build wheels
         run: |
