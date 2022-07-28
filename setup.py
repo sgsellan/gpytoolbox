@@ -47,7 +47,7 @@ class CMakeBuild(build_ext):
         os.system("python -m pip install numpy")
 
         print("=----------------------------=")
-        print(cmake_args)
+        print(platform.system())
         #cfg = 'Debug' if self.debug else 'Release'
         cfg = 'Release'
         build_args = ['--config', cfg]
