@@ -8,8 +8,7 @@ on:
       - main
 
 jobs:
-  example-1:
-    name: Full build (Windows)
+  build:
     runs-on: "windows-latest"
     steps:
       - uses: actions/checkout@v3
@@ -35,8 +34,8 @@ jobs:
       - name: Install c++ bindings
         shell: bash -l {0}
         run: |
-          mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && 
-          cmake --build "."
+          mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && 
+          cmake --build "." --config Release
       - name: Run unit tests
         shell: bash -l {0}
         run: |
