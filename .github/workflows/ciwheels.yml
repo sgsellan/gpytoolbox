@@ -20,6 +20,7 @@ jobs:
     # if: "contains(toJSON(github.event.commits.*.message), '[ci build]') || contains(toJSON(github.event.pull_request.title), '[ci build]') || contains(github.ref, 'refs/tags')"
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           # - runs-on: ubuntu-latest
