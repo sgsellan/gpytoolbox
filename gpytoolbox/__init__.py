@@ -2,8 +2,9 @@
 import sys
 import os
 try:
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build-linux/')))
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
+    # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
+    # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build-linux/')))
     from gpytoolbox_eigen_bindings import mesh_union
     from gpytoolbox_eigen_bindings import mesh_difference
     from gpytoolbox_eigen_bindings import mesh_intersection
