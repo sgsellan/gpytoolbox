@@ -37,6 +37,19 @@ jobs:
           python -m pip install tetgen
           python -m pip install scikit-image
           conda install -c conda-forge scikit-sparse
+      - name: Install dependencies (MacOS)
+        shell: bash -l {0}
+        if: matrix.os == 'windows-latest'
+        run: |
+          conda info
+          conda install numpy
+          conda install -c conda-forge igl
+          conda install -c conda-forge matplotlib 
+          python -m pip install --upgrade pip
+          python -m pip install polyscope
+          python -m pip install tetgen
+          python -m pip install scikit-image
+          conda install -c conda-forge scikit-sparse
       - name: Install dependencies (Ubuntu)
         shell: bash -l {0}
         if: matrix.os == 'ubuntu-latest'
