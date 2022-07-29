@@ -30,6 +30,7 @@ jobs:
           python -m pip install polyscope
           python -m pip install tetgen
           python -m pip install scikit-image
+          python -m pip install scikit-sparse
           sudo apt-get update
           sudo apt-get upgrade
           sudo apt-get install \
