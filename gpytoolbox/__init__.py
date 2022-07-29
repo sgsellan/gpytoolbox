@@ -1,25 +1,25 @@
 # Bindings using C++ and Eigen:
 import sys
 import os
-try:
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
-    # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
-    # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build-linux/')))
-    from gpytoolbox_eigen_bindings import mesh_union
-    from gpytoolbox_eigen_bindings import mesh_difference
-    from gpytoolbox_eigen_bindings import mesh_intersection
-    from gpytoolbox_eigen_bindings import upper_envelope
-    from gpytoolbox_eigen_bindings import ray_mesh_intersect
-    from gpytoolbox_eigen_bindings import in_element_aabb
-    from gpytoolbox_eigen_bindings import decimate
-    from gpytoolbox_eigen_bindings import remesh_botsch
-    from .lazy_cage import lazy_cage
-except:
-    print("-------------------------------------------------------------------")
-    print("WARNING: You are using only the pure-python gpytoolbox functionality. Some functions will be unavailable. \n See https://github.com/sgsellan/gpytoolbox for full installation instructions.")
-    print("-------------------------------------------------------------------")
+# try:
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build-linux/')))
+from gpytoolbox_eigen_bindings import mesh_union
+from gpytoolbox_eigen_bindings import mesh_difference
+from gpytoolbox_eigen_bindings import mesh_intersection
+from gpytoolbox_eigen_bindings import upper_envelope
+from gpytoolbox_eigen_bindings import ray_mesh_intersect
+from gpytoolbox_eigen_bindings import in_element_aabb
+from gpytoolbox_eigen_bindings import decimate
+from gpytoolbox_eigen_bindings import remesh_botsch
+from .lazy_cage import lazy_cage
+# except:
+#     print("-------------------------------------------------------------------")
+#     print("WARNING: You are using only the pure-python gpytoolbox functionality. Some functions will be unavailable. \n See https://github.com/sgsellan/gpytoolbox for full installation instructions.")
+#     print("-------------------------------------------------------------------")
 
 # This function depends on skimage and imageio (should it?)
 try:
