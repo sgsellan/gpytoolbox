@@ -46,14 +46,14 @@ class CMakeBuild(build_ext):
 
 
         # This is horrible, I don't know other way of installing dependencies on the wheel dependencies
-        os.system("python -m pip install numpy")
+        # os.system("python -m pip install numpy")
         # if platform.system() == "Linux":
         #     os.system("apt-get install \
         #       libmpfr-dev \
         #       libgmp-dev")
 
-        print("=----------------------------=")
-        print(platform.system())
+        # print("=----------------------------=")
+        # print(platform.system())
         #cfg = 'Debug' if self.debug else 'Release'
         cfg = 'Release'
         build_args = ['--config', cfg]
