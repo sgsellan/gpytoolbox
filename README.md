@@ -1,7 +1,11 @@
 # A *Python* Geometry Processing Toolbox
 
 ![unit
-tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/ci.yml/badge.svg)
+tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/linux_build.yml/badge.svg)
+![unit
+tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/macos_build.yml/badge.svg)
+![unit
+tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/windows_build.yml/badge.svg)
 
 *Authors:* [Silvia Sellán](https://www.silviasellan.com), University of Toronto
 and [Oded Stein](https://odedstein.com), Massachusetts Institute of Technology
