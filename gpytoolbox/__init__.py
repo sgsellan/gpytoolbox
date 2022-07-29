@@ -2,12 +2,9 @@
 import sys
 import os
 try:
-    if os.name == 'nt': # if Windows
-    # handle default location where VS puts binary
-        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
-        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
-    else:
-        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
     # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
     # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build-linux/')))
     from gpytoolbox_eigen_bindings import mesh_union
