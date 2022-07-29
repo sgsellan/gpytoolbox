@@ -30,7 +30,7 @@ jobs:
           python -m pip install polyscope
           python -m pip install tetgen
           python -m pip install scikit-image
-          python -m pip install scikit-sparse
+          conda install -c conda-forge scikit-sparse 
 
       - name: Install c++ bindings
         shell: bash -l {0}
