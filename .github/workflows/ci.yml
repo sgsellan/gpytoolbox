@@ -72,11 +72,7 @@ jobs:
       - name: Install c++ bindings
         shell: bash -l {0}
         run: |
-          mkdir build
-          cd build
-          cmake ..
-          make -j2
-          cd .. 
+          python -m pip install .
       - name: Run unit tests
         shell: bash -l {0}
         run: |
