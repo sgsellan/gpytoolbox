@@ -9,12 +9,12 @@ on:
 
 jobs:
   example-1:
-    name: Full build (${{ matrix.os }})
+    name: Full build (Windows)
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
+        os: ["windows-latest"]
         python-version: [ "3.7" ]
     steps:
       - uses: actions/checkout@v3
@@ -24,24 +24,9 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies (MacOS)
-        shell: bash -l {0}
-        if: matrix.os == 'macos-latest'
-        run: |
-          conda info
-          conda install numpy
-          conda install -c conda-forge igl
-          conda install -c conda-forge matplotlib 
-          python -m pip install --upgrade pip
-          python -m pip install polyscope
-          python -m pip install tetgen
-          python -m pip install scikit-image
-          conda install -c conda-forge scikit-sparse
 
-        # python -m pip install scikit-sparse
-      - name: Install dependencies (Ubuntu)
+      - name: Install dependencies (Windows)
         shell: bash -l {0}
-        if: matrix.os == 'ubuntu-latest'
         run: |
           conda info
           conda install numpy
@@ -51,20 +36,11 @@ jobs:
           python -m pip install polyscope
           python -m pip install tetgen
           python -m pip install scikit-image
-          conda install -c conda-forge scikit-sparse
-          sudo apt-get update
-          sudo apt-get upgrade
-          sudo apt-get install \
-              libmpfr-dev \
-              libgmp-dev \
+
       - name: Install c++ bindings
         shell: bash -l {0}
         run: |
-          mkdir build
-          cd build
-          cmake ..
-          make -j2
-          cd .. 
+          mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cd\ build && cmake --build "."
       - name: Run unit tests
         shell: bash -l {0}
         run: |
