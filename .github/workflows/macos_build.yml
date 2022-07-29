@@ -1,0 +1,48 @@
+name: Full build (MacOS)
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: "macos-latest"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: "3.7"
+
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          conda info
+          conda install numpy
+          conda install -c conda-forge igl
+          conda install -c conda-forge matplotlib 
+          python -m pip install --upgrade pip
+          python -m pip install polyscope
+          python -m pip install tetgen
+          python -m pip install scikit-image
+
+      - name: Install c++ bindings
+        shell: bash -l {0}
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make -j2
+          cd .. 
+
+      - name: Run unit tests
+        shell: bash -l {0}
+        run: |
+          python -m unittest -v
+
+# see https://github.com/libigl/libigl/blob/main/.github/workflows/continuous.yml
