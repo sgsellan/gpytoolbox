@@ -41,6 +41,15 @@ jobs:
         run: |
           mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && 
           cmake --build "." --config Release
+
+
+      - name: Debug
+        shell: bash -l {0}
+        run: |
+          tree
+          python -m unittest -v test/test_in_element_aabb.py
+          dumpbin /dependents D:\a\gpytoolbox\gpytoolbox\build\Release\gpytoolbox_bindings.pyd
+
       - name: Run unit tests
         shell: bash -l {0}
         run: |
