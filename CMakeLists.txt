@@ -15,7 +15,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${EXT_DIR}/numpyeigen/cmake")
 include(numpyeigen)
-# option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
+option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
 
@@ -48,17 +48,17 @@ add_library(cpytoolbox
 	)
 
 # target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
-target_link_libraries(cpytoolbox igl::core igl::embree)
+target_link_libraries(cpytoolbox igl::core igl::embree igl_copyleft::cgal)
 
 
 npe_add_module(gpytoolbox_bindings
 	BINDING_SOURCES
-	# src/cpp/binding_offset_surface.cpp
-  	# src/cpp/binding_booleans.cpp
+	src/cpp/binding_offset_surface.cpp
+  	src/cpp/binding_booleans.cpp
 	src/cpp/binding_ray_mesh_intersect.cpp
 	src/cpp/binding_upper_envelope.cpp
 	src/cpp/binding_in_element_aabb.cpp
-	# src/cpp/binding_decimate.cpp
+	src/cpp/binding_decimate.cpp
 	src/cpp/binding_remesher_botsch.cpp
 	src/cpp/binding_write_obj.cpp
 	src/cpp/binding_read_obj.cpp
