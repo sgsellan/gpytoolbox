@@ -65,6 +65,8 @@ if __name__ == '__main__':
         # handle default location where VS puts binary
         sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
         sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+        os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+        os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
     else:
         # normal / unix case
         sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
