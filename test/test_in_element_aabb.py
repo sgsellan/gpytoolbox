@@ -58,4 +58,15 @@ class TestInElementAABB(unittest.TestCase):
     #     assert((I==indeces).all())
 
 if __name__ == '__main__':
+    import sys
+    import os
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+    if os.name == 'nt': # if Windows
+        # handle default location where VS puts binary
+        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+    else:
+        # normal / unix case
+        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
+    print(sys.path)
     unittest.main()
