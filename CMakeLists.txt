@@ -22,7 +22,7 @@ include(libigl)
 add_library(cpytoolbox
 	SHARED
 	# Headers
-	# src/cpp/upper_envelope.h
+	src/cpp/upper_envelope.h
 	src/cpp/ray_mesh_intersect_aabb.h
 	src/cpp/in_element_aabb.h
 	src/cpp/read_obj.h
@@ -34,7 +34,7 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges.h
 	src/cpp/remesher/tangential_relaxation.h
 	# Source
-	# src/cpp/upper_envelope.cpp
+	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
 	src/cpp/in_element_aabb.cpp
 	src/cpp/read_obj.cpp

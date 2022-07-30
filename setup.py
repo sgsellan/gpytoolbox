@@ -90,8 +90,8 @@ class CMakeBuild(build_ext):
 
 def main():
 
-    # with open('deps/polyscope/README.md') as f:
-    #     long_description = f.read()
+    with open('README.md') as f:
+        long_description = f.read()
 
     # Applies to windows only.
     # Normally, we set cmake's -A option to specify 64 bit platform when need (and /m for build), 
@@ -111,8 +111,8 @@ def main():
         author_email='sgsellan@cs.toronto.edu',
         url='https://github.com/sgsellan/gpytoolbox',
         description='Gpytoolbox: A Python Geometry Processing Toolbox.',
-        # long_description=long_description,
-        # long_description_content_type='text/markdown',
+        long_description=long_description,
+        long_description_content_type='text/markdown',
         license="MIT",
         package_dir = {'': 'src'},
         packages=setuptools.find_packages(where="src"),
