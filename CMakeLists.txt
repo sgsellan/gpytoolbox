@@ -54,7 +54,7 @@ target_link_libraries(cpytoolbox igl::core igl::embree)
 npe_add_module(gpytoolbox_bindings
 	BINDING_SOURCES
 	src/cpp/binding_offset_surface.cpp
-  	src/cpp/binding_booleans.cpp
+  	# src/cpp/binding_booleans.cpp
 	src/cpp/binding_ray_mesh_intersect.cpp
 	src/cpp/binding_upper_envelope.cpp
 	src/cpp/binding_in_element_aabb.cpp
