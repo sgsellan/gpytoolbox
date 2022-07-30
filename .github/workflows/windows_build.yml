@@ -11,9 +11,11 @@ jobs:
   build:
     runs-on: "windows-latest"
     steps:
+
       - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
+
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
@@ -46,7 +48,7 @@ jobs:
       - name: Debug
         shell: bash -l {0}
         run: |
-          tree
+# tree
           dumpbin /dependents D:\a\gpytoolbox\gpytoolbox\build\Release\gpytoolbox_bindings.pyd
 
       - name: Run unit tests
