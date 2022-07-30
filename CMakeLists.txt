@@ -16,7 +16,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 list(APPEND CMAKE_MODULE_PATH "${EXT_DIR}/numpyeigen/cmake")
 include(numpyeigen)
 # option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
-# option(LIBIGL_EMBREE "Build target igl::embree" ON)
+option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
 
 add_library(cpytoolbox
