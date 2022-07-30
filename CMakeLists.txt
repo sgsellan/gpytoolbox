@@ -23,7 +23,7 @@ add_library(cpytoolbox
 	SHARED
 	# Headers
 	# src/cpp/upper_envelope.h
-	# src/cpp/ray_mesh_intersect_aabb.h
+	src/cpp/ray_mesh_intersect_aabb.h
 	src/cpp/in_element_aabb.h
 	src/cpp/read_obj.h
 	src/cpp/write_obj.h
@@ -35,7 +35,7 @@ add_library(cpytoolbox
 	# src/cpp/remesher/tangential_relaxation.h
 	# Source
 	# src/cpp/upper_envelope.cpp
-	# src/cpp/ray_mesh_intersect_aabb.cpp
+	src/cpp/ray_mesh_intersect_aabb.cpp
 	src/cpp/in_element_aabb.cpp
 	src/cpp/read_obj.cpp
 	src/cpp/write_obj.cpp
@@ -48,14 +48,14 @@ add_library(cpytoolbox
 	)
 
 # target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
-target_link_libraries(cpytoolbox igl::core)
+target_link_libraries(cpytoolbox igl::core igl::embree)
 
 
 npe_add_module(gpytoolbox_bindings
 	BINDING_SOURCES
 	# src/cpp/binding_offset_surface.cpp
   	# src/cpp/binding_booleans.cpp
-	# src/cpp/binding_ray_mesh_intersect.cpp
+	src/cpp/binding_ray_mesh_intersect.cpp
 	# src/cpp/binding_upper_envelope.cpp
 	src/cpp/binding_in_element_aabb.cpp
 	# src/cpp/binding_decimate.cpp
