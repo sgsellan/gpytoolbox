@@ -11,6 +11,6 @@ npe_arg(fb, dense_int)
 npe_begin_code()
     Eigen::MatrixXd VC;
     Eigen::MatrixXi FC;
-    mesh_union(va,fa,vb,fb,igl::MESH_BOOLEAN_TYPE_UNION,VC,FC);
+    mesh_union(va,fa,vb,fb,VC,FC);
     return std::make_tuple(npe::move(VC), npe::move(FC));
 npe_end_code()
