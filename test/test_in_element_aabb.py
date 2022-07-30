@@ -9,8 +9,12 @@ if os.name == 'nt': # if Windows
     # handle default location where VS puts binary
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
-    os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
-    os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+    try:  # to use Python 3.8's DLL handling
+        os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+        os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+    except AttributeError:  # <3.8, use PATH
+            os.environ['PATH'] += os.pathsep + os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release"))
+            os.environ['PATH'] += os.pathsep + os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug"))
 else:
     # normal / unix case
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
@@ -71,17 +75,17 @@ class TestInElementAABB(unittest.TestCase):
     #     assert((I==indeces).all())
 
 if __name__ == '__main__':
-    import sys
-    import os
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
-    if os.name == 'nt': # if Windows
-        # handle default location where VS puts binary
-        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
-        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
-        os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
-        os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
-    else:
-        # normal / unix case
-        sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
-    print(sys.path)
+    # import sys
+    # import os
+    # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+    # if os.name == 'nt': # if Windows
+    #     # handle default location where VS puts binary
+    #     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+    #     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+    #     os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+    #     os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+    # else:
+    #     # normal / unix case
+    #     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
+    # print(sys.path)
     unittest.main()
