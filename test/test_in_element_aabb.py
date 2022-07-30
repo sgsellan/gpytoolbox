@@ -2,6 +2,19 @@ from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+if os.name == 'nt': # if Windows
+    # handle default location where VS puts binary
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+    os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+    os.add_dll_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+else:
+    # normal / unix case
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
+
 class TestInElementAABB(unittest.TestCase):
     def test_synthetic_samples(self):
         # Generate triangle mesh
