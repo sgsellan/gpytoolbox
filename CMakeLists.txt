@@ -22,45 +22,46 @@ include(libigl)
 add_library(cpytoolbox
 	SHARED
 	# Headers
-	src/cpp/upper_envelope.h
-	src/cpp/ray_mesh_intersect_aabb.h
+	# src/cpp/upper_envelope.h
+	# src/cpp/ray_mesh_intersect_aabb.h
 	src/cpp/in_element_aabb.h
-	src/cpp/read_obj.h
-	src/cpp/write_obj.h
-	src/cpp/remesher/collapse_edges.h
-	src/cpp/remesher/equalize_valences.h
-	src/cpp/remesher/remesh_botsch.h
-	src/cpp/remesher/split_edges_until_bound.h
-	src/cpp/remesher/split_edges.h
-	src/cpp/remesher/tangential_relaxation.h
+	# src/cpp/read_obj.h
+	# src/cpp/write_obj.h
+	# src/cpp/remesher/collapse_edges.h
+	# src/cpp/remesher/equalize_valences.h
+	# src/cpp/remesher/remesh_botsch.h
+	# src/cpp/remesher/split_edges_until_bound.h
+	# src/cpp/remesher/split_edges.h
+	# src/cpp/remesher/tangential_relaxation.h
 	# Source
-	src/cpp/upper_envelope.cpp
-	src/cpp/ray_mesh_intersect_aabb.cpp
+	# src/cpp/upper_envelope.cpp
+	# src/cpp/ray_mesh_intersect_aabb.cpp
 	src/cpp/in_element_aabb.cpp
-	src/cpp/read_obj.cpp
-	src/cpp/write_obj.cpp
-	src/cpp/remesher/collapse_edges.cpp
-	src/cpp/remesher/equalize_valences.cpp
-	src/cpp/remesher/remesh_botsch.cpp
-	src/cpp/remesher/split_edges_until_bound.cpp
-	src/cpp/remesher/split_edges.cpp
-	src/cpp/remesher/tangential_relaxation.cpp
+	# src/cpp/read_obj.cpp
+	# src/cpp/write_obj.cpp
+	# src/cpp/remesher/collapse_edges.cpp
+	# src/cpp/remesher/equalize_valences.cpp
+	# src/cpp/remesher/remesh_botsch.cpp
+	# src/cpp/remesher/split_edges_until_bound.cpp
+	# src/cpp/remesher/split_edges.cpp
+	# src/cpp/remesher/tangential_relaxation.cpp
 	)
 
-target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
+# target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
+target_link_libraries(cpytoolbox igl::core)
 
 
 npe_add_module(gpytoolbox_bindings
 	BINDING_SOURCES
-	src/cpp/binding_offset_surface.cpp
-  	src/cpp/binding_booleans.cpp
-	src/cpp/binding_ray_mesh_intersect.cpp
-	src/cpp/binding_upper_envelope.cpp
+	# src/cpp/binding_offset_surface.cpp
+  	# src/cpp/binding_booleans.cpp
+	# src/cpp/binding_ray_mesh_intersect.cpp
+	# src/cpp/binding_upper_envelope.cpp
 	src/cpp/binding_in_element_aabb.cpp
-	src/cpp/binding_decimate.cpp
-	src/cpp/binding_remesher_botsch.cpp
-	src/cpp/binding_write_obj.cpp
-	src/cpp/binding_read_obj.cpp
+	# src/cpp/binding_decimate.cpp
+	# src/cpp/binding_remesher_botsch.cpp
+	# src/cpp/binding_write_obj.cpp
+	# src/cpp/binding_read_obj.cpp
 )
 
 target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
