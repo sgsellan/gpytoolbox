@@ -24,6 +24,7 @@ jobs:
         run: |
           conda info
           conda install numpy
+          conda install scipy=1.6.1
           conda install -c conda-forge igl
           conda install -c conda-forge matplotlib 
           python -m pip install --upgrade pip
@@ -33,6 +34,7 @@ jobs:
           conda install -c conda-forge cython
           conda install -c conda-forge suitesparse
           pip install git+https://github.com/EmJay276/scikit-sparse
+          conda install scipy=1.6.1
 
       - name: Install c++ bindings
         shell: bash -l {0}
