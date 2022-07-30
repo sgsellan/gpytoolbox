@@ -140,9 +140,11 @@ bug, by expanding existing functionality or by adding new functionality.
 If you contribute to this repo in any of the above listed ways, you will be
 properly credited both in this page and in the individual files.
 
+# TO-DO
 ## Must do before first PyPi release
 - Make every function documented with docstrings so we have pretty auto
   documentation.
+- Fix argument conventions (None vs empty array)
 - Write unit tests for `bad_quad_mesh_from_quadtree`, `decimate`,
   `do_meshes_intersect`, `edge_indeces` (fix spelling), `lazy_cage`,
   `linear_elasticity_stiffness`, `offset_surface`, `signed_distance_polygon`,
@@ -152,33 +154,15 @@ properly credited both in this page and in the individual files.
 - Fix `test_grad.py`, `test_per_face_normal.py`, `test_per_vertex_normal.py`,
   `test_quadtree_laplacian.py`, `test_regular_cube_mesh.py`,
   `test_regular_square_mesh.py`.
-- 
 
 
 ## Future to-dos
-
 - Implement tet mesh version of `linear_elasticity_stiffness.py`
 - Implement tet mesh version of `linear_elasticity.py`
 - Write proper BVH structure and efficient signed distances
-- Write wrappers for all bindings
-- Use eigen templating so that inputs to bindings can be different types
-- Proper bad quad mesh from quadtree unit test
-- Proper mesh boolean unit test
+- Switch to pybind11
 - Port fracture modes code
-- Proper png2poly unit test
-- Proper lazy cage unit test
-- Vectorize `write_ply.py`
-- Fix number type thing in c++ bindings
-- Write `read_ply.py`
 - Add tets to `subdivide.py`
-- Write quadratic solver with fixed points and linear constraints
-- Write `decimate.py` functionality
-- Explore exactly which part of png2poly's dependencies we need
-- Fix argument conventions (None vs empty array)
-- Write unit test for `signed_distance_polygon.py`
-- Write python-only build test action
 - `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`
-- Package as conda package for easy installation
-- Automatic documentation generation from function comments so our docs look as
-  pretty as numpy's
+- Package for conda distribution
