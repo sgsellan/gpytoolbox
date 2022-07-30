@@ -1,6 +1,6 @@
 import numpy as np
 import scipy as sp
-import sksparse
+
 
 def min_quad_with_fixed(Q, c=None, A=None, b=None, k=None, y=None):
     # Solve the following quadratic program with linear constraints:
@@ -103,6 +103,7 @@ class min_quad_with_fixed_precompute:
             # CSC is more efficient per the documentation.
             self.QA = sp.sparse.csc_matrix(Qred)
             try:
+                import sksparse
                 self.solver = sksparse.cholmod.cholesky(self.QA)
             except:
                 splu = sp.sparse.linalg.splu(self.QA)

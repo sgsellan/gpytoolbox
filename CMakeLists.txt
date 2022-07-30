@@ -15,8 +15,8 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${EXT_DIR}/numpyeigen/cmake")
 include(numpyeigen)
-option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
-option(LIBIGL_EMBREE "Build target igl::embree" ON)
+# option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
+# option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
 
 add_library(cpytoolbox
@@ -64,6 +64,7 @@ npe_add_module(gpytoolbox_bindings
 	# src/cpp/binding_read_obj.cpp
 )
 
-target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
+# target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
+target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core)
 
 target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")
