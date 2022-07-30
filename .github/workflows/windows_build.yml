@@ -63,8 +63,7 @@ jobs:
       - name: Run unit tests
         shell: bash -l {0}
         run: |
-          python -m pip install unittest
-          python -m unittest -v test/test_in_element_aabb.py
+          python -m unittest -v test/test_in_element_aabb.py test/test_read_mesh.py test/test_write_mesh.py
         # python -c "import gpytoolbox"
         # python -c "import gpytoolbox_bindings"
           

@@ -25,8 +25,8 @@ add_library(cpytoolbox
 	# src/cpp/upper_envelope.h
 	# src/cpp/ray_mesh_intersect_aabb.h
 	src/cpp/in_element_aabb.h
-	# src/cpp/read_obj.h
-	# src/cpp/write_obj.h
+	src/cpp/read_obj.h
+	src/cpp/write_obj.h
 	# src/cpp/remesher/collapse_edges.h
 	# src/cpp/remesher/equalize_valences.h
 	# src/cpp/remesher/remesh_botsch.h
@@ -37,8 +37,8 @@ add_library(cpytoolbox
 	# src/cpp/upper_envelope.cpp
 	# src/cpp/ray_mesh_intersect_aabb.cpp
 	src/cpp/in_element_aabb.cpp
-	# src/cpp/read_obj.cpp
-	# src/cpp/write_obj.cpp
+	src/cpp/read_obj.cpp
+	src/cpp/write_obj.cpp
 	# src/cpp/remesher/collapse_edges.cpp
 	# src/cpp/remesher/equalize_valences.cpp
 	# src/cpp/remesher/remesh_botsch.cpp
@@ -60,8 +60,8 @@ npe_add_module(gpytoolbox_bindings
 	src/cpp/binding_in_element_aabb.cpp
 	# src/cpp/binding_decimate.cpp
 	# src/cpp/binding_remesher_botsch.cpp
-	# src/cpp/binding_write_obj.cpp
-	# src/cpp/binding_read_obj.cpp
+	src/cpp/binding_write_obj.cpp
+	src/cpp/binding_read_obj.cpp
 )
 
 # target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
