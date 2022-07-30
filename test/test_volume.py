@@ -1,7 +1,6 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestVolume(unittest.TestCase):
     def test_single_tet(self):

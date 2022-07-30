@@ -56,7 +56,7 @@ npe_add_module(gpytoolbox_bindings
 	# src/cpp/binding_offset_surface.cpp
   	# src/cpp/binding_booleans.cpp
 	src/cpp/binding_ray_mesh_intersect.cpp
-	# src/cpp/binding_upper_envelope.cpp
+	src/cpp/binding_upper_envelope.cpp
 	src/cpp/binding_in_element_aabb.cpp
 	# src/cpp/binding_decimate.cpp
 	src/cpp/binding_remesher_botsch.cpp

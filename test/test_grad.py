@@ -1,13 +1,11 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-import igl
-from scipy.sparse import csr_matrix
 
 class TestGrad(unittest.TestCase):
     def test_polyline_grad(self):
         # This is a cube, centered at the origin, with side length 1
-        # v,f = igl.read_triangle_mesh("test/unit_tests_data/cube.obj")
+        # v,f = gpy.read_mesh("test/unit_tests_data/cube.obj")
         #
         # Let's make up a simple polyline
         v = np.array([[0],[0.2],[0.5],[0.98],[1.0]])
@@ -61,12 +59,13 @@ class TestGrad(unittest.TestCase):
             self.assertTrue(np.amax(np.abs((G @ fun_other_grad)[0:f.shape[0]] - (2.0*barycenters[:,0] + 3)))<err )
             err = np.amax(np.abs((G @ fun_other_grad)[0:f.shape[0]] - (2.0*barycenters[:,0] + 3)))
 
-    def test_3d_grad(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
-        #v = v[:,0:2]
-        G = gpytoolbox.grad(v,f).toarray()
-        G_igl = csr_matrix(igl.grad(v,f)).toarray()
-        self.assertTrue(np.isclose(G-G_igl,0.0).all())
+    #TODO WRITE THIS WITHOUT IGL IMPORT
+    # def test_3d_grad(self):
+    #     v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
+    #     #v = v[:,0:2]
+    #     G = gpytoolbox.grad(v,f).toarray()
+    #     G_igl = csr_matrix(igl.grad(v,f)).toarray()
+    #     self.assertTrue(np.isclose(G-G_igl,0.0).all())
 
         
 

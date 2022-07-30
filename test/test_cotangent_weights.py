@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestCotangentWeights(unittest.TestCase):
 
@@ -20,7 +19,7 @@ class TestCotangentWeights(unittest.TestCase):
         self.assertTrue(np.isclose(C, C_gt).all())
 
     def test_bunny_oded(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
 
         C = gpy.cotangent_weights(v,f)
         C_gt = np.array([[ 4.30199529e-01, -3.38453100e-02,  6.67484346e-01],

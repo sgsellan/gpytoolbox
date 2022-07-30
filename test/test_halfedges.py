@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestHalfedges(unittest.TestCase):
     # There is not much to test here that goes beyond just inputting the
@@ -15,17 +14,17 @@ class TestHalfedges(unittest.TestCase):
         self.assertTrue(np.all(he == he_groundtruth))
     
     def test_bunny(self):
-        _,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        _,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
         he = gpy.halfedges(f)
         self.assertTrue(he.shape==(f.shape[0],3,2))
 
     def test_mountain(self):
-        _,f = igl.read_triangle_mesh("test/unit_tests_data/mountain.obj")
+        _,f = gpy.read_mesh("test/unit_tests_data/mountain.obj")
         he = gpy.halfedges(f)
         self.assertTrue(he.shape==(f.shape[0],3,2))
 
     def test_airplane(self):
-        _,f = igl.read_triangle_mesh("test/unit_tests_data/airplane.obj")
+        _,f = gpy.read_mesh("test/unit_tests_data/airplane.obj")
         he = gpy.halfedges(f)
         self.assertTrue(he.shape==(f.shape[0],3,2))
 

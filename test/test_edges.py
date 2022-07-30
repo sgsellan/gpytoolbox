@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestEdges(unittest.TestCase):
 
@@ -12,7 +11,7 @@ class TestEdges(unittest.TestCase):
         self.assertTrue(he.shape[0]*he.shape[1] == e.shape[0])
     
     def test_bunny(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
 
         e = gpy.edges(f)
         #The bunny is closed
@@ -36,7 +35,7 @@ class TestEdges(unittest.TestCase):
         self.assertTrue(len(nonmanifold_indices)==0)
 
     def test_mountain(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/mountain.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/mountain.obj")
 
         #The mountain has a boundary of length 636
         b = 636
@@ -62,7 +61,7 @@ class TestEdges(unittest.TestCase):
         self.assertTrue(len(nonmanifold_indices)==0)
 
     def test_airplane(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/airplane.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/airplane.obj")
         
         #The plane has a boundary of length 341 with 27 components
         b = 341

@@ -63,7 +63,8 @@ jobs:
       - name: Run unit tests
         shell: bash -l {0}
         run: |
-          python -m unittest -v test/test_in_element_aabb.py test/test_read_mesh.py test/test_write_mesh.py test/test_ray_mesh_intersect.py test/test_remesh_botsch.py
+          python -m pip install tetgen
+          python -m unittest -v
         # python -c "import gpytoolbox"
         # python -c "import gpytoolbox_bindings"
           

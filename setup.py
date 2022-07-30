@@ -116,7 +116,7 @@ def main():
         license="MIT",
         package_dir = {'': 'src'},
         packages=setuptools.find_packages(where="src"),
-        install_requires=['numpy', 'scipy'],
+        install_requires=['numpy', 'scipy', 'matplotlib'],
         ext_modules=[CMakeExtension('.', exclude_arch=exclude_arch)],
         setup_requires=['pybind11>=2.4'],
         cmdclass=dict(build_ext=CMakeBuild),

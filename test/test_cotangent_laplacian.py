@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 import scipy as sp
 
 class TestCotangentLaplacian(unittest.TestCase):
@@ -23,7 +22,7 @@ class TestCotangentLaplacian(unittest.TestCase):
     def test_wrt_grad(self):
         meshes = ["armadillo.obj", "bunny.obj", "mountain.obj"]
         for mesh in meshes:
-            v,f = igl.read_triangle_mesh("test/unit_tests_data/" + mesh)
+            v,f = gpy.read_mesh("test/unit_tests_data/" + mesh)
 
             L = gpy.cotangent_laplacian(v,f)
 
@@ -35,7 +34,7 @@ class TestCotangentLaplacian(unittest.TestCase):
             self.assertTrue(np.isclose(sp.sparse.linalg.norm(L-L_grad) / L.nnz, 0.))
 
     def test_bunny_oded(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
 
         L = gpy.cotangent_laplacian(v,f)
 
