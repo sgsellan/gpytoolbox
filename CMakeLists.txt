@@ -33,6 +33,7 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.h
 	src/cpp/remesher/split_edges.h
 	src/cpp/remesher/tangential_relaxation.h
+	src/cpp/mesh_union.h
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
@@ -45,10 +46,11 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.cpp
 	src/cpp/remesher/split_edges.cpp
 	src/cpp/remesher/tangential_relaxation.cpp
+	src/cpp/mesh_union.cpp
 	)
 
 # target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
-target_link_libraries(cpytoolbox igl::core igl::embree)
+target_link_libraries(cpytoolbox igl::core igl::embree igl_copyleft::cgal)
 
 
 npe_add_module(gpytoolbox_bindings
@@ -62,9 +64,10 @@ npe_add_module(gpytoolbox_bindings
 	src/cpp/binding_remesher_botsch.cpp
 	src/cpp/binding_write_obj.cpp
 	src/cpp/binding_read_obj.cpp
+	src/cpp/binding_mesh_union.cpp
 )
 
 # target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
-target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
+target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core)
 
 target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")
