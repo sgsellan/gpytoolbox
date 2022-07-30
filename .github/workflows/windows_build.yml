@@ -43,6 +43,7 @@ jobs:
         shell: bash -l {0}
         run: |
           python -c "import gpytoolbox"
+          python -c "import gpytoolbox_bindings"
           python -m unittest -v test/test_in_element_aabb.py
         # python -m unittest -v
 

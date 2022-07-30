@@ -20,7 +20,7 @@ option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
 
 add_library(cpytoolbox
-	STATIC
+	SHARED
 	# Headers
 	src/cpp/upper_envelope.h
 	src/cpp/ray_mesh_intersect_aabb.h
