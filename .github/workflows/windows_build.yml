@@ -47,7 +47,6 @@ jobs:
         shell: bash -l {0}
         run: |
           tree
-          python -m unittest -v test/test_in_element_aabb.py
           dumpbin /dependents D:\a\gpytoolbox\gpytoolbox\build\Release\gpytoolbox_bindings.pyd
 
       - name: Run unit tests
