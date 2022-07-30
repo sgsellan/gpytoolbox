@@ -2,8 +2,10 @@ import numpy as np
 # Bindings using C++ and Eigen:
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
-from gpytoolbox_eigen_bindings import mesh_union, offset_surface, do_meshes_intersect, decimate
+from gpytoolbox.do_meshes_intersect import do_meshes_intersect
+from gpytoolbox.mesh_boolean import mesh_boolean
+from gpytoolbox.decimate import decimate
+from gpytoolbox.offset_surface import offset_surface
 
 def lazy_cage(V,F,grid_size=50,max_iter=10,num_faces=100):
 
@@ -18,7 +20,8 @@ def lazy_cage(V,F,grid_size=50,max_iter=10,num_faces=100):
         decimated_vertices,decimated_faces,J,I = decimate(vertices,faces,num_faces)
 
     #    "self union" to remove self-intersections
-        clean_vertices, clean_faces = mesh_union(decimated_vertices,decimated_faces.astype(np.int32),decimated_vertices,decimated_faces.astype(np.int32))
+        # clean_vertices, clean_faces = mesh_union(decimated_vertices,decimated_faces.astype(np.int32),decimated_vertices,decimated_faces.astype(np.int32))
+        clean_vertices, clean_faces = mesh_boolean(decimated_vertices,decimated_faces,decimated_vertices,decimated_faces,boolean_type='union')
         a = do_meshes_intersect(clean_vertices,clean_faces,V,F.astype(np.int32))
         if len(a[0])>0: # it intersects
             ds[0] = d

@@ -3,7 +3,7 @@
 #include <igl/decimate.h>
 
 // // decimated_vertices,decimated_faces,J,I = igl.decimate(vertices,faces,num_faces)
-npe_function(decimate)
+npe_function(_decimate_cpp_impl)
 npe_arg(vt, dense_double)
 npe_arg(ft, dense_int)
 npe_arg(num_faces, int)

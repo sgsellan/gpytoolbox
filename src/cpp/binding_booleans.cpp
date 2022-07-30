@@ -5,7 +5,7 @@
 #include <igl/copyleft/cgal/RemeshSelfIntersectionsParam.h>
 
 
-npe_function(mesh_union)
+npe_function(_mesh_union_cpp_impl)
 npe_arg(va, dense_double)
 npe_arg(fa, dense_int)
 npe_arg(vb, dense_double)
@@ -21,7 +21,7 @@ npe_begin_code()
     return std::make_tuple(npe::move(VC), npe::move(FC));
 npe_end_code()
 
-npe_function(mesh_intersection)
+npe_function(_mesh_intersection_cpp_impl)
 npe_arg(va, dense_double)
 npe_arg(fa, dense_int)
 npe_arg(vb, dense_double)
@@ -37,7 +37,7 @@ npe_begin_code()
     return std::make_tuple(npe::move(VC), npe::move(FC));
 npe_end_code()
 
-npe_function(mesh_difference)
+npe_function(_mesh_difference_cpp_impl)
 npe_arg(va, dense_double)
 npe_arg(fa, dense_int)
 npe_arg(vb, dense_double)
@@ -53,7 +53,7 @@ npe_begin_code()
     return std::make_tuple(npe::move(VC), npe::move(FC));
 npe_end_code()
 
-npe_function(do_meshes_intersect)
+npe_function(_do_meshes_intersect_cpp_impl)
 npe_arg(va, dense_double)
 npe_arg(fa, dense_int)
 npe_arg(vb, dense_double)

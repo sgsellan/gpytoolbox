@@ -1,8 +1,8 @@
 #include <npe.h>
 #include <pybind11/stl.h>
-#include <igl/offset_surface.h>
+#include "igl/offset_surface.h"
 
-npe_function(offset_surface)
+npe_function(_offset_surface_cpp_impl)
 npe_arg(va, dense_double)
 npe_arg(fa, dense_int)
 npe_arg(iso, double)

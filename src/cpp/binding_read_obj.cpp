@@ -1,6 +1,6 @@
 #include <npe.h>
 #include <pybind11/stl.h>
-#include <read_obj.h>
+#include "read_obj.h"
 
 npe_function(_read_obj_cpp_impl)
 npe_arg(file, std::string)

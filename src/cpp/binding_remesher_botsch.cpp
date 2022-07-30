@@ -1,8 +1,8 @@
 #include <npe.h>
 #include <pybind11/stl.h>
-#include <remesher/remesh_botsch.h>
+#include "remesher/remesh_botsch.h"
 
-npe_function(remesh_botsch)
+npe_function(_remesh_botsch_cpp_impl)
 npe_arg(v, dense_double)
 npe_arg(f, dense_int)
 npe_arg(i, int)

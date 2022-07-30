@@ -2,20 +2,20 @@
 import sys
 import os
 # try:
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Debug")))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build", "Release")))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
 # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build/')))
 # sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../build-linux/')))
-from gpytoolbox_eigen_bindings import mesh_union
-from gpytoolbox_eigen_bindings import mesh_difference
-from gpytoolbox_eigen_bindings import mesh_intersection
-from gpytoolbox_eigen_bindings import upper_envelope
-from gpytoolbox_eigen_bindings import ray_mesh_intersect
-from gpytoolbox_eigen_bindings import in_element_aabb
-from gpytoolbox_eigen_bindings import decimate
-from gpytoolbox_eigen_bindings import remesh_botsch
-from .lazy_cage import lazy_cage
+# from gpytoolbox_bindings import mesh_union
+# from gpytoolbox_bindings import mesh_difference
+# from gpytoolbox_bindings import mesh_intersection
+# from gpytoolbox_bindings import upper_envelope
+# from gpytoolbox_bindings import ray_mesh_intersect
+# from gpytoolbox_bindings import in_element_aabb
+# from gpytoolbox_bindings import decimate
+# from gpytoolbox_bindings import remesh_botsch
+# from .lazy_cage import lazy_cage
 # except:
 #     print("-------------------------------------------------------------------")
 #     print("WARNING: You are using only the pure-python gpytoolbox functionality. Some functions will be unavailable. \n See https://github.com/sgsellan/gpytoolbox for full installation instructions.")
@@ -84,3 +84,11 @@ from .array_correspondence import array_correspondence
 from .subdivide import subdivide
 from .read_mesh import read_mesh
 from .write_mesh import write_mesh
+from .do_meshes_intersect import do_meshes_intersect
+from .mesh_boolean import mesh_boolean
+from .decimate import decimate
+from .in_element_aabb import in_element_aabb
+from .ray_mesh_intersect import ray_mesh_intersect
+from .remesh_botsch import remesh_botsch
+from .upper_envelope import upper_envelope
+from .lazy_cage import lazy_cage
