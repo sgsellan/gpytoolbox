@@ -25,6 +25,11 @@ jobs:
         shell: bash -l {0}
         run: |
           cmd //c tree //F
+      
+      - name: Debug dumpbin
+        shell: bash -l {0}
+        run: |
+          cmd //c dumpbin //dependents build\Release\gpytoolbox_bindings.cp37-win_amd64.pyd
 
       # - uses: conda-incubator/setup-miniconda@v2
       #   with:
