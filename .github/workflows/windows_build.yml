@@ -24,8 +24,8 @@ jobs:
       - name: Debug tree 2
         shell: bash -l {0}
         run: |
-          cmd //c tree
-          
+          cmd //c tree /F
+
       # - uses: conda-incubator/setup-miniconda@v2
       #   with:
       #     auto-update-conda: true
@@ -72,7 +72,7 @@ jobs:
       - name: Debug tree 2
         shell: bash -l {0}
         run: |
-          cmd //c tree
+          cmd //c tree /F
 
       - name: Run unit tests
         shell: bash -l {0}
