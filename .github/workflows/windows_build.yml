@@ -59,9 +59,9 @@ jobs:
       - name: Debug
         shell: bash -l {0}
         run: |
-          cd D:\
+          cd D:
           ls
-          cd Program/ Files
+          cd a
           ls
 
       - name: Run unit tests
