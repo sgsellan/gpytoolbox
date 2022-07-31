@@ -66,6 +66,6 @@ npe_add_module(gpytoolbox_bindings
 )
 
 # target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
-target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core)
+target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
 
 target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")
