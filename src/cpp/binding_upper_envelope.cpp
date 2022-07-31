@@ -1,10 +1,10 @@
 #include <npe.h>
 #include <pybind11/stl.h>
-#include <upper_envelope.h>
+#include "upper_envelope.h"
 
 
 // // void upper_envelope(const Eigen::MatrixXd VT, const Eigen::MatrixXi FT, const Eigen::MatrixXd DT, Eigen::MatrixXd & UT, Eigen::MatrixXi & GT, Eigen::MatrixXd LT);
-npe_function(upper_envelope)
+npe_function(_upper_envelope_cpp_impl)
 npe_arg(vt, dense_double)
 npe_arg(ft, dense_int)
 npe_arg(dt, dense_double)

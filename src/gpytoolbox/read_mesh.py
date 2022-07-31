@@ -2,6 +2,7 @@ import os
 import numpy as np
 import csv
 
+
 def read_mesh(file,
     fmt=None,
     return_UV=False,
@@ -59,7 +60,7 @@ def read_mesh(file,
 
 try:
     # Import C++ reader
-    from gpytoolbox_eigen_bindings import _read_obj_cpp_impl
+    from gpytoolbox_bindings import _read_obj_cpp_impl
     _CPP_READER_AVAILABLE = True
 except Exception as e:
     _CPP_READER_AVAILABLE = False

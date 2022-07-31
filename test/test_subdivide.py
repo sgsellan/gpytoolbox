@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 
 class TestSubdivide(unittest.TestCase):
@@ -104,20 +103,20 @@ class TestSubdivide(unittest.TestCase):
     def test_meshes(self):
         meshes = ["armadillo.obj", "bunny_oded.obj", "bunny.obj", "mountain.obj"]
         for mesh in meshes:
-            v,f = igl.read_triangle_mesh("test/unit_tests_data/" + mesh)
+            v,f = gpy.read_mesh("test/unit_tests_data/" + mesh)
             self.consistency(v,f)
 
 
     def test_bunny_oded(self):
         #Ground-truth test a mesh without boundary
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
-        vu_gt,fu_gt = igl.read_triangle_mesh("test/unit_tests_data/upsampled_bunny_oded.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
+        vu_gt,fu_gt = gpy.read_mesh("test/unit_tests_data/upsampled_bunny_oded.obj")
         vu,fu = gpy.subdivide(v,f)
         self.assertTrue(np.isclose(vu,vu_gt).all())
         self.assertTrue((fu==fu_gt).all())
 
 
-        vu_gt,fu_gt = igl.read_triangle_mesh("test/unit_tests_data/looped_bunny_oded.obj")
+        vu_gt,fu_gt = gpy.read_mesh("test/unit_tests_data/looped_bunny_oded.obj")
         vu,fu = gpy.subdivide(v,f,method='loop')
         self.assertTrue(np.isclose(vu,vu_gt).all())
         self.assertTrue((fu==fu_gt).all())
@@ -125,15 +124,15 @@ class TestSubdivide(unittest.TestCase):
 
     def test_mountain(self):
         #Ground-truth test a mesh with boundary
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/mountain.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/mountain.obj")
 
         vu,fu = gpy.subdivide(v,f)
-        vu_gt,fu_gt = igl.read_triangle_mesh("test/unit_tests_data/upsampled_mountain.obj")
+        vu_gt,fu_gt = gpy.read_mesh("test/unit_tests_data/upsampled_mountain.obj")
         self.assertTrue(np.isclose(vu,vu_gt).all())
         self.assertTrue((fu==fu_gt).all())
 
         vu,fu = gpy.subdivide(v,f,method='loop')
-        vu_gt,fu_gt = igl.read_triangle_mesh("test/unit_tests_data/looped_mountain.obj")
+        vu_gt,fu_gt = gpy.read_mesh("test/unit_tests_data/looped_mountain.obj")
         self.assertTrue(np.isclose(vu,vu_gt).all())
         self.assertTrue((fu==fu_gt).all())
 

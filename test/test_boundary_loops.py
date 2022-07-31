@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestBoundaryLoops(unittest.TestCase):
 
@@ -12,14 +11,14 @@ class TestBoundaryLoops(unittest.TestCase):
         self.assertTrue(len(loops[0])==3)
     
     def test_bunny(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
 
         loops = gpy.boundary_loops(f)
         #The bunny is closed
         self.assertTrue(len(loops)==0)
 
     def test_mountain(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/mountain.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/mountain.obj")
 
         #The mountain has a boundary of length 636 with one component
         b = 636
@@ -30,7 +29,7 @@ class TestBoundaryLoops(unittest.TestCase):
         self.assertTrue(len(loops[0])==b)
 
     def test_airplane(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/airplane.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/airplane.obj")
         
         #The plane has a boundary of length 341 with 27 components
         b = 341

@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestBoundaryEdges(unittest.TestCase):
 
@@ -12,7 +11,7 @@ class TestBoundaryEdges(unittest.TestCase):
         self.assertTrue(be.shape[0] == e.shape[0])
     
     def test_bunny(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
 
         be = gpy.boundary_edges(f)
 
@@ -20,7 +19,7 @@ class TestBoundaryEdges(unittest.TestCase):
         self.assertTrue(len(be)==0)
 
     def test_mountain(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/mountain.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/mountain.obj")
 
         be = gpy.boundary_edges(f)
 
@@ -34,7 +33,7 @@ class TestBoundaryEdges(unittest.TestCase):
 
 
     def test_airplane(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/airplane.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/airplane.obj")
 
         be = gpy.boundary_edges(f)
         

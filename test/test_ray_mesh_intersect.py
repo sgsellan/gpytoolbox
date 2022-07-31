@@ -1,12 +1,11 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestRayMeshIntersect(unittest.TestCase):
     def test_simple_cube(self):
         # This is a cube, centered at the origin, with side length 1
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/cube.obj")
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
         cam_pos = np.array([[1,0.1,0.1],[1,0.2,0.0]])
         cam_dir = np.array([[-1,0,0],[-1,0,0]])
         t, ids, l = gpytoolbox.ray_mesh_intersect(cam_pos.astype(np.float64),cam_dir.astype(np.float64),v.astype(np.float64),f.astype(np.int32))

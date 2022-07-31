@@ -1,12 +1,11 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestDoublearea(unittest.TestCase):
     def test_polyline_lengths(self):
         # This is a cube, centered at the origin, with side length 1
-        # v,f = igl.read_triangle_mesh("test/unit_tests_data/cube.obj")
+        # v,f = gpy.read_mesh("test/unit_tests_data/cube.obj")
         #
         # Let's make up a simple polyline
         v = np.array([[0],[0.2],[0.5],[0.98],[1.0]])
@@ -43,7 +42,7 @@ class TestDoublearea(unittest.TestCase):
 
 
     def test_orientation(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
         A = gpytoolbox.doublearea(v,f)
         self.assertTrue((A>=0).all())
         f_backwards = f[:,[0,2,1]]

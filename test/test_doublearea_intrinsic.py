@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestDoubleareaIntrinsic(unittest.TestCase):
     def test_equilateral_triangle(self):

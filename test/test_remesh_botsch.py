@@ -1,14 +1,13 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-import igl
 
 # TODO: Check that projection is happening (with distances to surface, maybe?)
 
 class TestRemeshBotsch(unittest.TestCase):
     def test_bunny(self):
         np.random.seed(0)
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
         u,g = gpytoolbox.remesh_botsch(v,f.astype(np.int32),20,0.01,True)
         # igl.write_obj("output.obj",u,g)
         E,bd = gpytoolbox.edges(g,return_boundary_indices=True)
@@ -21,7 +20,7 @@ class TestRemeshBotsch(unittest.TestCase):
     # This example used to break the remesher     
     def test_chair_example(self):
         np.random.seed(0)
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/wooden-chair-remesher-bug.obj")
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/wooden-chair-remesher-bug.obj")
         u,g = gpytoolbox.remesh_botsch(v,f.astype(np.int32),5,0.1,True)
         # There used to be a bunch of duplicate vertices
         sv,_,_ = gpytoolbox.remove_duplicate_vertices(u)

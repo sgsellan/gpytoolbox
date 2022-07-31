@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestTipAngles(unittest.TestCase):
 
@@ -20,7 +19,7 @@ class TestTipAngles(unittest.TestCase):
         self.assertTrue(np.isclose(alpha, alpha_gt).all())
 
     def test_bunny_oded(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
 
         alpha = gpy.tip_angles(v,f)
         alpha_gt = np.array([[0.86029597, 1.63838384, 0.64291284],

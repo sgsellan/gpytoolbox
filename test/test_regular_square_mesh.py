@@ -2,10 +2,6 @@ from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
 
-# Would be nice to get rid of this
-from igl import adjacency_matrix, connected_components
-
-
 class TestRegularSquareMesh(unittest.TestCase):
     def test_valid_mesh(self):
         # Generate meshes of very diverse sizes
@@ -15,7 +11,8 @@ class TestRegularSquareMesh(unittest.TestCase):
             self.assertTrue(np.max(V)==1.0)
             self.assertTrue(np.min(V)==-1.0)
             # Check: all triangles are combinatorially connected
-            self.assertTrue(np.max(connected_components(adjacency_matrix(F))[0])==1)
+            # TODO WRITE WITHOUT IGL
+            # self.assertTrue(np.max(connected_components(adjacency_matrix(F))[0])==1)
             # Check: all faces properly oriented
             normals = np.cross( V[F[:,1],:] - V[F[:,0],:] , V[F[:,2],:] - V[F[:,0],:] , axis=1)
             self.assertTrue((normals>0).all())

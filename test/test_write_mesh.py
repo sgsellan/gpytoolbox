@@ -2,8 +2,6 @@ from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
 
-import time
-
 class TestWriteMesh(unittest.TestCase):
 
     def test_read_then_write(self):

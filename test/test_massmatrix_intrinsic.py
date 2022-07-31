@@ -3,7 +3,6 @@ from .context import numpy as np
 from .context import unittest
 import numpy as np
 import scipy as sp
-import igl
 
 
 class TestMassmatrixIntrinsic(unittest.TestCase):

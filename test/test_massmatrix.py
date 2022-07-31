@@ -3,13 +3,12 @@ from .context import numpy as np
 from .context import unittest
 import numpy as np
 import scipy as sp
-import igl
 
 
 class TestMassmatrix(unittest.TestCase):
     def test_polyline_integral(self):
         # This is a cube, centered at the origin, with side length 1
-        # v,f = igl.read_triangle_mesh("test/unit_tests_data/cube.obj")
+        # v,f = gpy.read_mesh("test/unit_tests_data/cube.obj")
         #
         # Let's make up a simple polyline
         v = np.array([[0],[0.2],[0.5],[0.98],[1.0]])
@@ -60,7 +59,7 @@ class TestMassmatrix(unittest.TestCase):
         self.assertTrue(np.isclose(M_f.toarray(), M_f_gt).all())
 
     def test_bunny_oded(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
 
         M_b = gpy.massmatrix(v,f, type='barycentric')
         M_v = gpy.massmatrix(v,f, type='voronoi')
