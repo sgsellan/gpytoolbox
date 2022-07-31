@@ -23,14 +23,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runs-on: ubuntu-latest
-            cibw-arch: manylinux_x86_64
+          # - runs-on: ubuntu-latest
+          #   cibw-arch: manylinux_x86_64
           # - runs-on: ubuntu-latest
           #   cibw-arch: manylinux_i686
-          - runs-on: macos-latest
-            cibw-arch: macosx_x86_64
-          - runs-on: macos-latest
-            cibw-arch: macosx_arm64
+          # - runs-on: macos-latest
+          #   cibw-arch: macosx_x86_64
+          # - runs-on: macos-latest
+          #   cibw-arch: macosx_arm64
           # - runs-on: macos-latest
           #   cibw-arch: macosx_universal2
           - runs-on: windows-latest
@@ -98,9 +98,10 @@ jobs:
         run: |
           python -m cibuildwheel --output-dir wheelhouse
 
-      # - name: tree debug
-      #   run: |
-      #     cmd //c tree //F
+      - name: tree debug
+        run: |
+          cd D:
+          cmd //c tree //F
 
       # - name: Fix Windows wheels
       #   run: |
