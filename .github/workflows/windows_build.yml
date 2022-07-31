@@ -21,17 +21,6 @@ jobs:
         with:
           python-version: '3.7'
 
-      - name: Debug tree 2
-        shell: bash -l {0}
-        run: |
-          cmd //c tree //F
-
-      - name: big tree
-        shell: bash -l {0}
-        run: |
-          cd D:
-          cmd //c tree //F
-
       # - uses: conda-incubator/setup-miniconda@v2
       #   with:
       #     auto-update-conda: true
@@ -75,16 +64,11 @@ jobs:
           cd a
           ls
 
-      - name: Debug tree 2
+      - name: copying dlls
         shell: bash -l {0}
         run: |
-          cmd //c tree //F
-
-      - name: big tree
-        shell: bash -l {0}
-        run: |
-          cd D:
-          cmd //c tree //F
+          cp .\build\_deps\gmp-src\lib\libgmp-10.dll .\build\
+          cp .\build\_deps\mpfr-src\lib\libmpfr-4.dll .\build\
 
       - name: Run unit tests
         shell: bash -l {0}
