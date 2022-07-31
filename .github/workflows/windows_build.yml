@@ -69,6 +69,8 @@ jobs:
         run: |
           cp .\\build\\_deps\\gmp-src\\lib\\libgmp-10.dll .\\build\\.
           cp .\\build\\_deps\\mpfr-src\\lib\\libmpfr-4.dll .\\build\\.
+          p .\\build\\_deps\\gmp-src\\lib\\libgmp-10.dll .
+          cp .\\build\\_deps\\mpfr-src\\lib\\libmpfr-4.dll .
 
       - name: Run unit tests
         shell: bash -l {0}
