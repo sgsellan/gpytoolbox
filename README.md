@@ -19,11 +19,6 @@ existing libraries. If you find yourself in need of new functionality that is
 not in this library, I encourage you to contribute by submitting a pull request
 (see below).
 
-## Template
-
-If you want to build a project using `gpytoolbox`, you can use [our
-template](https://github.com/sgsellan/python-project-with-gpytoolbox).
-
 ## Installation & Use
 
 Most of the functionality in this library is python-only, and it requires no
