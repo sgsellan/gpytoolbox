@@ -76,6 +76,7 @@ jobs:
           echo "CIBW_BUILD=*-${{ matrix.cibw-arch }}" >> $GITHUB_ENV
           echo "CIBW_ENVIRONMENT_MACOS=CMAKE_OSX_ARCHITECTURES=\"$CMAKE_OSX_ARCHITECTURES\"" >> $GITHUB_ENV
 
+    # This shouldn't be necessary
       - name: Install dependencies (Ubuntu)
         shell: bash -l {0}
         if: runner.os == 'Linux'
