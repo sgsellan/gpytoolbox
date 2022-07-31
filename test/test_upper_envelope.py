@@ -13,7 +13,7 @@ class TestUpperEnvelope(unittest.TestCase):
         # print("1")
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
         # Generate many examples
-        for m in np.linspace(20,200,20,dtype=int):
+        for m in np.linspace(20,5000,20,dtype=int):
             # print("2")
             v,f = gpytoolbox.lazy_cage(v,f,num_faces=m)
             # print("3")
