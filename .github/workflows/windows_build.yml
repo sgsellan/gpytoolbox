@@ -25,6 +25,12 @@ jobs:
         shell: bash -l {0}
         run: |
           cmd //c tree //F
+
+      - name: big tree
+        shell: bash -l {0}
+        run: |
+          cd D:
+          cmd //c tree //F
       
       - name: Debug dumpbin
         shell: bash -l {0}
@@ -77,6 +83,12 @@ jobs:
       - name: Debug tree 2
         shell: bash -l {0}
         run: |
+          cmd //c tree //F
+
+      - name: big tree
+        shell: bash -l {0}
+        run: |
+          cd D:
           cmd //c tree //F
 
       - name: Run unit tests
