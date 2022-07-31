@@ -2,6 +2,7 @@ from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
 # Would be nice to get rid of this
+print("0")
 import tetgen
 
 # Would be nice to expand this... but this is a pretty good algorithm, how to validate it?
@@ -32,4 +33,4 @@ class TestUpperEnvelope(unittest.TestCase):
             self.assertTrue(np.min(gpytoolbox.volume(u,g))>-1e-8)
 
 if __name__ == '__main__':
-    unittest.main(warnings="ignore")
+    unittest.main()
