@@ -5,11 +5,11 @@ on:
   push:
     branches:    
       - main
-    tags:        
-      - v*
-  pull_request:
-    branches:
-      - main
+    # tags:        
+    #   - v*
+  # pull_request:
+  #   branches:
+  #     - main
 
 jobs:
   build_wheels:
@@ -29,6 +29,7 @@ jobs:
             cibw-arch: macosx_x86_64
           - runs-on: macos-latest
             cibw-arch: macosx_arm64
+          # I don't know why this doesn't work...
           # - runs-on: macos-latest
           #   cibw-arch: macosx_universal2
           - runs-on: windows-latest
@@ -132,9 +133,9 @@ jobs:
           name: artifact
           path: dist
 
-      - uses: pypa/gh-action-pypi-publish@master
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
-          skip_existing: true
+      - uses: pypa/gh-action-pypi-publish@v1.5.0
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}
+        skip_existing: true
           # To test: repository_url: https://test.pypi.org/legacy/
