@@ -6,7 +6,6 @@ tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/linux_build.yml/
 tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/macos_build.yml/badge.svg)
 ![unit
 tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/windows_build.yml/badge.svg)
-[![PyPI](https://img.shields.io/pypi/v/polyscope?style=plastic)](https://pypi.org/project/polyscope/)
 
 [https://www.silviasellan.com/gpytoolbox/](https://www.silviasellan.com/gpytoolbox/)
 
