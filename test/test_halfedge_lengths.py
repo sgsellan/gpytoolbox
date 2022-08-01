@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestHalfedgeLengths(unittest.TestCase):
 
@@ -12,7 +11,7 @@ class TestHalfedgeLengths(unittest.TestCase):
         self.assertTrue(np.isclose(l, np.array([[np.sqrt(2.), 1., 1.]])).all())
     
     def test_bunny(self):
-        v,f = igl.read_triangle_mesh("test/unit_tests_data/bunny_oded.obj")
+        v,f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
 
         l = gpy.halfedge_lengths(v,f)
 

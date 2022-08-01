@@ -1,6 +1,6 @@
 #include <npe.h>
 #include <pybind11/stl.h>
-#include <write_obj.h>
+#include "write_obj.h"
 
 
 npe_function(_write_obj_cpp_impl)

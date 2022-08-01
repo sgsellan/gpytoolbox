@@ -49,7 +49,7 @@ def write_mesh(file,
 
 try:
     # Import C++ reader
-    from gpytoolbox_eigen_bindings import _write_obj_cpp_impl
+    from gpytoolbox_bindings import _write_obj_cpp_impl
     _CPP_WRITER_AVAILABLE = True
 except Exception as e:
     _CPP_WRITER_AVAILABLE = False

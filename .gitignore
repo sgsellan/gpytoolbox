@@ -5,3 +5,5 @@
 *.code-workspace
 build/
 build-linux/
+.vs-code/
+site/

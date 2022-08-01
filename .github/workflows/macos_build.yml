@@ -1,0 +1,45 @@
+name: Full build (MacOS)
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: "macos-latest"
+    steps:
+
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+
+      # - uses: actions/setup-python@v2
+      #   name: Install Python
+      #   with:
+      #     python-version: '3.7'
+
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          python3 -m pip install numpy
+          python3 -m pip install scipy
+          python3 -m pip install matplotlib
+
+      - name: Install c++ bindings
+        shell: bash -l {0}
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=$(python3 -c "import sys; print(sys.executable)") ..  
+          cmake --build "." --config Release
+
+      - name: Run unit tests
+        shell: bash -l {0}
+        run: |
+          python3 -m pip install tetgen
+          python3 -m unittest -v
+
+# see https://github.com/libigl/libigl/blob/main/.github/workflows/continuous.yml

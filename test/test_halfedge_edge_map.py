@@ -1,7 +1,6 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-import igl
 
 class TestHalfedgeEdgeMap(unittest.TestCase):
 
@@ -34,7 +33,7 @@ class TestHalfedgeEdgeMap(unittest.TestCase):
     def test_variety_of_meshes(self):
         meshes = ["airplane.obj", "armadillo.obj", "bunny.obj", "bunny_oded.obj", "mountain.obj", "wooden-chair-remesher-bug.obj"]
         for mesh in meshes:
-            v,f = igl.read_triangle_mesh("test/unit_tests_data/" + mesh)
+            v,f = gpy.read_mesh("test/unit_tests_data/" + mesh)
 
             do_m = True
             do_nm = v.shape[0]<5000
