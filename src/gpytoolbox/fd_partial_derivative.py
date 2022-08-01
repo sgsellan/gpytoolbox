@@ -3,7 +3,37 @@ from numpy.core.function_base import linspace
 from scipy.sparse import csr_matrix
 
 
-def fd_partial_derivative(gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),direction=0):
+def fd_partial_derivative(gs,h,direction):
+    """Finite difference partial derivative on a grid
+
+    Given a regular finite-difference grid described by the number of nodes on each side, the grid spacing and a desired direction, construct a sparse matrix to compute first partial derivatives in the given direction onto the staggered grid in that direction.
+
+    Parameters
+    ----------
+    gs : numpy int array
+        Grid size [nx,ny(,nz)]
+    h : numpy double array
+        Spacing between grid points [hx,hy(,hz)]
+    direction : int
+        Direction with respect to which the derivative is computed (x: 0, y: 1, z: 2)
+
+    Returns
+    -------
+    W : scipy sparse.csr_matrix
+        Sparse matrix of partial derivative
+
+    See Also
+    --------
+    fd_grad, fd_interpolate.
+
+    Notes
+    -----
+    For any function f defined on a gs by gs grid, then W @ f contains the directional derivative on a staggered grid
+
+    Examples
+    --------
+    TO-DO
+    """
     # Given a regular finite-difference grid described by the number of nodes 
     # on each side, the grid spacing and a desired direction, construct a sparse matrix 
     # to compute first partial derivatives in the given direction onto the 
