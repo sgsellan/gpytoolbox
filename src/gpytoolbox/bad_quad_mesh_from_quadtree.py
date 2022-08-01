@@ -6,26 +6,37 @@ from .remove_duplicate_vertices import remove_duplicate_vertices
 
 
 def bad_quad_mesh_from_quadtree(C,W,CH):
-    # BAD_QUAD_MESH_FROM_QUADTREE
-    # From a proper quadtree, builds a connected but degenerate quad mesh
-    # containing only the leaf nodes, mostly for visualization purposes.
-    #
-    # V,Q = bad_quad_mesh_from_quadtree(C,W,CH)
-    #
-    # Inputs:
-    #   C #nodes by 3 matrix of cell centers
-    #   W #nodes vector of cell widths (**not** half widths)
-    #   CH #nodes by 4 matrix of child indeces (-1 if leaf node)
-    #
-    # Outputs:
-    #   V #V by 3 matrix of vertex positions
-    #   Q #Q by 4 matrix of quad indeces into V
-    #   H is None if dimension is 2, contains hex indeces if dimension is 3
-    #
-    # Example:
-    #
-    #
-    # See also: initialize_quadtree
+    """Builds a mesh of a quadtree or octree for visualization purposes.
+
+    From a proper quadtree, builds a vertex-connected but degenerate quad mesh
+    containing only the leaf nodes, to be used for visualizing the quadtree and quantities defined on its leaf nodes.
+
+    Parameters
+    ----------
+    C : numpy double array
+        Matrix of cell centers
+    W : numpy double array
+        Vector of half cell widths
+    CH : numpy int array
+        Matrix of child indices (-1 if leaf node)
+
+    Returns
+    -------
+    V : numpy double array
+        Matrix of mesh vertices
+    Q : numpy int array
+        Matrix of quad mesh indices
+    H : numpy int array
+        Matrix of hexahedral mesh indices if input is octree (empty if quadtree)
+
+    See Also
+    --------
+    initialize_quadtree, quadtree_children.
+
+    Examples
+    --------
+    TO-DO
+    """
     dim = C.shape[1]
     is_child = (CH[:,1]==-1)
     W = W[is_child][:,None]
