@@ -1,0 +1,10 @@
+# https://realpython.com/python-project-documentation-with-mkdocs/
+# to deploy: mkdocs gh-deploy
+site_name: Gpytoolbox
+theme:
+  name: "material"
+plugins:
+  - mkdocstrings
+favicon: assets/images/favicon.png
+repo_url: https://github.com/sgsellan/gpytoolbox
+repo_name: sgsellan/gpytoolbox
