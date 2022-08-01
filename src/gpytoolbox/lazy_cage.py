@@ -22,7 +22,7 @@ def lazy_cage(V,F,grid_size=50,max_iter=10,num_faces=100):
     #    "self union" to remove self-intersections
         # clean_vertices, clean_faces = mesh_union(decimated_vertices,decimated_faces.astype(np.int32),decimated_vertices,decimated_faces.astype(np.int32))
         clean_vertices, clean_faces = mesh_boolean(decimated_vertices,decimated_faces,decimated_vertices,decimated_faces,boolean_type='union')
-        a = do_meshes_intersect(clean_vertices,clean_faces,V,F.astype(np.int32))
+        _,a = do_meshes_intersect(clean_vertices,clean_faces,V,F.astype(np.int32))
         if len(a[0])>0: # it intersects
             ds[0] = d
         else:

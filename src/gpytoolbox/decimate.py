@@ -31,13 +31,13 @@ def decimate(V,F,face_ratio=0.1,num_faces=None):
     --------
     lazy_cage.
 
-    Examples
-    --------
-    TO-DO
-
     Notes
     -----
     As described in libigl, this collapses the shortest edges first, placing the new vertex at the edge midpoint, and stops when the desired number of faces is reached or no face can be collapsed without going below the desired number of faces.
+
+    Examples
+    --------
+    TO-DO
     """
 
     # Try to import C++ binding
