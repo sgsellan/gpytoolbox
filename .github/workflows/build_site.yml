@@ -3,10 +3,6 @@ on:
   push:
     branches:
       - main
-      # REMEMBER TO DELETE THIS
-  pull_request:
-    branches:
-      - main
 
 
 jobs:
