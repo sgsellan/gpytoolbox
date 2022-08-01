@@ -7,7 +7,7 @@ tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/macos_build.yml/
 ![unit
 tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/windows_build.yml/badge.svg)
 
-[https://www.silviasellan.com/gpytoolbox/](https://www.silviasellan.com/gpytoolbox/)
+[https://gpytoolbox.org](https://gpytoolbox.org/)
 
 *Authors:* [Silvia Sellán](https://www.silviasellan.com), University of Toronto
 and [Oded Stein](https://odedstein.com), Massachusetts Institute of Technology
