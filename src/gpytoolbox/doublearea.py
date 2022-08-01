@@ -1,23 +1,36 @@
 import numpy as np
 from gpytoolbox.halfedge_lengths_squared import halfedge_lengths_squared
-from gpytoolbox.edge_indeces import edge_indeces
+from gpytoolbox.edge_indices import edge_indices
 from gpytoolbox.doublearea_intrinsic import doublearea_intrinsic
 
 def doublearea(V,F=None):
-    # Construct the doublearea of each element of a line or triangle mesh
-    #
-    # Input:
-    #       V  #V by 3 numpy array of mesh vertex positions
-    #       F  #F by 3 int numpy array of face/edge vertex indices into V
-    #
-    # Output:
-    #       A  #F vector of twice the (unsigned) area/length 
+    """Construct the doublearea of each element of a line or triangle mesh.
+
+    Parameters
+    ----------
+    V : numpy double array
+        Matrix of vertex coordinates
+    F : numpy int array, optional
+        Matrix of triangle indices, None if ordered polyline (by default, None)
+
+    Returns
+    -------
+    dblA : numpy double array
+        vector of twice the (unsigned) area/length 
+
+    See Also
+    --------
+    doublearea_intrinsic.
+
+    Examples
+    --------
+    TO-DO
+    """
 
     # if you didn't pass an F then this is a ordered polyline
     if (F is None):
-        F = edge_indeces(V.shape[0])
+        F = edge_indices(V.shape[0])
 
-    dim = V.shape[1]
     simplex_size = F.shape[1]
     # Option 1: simplex size is two
     if simplex_size==2:

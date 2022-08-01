@@ -98,8 +98,7 @@ To write
 - Make every function documented with docstrings so we have pretty auto
   documentation.
 - Fix argument conventions (None vs empty array)
-- Write unit tests for `bad_quad_mesh_from_quadtree`,
-  `do_meshes_intersect`, `edge_indeces` (fix spelling), `lazy_cage`,
+- Write unit tests for `edge_indices`, `lazy_cage`,
   `linear_elasticity_stiffness`, `offset_surface`, `signed_distance_polygon`,
   `subdivide_quad`.
 - Figure out what to do about `png2poly`, including writing test.

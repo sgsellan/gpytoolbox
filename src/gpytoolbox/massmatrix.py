@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from gpytoolbox.edge_indeces import edge_indeces
+from gpytoolbox.edge_indices import edge_indices
 from gpytoolbox.halfedge_lengths_squared import halfedge_lengths_squared
 from gpytoolbox.massmatrix_intrinsic import massmatrix_intrinsic
 
@@ -22,7 +22,7 @@ def massmatrix(V,F=None,type='voronoi'):
 
     # if you didn't pass an F then this is a ordered polyline
     if (F is None):
-        F = edge_indeces(V.shape[0])
+        F = edge_indices(V.shape[0])
 
     simplex_size = F.shape[1]
     # Option 1: simplex size is two

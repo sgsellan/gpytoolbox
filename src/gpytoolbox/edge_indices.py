@@ -1,6 +1,35 @@
 import numpy as np
 
-def edge_indeces(n,closed=False):
+def edge_indices(n,closed=False):
+    """Returns matrix of edge indices
+
+    Given an ordered polyline, this returns the edge indeces in a similar way to how the face indeces of a triangle mesh are given.
+
+    Parameters
+    ----------
+    n : int
+        Number of vertices in polyline
+    closed : boolean, optional (default False)
+        Matrix of triangle indices
+
+    Returns
+    -------
+    EC : numpy int array
+        Matrix of edge indeces
+
+    See Also
+    --------
+    
+
+    Notes
+    -----
+
+
+    Examples
+    --------
+    TO-DO
+    """
+
     # Given an ordered polyline, this returns the edge indeces in a similar way
     # to how the face indeces of a triangle mesh are given.
     # Inputs:

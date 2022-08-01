@@ -1,5 +1,5 @@
 import numpy as np
-from .edge_indeces import edge_indeces
+from .edge_indices import edge_indices
 
 def random_points_on_polyline(V, n, EC=np.empty(0)):
     # Compute n uniformly distributed random points in a given polyline
@@ -20,7 +20,7 @@ def random_points_on_polyline(V, n, EC=np.empty(0)):
     #
 
     if EC.shape[0]==0:
-        EC = edge_indeces(V.shape[0],closed=False)
+        EC = edge_indices(V.shape[0],closed=False)
     
     edge_lengths = np.linalg.norm(V[EC[:,1],:] - V[EC[:,0],:],axis=1)
     normalized_edge_lengths = np.cumsum(edge_lengths)/np.sum(edge_lengths)

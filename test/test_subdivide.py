@@ -7,7 +7,7 @@ class TestSubdivide(unittest.TestCase):
 
     def test_polyline(self):
         v = np.array([[0],[0.2],[0.5],[0.98],[1.0]])
-        f = gpy.edge_indeces(v.shape[0])
+        f = gpy.edge_indices(v.shape[0])
         vu,fu = gpy.subdivide(v,f)
         vu_gt = np.array([[0.  ],
        [0.2 ],

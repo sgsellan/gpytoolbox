@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse import csr_matrix
 
-from gpytoolbox.edge_indeces import edge_indeces
+from gpytoolbox.edge_indices import edge_indices
 
 # Lifted from https://github.com/alecjacobson/gptoolbox/blob/master/mesh/grad.m
 
@@ -17,7 +17,7 @@ def grad(V,F=None):
 
     # if you didn't pass an F then this is a ordered polyline
     if (F is None):
-        F = edge_indeces(V.shape[0])
+        F = edge_indices(V.shape[0])
 
     dim = V.shape[1]
     simplex_size = F.shape[1]

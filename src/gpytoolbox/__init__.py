@@ -14,7 +14,7 @@ except:
 # These functions depend ONLY on numpy, scipy and each other
 from .linear_elasticity import linear_elasticity
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
-from .edge_indeces import edge_indeces
+from .edge_indices import edge_indices
 from .regular_square_mesh import regular_square_mesh
 from .regular_cube_mesh import regular_cube_mesh
 from .signed_distance_polygon import signed_distance_polygon
