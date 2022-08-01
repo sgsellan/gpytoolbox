@@ -26,4 +26,4 @@ jobs:
           CONFIG_FILE: mkdocs.yml
           # EXTRA_PACKAGES: mkdocstrings
           # GITHUB_DOMAIN: github.myenterprise.com
-          # REQUIREMENTS: folder/requirements.txt
+          REQUIREMENTS: docs/requirements.txt
