@@ -3,24 +3,37 @@ from numpy.core.function_base import linspace
 from scipy.sparse import csr_matrix
 
 
-def fd_interpolate(P,gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),corner=np.array([0.0,0.0])):
-    # Given a regular finite-difference grid described by the number of nodes on each side, 
-    # the grid spacing, and the location of the bottom-left-front-most corner node, 
-    # and a list of points, construct a sparse matrix of bilinear interpolation weights so that P = W @ x
-    #
-    # Note: This only works in 2D for now
-    # Note: Ordering in output is consistent with regular_square_mesh
-    #
-    # Input:
-    #       P #P by dim numpy array with interpolated point coordinates
-    #       Optional:
-    #               gs #dim int numpy array of grid sizes [nx,ny]
-    #               h #dim float numpy array of spacing between nearest grid nodes [hx,hy]
-    #               corner a #dim numpy-array of the lowest-valued corner of the grid     
-    #
-    # Output:
-    #       W scipy csr sparse matrix such that if x are the grid nodes, P = W @ x
-    #       
+def fd_interpolate(P,gs,h,corner=np.array([0.0,0.0])):
+    """Bi/Trilinear interpolation matrix
+
+    Given a regular finite-difference grid described by the number of nodes on each side, the grid spacing, and the location of the bottom-left-front-most corner node, and a list of points, construct a sparse matrix of bilinear interpolation weights so that P = W @ x
+
+    Parameters
+    ----------
+    P : numpy double array 
+        Matrix of interpolated point coordinates
+    gs : numpy int array
+        Grid size [nx,ny(,nz)]
+    h : numpy double array
+        Spacing between grid points [hx,hy(,hz)]
+
+    Returns
+    -------
+    W  : scipy sparse.csr_matrix
+        Sparse matrix such that if x are the grid nodes, P = W @ x
+
+    See Also
+    --------
+    regular_square_mesh.
+
+    Notes
+    -----
+    The ordering in the output is consistent with the mesh built in regular_square_mesh
+
+    Examples
+    --------
+    TO-DO
+    """
 
     dim = P.shape[1]
 
