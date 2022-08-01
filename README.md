@@ -98,7 +98,7 @@ To write
 - Make every function documented with docstrings so we have pretty auto
   documentation.
 - Fix argument conventions (None vs empty array)
-- Write unit tests for `edge_indices`, `lazy_cage`,
+- Write unit tests for `lazy_cage`,
   `linear_elasticity_stiffness`, `offset_surface`, `signed_distance_polygon`,
   `subdivide_quad`.
 - Figure out what to do about `png2poly`, including writing test.
