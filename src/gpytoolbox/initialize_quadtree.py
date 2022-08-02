@@ -6,38 +6,51 @@ from . subdivide_quad import subdivide_quad
 
 
 def initialize_quadtree(P,max_depth=8,min_depth=1,graded=False,vmin=None,vmax=None):
-    # Builds an adaptatively refined (optionally graded) quadtree for
+    """Builds quadtree or octree from given point cloud.
+
+    Builds an adaptatively refined (optionally graded) quadtree for
     # prototyping on adaptative grids. Keeps track of all parenthood and
     # adjacency information so that traversals and differential quantities are
-    # easy to compute. This code is *purposefully* not optimized beyond
-    # asymptotics for simplicity in understanding its functionality and
-    # translating it to other programming languages beyond prototyping.
-    #
-    #
-    #
-    # Inputs:
-    #   P is a #P by 3 matrix of points. The output tree will be more subdivided in
-    #       regions with more points
-    #   Optional:
-    #       MinDepth integer minimum tree depth (depth one is a single box)
-    #       MaxDepth integer max tree depth (min edge length will be
-    #           bounding_box_length*2^(-MaxDepth))
-    #       Graded boolean whether to ensure that adjacent quads only differ by
-    #           one in depth or not (this is useful for numerical applications, 
-    #           not so much for others like position queries).
-    #
-    # Outputs:
-    #   C #nodes by 3 matrix of cell centers
-    #   W #nodes vector of cell widths (**not** half widths)
-    #   CH #nodes by 4 matrix of child indeces (-1 if leaf node)
-    #   PAR #nodes vector of immediate parent indeces (to traverse upwards)
-    #   D #nodes vector of tree depths
-    #   A #nodes by #nodes sparse adjacency matrix, where a value of a in the
-    #       (i,j) entry means that node j is to the a-th direction of i
-    #       (a=1: left;  a=2: right;  a=3: bottom;  a=4: top).
-    #
+    # easy to compute. 
 
+    Parameters
+    ----------
+    P : numpy double array
+        Matrix of point cloud coordinates
+    max_depth : int, optional (default 8)
+        max tree depth (min edge length will be bounding_box_length*2^(-max_depth))
+    min_depth : int, optional (default 1)
+        minimum tree depth (depth one is a single box)
+    graded bool 
+        Whether to ensure that adjacent quads only differ by one in depth or not (this is useful for numerical applications, not so much for others like position queries).
 
+    Returns
+    -------
+    C : numpy double array 
+        Matrix of cell centers
+    W : numpy double array 
+        Vector of cell half widths
+    CH : numpy int array
+        Matrix of child indeces (-1 if leaf node)
+    PAR : numpy int array 
+        Vector of immediate parent indeces (to traverse upwards)
+    D : numpy int array
+        Vector of tree depths
+    A : scipy sparse.csr_matrix
+        Sparse node adjacency matrix, where a value of a in the (i,j) entry means that node j is to the a-th direction of i (a=1: left;  a=2: right;  a=3: bottom;  a=4: top).
+
+    See Also
+    --------
+    quadtree_children, in_quadtree.
+
+    Notes
+    -----
+    This code is *purposefully* not optimized beyond asymptotics for simplicity in understanding its functionality and translating it to other programming languages beyond prototyping.
+
+    Examples
+    --------
+    TO-DO
+    """
 
     # We start with a bounding box
     dim = P.shape[1]
