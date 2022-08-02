@@ -1,11 +1,7 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-# Would be nice to get rid of this
-# print("0")
-import tetgen
 
-# Would be nice to expand this... but this is a pretty good algorithm, how to validate it?
 class TestLazyCage(unittest.TestCase):
     def test_bunny(self):
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
