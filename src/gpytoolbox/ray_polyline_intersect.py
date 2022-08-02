@@ -41,23 +41,7 @@ def ray_polyline_intersect(position, direction, polyline_vertices, max_distance 
     --------
     TODO
     """
-    # Calculates the intersection point between a ray and a given polyline in 2D
-    # 
-    # Note: This does a for loop on all the edges of the polyline, suffering performance
-    #
-    # Inputs:
-    #       position #2 numpy array of camera position
-    #       direction #2 numpy array of camera direction 
-    #       polyline_vertices #polyline vertices by 2 numpy array (in clockwise order if EC is missing)
-    #       Optional:
-    #               max_distance float max distance to consider
-    #               EC #EC by 2 int numpy array of edge indeces into polyline_vertices
-    #
-    # Outputs:
-    #       x #2 numpy array of intersection point (np.Inf if no intersection)
-    #       n #2 numpy array of polyline normal at intersection (zero if no intersection)
-    #       ind int index into EC of intersection edge (-1 if no intersection)
-    #
+
     if (EC is None)==0:
         EC = edge_indices(polyline_vertices.shape[0],closed=True)
     ind = -1
