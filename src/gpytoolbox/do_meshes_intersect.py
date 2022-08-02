@@ -46,7 +46,7 @@ def do_meshes_intersect(V1,F1,V2,F2):
     b = False
     if len(inters[0])>0:
         b = True
-        inters = None
+        inters = inters[0]  
     else:
-        inters = inters[0]    
+        inters = None
     return b, inters

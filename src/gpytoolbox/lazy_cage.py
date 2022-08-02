@@ -6,7 +6,44 @@ from gpytoolbox.decimate import decimate
 from gpytoolbox.offset_surface import offset_surface
 
 def lazy_cage(V,F,grid_size=50,max_iter=10,num_faces=100):
+    """Constructs a coarse surface fully containing a given mesh
 
+    Given a fine triangle mesh, output a coarser cage triangle mesh that fully contains the input, useful for animation and physics-based simulation.
+
+    Parameters
+    ----------
+    V : numpy double array
+        Matrix of vertex coordinates
+    F : numpy int array
+        Matrix of triangle indices
+    grid_size : int, optional (default 50)
+        Size of the grid on which distances are computed during cage construction (higher should give a more tightly fitting cage)
+    max_iter : int, optional (default 10)
+        Iterations in cage construction binary search (more gives a more tightly fitting cage)
+    num_faces : int, optional (default 100)
+        Desired number of faces in the cage (will be passed as an argument to decimate)
+
+    Returns
+    -------
+    U : numpy double array
+        Matrix of cage mesh vertices (None if unsuccessful)
+    G : numpy int array
+        Matrix of cage triangle indices (None if unsuccessful)
+
+    See Also
+    --------
+    decimate.
+
+    Notes
+    -----
+    This construction follows the algorithm introduced by Sellán et al. in "Breaking Good: Fracture Modes for Realtime Destruction"
+
+    Examples
+    --------
+    TO-DO
+    """
+    U = None
+    G = None
     ds = np.array([0.0,0.5])
     num_iter = 0
     while num_iter<max_iter:
@@ -25,6 +62,6 @@ def lazy_cage(V,F,grid_size=50,max_iter=10,num_faces=100):
             ds[0] = d
         else:
             ds[1] = d
-        U = clean_vertices
-        G = clean_faces
-    return clean_vertices,clean_faces
+            U = clean_vertices
+            G = clean_faces
+    return U, G

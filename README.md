@@ -98,8 +98,7 @@ To write
 - Make every function documented with docstrings so we have pretty auto
   documentation.
 - Fix argument conventions (None vs empty array)
-- Write unit tests for `lazy_cage`,
-  `linear_elasticity_stiffness`, `offset_surface`, `signed_distance_polygon`,
+- Write unit tests for `linear_elasticity_stiffness`, `offset_surface`, `signed_distance_polygon`,
   `subdivide_quad`.
 - Figure out what to do about `png2poly`, including writing test.
 - Figure out what to do about `write_ply`, including `matplotlib` dependency.
