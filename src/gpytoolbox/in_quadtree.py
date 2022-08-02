@@ -1,21 +1,40 @@
 import numpy as np
 
 def in_quadtree(point,C,W,CH):
-    # IN_QUADTREE
-    # Traverses a quadtree in logarithmic time to find the smallest cell
-    # containing a given point in 2D space
-    #
-    # i, others = in_quadtree(point,C,W,CH)
-    #
-    # Inputs:
-    #   point size-3 vector of point in the plane
-    #   C #nodes by 3 matrix of cell centers
-    #   W #nodes vector of cell widths (**not** half widths)
-    #   CH #nodes by 4 matrix of child indeces (-1 if leaf node)
-    #
-    # Outputs:
-    #   i integer index of smallest cell containint P into C,W,CH
-    #   others vector of integers to all other (non-leaf) cells containing P
+    """Find quadtree cell containing point
+
+    Traverses a quadtree in logarithmic time to find the smallest cell (and every other cell) containing a given point in 2D space.
+
+    Parameters
+    ----------
+    point : numpy double array
+        Query point coordinates
+    C : numpy double array
+        Matrix of cell centers
+    W : numpy double array
+        Vector of half cell widths
+    CH : numpy int array
+        Matrix of child indices (-1 if leaf node)
+
+    Returns
+    -------
+    i : int
+        Index of smallest cell containint P into C,W,CH (-1 means the point is not in the quadtree)
+    others : numpy int array
+        others vector of integers to all other (non-leaf) cells containing P
+
+    See Also
+    --------
+    initialize_quadtree.
+
+    Notes
+    -----
+    Only works for 2D quadtree. 3D functionality is coming soon.
+
+    Examples
+    --------
+    TO-DO
+    """
 
     others = []
     queue = [0]
