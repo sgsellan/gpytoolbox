@@ -6,26 +6,41 @@ from .fd_interpolate import fd_interpolate
 
 
 
-def poisson_surface_reconstruction(P,N,gs=np.array([10,10]),h=np.array([1/9.0,1/9.0]),corner=np.array([0.0,0.0]),screened=False):
-    # Given an oriented point cloud on a volume's surface, return the values on a regular grid of an implicit function
-    # that represents the volume enclosed by the surface.
-    #
-    # Note: This only works in 2D
-    # Note: This only outputs the grid implicit values, not a mesh
-    #
-    # Input:
-    #       P #P by dim numpy array of point coordinates
-    #       N #P by dim numpy array of unit-norm normals  
-    #       Optional:
-    #               gs #dim int numpy array of grid sizes [nx,ny]
-    #               h #dim float numpy array of spacing between nearest grid nodes [hx,hy]
-    #               corner a #dim numpy-array of the lowest-valued corner of the grid     
-    #
-    # Output:
-    #       g np array vector of implicit function values on the requested grid, ordered 
-    #           increasing and row first (see poisson_surface_reconstruction_unit_test.py)
-    #       sigma is the isolvalue of the surface; i.e. to be deducted from g if one wants
-    #           the zero-level-set to cross the surface
+def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,screened=False):
+    """Reconstruct surface from point cloud
+    
+    Given an oriented point cloud on a volume's surface, return the values on a regular grid of an implicit function that represents the volume enclosed by the surface.
+
+    Parameters
+    ----------
+    P : numpy double array
+        Matrix of point cloud coordinates
+    N : numpy double array 
+        Matrix of unit-norm normals
+    gs : numpy int array, optional (default None)
+        Vector of grid sizes [nx,ny]
+    h : numpy double array, optional (default None)
+        Vector of spacing between nearest grid 
+    corner : numpy double array, optional (default None)
+        Vector of lowest-valued corner of the grid     
+    screened : bool, optional (default False)
+        Whether to used *screened* Poisson Surface Reconstruction
+
+    Returns
+    -------
+    g : numpy double array
+        Vector of implicit function values on the requested grid, ordered increasing and row first (see poisson_surface_reconstruction_unit_test.py) 
+    sigma : double
+        The isolvalue of the surface; i.e. to be deducted from g if one wants the zero-level-set to cross the surface.
+
+    Notes
+    -----
+    This only works in 2D. This only outputs the grid implicit values, not a mesh
+
+    Examples
+    --------
+    TODO
+    """
 
     # Gradient matrix
     G = fd_grad(gs=gs,h=h)
