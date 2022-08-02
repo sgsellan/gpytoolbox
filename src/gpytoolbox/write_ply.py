@@ -1,5 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from gpytoolbox.colormap import colormap
+from gpytoolbox.apply_colormap import apply_colormap
 
 def write_ply(filename,vertices,faces=None,colors=None):
     # Writes a triangle mesh with colors into ply file format,
@@ -37,12 +38,12 @@ def write_ply(filename,vertices,faces=None,colors=None):
             f.write("{} {} {}\n".format(vertices[i,0],vertices[i,1],vertices[i,2]))
     else:
         if (colors.ndim==1 or colors.shape[1]==1): # color is scalar values
-        # to-do: make this different
-            colors = plt.cm.plasma((np.clip(colors,np.min(colors),np.max(colors))-np.min(colors))/(np.max(colors) - np.min(colors)))
-        if np.max(colors)<=1:
-            C = np.round(colors*255)
+            C = apply_colormap(colormap('BuGn', 200), colors)
         else:
-            C = colors
+            if np.max(colors)<=1:
+                C = np.round(colors*255)
+            else:
+                C = colors
         # This should be vectorized
         for i in range(vertices.shape[0]):
             f.write("{} {} {} {} {} {} 255\n".format(vertices[i,0],vertices[i,1],vertices[i,2],int(C[i,0]),int(C[i,1]),int(C[i,2])))

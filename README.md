@@ -118,4 +118,6 @@ To write
 - Add tets to `subdivide.py`
 - `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`
+- Intrinsic Delaunay triangulation
+- Nearest point on mesh / Hausdorff distance
 - Package for conda distribution
