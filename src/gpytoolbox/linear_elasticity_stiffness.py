@@ -4,7 +4,7 @@ from gpytoolbox.grad import grad
 from gpytoolbox.doublearea import doublearea
 from gpytoolbox.massmatrix import massmatrix
 
-def linear_elasticity_stiffness(V,F,K=1.75,mu=0.0115,volumes=np.array([]),mass=np.array([])):
+def linear_elasticity_stiffness(V,F,K=1.75,mu=0.0115,volumes=None,mass=None):
     """Differential operators needed for linear elasticity calculations
 
     Returns the linear elastic stiffness and strain matrices for a given shape and material parameters
