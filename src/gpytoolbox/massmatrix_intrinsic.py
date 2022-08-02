@@ -6,6 +6,38 @@ from gpytoolbox.doublearea_intrinsic import doublearea_intrinsic
 # Lifted from https://github.com/alecjacobson/gptoolbox/blob/master/mesh/massmatrix_intrinsic.m
 
 def massmatrix_intrinsic(l_sq,F,n=None,type='voronoi'):
+    """FEM intrinsic mass matrix
+    
+    Builds the finite elements mass matrix for a triangle mesh using a piecewise linear hat function basis, using only intrinsic information (squared halfedge edge lengths).
+
+    Parameters
+    ----------
+    l_sq : numpy double array
+        Vector of squared halfedge lengths as computed by halfedge_lengths_squared
+    F : numpy int array
+        Matrix of triangle indices into some V that is assumed to exist
+    n : int, optional (default None)
+        Integer denoting the number of vertices in the mesh
+    type : str, optional (default 'voronoi')
+        Type of mass matrix computation: 'voronoi' (default), 'full' or 'barycentric'
+
+    Returns
+    -------
+    M : scipy sparse.csr_matrix
+        Intrinsicly computed mass matrix
+
+    See Also
+    --------
+    massmatrix.
+
+    Notes
+    -----
+    This implementation is lifted from https://github.com/alecjacobson/gptoolbox/blob/master/mesh/massmatrix_intrinsic.m
+
+    Examples
+    --------
+    TO-DO
+    """
     # Builds the finite elements mass matrix for a triangle mesh using a
     # piecewise linear hat function basis, using only intrinsic information
     # (squared halfedge edge lengths).

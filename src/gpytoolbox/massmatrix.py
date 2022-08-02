@@ -7,18 +7,36 @@ from gpytoolbox.massmatrix_intrinsic import massmatrix_intrinsic
 
 
 def massmatrix(V,F=None,type='voronoi'):
-    # Builds the finite elements mass matrix using a piecewise linear hat
-    # function basis.
-    #
-    # Input:
-    #       V  #V by 3 numpy array of mesh vertex positions, or polyline vertices
-    #       F  #F by 3 int numpy array of face/edge vertex indices into V
-    #          (or None if polyline)
-    #       Optional:
-    #           type either of 'voronoi' {default}, 'full', or 'barycentric'
-    #
-    # Output:
-    #       M  #V by #V mass matrix
+    """FEM Mass matrix
+    
+    Builds the finite elements mass matrix of a triangle mesh or polyline using a piecewise linear hat function basis.
+
+    Parameters
+    ----------
+    V : numpy double array
+        Matrix of vertex coordinates
+    F : numpy int array (optional, default None)
+        Matrix of element indices (if None, assumed to be ordered polyline)
+    type : str, optional (default 'voronoi')
+        Type of mass matrix computation: 'voronoi' (default), 'full' or 'barycentric'
+
+    Returns
+    -------
+    M : scipy sparse.csr_matrix
+        Mass matrix
+
+    See Also
+    --------
+    massmatrix.
+
+    Notes
+    -----
+    For a polyline, this is just the finite difference mass matrix.
+
+    Examples
+    --------
+    TO-DO
+    """
 
     # if you didn't pass an F then this is a ordered polyline
     if (F is None):
