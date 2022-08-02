@@ -26,7 +26,6 @@ jobs:
         run: |
           python3 -m pip install numpy
           python3 -m pip install scipy
-          python3 -m pip install matplotlib
 
       - name: Install c++ bindings
         shell: bash -l {0}
