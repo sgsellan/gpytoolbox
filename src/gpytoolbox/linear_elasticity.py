@@ -61,28 +61,6 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=None,bc = None
     --------
     TO-DO
     """
-    # Compute the deformation of a 2D solid object according to the usual linear elasticity model 
-    #
-    # Note: This only works for 2D (d=2) meshes currently
-    # TO-DO: Code tet mesh version of this
-    #
-    # Inputs:
-    #       V #V by d numpy array of vertex positions 
-    #       F #F by d+1 integer numpy array of element indeces into V
-    #       U0 #V by d numpy array of previous displacement
-    #       Optional:
-    #           dt float timestep
-    #           bb #bb integer numpy array of fixed vertex indeces into V
-    #           bc #bb by d numpy array of fixed vertex coordinates
-    #           K bulk modulus
-    #           mu material shear modulus
-    #           volumes an #F numpy array with the volumes (if d=3) or areas (if d=2) of each mesh element
-    #           mass the shape's #V by #V scipy sparse mass matrix (will be computed otherwise)
-    #           fext #V by d external forces (for example, gravity or a load)
-    #           Ud0 #V by d numpy array of previous velocity
-    # Outputs:
-    #       U  #V by d numpy array of new displacements
-    #       sigma_v #F numpy array of Von Mises stresses
 
     if (Ud0 is None):
         Ud0 = 0*V
