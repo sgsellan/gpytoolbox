@@ -102,7 +102,6 @@ To write
 - Write unit tests for `offset_surface`, `signed_distance_polygon`,
   `subdivide_quad`.
 - Figure out what to do about `png2poly`, including writing test.
-- Figure out what to do about `write_ply`, including `matplotlib` dependency.
 - Fix `test_grad.py`, `test_per_face_normal.py`, `test_per_vertex_normal.py`,
   `test_quadtree_laplacian.py`, `test_regular_cube_mesh.py`,
   `test_regular_square_mesh.py`.
@@ -117,4 +116,6 @@ To write
 - Add tets to `subdivide.py`
 - `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`
+- Intrinsic Delaunay triangulation
+- Nearest point on mesh / Hausdorff distance
 - Package for conda distribution

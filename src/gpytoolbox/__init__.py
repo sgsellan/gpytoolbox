@@ -73,3 +73,5 @@ from .ray_mesh_intersect import ray_mesh_intersect
 from .remesh_botsch import remesh_botsch
 from .upper_envelope import upper_envelope
 from .lazy_cage import lazy_cage
+from .colormap import colormap
+from .apply_colormap import apply_colormap
