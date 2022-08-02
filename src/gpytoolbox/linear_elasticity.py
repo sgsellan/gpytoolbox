@@ -1,10 +1,5 @@
 import numpy as np
-from scipy.sparse import csr_matrix
-
-import gpytoolbox
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
-import sys
-import os
 from .min_quad_with_fixed import min_quad_with_fixed
 
 
@@ -24,23 +19,22 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=None,bc = None
         Matrix of previous displacements
     dt : double (optional, default 0.1) 
         Timestep
-    bb : numpy int array (optional, default is None)
+    bb : numpy int array (optional, default None)
         Fixed vertex indices into V
-    bc : numpy double array (optional, default is None)
+    bc : numpy double array (optional, default None)
         Fixed vertex *displacements*
-    fext : numpy double array
+    fext : numpy double array (optional, default None)
         Matrix of external forces (for example, gravity or a load)
-    Ud0 : numpy double array 
+    Ud0 : numpy double array (optional, default None)
         Matrix of previous velocity
-    K : double (optional, default is 1.75)
+    K : double (optional, default 1.75)
         Bulk modulus
-    mu : double (optional, default is 0.0115)
+    mu : double (optional, default 0.0115)
         Material shear modulus
     volumes : numpy double array (optional, default None)
-        Vector with the volumes (if d=3) or areas (if d=2) of each mesh element (if None, will be computed)
-    mass : scipy sparse_csr 
+        Vector with the volumes (in 3D) or areas (in 2D) of each mesh element (if None, will be computed)
+    mass : scipy sparse_csr (optional, default None)
         The mesh's sparse mass matrix (if None, will be computed)
-    
 
     Returns
     -------
@@ -51,7 +45,7 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=None,bc = None
 
     See Also
     --------
-    decimate.
+    linear_elasticity_stiffness.
 
     Notes
     -----

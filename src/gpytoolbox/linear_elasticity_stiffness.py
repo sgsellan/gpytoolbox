@@ -5,26 +5,51 @@ from gpytoolbox.doublearea import doublearea
 from gpytoolbox.massmatrix import massmatrix
 
 def linear_elasticity_stiffness(V,F,K=1.75,mu=0.0115,volumes=np.array([]),mass=np.array([])):
-    # Returns the linear elastic stiffness and strain matrices for a given shape and 
-    # material parameters
-    #
-    # Note: This only works for 2D (d=2) meshes currently
-    # TO-DO: Code tet mesh version of this
-    #
-    # Inputs:
-    #       V  #V by d numpy array of vertex positions 
-    #       F  #F by d+1 integer numpy array of element indeces into V
-    #       Optional:
-    #           K bulk modulus
-    #           mu material shear modulus
-    #           volumes an #F numpy array with the volumes (if d=3) or areas (if d=2) of each mesh element
-    #           mass the shape's #V by #V scipy sparse mass matrix (will be computed otherwise)
-    # Outputs:
-    #       K  #V*d by #V*d scipy csr sparse stiffness matrix
-    #       C  #F**(d*(d+1)/2) by #F**(d*(d+1)/2) scipy csr sparse constituitive model matrix 
-    #       strain  #F*(d*(d+1)/2) by #V*d scipy csr sparse strain matrix
-    #       A  #F*(d*(d+1)/2) by #F*(d*(d+1)/2) scipy csr sparse diagonal element area matrix
-    #       M  #V*d by #V*d scipy csr sparse sparse mass matrix
+    """Differential operators needed for linear elasticity calculations
+
+    Returns the linear elastic stiffness and strain matrices for a given shape and material parameters
+
+    Parameters
+    ----------
+    V : numpy double array
+        Matrix of vertex coordinates
+    F : numpy int array
+        Matrix of triangle indices
+    K : double (optional, default 1.75)
+        Bulk modulus
+    mu : double (optional, default 0.0115)
+        Material shear modulus
+    volumes : numpy double array (optional, default None)
+        Vector with the volumes (in 2D) or areas (in 3D) of each mesh element (if None, will be computed)
+    mass : scipy sparse_csr (optional, default None)
+        The mesh's sparse mass matrix (if None, will be computed)
+    
+
+    Returns
+    -------
+    K  : scipy sparse.csr_matrix 
+        Stiffness matrix
+    C : scipy sparse.csr_matrix 
+        Constituitive model matrix 
+    strain : scipy sparse.csr_matrix 
+        Strain matrix
+    A : scipy csr_matrix 
+        Diagonal element area matrix
+    M : scipy sparse.csr_matrix 
+        Mass matrix (if input mass is not None, this returns the input)
+
+    See Also
+    --------
+    linear_elasticity.
+
+    Notes
+    -----
+    This implementation only works for 2D triangle meshes. Tetrahedral meshes will be supported soon.
+
+    Examples
+    --------
+    TO-DO
+    """
 
     l = K - (2/3)*mu
     Z = csr_matrix((F.shape[0],V.shape[0]))
