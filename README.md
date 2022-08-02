@@ -97,6 +97,7 @@ To write
 ## Must do before first PyPi release
 - Make every function documented with docstrings so we have pretty auto
   documentation.
+- Copyleft module
 - Fix argument conventions (None vs empty array)
 - Write unit tests for `linear_elasticity_stiffness`, `offset_surface`, `signed_distance_polygon`,
   `subdivide_quad`.
