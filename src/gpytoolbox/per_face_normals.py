@@ -3,6 +3,32 @@ import numpy as np
 
 
 def per_face_normals(V,F,unit_norm=True):
+    """Vector perpedicular to all faces on a mesh
+    
+    Computes per face (optionally unit) normal vectors for a triangle mesh.
+
+    Parameters
+    ----------
+    V : numpy double array
+        Matrix of mesh vertex coordinates
+    F : numpy int array
+        Matrix of triangle indices into V
+    unit_norm : bool, optional (default True)
+        Whether to normalize each face's normal before outputting
+
+    Returns
+    -------
+    N : numpy double array
+        Matrix of per-face normals
+
+    See Also
+    --------
+    per_vertex_normals.
+
+    Examples
+    --------
+    TODO
+    """
     # Computes per face (optionally unit) normal vectors for a triangle mesh
     #
     # Input:

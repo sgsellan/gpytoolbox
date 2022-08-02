@@ -139,7 +139,7 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Fix argument conventions (None vs empty array)
 - Write unit tests for `signed_distance_polygon`, `subdivide_quad`.
 - Figure out what to do about `png2poly`, including writing test.
-- Fix `test_grad.py`, `test_per_face_normal.py`, `test_per_vertex_normal.py`,
+- Fix `test_grad.py`, `test_per_face_normals.py`, `test_per_vertex_normals.py`,
   `test_quadtree_laplacian.py`, `test_regular_cube_mesh.py`,
   `test_regular_square_mesh.py`.
 

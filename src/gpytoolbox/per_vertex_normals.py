@@ -5,6 +5,30 @@ from .doublearea import doublearea
 
 
 def per_vertex_normals(V,F):
+    """Normal vectors to all vertices on a mesh
+    
+    Computs area-weighted per-vertex unit normal vectors for a triangle mesh
+
+    Parameters
+    ----------
+    V : numpy double array
+        Matrix of mesh vertex coordinates
+    F : numpy int array
+        Matrix of triangle indices into V
+
+    Returns
+    -------
+    N : numpy double array
+        Matrix of per-vertex normals
+
+    See Also
+    --------
+    per_face_normals.
+
+    Examples
+    --------
+    TODO
+    """
     # Computs per vertex unit normal vectors for a triangle mesh
     #
     # Input:
