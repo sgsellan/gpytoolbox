@@ -26,7 +26,7 @@ jobs:
         run: |
           python3 -m pip install numpy
           python3 -m pip install scipy
-          python -m pip install scikit-image
+          python3 -m pip install scikit-image
 
       - name: Install c++ bindings
         shell: bash -l {0}
