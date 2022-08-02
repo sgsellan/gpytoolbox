@@ -1,4 +1,34 @@
 def quadtree_boundary(CH,A):
+    """"Boundary of a quadtree
+
+    Returns indeces of cells that fall on the boundary (defined as cells that have no neighbor in at least one direction)
+    
+    Parameters
+    ----------
+    CH : numpy int array
+        Matrix of child indeces (-1 if leaf node)
+    A : scipy sparse.csr_matrix
+        Sparse node adjacency matrix, where a value of a in the (i,j) entry means that node j is to the a-th direction of i (a=1: left;  a=2: right;  a=3: bottom;  a=4: top).
+
+    Returns
+    -------
+    children_boundary : list
+        Indeces into CH and A of cells that are both boundary cells and leaf nodes in the tree
+    other_boundary : list
+        All boundary cells regardless of leaf status
+
+    See Also
+    --------
+    initialize_quadtree, quadtree_children.
+
+    Notes
+    -----
+    This only works in 2D quadtrees.
+
+    Examples
+    --------
+    TODO 
+    """
     # Returns indeces of cells that fall on the boundary (defined as cells that
     # have no neighbor in at least one direction)
     #
