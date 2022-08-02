@@ -3,44 +3,36 @@ import scipy as sp
 
 
 def colormap(name, n, interpolate=True):
-    """
-    Produces the RGB values for a specific color map.
-    Currently, all of Cynthia Brewer's ColorBrewer maps are supported
-    (colorbrewer2.org):
-    `BuGn`,`BuPu`,`GnBu`,`OrRd`,`PuBu`,`PuBuGn`,`PuRd`,`RdPu`,`YlGn`,`YlGnBu`,
-    `YlOrBr`,`YlOrRd`,`Blues`,`Greens`,`Greys`,`Oranges`,`Purples`,`Reds`,
-    `BrBG`,`PiYG`,`PRGn`,`PuOr`,`RdBu`,`RdGy`,`RdYlBu`,`RdYlGn`,`Spectral`,
-    `Accent`,`Dark2`,`Paired`,`Pastel1`,`Pastel2`,`Set1`,`Set2`,`Set3`.
-
+    """Produces the RGB values for a specific color map.
     
     Parameters
     ----------
-    name : the name of the colormap to produce
-    n: how many colors of the color map to produce.
-       if n is zero and interpolate is false, will return the maximum number
+    name : str
+       Name of the colormap to produce. Currently, all of Cynthia Brewer's ColorBrewer maps are supported (colorbrewer2.org): `BuGn`,`BuPu`,`GnBu`,`OrRd`,`PuBu`,`PuBuGn`,`PuRd`,`RdPu`,`YlGn`,`YlGnBu`, `YlOrBr`,`YlOrRd`,`Blues`,`Greens`,`Greys`,`Oranges`,`Purples`,`Reds`, `BrBG`,`PiYG`,`PRGn`,`PuOr`,`RdBu`,`RdGy`,`RdYlBu`,`RdYlGn`,`Spectral`, `Accent`,`Dark2`,`Paired`,`Pastel1`,`Pastel2`,`Set1`,`Set2`,`Set3`.
+    n: int
+       How many colors of the color map to produce. If n is zero and interpolate is False, will return the maximum number
        of colors for this color map.
-    interpolate (optional) : If this is set to True, then this function will
-                             return `n` colors, cubically interpolated from the
-                             entire color map.
-                             If this is set to False, then this function will
-                             return the first `n` colors of the colormap, and
-                             error if `n` is larger than the amount of available
-                             colors.
+    interpolate : bool, optional (default True)
+       If this is set to True, then this function will return `n` colors, cubically interpolated from the entire color map. If this is set to False, then this function will return the first `n` colors of the colormap, and error if `n` is larger than the amount of available colors.
 
     Returns
     -------
-    C : the resulting color map as a numpy array.
-        It can be evaluated with constant interpolation
+    C : numpy int array
+       Resulting colormap. It can be evaluated with constant interpolation.
 
-
-    Examples
+    See Also
     --------
-    TODO
+    apply_colormap.
 
-
+    Notes
+    -----
     Prof. Cynthia Brewer (Pennsylvania State University) has released the
     ColorBrewer color maps under the Apache 2.0 license
     (http://www.personal.psu.edu/cab38/ColorBrewer/ColorBrewer_updates.html)
+    
+    Examples
+    --------
+    TODO
     """
 
     if interpolate:

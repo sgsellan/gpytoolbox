@@ -7,41 +7,46 @@ def apply_colormap(C, f,
        max=None,
        log=False,
        piecewise_linear=False):
-    """
+    """Maps function values to colors of a given colormap.
+    
     Apply a colormap produced with the colormap function to an array of
     scalar values.
+    
+    Parameters
+    ----------
+    C : numpy int array
+        Colormap matrix where each row corresponds to an RGB color. Compatible with maps produced by colormap
+    f : numpy double array
+        Vector of scalar function values to which to apply the colormap
+    min : double, optional (default None)
+        Scalar value corresponding to the beginning of C. Will auto-scale if None.
+    max : double, optional (default None)
+        Scalar value corresponding to the end of C. Will auto-scale if None.
+    log : bool, optional (default False)
+        Whether to log-scale the colormap or not. For this option, all values will be clamped to larger than machine epsilon.
+    piecewise_linear : bool, optional (default False)
+        Whether to treat the colormap as piecewise linear
 
+    Returns
+    -------
+    f_colored : numpy double array
+        Matrix of C applied to f. Each row corresponds to a scalar value in f.
+
+    See Also
+    --------
+    colormap.
+
+    Notes
+    -----
     All colormaps are assumed to be piecewise constant unless otherwise
     specified (be aware: the first and last colors of the colormap will span
     half as much length as the other colors, since they represent the colors
     at the minimum and maximum respectively).
 
-    
-    Parameters
-    ----------
-    C : a colormap where each row corresponds to an RGB color.
-        Compatible with maps produced by colormap
-    f : a scalar function to which to apply the colormap
-    min (optional) : scalar value corresponding to the beginning of C.
-                     Will auto-scale if None.
-    max (optional) : scalar value corresponding to the end of C.
-                     Will auto-scale if None.
-    log (optional) : whether to log-scale the colormap or not.
-                     For this option, all values will be clamped to larger than
-                     machine epsilon.
-    piecewise_linear (optional) : whether to treat the colormap as piecewise linear
-
-
-    Returns
-    -------
-    f_colored : C applied to f.
-                Each row of f_colored corresponds to a scalar value in f.
-
 
     Examples
     --------
     TODO
-
     """
 
     assert C.shape[0] >= 1
