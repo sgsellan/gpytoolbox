@@ -24,13 +24,49 @@ You should be able install the latest stable release of *Gpytoolbox* with pip:
 ```bash
 python -m pip install gpytoolbox
 ```
-A conda installation will be supported in the future
+A conda installation will be supported in the future.
+
+## Documentation
+
+You can find documentation for all our functions by browsing this website. You
+can also view the documentation for a specific function by running
+`help(function_name)` or `function_name.__doc__`; for example,
+```python
+>>> from gpytoolbox import grad
+>>> help(grad)
+Builds a mesh of a quadtree or octree for visualization purposes.
+
+From a proper quadtree, builds a vertex-connected but degenerate quad mesh
+containing only the leaf nodes, to be used for visualizing the quadtree and quantities defined on its leaf nodes.
+
+Parameters
+----------
+C : numpy double array
+    Matrix of cell centers
+W : numpy double array
+    Vector of half cell widths
+CH : numpy int array
+    Matrix of child indices (-1 if leaf node)
+
+Returns
+-------
+V : numpy double array
+    Matrix of mesh vertices
+Q : numpy int array
+    Matrix of quad mesh indices
+H : numpy int array
+    Matrix of hexahedral mesh indices if input is octree (empty if quadtree)
+
+See Also
+--------
+initialize_quadtree, quadtree_children.
+```
 
 ## Contribute
 
 We hope you find our current version of our library useful. At the same time, we
-encourage you to *ask not what Gpytoolbox can do for you, but what you can do for
-Gpytoolbox*. 
+encourage you to *ask not what Gpytoolbox can do for you, but what you can do
+for Gpytoolbox*. 
 
 Since Gpytoolbox is a very young library, we want to make it as easy as possible
 for others to contribute to it and help it grow. You can contribute by adding a
@@ -38,8 +74,8 @@ new function in a new file inside `src/gpytoolbox/`, or by adding to existing
 functions, and [submitting a Pull
 Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
 
-We also want to make the contribution process as unintimidating as possible.
-We will gladly review and edit your code to make sure it acommodates to our
+We also want to make the contribution process as unintimidating as possible. We
+will gladly review and edit your code to make sure it acommodates to our
 standards and we have set up many tests that will let us know if your
 contribution accidentally breaks anything. If there's any functionality that is
 not already in this library, is remotely related to geometry processing, and you

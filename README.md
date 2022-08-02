@@ -23,6 +23,40 @@ python -m pip install gpytoolbox
 ```
 A conda installation will be supported in the future
 
+## Documentation
+
+You can find documentation for all our functions in [our website](https://gpytoolbox.org/). You can also view the documentation for a specific function by running `help(function_name)` or `function_name.__doc__`; for example,
+```python
+>>> from gpytoolbox import grad
+>>> help(grad)
+Builds a mesh of a quadtree or octree for visualization purposes.
+
+From a proper quadtree, builds a vertex-connected but degenerate quad mesh
+containing only the leaf nodes, to be used for visualizing the quadtree and quantities defined on its leaf nodes.
+
+Parameters
+----------
+C : numpy double array
+    Matrix of cell centers
+W : numpy double array
+    Vector of half cell widths
+CH : numpy int array
+    Matrix of child indices (-1 if leaf node)
+
+Returns
+-------
+V : numpy double array
+    Matrix of mesh vertices
+Q : numpy int array
+    Matrix of quad mesh indices
+H : numpy int array
+    Matrix of hexahedral mesh indices if input is octree (empty if quadtree)
+
+See Also
+--------
+initialize_quadtree, quadtree_children.
+```
+
 ## Contribute
 
 We hope you find our current version of our library useful. At the same time, we
