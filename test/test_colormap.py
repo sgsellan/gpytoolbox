@@ -16,10 +16,10 @@ class TestColormap(unittest.TestCase):
                 C = gpy.colormap(map, num, interpolate=False)
                 self.assertTrue(C.shape == (num,3))
         for map in maps:
-            for num in range(1,50):
+            # Check that with interpolate we can go well above the number of colors
+            for num in range(1,500):
                 C = gpy.colormap(map, num, interpolate=True)
                 self.assertTrue(C.shape == (num,3))
-
 
 if __name__ == '__main__':
     unittest.main()
