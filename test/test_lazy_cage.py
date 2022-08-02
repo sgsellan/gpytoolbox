@@ -16,6 +16,16 @@ class TestLazyCage(unittest.TestCase):
             # u,g fully contains v,f, i.e. they don't intersect
             b, _ = gpytoolbox.do_meshes_intersect(v,f,u,g)
             self.assertFalse(b)
+    def test_armadillo(self):
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/armadillo.obj")
+        # print(v)
+        # Generate many examples
+        for m in np.linspace(1000,2000,5,dtype=int):
+            # print(m)
+            u,g = gpytoolbox.lazy_cage(v,f,num_faces=m,max_iter=10)
+            # u,g fully contains v,f, i.e. they don't intersect
+            b, _ = gpytoolbox.do_meshes_intersect(v,f,u,g)
+            self.assertFalse(b)
             
 if __name__ == '__main__':
     unittest.main()
