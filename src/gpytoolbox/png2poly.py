@@ -1,25 +1,31 @@
 import numpy as np
 from skimage import measure
 from skimage.color.colorconv import rgb2gray, rgba2rgb
-from imageio import imread
+from skimage.io import imread
 
 def png2poly(filename):
-    # Reads a png file and outputs a list of polylines that constitute
-    # the contours of the png, using marching squares. This is useful for 
-    # generating 2D "realworld" data. 
-    # 
-    # This follows code under MIT licence by Stephan Hügel.
-    #
-    # Input:
-    #       filename string containing the path (relative or absolute) to the 
-    #           png file 
-    #
-    # Output:
-    #       poly  a list where the i-th element is a #Vi by 2 polyline 
-    #
-    # Note: This often results in "duplicate" polylines (one is the 
-    # white->black contour, other is the black->white contour.
-    # 
+    """Export polylines from png image
+    
+    Reads a png file and outputs a list of polylines that constitute the contours of the png, using marching squares. This is useful for generating 2D "realworld" data. 
+
+    Parameters
+    ----------
+    filename : str
+        Path to png file
+    
+    Returns
+    -------
+    poly : list of numpy double arrays
+        Each list element is a matrix of ordered polyline vertex coordinates
+
+    Notes
+    -----
+    This often results in "duplicate" polylines (one is the white->black contour, other is the black->white contour.
+
+    Examples
+    --------
+    TODO
+    """
     polypic = imread(filename)
    
     # convert to greyscale and remove alpha if neccessary
