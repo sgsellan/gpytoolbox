@@ -32,7 +32,7 @@ def in_element_aabb(queries,V,F):
     try:
         from gpytoolbox_bindings import _in_element_aabb_cpp_impl
     except:
-        raise ImportError("Gpytoolbox cannot import its C++ decimate binding.")
+        raise ImportError("Gpytoolbox cannot import its C++ binding.")
 
     
 
