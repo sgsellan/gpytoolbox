@@ -8,10 +8,7 @@ from . subdivide_quad import subdivide_quad
 def initialize_quadtree(P,max_depth=8,min_depth=1,graded=False,vmin=None,vmax=None):
     """Builds quadtree or octree from given point cloud.
 
-    Builds an adaptatively refined (optionally graded) quadtree for
-    # prototyping on adaptative grids. Keeps track of all parenthood and
-    # adjacency information so that traversals and differential quantities are
-    # easy to compute. 
+    Builds an adaptatively refined (optionally graded) quadtree for prototyping on adaptative grids. Keeps track of all parenthood and adjacency information so that traversals and differential quantities are easy to compute. 
 
     Parameters
     ----------
