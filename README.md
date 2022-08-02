@@ -97,6 +97,7 @@ To write
 ## Must do before first PyPi release
 - Make every function documented with docstrings so we have pretty auto
   documentation.
+- Copyleft module
 - Fix argument conventions (None vs empty array)
 - Write unit tests for `bad_quad_mesh_from_quadtree`, `decimate`,
   `do_meshes_intersect`, `edge_indeces` (fix spelling), `lazy_cage`,
