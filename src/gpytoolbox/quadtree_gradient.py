@@ -14,8 +14,6 @@ def quadtree_gradient(C,W,CH,D,A):
         Vector of cell half widths
     CH : numpy int array
         Matrix of child indeces (-1 if leaf node)
-    PAR : numpy int array 
-        Vector of immediate parent indeces (to traverse upwards)
     D : numpy int array
         Vector of tree depths
     A : scipy sparse.csr_matrix
