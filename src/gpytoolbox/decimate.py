@@ -3,7 +3,7 @@ import numpy as np
 def decimate(V,F,face_ratio=0.1,num_faces=None):
     """Reduce the number of faces of a triangle mesh.
 
-    From a manifold triangle mesh, builds a new triangle mesh with less faces than the original one using libigl's decimation algorithm.
+    From a manifold triangle mesh, builds a new triangle mesh with fewer faces than the original one using libigl's decimation algorithm.
 
     Parameters
     ----------
