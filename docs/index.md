@@ -3,7 +3,7 @@ title: "Home"
 ---
 
 
-# Gpytoolbox
+# Gpytoolbox: A *Python* Geometry Processing Toolbox
 
 ![unit
 tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/linux_build.yml/badge.svg)
@@ -24,3 +24,19 @@ You should be able install the latest stable release of *Gpytoolbox* with pip:
 python -m pip install gpytoolbox
 ```
 A conda installation will be supported in the future
+
+
+## Acknowledgements
+
+Several people have, knowingly or unknowingly, greatly contributed to this
+library. We are thankful to them:
+
+- [Alec Jacobson](https://www.cs.toronto.edu/~jacobson/) is the author of the
+  original Matlab [gptoolbox](https://github.com/alecjacobson/gptoolbox) on
+  which we inspired ourselves to create this library. Several of our functions
+  are line-by-line translations of his Matlab ones. Thanks, Alec!
+
+- [Nicholas Sharp](https://nmwsharp.com), the author of the game-changing
+  geometry visualization library [polyscope](https://polyscope.run/py/), was
+  extremely helpful in guiding us through setting up and distributing a Python
+  package. Thanks, Nick!
