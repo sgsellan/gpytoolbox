@@ -2,7 +2,45 @@ import numpy as np
 from numpy.linalg import solve
 from .edge_indices import edge_indices
 
-def ray_polyline_intersect(position, direction, polyline_vertices, max_distance = 100.0, EC=np.empty(0)):
+def ray_polyline_intersect(position, direction, polyline_vertices, max_distance = 100.0, EC=None):
+    """Shoot a ray in 2D from a position and see where it crashes into a given polyline
+
+    Calculates the intersection point between a ray and a given polyline in 2D
+
+    Parameters
+    ----------
+    position : numpy double array
+        Vector of camera position coordinates
+    direction : numpy double array
+        Vector of camera direction 
+    polyline_vertices : numpy double array
+        Matrix of polyline vertex coordinates
+    max_distance : double, optional (default 100.0)
+        Maximum ray distance to consider
+    EC : numpy int array, optional (default None)
+        Matrix of edge indices into polyline_vertices
+
+    Returns
+    -------
+    x : numpy double array
+        Vector of intersection point coordinates (np.Inf if no intersection)
+    n : numpy double array
+        Vector of polyline normal at intersection (zeros if no intersection)
+    ind : int 
+        Index into EC of intersection edge (-1 if no intersection)
+
+    See Also
+    --------
+    test_ray_mesh_intersect.
+
+    Notes
+    -----
+    This does a for loop on all the edges of the polyline, suffering performance.
+
+    Examples
+    --------
+    TODO
+    """
     # Calculates the intersection point between a ray and a given polyline in 2D
     # 
     # Note: This does a for loop on all the edges of the polyline, suffering performance
@@ -20,7 +58,7 @@ def ray_polyline_intersect(position, direction, polyline_vertices, max_distance 
     #       n #2 numpy array of polyline normal at intersection (zero if no intersection)
     #       ind int index into EC of intersection edge (-1 if no intersection)
     #
-    if EC.shape[0]==0:
+    if (EC is None)==0:
         EC = edge_indices(polyline_vertices.shape[0],closed=True)
     ind = -1
     x = np.array([np.Inf, np.Inf])
