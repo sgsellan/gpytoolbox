@@ -12,11 +12,54 @@ tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/windows_build.ym
 *Authors:* [Silvia Sellán](https://www.silviasellan.com), University of Toronto
 and [Oded Stein](https://odedstein.com), Massachusetts Institute of Technology
 
---DESCRIPTION--
+This is a very young library of general geometry processing Python research
+utility functions that evolves from our personal student codebases. 
 
-## Installation & Use
+## Installation
 
-To write after PyPi deployment
+You should be able install the latest stable release of *Gpytoolbox* with pip:
+```bash
+python -m pip install gpytoolbox
+```
+A conda installation will be supported in the future
+
+## Contribute
+
+We hope you find our current version of our library useful. At the same time, we
+encourage you to *ask not what Gpytoolbox can do for you, but what you can do for
+Gpytoolbox*. 
+
+Since Gpytoolbox is a very young library, we want to make it as easy as possible
+for others to contribute to it and help it grow. You can contribute by adding a
+new function in a new file inside `src/gpytoolbox/`, or by adding to existing
+functions, and [submitting a Pull
+Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
+
+We also want to make the contribution process as unintimidating as possible.
+We will gladly review and edit your code to make sure it acommodates to our
+standards and we have set up many tests that will let us know if your
+contribution accidentally breaks anything. If there's any functionality that is
+not already in this library, is remotely related to geometry processing, and you
+have used or used in any of your past projects, we encourage you to submit it
+*as-is* in a Pull Request. We will gladly credit you in the individual function
+as well as on this home page.
+
+
+
+## Acknowledgements
+
+Several people have, knowingly or unknowingly, greatly contributed to this
+library. We are thankful to them:
+
+- [Alec Jacobson](https://www.cs.toronto.edu/~jacobson/) is the author of the
+  original Matlab [gptoolbox](https://github.com/alecjacobson/gptoolbox) on
+  which we inspired ourselves to create this library. Several of our functions
+  are line-by-line translations of his Matlab ones. Thanks, Alec!
+
+- [Nicholas Sharp](https://nmwsharp.com), the author of the game-changing
+  geometry visualization library [polyscope](https://polyscope.run/py/), was
+  extremely helpful in guiding us through setting up and distributing a Python
+  package. Thanks, Nick!
 
 <!-- Most of the functionality in this library is python-only, and it requires no
 installation. To use it, simply clone this repository
@@ -87,11 +130,6 @@ v, f = regular_square_mesh(10) # This is a pure python function
 query = np.array([[0.1,0.1]])
 I = in_element_aabb(queries,V,F) # This is a C++ binding
 ``` -->
-
-
-## How to contribute?
-
-To write
 
 # TO-DO
 ## Must do before first PyPi release
