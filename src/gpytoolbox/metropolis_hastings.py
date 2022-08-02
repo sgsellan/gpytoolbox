@@ -2,32 +2,32 @@ import numpy as np
 import random
 
 def metropolis_hastings(unnorm_distr, next_sample, x0 , num_samples=100):
-    # Uses the Metropolis-Hastings algorithm to generate a sequence of random samples from
-    # an unknown distribution p assuming one knows a function which is proportional to its density
-    #
-    # Inputs:
-    #       unnorm_distr function returning the value of the known function
-    #           which is proportional to the desired distribution density
-    #               Inputs:
-    #                       x #dim numpy array of sample being considered
-    #               Outputs:
-    #                       f float function value
-    # 
-    #       next_sample function returning a candidate next sample from the current
-    #           sample x; for example, a Gaussian centered at x
-    #               Inputs:
-    #                       x #dim numpy array of previous sample point
-    #               Outputs:
-    #                       x1 #dim numpy array of next candidate sample
-    #
-    #       num_sample int number of samples in output (this will be *more* than the total number
-    #           of considered samples or evaluations of unnorm_distr)
-    #
-    #       x0 #dim numpy array of first element in the sequence of samples
-    #
-    # Outputs:
-    #       S #num_samples by #dim numpy array of sequence of samples
-    #       F #num_samples vector of f evaluated at each row of S
+    """Finds intersection, union or subtraction of two triangle meshes.
+
+    Given two triangle meshes dA and dB, uses exact predicates to compute the intersection, union or subtraction of the two solids A and B, and output its surface dC
+
+    Parameters
+    ----------
+    unnorm_distr : func
+        Function returning the value of the known function which is proportional to the desired distribution density
+    next_sample : func
+        Function returning a candidate next sample from the current
+    x0 : numpy array
+        Initial sample
+    num_samples : int
+        Number of samples in output (this will be *more* than the total number of considered samples or evaluations of unnorm_distr)
+
+    Returns
+    -------
+    S : numpy double array
+        Matrix sequence of samples
+    F : numpy int array
+        Vector of f evaluated at each row of S
+
+    Examples
+    --------
+    TO-DO
+    """
     
     S = np.zeros((num_samples,x0.shape[0]))
     F = np.zeros((num_samples))
