@@ -1,15 +1,5 @@
-# Bindings using C++ and Eigen:
-import sys
-import os
-
-# This function depends on skimage and imageio (should it?)
-try:
-    from .png2poly import png2poly
-except:
-    print("-------------------------------------------------------------------")
-    print("WARNING: You have not installed the necessary libraries to use png2poly.")
-    print("-------------------------------------------------------------------")
-
+# This function depends on skimage 
+from .png2poly import png2poly
 
 # These functions depend ONLY on numpy, scipy and each other
 from .linear_elasticity import linear_elasticity
