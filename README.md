@@ -184,6 +184,7 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 
 
 ## Future to-dos
+- Add examples to docstrings.
 - Implement tet mesh version of `linear_elasticity_stiffness.py`
 - Implement tet mesh version of `linear_elasticity.py`
 - Improve `poisson_surface_reconstruction` and make it 3D.
