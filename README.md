@@ -25,7 +25,10 @@ A conda installation will be supported in the future
 
 ## Documentation
 
-You can find documentation for all our functions in [our website](https://gpytoolbox.org/). You can also view the documentation for a specific function by running `help(function_name)` or `function_name.__doc__`; for example,
+You can find documentation for all our functions in [our
+website](https://gpytoolbox.org/). You can also view the documentation for a
+specific function by running `help(function_name)` or `function_name.__doc__`;
+for example,
 ```python
 >>> from gpytoolbox import grad
 >>> help(grad)
@@ -60,8 +63,8 @@ initialize_quadtree, quadtree_children.
 ## Contribute
 
 We hope you find our current version of our library useful. At the same time, we
-encourage you to *ask not what Gpytoolbox can do for you, but what you can do for
-Gpytoolbox*. 
+encourage you to *ask not what Gpytoolbox can do for you, but what you can do
+for Gpytoolbox*. 
 
 Since Gpytoolbox is a very young library, we want to make it as easy as possible
 for others to contribute to it and help it grow. You can contribute by adding a
@@ -69,8 +72,8 @@ new function in a new file inside `src/gpytoolbox/`, or by adding to existing
 functions, and [submitting a Pull
 Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
 
-We also want to make the contribution process as unintimidating as possible.
-We will gladly review and edit your code to make sure it acommodates to our
+We also want to make the contribution process as unintimidating as possible. We
+will gladly review and edit your code to make sure it acommodates to our
 standards and we have set up many tests that will let us know if your
 contribution accidentally breaks anything. If there's any functionality that is
 not already in this library, is remotely related to geometry processing, and you
@@ -167,8 +170,13 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 
 # TO-DO
 ## Must do before first PyPi release
-- Make every function documented with docstrings so we have pretty auto
-  documentation.
+- Add docstrings for `array_correspondence`, `boundary_edges`, `boundary_loops`,
+  `boundary_vertices`, `cotangent_laplacian_intrinsic`, `cotangent_laplacian`,
+  `cotangent_weights_intrinsic`, `cotangent_weights`, `doublearea_intrinsic`,
+  `edges`, `halfedge_edge_map`, `halfedge_lengths_squared`, `halfedge_lengths`,
+  `halfedges`, `min_quad_with_fixed`, `read_mesh`, `subdivide`,
+  `tip_angles_intrinsic`, `tip_angles`, `triangle_triangle_adjacency`,
+  `write_mesh`.
 - Copyleft module
 - Fix `test_grad.py`, `test_per_face_normals.py`, `test_per_vertex_normals.py`,
   `test_quadtree_laplacian.py`, `test_regular_cube_mesh.py`,
