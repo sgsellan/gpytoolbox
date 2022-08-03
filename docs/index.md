@@ -34,32 +34,32 @@ can also view the documentation for a specific function by running
 ```python
 >>> from gpytoolbox import grad
 >>> help(grad)
-Builds a mesh of a quadtree or octree for visualization purposes.
+Finite element gradient matrix
 
-From a proper quadtree, builds a vertex-connected but degenerate quad mesh
-containing only the leaf nodes, to be used for visualizing the quadtree and quantities defined on its leaf nodes.
+Given a triangle mesh or a polyline, computes the finite element gradient matrix assuming piecewise linear hat function basis.
 
 Parameters
 ----------
-C : numpy double array
-    Matrix of cell centers
-W : numpy double array
-    Vector of half cell widths
-CH : numpy int array
-    Matrix of child indices (-1 if leaf node)
+V : numpy double array
+    Matrix of vertex coordinates
+F : numpy int array, optional (default None)
+    Matrix of triangle indices
 
 Returns
 -------
-V : numpy double array
-    Matrix of mesh vertices
-Q : numpy int array
-    Matrix of quad mesh indices
-H : numpy int array
-    Matrix of hexahedral mesh indices if input is octree (empty if quadtree)
+G : scipy sparse.csr_matrix
+    Sparse FEM gradient matrix
 
 See Also
 --------
-initialize_quadtree, quadtree_children.
+cotangent_laplacian.
+
+Notes
+-----
+
+Examples
+--------
+TO-DO
 ```
 
 ## Contribute
