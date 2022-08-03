@@ -26,10 +26,10 @@ def volume(V,T):
 
     
     # Dimension:
-    a = v[t[:,0],:]
-    b = v[t[:,1],:]
-    c = v[t[:,2],:]
-    d = v[t[:,3],:]
+    a = V[T[:,0],:]
+    b = V[T[:,1],:]
+    c = V[T[:,2],:]
+    d = V[T[:,3],:]
 
     vols = -np.sum(np.multiply(a-d,np.cross(b-c,c-d,axis=1)),axis=1)/6.
 
