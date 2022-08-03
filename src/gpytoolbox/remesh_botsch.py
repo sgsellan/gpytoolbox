@@ -26,8 +26,11 @@ def remesh_botsch(V,F,i=10,h=None,project=True):
         Matrix of output triangle mesh vertex coordinates
     G : numpy int array
         Matrix of output triangle mesh indices into U
+
+    Examples
+    --------
+    TODO
     """
-    # TODO 
     try:
         from gpytoolbox_bindings import _remesh_botsch_cpp_impl
     except:
