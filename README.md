@@ -177,11 +177,9 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
   `halfedges`, `min_quad_with_fixed`, `read_mesh`, `subdivide`,
   `tip_angles_intrinsic`, `tip_angles`, `triangle_triangle_adjacency`,
   `write_mesh`.
+- \[Oded\] Add FD-type linear solve with Dirichlet conditions function.
+- \[Silvia\] When Oded does this^, fix `test_quadtree_laplacian.py`.
 - \[Silvia\] Add Copyleft module
-- \[Silvia\] Fix `test_grad.py`, `test_per_face_normals.py`, `test_per_vertex_normals.py`,
-  `test_quadtree_laplacian.py`, `test_regular_cube_mesh.py`,
-  `test_regular_square_mesh.py`.
-
 
 ## Future to-dos
 - Add examples to docstrings.
