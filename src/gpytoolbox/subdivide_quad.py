@@ -1,36 +1,53 @@
 import numpy as np
 from scipy.sparse import csr_matrix, vstack, hstack, eye
 
-def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded1):
-    # Subdivides the ind-th cell of a given octree, maintaining all the #
-    # adjacency information
-    #
-    # Inputs:
-    #   ind integer index of cell to subdivide
-    #   C1 #nodes by 3 matrix of cell centers
-    #   W1 #nodes vector of cell widths (**not** half widths)
-    #   CH1 #nodes by 4 matrix of child indeces (-1 if leaf node)
-    #   PAR1 #nodes vector of immediate parent indeces (to traverse upwards)
-    #   D1 #nodes vector of tree depths
-    #   A1 #nodes by #nodes sparse adjacency matrix, where a value of a in the
-    #       (i,j) entry means that node j is to the a-th direction of i
-    #       (a=1: left;  a=2: right;  a=3: bottom;  a=4: top).
-    #  Optional:
-    #       graded1 boolean whether to ensure that adjacent quads only differ by
-    #           one in depth or not (this is useful for numerical applications, 
-    #           not so much for others like position queries).
-    #
-    # Outputs:
-    #   C2 #nodes by 3 matrix of cell centers
-    #   W2 #nodes vector of cell widths (**not** half widths)
-    #   CH2 #nodes by 4 matrix of child indeces (-1 if leaf node)
-    #   PAR2 #nodes vector of immediate parent indeces (to traverse upwards)
-    #   D2 #nodes vector of tree depths
-    #   A2 #nodes by #nodes sparse adjacency matrix, where a value of a in the
-    #       (i,j) entry means that node j is to the a-th direction of i
-    #       (a=1: left;  a=2: right;  a=3: bottom;  a=4: top).
-    #
+def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded=True):
+    """"Turn one cell of a quadtree or octree into four or eight, respectively
+    
+    Subdivides the ind-th cell of a given octree, maintaining all the adjacency information
 
+    Parameters
+    ----------
+    ind : int 
+        Index of cell to subdivide into input tree
+    C1 : numpy double array 
+        Matrix of cell centers of input tree
+    W1 : numpy double array 
+        Vector of cell half widths of input tree
+    CH1 : numpy int array
+        Matrix of child indeces (-1 if leaf node) of input tree
+    PAR1 : numpy int array 
+        Vector of immediate parent indeces (to traverse upwards) of input tree
+    D1 : numpy int array
+        Vector of tree depths of input tree
+    A1 : scipy sparse.csr_matrix
+        Sparse node adjacency matrix of input tree, where a value of a in the (i,j) entry means that node j is to the a-th direction of i (a=1: left;  a=2: right;  a=3: bottom;  a=4: top).
+    graded : bool, optional (default True)
+        Whether to ensure that adjacent quads only differ by one in depth or not (this is useful for numerical applications, not so much for others like position queries).
+
+    Returns
+    -------
+    C2 : numpy double array 
+        Matrix of cell centers of output tree
+    W2 : numpy double array 
+        Vector of cell half widths of output tree
+    CH2 : numpy int array
+        Matrix of child indeces (-1 if leaf node) of output tree
+    PAR2 : numpy int array 
+        Vector of immediate parent indeces (to traverse upwards) of output tree
+    D2 : numpy int array
+        Vector of tree depths of output tree
+    A2 : scipy sparse.csr_matrix
+        Sparse node adjacency matrix of output tree, where a value of a in the (i,j) entry means that node j is to the a-th direction of i (a=1: left;  a=2: right;  a=3: bottom;  a=4: top).
+
+    See Also
+    --------
+    initialize_quadtree.
+
+    Examples
+    --------
+    TODO
+    """
 
     # If quad A lays to the <lookup[:,1]> of quad B, then children
     # <lookup[:,2:end]> resulting from subdividing A will still be
@@ -207,7 +224,7 @@ def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded1):
         hstack((transpose_orientation(rect_mat),square_mat))
     )))
     #print("A2") print(A2.toarray())
-    if graded1:
+    if graded:
         a2_ind = A2[:,ind] # from the perspective of the neighbors
         # Go over all neighbors of the original quad we subdivided
         neighbors_ind = a2_ind.nonzero()[0]
