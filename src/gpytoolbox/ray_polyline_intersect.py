@@ -42,7 +42,7 @@ def ray_polyline_intersect(position, direction, polyline_vertices, max_distance 
     TODO
     """
 
-    if (EC is None)==0:
+    if (EC is None):
         EC = edge_indices(polyline_vertices.shape[0],closed=True)
     ind = -1
     x = np.array([np.Inf, np.Inf])
