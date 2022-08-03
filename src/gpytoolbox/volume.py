@@ -1,6 +1,6 @@
 import numpy as np
 
-def volume(v,t):
+def volume(V,T):
     """Computes a vector containing the volumes of all tetrahedra in a mesh
 
     Parameters
