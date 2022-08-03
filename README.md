@@ -170,15 +170,15 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 
 # TO-DO
 ## Must do before first PyPi release
-- Add docstrings for `array_correspondence`, `boundary_edges`, `boundary_loops`,
+- \[Oded\] Add docstrings for `array_correspondence`, `boundary_edges`, `boundary_loops`,
   `boundary_vertices`, `cotangent_laplacian_intrinsic`, `cotangent_laplacian`,
   `cotangent_weights_intrinsic`, `cotangent_weights`, `doublearea_intrinsic`,
   `edges`, `halfedge_edge_map`, `halfedge_lengths_squared`, `halfedge_lengths`,
   `halfedges`, `min_quad_with_fixed`, `read_mesh`, `subdivide`,
   `tip_angles_intrinsic`, `tip_angles`, `triangle_triangle_adjacency`,
   `write_mesh`.
-- Copyleft module
-- Fix `test_grad.py`, `test_per_face_normals.py`, `test_per_vertex_normals.py`,
+- \[Silvia\] Add Copyleft module
+- \[Silvia\] Fix `test_grad.py`, `test_per_face_normals.py`, `test_per_vertex_normals.py`,
   `test_quadtree_laplacian.py`, `test_regular_cube_mesh.py`,
   `test_regular_square_mesh.py`.
 
