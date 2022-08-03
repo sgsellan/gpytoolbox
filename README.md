@@ -170,8 +170,6 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Make every function documented with docstrings so we have pretty auto
   documentation.
 - Copyleft module
-- Fix argument conventions (None vs empty array)
-- Write unit tests for `signed_distance_polygon`, `subdivide_quad`.
 - Fix `test_grad.py`, `test_per_face_normals.py`, `test_per_vertex_normals.py`,
   `test_quadtree_laplacian.py`, `test_regular_cube_mesh.py`,
   `test_regular_square_mesh.py`.
@@ -184,6 +182,7 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Write proper BVH structure and efficient signed distances
 - Switch to pybind11
 - Port fracture modes code
+- Port swept volume code
 - Add tets to `subdivide.py`
 - `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`

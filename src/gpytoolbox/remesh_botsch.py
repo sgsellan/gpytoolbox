@@ -34,7 +34,7 @@ def remesh_botsch(V,F,i=10,h=None,project=True):
     try:
         from gpytoolbox_bindings import _remesh_botsch_cpp_impl
     except:
-        raise ImportError("Gpytoolbox cannot import its C++ decimate binding.")
+        raise ImportError("Gpytoolbox cannot import its C++ binding.")
     
     if (h is None):
         h = np.mean(halfedge_lengths(V,F))
