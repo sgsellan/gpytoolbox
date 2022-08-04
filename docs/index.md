@@ -12,6 +12,10 @@ tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/macos_build.yml/
 ![unit
 tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/windows_build.yml/badge.svg)
 
+<img src="assets/images/logo.png" alt="logo" style="width:50%;margin-left: auto;margin-right: auto;display: block;">
+
+<!-- ![logo](assets/images/logo.png) -->
+
 *Authors:* [Silvia Sellán](https://www.silviasellan.com), University of Toronto
 and [Oded Stein](https://odedstein.com), MIT
 
