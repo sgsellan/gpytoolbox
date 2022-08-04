@@ -83,7 +83,25 @@ have used or used in any of your past projects, we encourage you to submit it
 *as-is* in a Pull Request. We will gladly credit you in the individual function
 as well as on this home page.
 
+## License
 
+Gpytoolbox's is released under an MIT license ([see details](https://github.com/sgsellan/gpytoolbox/blob/main/LICENSE.MIT)),
+except for files in the `gpytoolbox.copyleft` module, which are under a GPL one
+([see details](https://github.com/sgsellan/gpytoolbox/blob/main/LICENSE.GPL)). Functions in the copyleft module must be imported
+explicitly; this way, if you import only the main Gpytoolbox module
+```python
+import gpytoolbox
+```
+or individual functions from it,
+```python
+from gpytoolbox import regular_square_mesh, regular_cube_mesh
+```
+you are only bound by the terms of the permissive MIT license. However, if you
+import any functionality from `gpytoolbox.copyleft`; e.g.,
+```python
+from gpytoolbox.copyleft import mesh_boolean
+```
+you will be bound by the more restrictive GPL license.
 
 ## Acknowledgements
 

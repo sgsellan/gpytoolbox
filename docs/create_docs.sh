@@ -37,7 +37,7 @@ for file in src/gpytoolbox/*/*.py; do
 		mkdir -p "docs/${modulename}"
 		path="docs/${modulename}/${name}.md"
 		echo "---" > $path
-		echo "title: \"${name}\"" >> $path
+		echo "title: \"${modulename}.${name}\"" >> $path
 		echo "---" >> $path
 		echo >> $path
 		echo "::: src.gpytoolbox.${modulename}.${name}" >> $path

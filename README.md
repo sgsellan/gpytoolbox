@@ -81,7 +81,25 @@ have used or used in any of your past projects, we encourage you to submit it
 *as-is* in a Pull Request. We will gladly credit you in the individual function
 as well as on this home page.
 
+## License
 
+Gpytoolbox's is released under an MIT license ([see details](/LICENSE.MIT)),
+except for files in the `gpytoolbox.copyleft` module, which are under a GPL one
+([see details](/LICENSE.GPL)). Functions in the copyleft module must be imported
+explicitly; this way, if you import only the main Gpytoolbox module
+```python
+import gpytoolbox
+```
+or individual functions from it,
+```python
+from gpytoolbox import regular_square_mesh, regular_cube_mesh
+```
+you are only bound by the terms of the permissive MIT license. However, if you
+import any functionality from `gpytoolbox.copyleft`; e.g.,
+```python
+from gpytoolbox.copyleft import mesh_boolean
+```
+you will be bound by the more restrictive GPL license.
 
 ## Acknowledgements
 
@@ -170,13 +188,13 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 
 # TO-DO
 ## Must do before first PyPi release
-- \[Oded\] Add docstrings for `array_correspondence`, `boundary_edges`, `boundary_loops`,
-  `boundary_vertices`, `cotangent_laplacian_intrinsic`, `cotangent_laplacian`,
-  `cotangent_weights_intrinsic`, `cotangent_weights`, `doublearea_intrinsic`,
-  `edges`, `halfedge_edge_map`, `halfedge_lengths_squared`, `halfedge_lengths`,
-  `halfedges`, `min_quad_with_fixed`, `read_mesh`, `subdivide`,
-  `tip_angles_intrinsic`, `tip_angles`, `triangle_triangle_adjacency`,
-  `write_mesh`.
+- \[Oded\] Add docstrings for `array_correspondence`, `boundary_edges`,
+  `boundary_loops`, `boundary_vertices`, `cotangent_laplacian_intrinsic`,
+  `cotangent_laplacian`, `cotangent_weights_intrinsic`, `cotangent_weights`,
+  `doublearea_intrinsic`, `edges`, `halfedge_edge_map`,
+  `halfedge_lengths_squared`, `halfedge_lengths`, `halfedges`,
+  `min_quad_with_fixed`, `read_mesh`, `subdivide`, `tip_angles_intrinsic`,
+  `tip_angles`, `triangle_triangle_adjacency`, `write_mesh`.
 - \[Oded\] Add FD-type linear solve with Dirichlet conditions function.
 - \[Silvia\] When Oded does this^, fix `test_quadtree_laplacian.py`.
 
