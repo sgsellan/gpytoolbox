@@ -55,14 +55,14 @@ from .array_correspondence import array_correspondence
 from .subdivide import subdivide
 from .read_mesh import read_mesh
 from .write_mesh import write_mesh
-from .do_meshes_intersect import do_meshes_intersect
-from .mesh_boolean import mesh_boolean
+# from .do_meshes_intersect import do_meshes_intersect
+# from .mesh_boolean import mesh_boolean
 from .decimate import decimate
 from .in_element_aabb import in_element_aabb
 from .ray_mesh_intersect import ray_mesh_intersect
 from .remesh_botsch import remesh_botsch
 from .upper_envelope import upper_envelope
-from .lazy_cage import lazy_cage
+# from .lazy_cage import lazy_cage
 from .colormap import colormap
 from .apply_colormap import apply_colormap
 from .offset_surface import offset_surface

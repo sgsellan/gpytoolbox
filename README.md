@@ -179,7 +179,6 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
   `write_mesh`.
 - \[Oded\] Add FD-type linear solve with Dirichlet conditions function.
 - \[Silvia\] When Oded does this^, fix `test_quadtree_laplacian.py`.
-- \[Silvia\] Add Copyleft module
 
 ## Future to-dos
 - Add examples to docstrings.

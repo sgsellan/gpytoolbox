@@ -12,7 +12,7 @@ class TestOffsetSurface(unittest.TestCase):
             u1,g1 = gpytoolbox.offset_surface(v,f,iso=0.05,grid_size=50)
             u2,g2 = gpytoolbox.offset_surface(v,f,iso=0.1,grid_size=50)
             # u1,g1 fully contains u2,g2, i.e. they don't intersect
-            b, _ = gpytoolbox.do_meshes_intersect(u1,g1,u2,g2)
+            b, _ = gpytoolbox.copyleft.do_meshes_intersect(u1,g1,u2,g2)
             self.assertFalse(b)
     def test_armadillo(self):
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/armadillo.obj")
@@ -26,7 +26,7 @@ class TestOffsetSurface(unittest.TestCase):
                 u1,g1 = gpytoolbox.offset_surface(v,f,iso=0.05,grid_size=gs)
                 u2,g2 = gpytoolbox.offset_surface(v,f,iso=0.1,grid_size=gs)
                 # u1,g1 fully contains v,f, i.e. they don't intersect
-                b, _ = gpytoolbox.do_meshes_intersect(u1,g1,u2,g2)
+                b, _ = gpytoolbox.copyleft.do_meshes_intersect(u1,g1,u2,g2)
                 self.assertFalse(b)
             
 if __name__ == '__main__':

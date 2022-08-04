@@ -1,7 +1,7 @@
 import numpy as np
 # Bindings using C++ and Eigen:
-from gpytoolbox.do_meshes_intersect import do_meshes_intersect
-from gpytoolbox.mesh_boolean import mesh_boolean
+from gpytoolbox.copyleft.do_meshes_intersect import do_meshes_intersect
+from gpytoolbox.copyleft.mesh_boolean import mesh_boolean
 from gpytoolbox.decimate import decimate
 from gpytoolbox.offset_surface import offset_surface
 

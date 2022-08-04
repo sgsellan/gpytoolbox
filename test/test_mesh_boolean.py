@@ -16,7 +16,7 @@ class TestMeshBoolean(unittest.TestCase):
         for i in range(100):
             # Generate random displacements
             displacement = 4*np.random.rand(1,3)-2
-            u,g = gpytoolbox.mesh_boolean(v1,f1,v2+np.tile(displacement,(v2.shape[0],1)),f2,boolean_type='union')
+            u,g = gpytoolbox.copyleft.mesh_boolean(v1,f1,v2+np.tile(displacement,(v2.shape[0],1)),f2,boolean_type='union')
             TT, TTi = gpytoolbox.triangle_triangle_adjacency(g)
             I = np.squeeze(np.reshape(TT,(-1,1),order='F'))
             J = np.linspace(0,g.shape[0]-1,g.shape[0],dtype=int)
@@ -26,7 +26,7 @@ class TestMeshBoolean(unittest.TestCase):
             A = scipy.sparse.csr_matrix((vals,(I,J)))
             n, labs = scipy.sparse.csgraph.connected_components(A)
             # If the displacement is <=1, then there is intersection. Otherwise, no
-            uu,gg = gpytoolbox.mesh_boolean(v1,f1,v2+np.tile(displacement,(v2.shape[0],1)),f2,boolean_type='intersection')
+            uu,gg = gpytoolbox.copyleft.mesh_boolean(v1,f1,v2+np.tile(displacement,(v2.shape[0],1)),f2,boolean_type='intersection')
             if np.max(np.abs(displacement))<=1:
                 self.assertTrue(n==1)
                 self.assertTrue(len(uu)>0)
