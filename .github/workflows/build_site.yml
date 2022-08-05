@@ -14,6 +14,11 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v2
 
+      - name: Build wheels
+        shell: bash -l {0}
+        run: |
+          bash docs/create_docs.sh
+
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         # Or use mhausenblas/mkdocs-deploy-gh-pages@nomaterial to build without the mkdocs-material theme

@@ -1,6 +1,32 @@
 import numpy as np
 
 def regular_cube_mesh(gs,type='rotationally-symmetric'):
+    """Tetrahedral volume mesh of a cube
+
+    Generates a regular tetrahedral mesh of a one by one by one cube by dividing each grid cube into 6 or 5tetrahedra
+
+    Parameters
+    ----------
+    gs : int
+        Number of vertices on each side
+    type : str, optional (default 'rotationally-symmetric')
+        the specific cube division scheme: 'five' for a division of each cube into 5 tets 'rotationally-symmetric' (default), 'reflectionally-symmetric' or 'hex'
+
+    Returns
+    -------
+    V : numpy double array
+        Matrix of tet mesh vertex coordinates
+    T : numpy int array
+        Matrix of tet vertex indices into V
+
+    See Also
+    --------
+    regular_square_mesh.
+
+    Examples
+    --------
+    TODO
+    """
     # Generates a regular tetrahedral mesh of a one by one by one cube. 
     # Each grid cube is decomposed into 6 reflectionally symmetric tetrahedra
     #

@@ -2,6 +2,42 @@ import numpy as np
 from scipy.sparse import csr_matrix, diags
 
 def quadtree_laplacian(C,W,CH,D,A):
+    """Finite difference Laplacian matrix on a quadtree
+    
+    Builds a finite difference laplacian on a quadtree following a centered finite difference scheme, with the adjacency as suggested by Bickel et al. "Adaptative Simulation of Electrical Discharges".
+
+    Parameters
+    ----------
+    C : numpy double array 
+        Matrix of cell centers
+    W : numpy double array 
+        Vector of cell half widths
+    CH : numpy int array
+        Matrix of child indeces (-1 if leaf node)
+    D : numpy int array
+        Vector of tree depths
+    A : scipy sparse.csr_matrix
+        Sparse node adjacency matrix, where a value of a in the (i,j) entry means that node j is to the a-th direction of i (a=1: left;  a=2: right;  a=3: bottom;  a=4: top).
+
+    Returns
+    -------
+    L : scipy sparse.csr_matrix
+        sparse Laplacian matrix
+    stored_at : numpy double array
+        Matrix of child cell centers, where the values of L are stored
+
+    See also
+    --------
+    quadtree_gradient, initialize_quadtree.
+
+    Notes
+    -----
+    This code is *purposefully* not optimized beyond asymptotics for simplicity in understanding its functionality and translating it to other programming languages beyond prototyping.
+    
+    Examples
+    --------
+    TODO
+    """
     # Builds a finite difference laplacian on a quadtree following a centered 
     # finite difference scheme, with the adjacency as suggested by 
     # Bickel et al. "Adaptative Simulation of Electrical

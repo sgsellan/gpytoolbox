@@ -1,20 +1,10 @@
-# Bindings using C++ and Eigen:
-import sys
-import os
-
-# This function depends on skimage and imageio (should it?)
-try:
-    from .png2poly import png2poly
-except:
-    print("-------------------------------------------------------------------")
-    print("WARNING: You have not installed the necessary libraries to use png2poly.")
-    print("-------------------------------------------------------------------")
-
+# This function depends on skimage 
+from .png2poly import png2poly
 
 # These functions depend ONLY on numpy, scipy and each other
 from .linear_elasticity import linear_elasticity
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
-from .edge_indeces import edge_indeces
+from .edge_indices import edge_indices
 from .regular_square_mesh import regular_square_mesh
 from .regular_cube_mesh import regular_cube_mesh
 from .signed_distance_polygon import signed_distance_polygon
@@ -65,13 +55,14 @@ from .array_correspondence import array_correspondence
 from .subdivide import subdivide
 from .read_mesh import read_mesh
 from .write_mesh import write_mesh
-from .do_meshes_intersect import do_meshes_intersect
-from .mesh_boolean import mesh_boolean
+# from .do_meshes_intersect import do_meshes_intersect
+# from .mesh_boolean import mesh_boolean
 from .decimate import decimate
 from .in_element_aabb import in_element_aabb
 from .ray_mesh_intersect import ray_mesh_intersect
 from .remesh_botsch import remesh_botsch
 from .upper_envelope import upper_envelope
-from .lazy_cage import lazy_cage
+# from .lazy_cage import lazy_cage
 from .colormap import colormap
 from .apply_colormap import apply_colormap
+from .offset_surface import offset_surface

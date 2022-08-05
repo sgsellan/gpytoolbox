@@ -1,17 +1,28 @@
 import numpy as np
 
 def signed_distance_polygon(P,V):
-    # Signed distance from a set of points to a given polygon
-    # (taken from https://www.shadertoy.com/view/wdBXRW)
-    # 
-    # Input:
-    #       P #P by 2 numpy array of query point coordinates
-    #       V #V by 2 numpy array of polyline vertex positions in order
-    #
-    # Output:
-    #       S #P numpy array of signed distances from each query point to the polyline
-    #
-    # 
+    """Signed distance from a set of points to a given polygon
+    
+    Parameters
+    ----------
+    P : numpy double array
+        Matrix of query point coordinates
+    V : numpy double array
+        Matrix of polyline vertex positions in order
+
+    Returns
+    -------
+    S : numpy double array  
+        Vector of signed distances from each query point to the polyline
+
+    Notes
+    -----
+    This is lifted from https://www.shadertoy.com/view/wdBXRW
+
+    Examples
+    --------
+    TODO
+    """
     n = V.shape[0]
     # vectorized dot product
     d = np.sum( (P - np.tile(V[0,:],(P.shape[0],1)))*(P - np.tile(V[0,:],(P.shape[0],1))) ,axis=1)

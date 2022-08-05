@@ -1,13 +1,27 @@
 # https://realpython.com/python-project-documentation-with-mkdocs/
 # to deploy: mkdocs gh-deploy
+# https://mkdocstrings.github.io/python/usage/
 site_name: Gpytoolbox
 theme:
   favicon: assets/images/favicon.png
   palette:
     primary: cyan
   name: "material"
+  features:
+    - navigation.sections
 plugins:
-  - mkdocstrings
+- mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        paths: [src, src/gpytoolbox]
+        options:
+          heading_level: 2
+          show_root_toc_entry: false
+          show_root_heading: false
+          show_signature_annotations: false
+          # show_signature: false
+          docstring_style: "numpy"
 repo_url: https://github.com/sgsellan/gpytoolbox
 repo_name: sgsellan/gpytoolbox
 extra:

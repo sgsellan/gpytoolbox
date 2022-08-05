@@ -15,7 +15,7 @@ class TestUpperEnvelope(unittest.TestCase):
         # Generate many examples
         for m in np.linspace(20,5000,20,dtype=int):
             # print("2")
-            v,f = gpytoolbox.lazy_cage(v,f,num_faces=m)
+            v,f = gpytoolbox.copyleft.lazy_cage(v,f,num_faces=m)
             # print("3")
             v = gpytoolbox.normalize_points(v)
             # print("4")

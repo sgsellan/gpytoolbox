@@ -1,27 +1,49 @@
 import numpy as np
 from numpy.linalg import solve
-from .edge_indeces import edge_indeces
+from .edge_indices import edge_indices
 
-def ray_polyline_intersect(position, direction, polyline_vertices, max_distance = 100.0, EC=np.empty(0)):
-    # Calculates the intersection point between a ray and a given polyline in 2D
-    # 
-    # Note: This does a for loop on all the edges of the polyline, suffering performance
-    #
-    # Inputs:
-    #       position #2 numpy array of camera position
-    #       direction #2 numpy array of camera direction 
-    #       polyline_vertices #polyline vertices by 2 numpy array (in clockwise order if EC is missing)
-    #       Optional:
-    #               max_distance float max distance to consider
-    #               EC #EC by 2 int numpy array of edge indeces into polyline_vertices
-    #
-    # Outputs:
-    #       x #2 numpy array of intersection point (np.Inf if no intersection)
-    #       n #2 numpy array of polyline normal at intersection (zero if no intersection)
-    #       ind int index into EC of intersection edge (-1 if no intersection)
-    #
-    if EC.shape[0]==0:
-        EC = edge_indeces(polyline_vertices.shape[0],closed=True)
+def ray_polyline_intersect(position, direction, polyline_vertices, max_distance = 100.0, EC=None):
+    """Shoot a ray in 2D from a position and see where it crashes into a given polyline
+
+    Calculates the intersection point between a ray and a given polyline in 2D
+
+    Parameters
+    ----------
+    position : numpy double array
+        Vector of camera position coordinates
+    direction : numpy double array
+        Vector of camera direction 
+    polyline_vertices : numpy double array
+        Matrix of polyline vertex coordinates
+    max_distance : double, optional (default 100.0)
+        Maximum ray distance to consider
+    EC : numpy int array, optional (default None)
+        Matrix of edge indices into polyline_vertices
+
+    Returns
+    -------
+    x : numpy double array
+        Vector of intersection point coordinates (np.Inf if no intersection)
+    n : numpy double array
+        Vector of polyline normal at intersection (zeros if no intersection)
+    ind : int 
+        Index into EC of intersection edge (-1 if no intersection)
+
+    See Also
+    --------
+    test_ray_mesh_intersect.
+
+    Notes
+    -----
+    This does a for loop on all the edges of the polyline, suffering performance.
+
+    Examples
+    --------
+    TODO
+    """
+
+    if (EC is None):
+        EC = edge_indices(polyline_vertices.shape[0],closed=True)
     ind = -1
     x = np.array([np.Inf, np.Inf])
     n = np.array([0.0, 0.0])

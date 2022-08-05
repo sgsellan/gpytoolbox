@@ -16,5 +16,6 @@ else:
     # normal / unix case
     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "build")))
 import gpytoolbox
+import gpytoolbox.copyleft
 import numpy
 import unittest

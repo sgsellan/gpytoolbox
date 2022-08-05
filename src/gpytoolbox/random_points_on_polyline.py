@@ -1,26 +1,38 @@
 import numpy as np
-from .edge_indeces import edge_indeces
+from .edge_indices import edge_indices
 
-def random_points_on_polyline(V, n, EC=np.empty(0)):
-    # Compute n uniformly distributed random points in a given polyline
-    #
-    # Note: The output normals follow a clockwise convention: normals will point
-    # outward for a clockwise-ordered circle
-    #
-    # Input:
-    #       V #V by 2 numpy array of polyline vertices 
-    #       n integer number of desired points
-    #       Optional:
-    #               EC #EC by 2 numpy array of polyline indeces into V
-    #
-    # Output:
-    #       P n by 2 numpy array of randomly sampled points
-    #       N n by 2 numpy array of outward facing polyline normals at P
-    #
-    #
+def random_points_on_polyline(V, n, EC=None):
+    """Generate points on the edges of a polyline.
 
-    if EC.shape[0]==0:
-        EC = edge_indeces(V.shape[0],closed=False)
+    Use a uniform distribution to randomly distribute random points in a given polyline.
+
+    Parameters
+    ----------
+    V : numpy double array
+        Matrix of polyline vertices 
+    n : int
+        Number of desired points
+    EC : numpy int array, optional (default None)
+        Matrix of polyline indeces into V. If None, the polyline is assumed to be open and ordered.
+
+    Returns
+    -------
+    P : numpy double array
+        Matrix of randomly sampled points that lay on the polyline
+    N : numpy double array
+        Matrix of outward facing polyline normals at P
+
+    See Also
+    --------
+    edge_indices.
+
+    Examples
+    --------
+    TODO
+    """
+
+    if (EC is None):
+        EC = edge_indices(V.shape[0],closed=False)
     
     edge_lengths = np.linalg.norm(V[EC[:,1],:] - V[EC[:,0],:],axis=1)
     normalized_edge_lengths = np.cumsum(edge_lengths)/np.sum(edge_lengths)

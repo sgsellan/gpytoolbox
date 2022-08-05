@@ -1,44 +1,67 @@
 import numpy as np
-from scipy.sparse import csr_matrix
-
-import gpytoolbox
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
-import sys
-import os
 from .min_quad_with_fixed import min_quad_with_fixed
 
 
 def linear_elasticity(V,F,U0,dt=0.1,bb=None,bc = None
     ,Ud0=None,fext=None,K=1.75,mu=0.0115,volumes=None,mass=None):
-    # Compute the deformation of a 2D solid object according to the usual linear elasticity model 
-    #
-    # Note: This only works for 2D (d=2) meshes currently
-    # TO-DO: Code tet mesh version of this
-    #
-    # Inputs:
-    #       V #V by d numpy array of vertex positions 
-    #       F #F by d+1 integer numpy array of element indeces into V
-    #       U0 #V by d numpy array of previous displacement
-    #       Optional:
-    #           dt float timestep
-    #           bb #bb integer numpy array of fixed vertex indeces into V
-    #           bc #bb by d numpy array of fixed vertex coordinates
-    #           K bulk modulus
-    #           mu material shear modulus
-    #           volumes an #F numpy array with the volumes (if d=3) or areas (if d=2) of each mesh element
-    #           mass the shape's #V by #V scipy sparse mass matrix (will be computed otherwise)
-    #           fext #V by d external forces (for example, gravity or a load)
-    #           Ud0 #V by d numpy array of previous velocity
-    # Outputs:
-    #       U  #V by d numpy array of new displacements
-    #       sigma_v #F numpy array of Von Mises stresses
+    """Linear elastic deformation
+
+    Compute the deformation of a 2D solid object according to the usual linear elasticity model.
+
+    Parameters
+    ----------
+    V : numpy double array
+        Matrix of vertex coordinates
+    F : numpy int array
+        Matrix of triangle indices
+    U0 : numpy double array 
+        Matrix of previous displacements
+    dt : double (optional, default 0.1) 
+        Timestep
+    bb : numpy int array (optional, default None)
+        Fixed vertex indices into V
+    bc : numpy double array (optional, default None)
+        Fixed vertex *displacements*
+    fext : numpy double array (optional, default None)
+        Matrix of external forces (for example, gravity or a load)
+    Ud0 : numpy double array (optional, default None)
+        Matrix of previous velocity
+    K : double (optional, default 1.75)
+        Bulk modulus
+    mu : double (optional, default 0.0115)
+        Material shear modulus
+    volumes : numpy double array (optional, default None)
+        Vector with the volumes (in 3D) or areas (in 2D) of each mesh element (if None, will be computed)
+    mass : scipy sparse_csr (optional, default None)
+        The mesh's sparse mass matrix (if None, will be computed)
+
+    Returns
+    -------
+    U : numpy double array
+        Matrix of new displacements
+    sigma_v : numpy double array
+        Vector of per-element Von Mises stresses
+
+    See Also
+    --------
+    linear_elasticity_stiffness.
+
+    Notes
+    -----
+    This implementation only works for 2D triangle meshes. Tetrahedral meshes will be supported soon.
+
+    Examples
+    --------
+    TO-DO
+    """
 
     if (Ud0 is None):
         Ud0 = 0*V
     if (fext is None):
         fext = 0*V
     if (bb is not None):
-        # THIS ASSUMES 2D
+        # This is the bit that assumes 2D
         bb = np.concatenate((bb,bb+V.shape[0]))
         bc = np.concatenate((bc[:,0],bc[:,1]))
     

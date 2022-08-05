@@ -1,18 +1,28 @@
 import numpy as np
 
 def remove_duplicate_vertices(V,epsilon=0.0,faces=None):
-    # Given an ordered polyline, this returns the edge indeces in a similar way
-    # to how the face indeces of a triangle mesh are given.
-    # Inputs:
-    #       V  #V by dim numpy array of vertex positions
-    #       Optional:
-    #           epsilon positive float uniqueness tolerance 
-    #           faces any array of indeces, for convenience
-    # Outputs:
-    #       SV  #SV by dim new numpy array of vertex positions
-    #       SVI #SV by 1 list of indices so SV = V[SVI,:]
-    #       SVJ #V by 1 list of indices so V = SV[SVJ,:]
-    #       SF is the "faces" array, re-indexed to SV
+    """Return unique vertices, optionally with a tolerance
+    
+    Parameters
+    ----------
+    V : numpy double array
+        Matrix of vertex positions
+    epsilon : double, optional (default 0.0)
+        Positive uniqueness absolute tolerance
+    faces : numpy int array, optional (default None)
+        Matrix of any-type mesh indices, for convenience
+    
+    Returns
+    -------
+    SV : numpy double array
+        Matrix of new vertex positions
+    SVI : numpy int array
+        Vector of indices such that SV = V[SVI,:]
+    SVJ : numpy int array
+        Vector of indices such that V = SV[SVJ,:]
+    SF : numpy int array
+        Matrix of new mesh indices into SV, only part of the output if faces is not None.
+    """
     
     if epsilon==0.0:
         SV, SVI, SVJ = np.unique(V,return_index=True,return_inverse=True,axis=0)
