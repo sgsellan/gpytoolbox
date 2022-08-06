@@ -34,6 +34,11 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.h
 	src/cpp/remesher/split_edges.h
 	src/cpp/remesher/tangential_relaxation.h
+	src/cpp/swept_volume/fd_interpolate.cpp
+	src/cpp/swept_volume/gradient_descent_test.cpp
+	src/cpp/swept_volume/random_points_on_mesh.cpp
+	src/cpp/swept_volume/sparse_continuation.cpp
+	src/cpp/swept_volume/swept_volume.cpp
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
@@ -46,6 +51,11 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.cpp
 	src/cpp/remesher/split_edges.cpp
 	src/cpp/remesher/tangential_relaxation.cpp
+	src/cpp/swept_volume/fd_interpolate.h
+	src/cpp/swept_volume/gradient_descent_test.h
+	src/cpp/swept_volume/random_points_on_mesh.h
+	src/cpp/swept_volume/sparse_continuation.h
+	src/cpp/swept_volume/swept_volume.h
 	)
 
 # target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
@@ -63,6 +73,7 @@ npe_add_module(gpytoolbox_bindings
 	src/cpp/binding_remesher_botsch.cpp
 	src/cpp/binding_write_obj.cpp
 	src/cpp/binding_read_obj.cpp
+	src/cpp/binding_swept_volume.cpp
 )
 
 # target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
