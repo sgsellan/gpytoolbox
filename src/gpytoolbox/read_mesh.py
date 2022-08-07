@@ -77,7 +77,14 @@ def _read_obj(file,return_UV,return_N,reader):
     if reader=="C++":
         err,V,F,UV,Ft,N,Fn = _read_obj_cpp_impl(file,return_UV,return_N)
         if err != 0:
-            raise Exception(f"Error {err} reading obj file.")
+            if err == -5:
+                raise Exception(f"The file {file} could not be opened.")
+            elif err == -7:
+                raise Exception(f"A line in {file} was ill-formed.")
+            elif err == -8:
+                raise Exception(f"{file} does not seem to be a triangle mesh.")
+            else:
+                raise Exception(f"Unknown error {err} reading obj file.")
     elif reader=="Python":
         V,F,UV,Ft,N,Fn = _read_obj_python(file,return_UV,return_N)
     else:
