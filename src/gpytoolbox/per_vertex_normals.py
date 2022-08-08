@@ -7,18 +7,18 @@ from .doublearea import doublearea
 def per_vertex_normals(V,F):
     """Normal vectors to all vertices on a mesh
     
-    Computs area-weighted per-vertex unit normal vectors for a triangle mesh
+    Computes area-weighted per-vertex unit normal vectors for a triangle mesh
 
     Parameters
     ----------
-    V : numpy double array
-        Matrix of mesh vertex coordinates
-    F : numpy int array
-        Matrix of triangle indices into V
+    V : (n,d) numpy array
+        vertex list of a triangle mesh
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
 
     Returns
     -------
-    N : numpy double array
+    N : (m,d) numpy double array
         Matrix of per-vertex normals
 
     See Also
@@ -29,16 +29,6 @@ def per_vertex_normals(V,F):
     --------
     TODO
     """
-    # Computs per vertex unit normal vectors for a triangle mesh
-    #
-    # Input:
-    #       V #V by 3 numpy array of mesh vertex positions
-    #       F #F by 3 int numpy array of face/edge vertex indeces into V
-    #
-    # Output:
-    #       N #F by 3 numpy array of per-vertex unit normals
-    #           
-
 
     # First compute face normals
     face_normals = per_face_normals(V,F,unit_norm=True)

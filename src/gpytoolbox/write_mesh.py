@@ -11,29 +11,46 @@ def write_mesh(file,
     Fn=None,
     fmt=None,
     writer=None):
-    # Writes a mesh to a file.
-    #
-    # If you have the approproate C++ extensions installed, this will use a fast
-    # C++-based writer. If you do not, this will use a slow python writer.
-    #
-    # Currently only supports triangle meshes.
-    # 
-    # Input:
-    #       file  the path to the mesh
-    #       V  numpy array of mesh vertex positions
-    #       F  numpy array of mesh face indices into V (0 indexing)
-    #       Optional:
-    #                UV  numpy array of texture coordinates
-    #                Ft  numpy array of mesh face indices into UV 
-    #                N  numpy array of normal coordinates
-    #                Fn  numpy array of mesh face indices into N
-    #                fmt  The file format of the mesh to open.
-    #                     If None, try to guess the format from the file
-    #                     extension.
-    #                     Supported formats: obj
-    #                writer  Which writer engine to use. None, 'C++' or 'Python'.
-    #                        If None, will use C++ if available, and else Python.
-    #
+    """Writes a mesh to a file.
+    
+    If you have the approproate C++ extensions installed, this will use a fast
+    C++-based writer. If you do not, this will use a slow python writer.
+    
+    Currently only supports triangle meshes.
+
+    Parameters
+    ----------
+    file : string
+        the path the mesh will be written to
+    V : (n,3) numpy array
+        vertex list of a triangle mesh
+    F : (m,3) numpy int array
+        face index list of a triangle mesh (into V)
+    UV : (n_uv,2) numpy array, optional (default: None)
+        vertex list for texture coordinates
+    Ft : (m,3) numpy int array, optional (default: None)
+        face index list for texture coordinates (into UV)
+    N : (n_n,3) numpy array, optional (default: None)
+        vertex list for normal coordinates
+    Fn : (m,3) numpy int array, optional (default: None)
+        face index list for normal coordinates (into N)
+    fmt : string, optional (default: None)
+        The file format of the mesh to write.
+        If None, try to guess the format from the file extension.
+        Supported formats: obj
+    writer : string, optional (default: None)
+        Which writer engine to use. None, 'C++' or 'Python'.
+        If None, will use C++ if available, and else Python.
+
+    Returns
+    -------
+
+
+    Examples
+    --------
+    TODO
+    
+    """
 
     # Detect format if it has not been specified
     if fmt is None:

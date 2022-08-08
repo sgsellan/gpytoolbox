@@ -12,14 +12,16 @@ def grad(V,F=None):
 
     Parameters
     ----------
-    V : numpy double array
-        Matrix of vertex coordinates
-    F : numpy int array, optional (default None)
-        Matrix of triangle indices
+    V : (n,d) numpy array
+        vertex list of a polyline or triangle mesh
+    F : numpy int array, optional (default: None)
+        if None, interpret input as ordered polyline;
+        if (m,3) numpy int array, interpred as face index list of a triangle
+        mesh
 
     Returns
     -------
-    G : scipy sparse.csr_matrix
+    G : (d*m,n) scipy sparse.csr_matrix
         Sparse FEM gradient matrix
 
     See Also

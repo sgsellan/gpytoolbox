@@ -6,27 +6,39 @@ def subdivide(V,F,
     method='upsample',
     iters=1,
     return_matrix=False):
-    # Subdivides a mesh
-    #
-    # Input:
-    #       V  #V by d numpy array of mesh vertex positions.
-    #          Can be None, in which case the subdivision is performed only
-    #          logically on the faces.
-    #       F  #F by k int numpy array of vertex indices into V.
-    #          Can represent a polyline or a triangle mesh.
-    #       Optional:
-    #                method  which method to use for subdivison.
-    #                        can be 'upsample' {default},
-    #                               'loop' (only triangle meshes)
-    #                iters  how many subdivision iterations to perform
-    #                return_matrix  whether to return matrix for sparse map S
-    #
-    # Output:
-    #       Vu  #Vu by d numpy array of subdivided mesh vertex positions
-    #           Is None if V was None.
-    #       Fu  #Fu by k int numpy array of subdivided vertex indices into V.
-    #       S  If return_matrix is True, the sparse matrix such that Vu == S*V
-    #
+    """Builds the (pos. def.) cotangent Laplacian for a triangle mesh.
+
+    Parameters
+    ----------
+    V : (n,d) numpy array
+        vertex list of vertex positions
+    F : numpy int array
+        if (m,2), interpret input as ordered polyline;
+        if (m,3) numpy int array, interpred as face index list of a triangle
+        mesh
+    method : string, optional (default: 'upsample')
+        Which method to use for subdivison.
+        Can be 'upsample' {default}, 'loop' (only triangle meshes)
+    iters : int, optional (default: 1)
+        How many iterations of subdivision to perform.
+    return_matrix : bool, optional (default: False)
+        Whether to return the matrix for the sparse map S.
+
+    Returns
+    -------
+    Vu : (n_u,d) numpy array
+        vertex list of subdivided polyline / mesh
+    Fu : (m_u,2) or (m_u) numpy int array
+        face index list of upsampled polyline or triangle mesh
+    S : (n_u,n) sparse scipy csr_matrix (if requested)
+        sparse matrix such that `Vu == S*V`;
+        returned only if `return_matrix == True`.
+
+    Examples
+    --------
+    TODO
+    
+    """
 
     assert iters >= 0
 

@@ -14,10 +14,10 @@ def regular_cube_mesh(gs,type='rotationally-symmetric'):
 
     Returns
     -------
-    V : numpy double array
-        Matrix of tet mesh vertex coordinates
-    T : numpy int array
-        Matrix of tet vertex indices into V
+    V : (n,d) numpy array
+        vertex list of a tet mesh
+    T : (m,T) numpy int array
+        tet index list of a tet mesh
 
     See Also
     --------
@@ -27,19 +27,6 @@ def regular_cube_mesh(gs,type='rotationally-symmetric'):
     --------
     TODO
     """
-    # Generates a regular tetrahedral mesh of a one by one by one cube. 
-    # Each grid cube is decomposed into 6 reflectionally symmetric tetrahedra
-    #
-    # Input:
-    #       gs int number of vertices on each side
-    #       Optional:
-    #       type a string choosing the specific cube division scheme: 'five' for
-    #            a division of each cube into 5 tets 'rotationally-symmetric'
-    #            (default), 'reflectionally-symmetric' or 'hex'
-    # Output:
-    #       V #V by 3 numpy array of mesh vertex positions
-    #       T #T by 4 int numpy array of tet vertex indeces into V
-    #
 
     dictionary ={
     'five' : 0,

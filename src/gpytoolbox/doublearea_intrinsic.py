@@ -2,16 +2,28 @@ import numpy as np
 
 
 def doublearea_intrinsic(l_sq,F):
-    # Construct the doublearea of each element of a triangle mesh using only
-    # intrinsic information (squared halfedge edge lengths).
-    #
-    # Input:
-    #       l_sq  #F by 3 numpy array of squared halfedge lengths as computed
-    #             by halfedge_lengths_squared
-    #       F  #F by 3 int numpy array of face/edge vertex indices into V
-    #
-    # Output:
-    #       A  #F vector of twice the (unsigned) area 
+    """Construct the doublearea of each element of a line or triangle mesh.
+
+    Parameters
+    ----------
+    l_sq : (m,3) numpy array
+        squared halfedge lengths as computed by halfedge_lengths_squared
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
+
+    Returns
+    -------
+    dblA : (m,) numpy double array
+        vector of twice the (unsigned) area/length 
+
+    See Also
+    --------
+    doublearea.
+
+    Examples
+    --------
+    TO-DO
+    """
 
     assert F.shape == l_sq.shape
     assert F.shape[1]==3

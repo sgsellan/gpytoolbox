@@ -11,10 +11,10 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F):
         Matrix of camera positions
     cam_dir : numpy double array
         Matrix of camera directions
-    V : numpy double array
-        Matrix of mesh vertices
-    F : numpy int array
-        Matrix of triangle indices into V
+    V : (n,d) numpy array
+        vertex list of a triangle mesh
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
 
     Returns
     -------

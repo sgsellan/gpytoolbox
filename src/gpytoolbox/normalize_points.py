@@ -7,7 +7,7 @@ def normalize_points(v,center=None):
 
     Parameters
     ----------
-    v : numpy double array
+    v : (n,d) numpy double array
         Matrix of point position coordinates
     center : numpy double array (optional, None by default)
         Where to center the mesh (if None, centered at zero)

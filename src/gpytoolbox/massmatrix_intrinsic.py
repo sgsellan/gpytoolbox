@@ -8,22 +8,24 @@ from gpytoolbox.doublearea_intrinsic import doublearea_intrinsic
 def massmatrix_intrinsic(l_sq,F,n=None,type='voronoi'):
     """FEM intrinsic mass matrix
     
-    Builds the finite elements mass matrix for a triangle mesh using a piecewise linear hat function basis, using only intrinsic information (squared halfedge edge lengths).
+    Builds the finite elements mass matrix for a triangle mesh using a piecewise
+    linear hat function basis, using only intrinsic information (squared
+    halfedge edge lengths).
 
     Parameters
     ----------
-    l_sq : numpy double array
+    l_sq : (m,3) numpy double array
         Vector of squared halfedge lengths as computed by halfedge_lengths_squared
-    F : numpy int array
-        Matrix of triangle indices into some V that is assumed to exist
-    n : int, optional (default None)
+    F : (m,3) numpy int array
+        face index list of a triangle mesh (into a V assumed to exist)
+    n : int, optional (default: None)
         Integer denoting the number of vertices in the mesh
-    type : str, optional (default 'voronoi')
+    type : str, optional (default: 'voronoi')
         Type of mass matrix computation: 'voronoi' (default), 'full' or 'barycentric'
 
     Returns
     -------
-    M : scipy sparse.csr_matrix
+    M : (n,n) scipy sparse.csr_matrix
         Intrinsicly computed mass matrix
 
     See Also
@@ -38,20 +40,6 @@ def massmatrix_intrinsic(l_sq,F,n=None,type='voronoi'):
     --------
     TO-DO
     """
-    # Builds the finite elements mass matrix for a triangle mesh using a
-    # piecewise linear hat function basis, using only intrinsic information
-    # (squared halfedge edge lengths).
-    #
-    # Input:
-    #       l_sq  #F by 3 numpy array of squared halfedge lengths as computed
-    #             by halfedge_lengths_squared
-    #       F #F by 3 int numpy array of face/edge vertex indices into V
-    #       Optional:
-    #                n  an integer denoting the number of vertices in the mesh
-    #                type either of 'voronoi' {default}, 'full', or 'barycentric'
-    #
-    # Output:
-    #       M  #V by #V mass matrix
 
     assert F.shape == l_sq.shape
     assert F.shape[1]==3

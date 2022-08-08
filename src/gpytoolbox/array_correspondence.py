@@ -1,21 +1,30 @@
 import numpy as np
 
 def array_correspondence(A,B,axis=None):
-    # Computes a map from the a to the equal elements in b
-    #
-    # Inputs:
-    #       A:  #a numpy array (must be 1-dim or 2-dim)
-    #       B:  #b numpy array (must be 1-dim or 2-dim)
-    #       Optional:
-    #                axis: If None, will treat A and B as flat arrays.
-    #                      If a number, will check for equality of the
-    #                      entire axis, in which case the dimension of
-    #                      A and B across that axis must be equal.
-    # Outputs:
-    #       f  #A numpy index list mapping from the a to b, with -1 if there is
-    #          no matching entry.
-    #          If b contains multiple eligible entries, return an arbitrary one.
-    #          If there are no -1s, b[f] == a
+    """Computes a map from A to the equal elements in B
+
+    Parameters
+    ----------
+    A : (a,) or (a,k) numpy array (must be 1-dim or 2-dim)
+    B : (b,) or (b,k) numpy array (must be 1-dim or 2-dim)
+    axis : int or None, optional (default None)
+        If None, will treat A and B as flat arrays.
+        If a number, will check for equality of the entire axis, in which case
+        the dimension of A and B across that axis must be equal.
+
+    Returns
+    -------
+    f : (a,) numpy int array
+        index list mapping from A to B, with -1 if there is no
+        matching entry.
+        If b contains multiple eligible entries, return an arbitrary one.
+        If there are no -1s, `b[f] == a`
+
+    Examples
+    --------
+    TODO
+    
+    """
 
     if axis is None:
         A = A.ravel()

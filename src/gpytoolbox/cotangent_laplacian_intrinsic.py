@@ -3,18 +3,25 @@ import scipy as sp
 from gpytoolbox.cotangent_weights_intrinsic import cotangent_weights_intrinsic
 
 def cotangent_laplacian_intrinsic(l_sq,F,n=None):
-    # Builds the (pos. def.) cotangent Laplacian for a triangle mesh using only
-    # intrinsic information (squared halfedge edge lengths).
-    #
-    # Input:
-    #       l_sq  #F by 3 numpy array of squared halfedge lengths as computed
-    #             by halfedge_lengths_squared
-    #       F  #F by 3 int numpy array of face/edge vertex indeces into V
-    #       Optional:
-    #                n  an integer denoting the number of vertices in the mesh
-    #
-    # Output:
-    #       L  #V by #V scipy csr_matrix cotangent Laplacian
+    """Builds the (pos. def.) cotangent Laplacian for a triangle mesh.
+
+    Parameters
+    ----------
+    l_sq : (m,3) numpy array
+        squared halfedge lengths as computed by halfedge_lengths_squared
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
+
+    Returns
+    -------
+    L : (n,n) scipy csr_matrix
+        cotangent Laplacian
+
+    Examples
+    --------
+    TODO
+    
+    """
 
     assert F.shape[1] == 3
     assert l_sq.shape == F.shape
