@@ -28,7 +28,6 @@ def regular_cube_mesh(gs,type='rotationally-symmetric'):
     TODO
     """
 
-
     dictionary ={
     'five' : 0,
     'reflectionally-symmetric' : 1,

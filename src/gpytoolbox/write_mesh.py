@@ -97,7 +97,14 @@ def _write_obj(file,V,F,UV,Ft,N,Fn,writer):
             N.astype(np.float64),
             Fn.astype(np.int32))
         if err != 0:
-            raise Exception(f"Error {err} writing obj file.")
+            if err == -11:
+                raise Exception("Ft has the wrong dimensions.")
+            elif err == -12:
+                raise Exception("Fn has the wrong dimensions.")
+            elif err == -5:
+                raise Exception(f"The file {file} could not be opened.")
+            else:
+                raise Exception(f"Unknown error {err} writing obj file.")
     elif writer=="Python":
         _write_obj_python(file,V,F,UV,Ft,N,Fn)
     else:

@@ -28,7 +28,19 @@ def per_face_normals(V,F,unit_norm=True):
     Examples
     --------
     TODO
-    """     
+    """
+    # Computes per face (optionally unit) normal vectors for a triangle mesh
+    #
+    # Input:
+    #       V #V by 3 numpy array of mesh vertex positions
+    #       F #F by 3 int numpy array of face/edge vertex indeces into V
+    #       Optional:
+    #               'unit_norm' boolean, whether to normalize each face's 
+    #                       normal before outputting {default: true}
+    #
+    # Output:
+    #       N #F by 3 numpy array of per-face normals
+    #           
 
     v0 = V[F[:,0],:]
     v1 = V[F[:,1],:]

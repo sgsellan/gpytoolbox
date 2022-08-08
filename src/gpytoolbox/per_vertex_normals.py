@@ -30,7 +30,6 @@ def per_vertex_normals(V,F):
     TODO
     """
 
-
     # First compute face normals
     face_normals = per_face_normals(V,F,unit_norm=True)
     # We blur these normals onto vertices, weighing by area
