@@ -1,21 +1,31 @@
 import numpy as np
 
-def tip_angles_intrinsic(l_sq, F, use_small_angle_approx=True):
-    # Computes the angles formed by each vertex within its respective face
-    # (the tip angle) using only intrinsic information (squared halfedge edge
-    # lengths).
-    #
-    # Input:
-    #       l_sq  #F by 3 numpy array of squared halfedge lengths as computed
-    #             by halfedge_lengths_squared
-    #       F  #F by 3 int numpy array of face/edge vertex indeces into V
-    #       Optional:
-    #                 use_small_angle_approx  if True, uses a different, more
-    #                                         more stable formula for small
-    #                                         angles.
-    #
-    # Output:
-    #       alpha  #F by 3 numpy array of tip angles for each vertex
+def tip_angles_intrinsic(l_sq, F,
+    use_small_angle_approx=True):
+    """Computes the angles formed by each vertex within its respective face
+    (the tip angle) using only intrinsic information (squared halfedge edge
+    lengths).
+
+    Parameters
+    ----------
+    l_sq : (m,3) numpy array
+        squared halfedge lengths as computed by halfedge_lengths_squared
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
+    use_small_angle_approx : bool, optional (default: True)
+        If True, uses a different, more more stable formula for small angles.
+
+    Returns
+    -------
+    α : (m,3) numpy array
+        tip angles for each vertex referenced in `F`
+
+    Examples
+    --------
+    TODO
+    
+    """
+    
 
     assert F.shape[1] == 3
     assert l_sq.shape == F.shape

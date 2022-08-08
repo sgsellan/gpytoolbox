@@ -3,21 +3,29 @@ from gpytoolbox.boundary_edges import boundary_edges
 
 
 def boundary_loops(f, allow_wrong_orientations=True):
-    # Computes oriented boundary loop for each boundary component of a triangle
-    # mesh.
-    #
-    # This function only works on manifold triangle meshes.
-    # TODO: assert manifoldness when running this function
-    #
-    # Input:
-    #       F  #F by 3 face index list of a triangle mesh
-    #       Optional:
-    #                allow_wrong_orientations  whether to allow F to contain
-    #                                          wrongly oriented triangles
-    #
-    # Output:
-    #       loops  list of numpy array list of boundary vertices
-    #              in oriented loops
+    """Computes oriented boundary loop for each boundary component of a triangle
+    mesh.
+    This function only works on manifold triangle meshes.
+
+    TODO: assert manifoldness when running this function
+
+    Parameters
+    ----------
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
+    allow_wrong_orientations: bool, optional (default True).
+        whether to allow F to contain wrongly oriented triangles
+
+    Returns
+    -------
+    loops : list of numpy arrays that are themselves lists of boundary vertices
+        in oriented loops
+
+    Examples
+    --------
+    TODO
+    
+    """
 
     assert f.shape[0] > 0
     assert f.shape[1] == 3

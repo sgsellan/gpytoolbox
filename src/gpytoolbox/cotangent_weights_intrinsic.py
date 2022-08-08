@@ -2,21 +2,31 @@ import numpy as np
 from gpytoolbox.doublearea_intrinsic import doublearea_intrinsic
 
 def cotangent_weights_intrinsic(l_sq,F):
-    # Builds the cotangent weights (cotangent/2) for each halfedge using only
-    # intrinsic information (squared halfedge edge lengths).
-    #
-    # The ordering convention for halfedges is the following:
-    # [halfedge opposite vertex 0,
-    #  halfedge opposite vertex 1,
-    #  halfedge opposite vertex 2]
-    #
-    # Input:
-    #       l_sq  #F by 3 numpy array of squared halfedge lengths as computed
-    #             by halfedge_lengths_squared
-    #       F  #F by 3 int numpy array of face/edge vertex indeces into V
-    #
-    # Output:
-    #       C  #F by 3 numpy array of cotangent weights for each halfedge
+    """Builds the cotangent weights (cotangent/2) for each halfedge using only
+    intrinsic information (squared halfedge edge lengths).
+
+    The ordering convention for halfedges is the following:
+    [halfedge opposite vertex 0,
+     halfedge opposite vertex 1,
+     halfedge opposite vertex 2]
+
+    Parameters
+    ----------
+    l_sq : (m,3) numpy array
+        squared halfedge lengths as computed by halfedge_lengths_squared
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
+
+    Returns
+    -------
+    C : (m,3) numpy array
+        cotangent weights for each halfedge
+
+    Examples
+    --------
+    TODO
+    
+    """
 
     assert F.shape[1] == 3
     assert l_sq.shape == F.shape

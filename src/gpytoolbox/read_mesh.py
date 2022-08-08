@@ -8,34 +8,51 @@ def read_mesh(file,
     return_UV=False,
     return_N=False,
     reader=None):
-    # Reads a mesh from file.
-    #
-    # If you have the approproate C++ extensions installed, this will use a fast
-    # C++-based reader. If you do not, this will use a slow python reader.
-    #
-    # Currently only supports triangle meshes.
-    # 
-    # Input:
-    #       file  the path to the mesh
-    #       Optional:
-    #                fmt  The file format of the mesh to open.
-    #                     If None, try to guess the format from the file
-    #                     extension.
-    #                     Supported formats: obj
-    #                return_UV  Try reading texture coordinates, if they are
-    #                           present and the file format supports it.
-    #                return_N  Try reading normal coordinates, if they are
-    #                          present and the file format supports it.
-    #                reader  Which reader engine to use. None, 'C++' or 'Python'.
-    #                        If None, will use C++ if available, and else Python.
-    #  Output:
-    #       V  numpy array of mesh vertex positions
-    #       F  numpy array of mesh face indices into V
-    #       UV  numpy array of texture coordinates (if requested)
-    #       Ft  numpy array of mesh face indices into UV (if requested)
-    #       N  numpy array of normal coordinates (if requested)
-    #       Fn  numpy array of mesh face indices into N (if requested)
-    #
+    """Reads a mesh from file.
+    
+    If you have the approproate C++ extensions installed, this will use a fast
+    C++-based reader. If you do not, this will use a slow python reader.
+    
+    Currently only supports triangle meshes.
+
+    Parameters
+    -------
+    file : string
+        the path the mesh will be read from
+    fmt : string, optional (default: None)
+        The file format of the mesh to open.
+        If None, try to guess the format from the file extension.
+        Supported formats: obj
+    return_UV : bool, optional (default: None)
+        Try reading texture coordinates, if they are present and the file
+        format supports it.
+    return_N : bool, optional (default: None)
+        Try reading normal coordinates, if they are present and the file format
+        supports it.
+    reader : string, optional (default: None)
+        Which reader engine to use. None, 'C++' or 'Python'.
+        If None, will use C++ if available, and else Python.
+
+    Returns
+    ----------
+    V : (n,3) numpy array
+        vertex list of a triangle mesh
+    F : (m,3) numpy int array
+        face index list of a triangle mesh (into V)
+    UV : (n_uv,2) numpy array, if requested
+        vertex list for texture coordinates
+    Ft : (m,3) numpy int array, if requested
+        face index list for texture coordinates (into UV)
+    N : (n_n,3) numpy array, if requested
+        vertex list for normal coordinates
+    Fn : (m,3) numpy int array, if requested
+        face index list for normal coordinates (into N)
+
+    Examples
+    --------
+    TODO
+    
+    """
 
     # Detect format if it has not been specified
     if fmt is None:

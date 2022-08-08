@@ -7,10 +7,10 @@ def decimate(V,F,face_ratio=0.1,num_faces=None):
 
     Parameters
     ----------
-    V : numpy double array
-        Matrix of vertex coordinates
-    F : numpy int array
-        Matrix of triangle indices
+    V : (n,d) numpy array
+        vertex list of a triangle mesh
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
     face_ratio: double, optional (default 0.1)
         Desired ratio of output faces to input faces 
     num_faces : int, optional (default None)

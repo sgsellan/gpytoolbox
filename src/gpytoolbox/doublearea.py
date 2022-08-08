@@ -8,14 +8,16 @@ def doublearea(V,F=None):
 
     Parameters
     ----------
-    V : numpy double array
-        Matrix of vertex coordinates
-    F : numpy int array, optional
-        Matrix of triangle indices, None if ordered polyline (by default, None)
+    V : (n,d) numpy array
+        vertex list of a polyline or triangle mesh
+    F : numpy int array, optional (default: None)
+        if None or (m,2), interpret input as ordered polyline;
+        if (m,3) numpy int array, interpred as face index list of a triangle
+        mesh
 
     Returns
     -------
-    dblA : numpy double array
+    dblA : (m,) numpy double array
         vector of twice the (unsigned) area/length 
 
     See Also
