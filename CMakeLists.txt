@@ -34,11 +34,6 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.h
 	src/cpp/remesher/split_edges.h
 	src/cpp/remesher/tangential_relaxation.h
-	src/cpp/swept_volume/fd_interpolate.cpp
-	src/cpp/swept_volume/gradient_descent_test.cpp
-	src/cpp/swept_volume/random_points_on_mesh.cpp
-	src/cpp/swept_volume/sparse_continuation.cpp
-	src/cpp/swept_volume/swept_volume.cpp
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
@@ -51,6 +46,17 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.cpp
 	src/cpp/remesher/split_edges.cpp
 	src/cpp/remesher/tangential_relaxation.cpp
+	)
+
+	add_library(cpytoolbox_copyleft
+	SHARED
+	# Headers
+	src/cpp/swept_volume/fd_interpolate.cpp
+	src/cpp/swept_volume/gradient_descent_test.cpp
+	src/cpp/swept_volume/random_points_on_mesh.cpp
+	src/cpp/swept_volume/sparse_continuation.cpp
+	src/cpp/swept_volume/swept_volume.cpp
+	# Source
 	src/cpp/swept_volume/fd_interpolate.h
 	src/cpp/swept_volume/gradient_descent_test.h
 	src/cpp/swept_volume/random_points_on_mesh.h
@@ -59,13 +65,13 @@ add_library(cpytoolbox
 	)
 
 # target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
-target_link_libraries(cpytoolbox igl::core igl::embree igl_copyleft::cgal)
+target_link_libraries(cpytoolbox igl::core igl::embree )
+target_link_libraries(cpytoolbox_copyleft igl::core igl_copyleft::cgal)
 
 
 npe_add_module(gpytoolbox_bindings
 	BINDING_SOURCES
 	src/cpp/binding_offset_surface.cpp
-  	src/cpp/binding_booleans.cpp
 	src/cpp/binding_ray_mesh_intersect.cpp
 	src/cpp/binding_upper_envelope.cpp
 	src/cpp/binding_in_element_aabb.cpp
@@ -73,10 +79,18 @@ npe_add_module(gpytoolbox_bindings
 	src/cpp/binding_remesher_botsch.cpp
 	src/cpp/binding_write_obj.cpp
 	src/cpp/binding_read_obj.cpp
+)
+
+npe_add_module(gpytoolbox_bindings_copyleft
+	BINDING_SOURCES
+  	src/cpp/binding_booleans.cpp
 	src/cpp/binding_swept_volume.cpp
 )
 
 # target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
-target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
+target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core)
+
+target_link_libraries(gpytoolbox_bindings_copyleft PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
 
 target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")
+target_include_directories(gpytoolbox_bindings_copyleft PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")
