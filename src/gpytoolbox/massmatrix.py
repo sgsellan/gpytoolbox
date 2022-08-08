@@ -9,20 +9,23 @@ from gpytoolbox.massmatrix_intrinsic import massmatrix_intrinsic
 def massmatrix(V,F=None,type='voronoi'):
     """FEM Mass matrix
     
-    Builds the finite elements mass matrix of a triangle mesh or polyline using a piecewise linear hat function basis.
+    Builds the finite elements mass matrix of a triangle mesh or polyline using
+    a piecewise linear hat function basis.
 
     Parameters
     ----------
-    V : numpy double array
-        Matrix of vertex coordinates
-    F : numpy int array (optional, default None)
-        Matrix of element indices (if None, assumed to be ordered polyline)
+    V : (n,d) numpy array
+        vertex list of a polyline or triangle mesh
+    F : numpy int array, optional (default: None)
+        if None or (m,2), interpret input as ordered polyline;
+        if (m,3) numpy int array, interpred as face index list of a triangle
+        mesh
     type : str, optional (default 'voronoi')
         Type of mass matrix computation: 'voronoi' (default), 'full' or 'barycentric'
 
     Returns
     -------
-    M : scipy sparse.csr_matrix
+    M : (n,n) scipy sparse.csr_matrix
         Mass matrix
 
     See Also

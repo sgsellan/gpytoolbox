@@ -7,10 +7,10 @@ def offset_surface(V,F,iso,grid_size=100):
 
     Parameters
     ----------
-    V : numpy double array
-        Matrix of vertex coordinates
-    F : numpy int array
-        Matrix of triangle indices
+    V : (n,d) numpy array
+        vertex list of a triangle mesh
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
     iso : double
         Matrix of vertex coordinates of the second mesh
     grid_size : int, optional (default 100)

@@ -9,10 +9,10 @@ def in_element_aabb(queries,V,F):
     ----------
     queries : numpy double array
         Matrix of query point coordinates
-    V : numpy double array
-        Matrix of vertex coordinates
-    F : numpy int array, optional (default None)
-        Matrix of triangle (2D) or tetrahedron (3D) indices
+    V : (n,d) numpy array
+        vertex list of a triangle mesh
+    F : (m,3) or (m,4) numpy int array
+        face/tet index list of a triangle/tet mesh
 
     Returns
     -------

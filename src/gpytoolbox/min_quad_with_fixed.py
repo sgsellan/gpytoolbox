@@ -2,29 +2,44 @@ import numpy as np
 import scipy as sp
 
 
-def min_quad_with_fixed(Q, c=None, A=None, b=None, k=None, y=None):
-    # Solve the following quadratic program with linear constraints:
-    #  argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)
-    #            A*u == b
-    #            u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)
-    #
-    # Input:
-    #       Q  n by n symmetric sparse scipy csr_matrix.
-    #          Will be symmetriyed if not symmetric.
-    #       c  scalar or n numpy array or (n,p) numpy array.
-    #          Assumed to be scalar 0 if None
-    #       A  m by n sparse scipy csr_matrix.
-    #          m=0 assumed if None.
-    #       b  scalar or m numpy array or (m,p) numpy array.
-    #          Assumed to be scalar 0 if None.
-    #       k  o numpy int array.
-    #          o=0 assumed if None.
-    #       y  scalar or o numpy array or (o,p) numpy array.
-    #          Assumed to be scalar 0 if None.
-    #
-    # Output:
-    #       u  n numpy array or (n,p) numpy array.
-    #          solution to the optimization problem.
+def min_quad_with_fixed(Q,
+    c=None,
+    A=None,
+    b=None,
+    k=None,
+    y=None):
+    """Solve the following quadratic program with linear constraints:
+    ```
+    argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)
+        A*u == b
+        u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)
+    ```
+
+    Parameters
+    ----------
+    Q : (n,n) symmetric sparse scipy csr_matrix
+        This matrix will be symmetrized if not exactly symmetric.
+    c : None or scalar or (n,) numpy array or (n,p) numpy array
+        Assumed to be scalar 0 if None
+    A : None or (m,n) sparse scipy csr_matrix
+        m=0 assumed if None
+    b : None or scalar or (m,) numpy array or (m,p) numpy array
+        Assumed to be scalar 0 if None
+    k : None or (o,) numpy array
+        o=0 assumed if None
+    y : None or scalar or (o,) numpy array or (o,p) numpy array
+        Assumed to be scalar 0 if None
+
+    Returns
+    -------
+    u : (n,) numpy array or (n,p) numpy array
+        Solution to the optimization problem
+
+    Examples
+    --------
+    TODO
+    
+    """
 
     return min_quad_with_fixed_precompute(Q, A, k).solve(c, b, y)
 
@@ -32,26 +47,39 @@ def min_quad_with_fixed(Q, c=None, A=None, b=None, k=None, y=None):
 # This is written in snake_case on purpose, so constructing the class looks just
 # like calling a function.
 class min_quad_with_fixed_precompute:
-    # Prepare a precomputation object to efficiently solve the following problem:
-    #  argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)
-    #            A*u == b
-    #            u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)
-    #
-    # Input:
-    #       Q  n by n symmetric sparse scipy csr_matrix.
-    #          Will be symmetriyed if not symmetric.
-    #       A  m by n sparse scipy csr_matrix.
-    #          m=0 assumed if None.
-    #       k  o numpy int array.
-    #          o=0 assumed if None.
-    #
-    # TODO: Detect linearly dependent constraints in A and remove them.
-    # TODO: Detect constraints in A that contradict k and error.
-    # TODO: Allow user to specify positive definiteness.
-    #
-    # Output:
-    #       precomputed  precomputation object that canbe used to solve the problem
-    def __init__(self, Q, A=None, k=None):
+
+    def __init__(self,
+        Q,
+        A=None,
+        k=None):
+        """Prepare a precomputation object to efficiently solve the following 
+        constrained optimization problem:
+        ```
+        argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)
+            A*u == b
+            u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)
+        ```
+
+        Parameters
+        ----------
+        Q : (n,n) symmetric sparse scipy csr_matrix
+            This matrix will be symmetrized if not exactly symmetric.
+        A : None or (m,n) sparse scipy csr_matrix
+            m=0 assumed if None
+        k : None or (o,) numpy array
+            o=0 assumed if None
+
+        Returns
+        -------
+        precomputed : instance of class min_quad_with_fixed_precompute
+            precomputation object that can be used to solve the optimization problem
+
+        Examples
+        --------
+        TODO
+        
+        """
+
         self.n = Q.shape[0]
         assert Q.shape[1] == self.n
         assert self.n>0
@@ -128,24 +156,37 @@ class min_quad_with_fixed_precompute:
             self.solver = lambda x : splu.solve(x)
 
 
+    def solve(self,
+        c=None,
+        b=None,
+        y=None):
+        """Solve the following quadratic program with linear constraints:
+        ```
+        argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)
+            A*u == b
+            u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)
+        ```
 
-    # Solve the following quadratic program with linear constraints:
-    #  argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)
-    #            A*u == b
-    #            u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)
-    #
-    # Input:
-    #       c  scalar or n numpy array or (n,p) numpy array.
-    #          Assumed to be scalar 0 if None
-    #       b  scalar or m numpy array or (m,p) numpy array.
-    #          Assumed to be scalar 0 if None.
-    #       y  scalar or o numpy array or (o,p) numpy array.
-    #          Assumed to be scalar 0 if None.
-    #
-    # Output:
-    #       u  n numpy array or (n,p) numpy array.
-    #          solution to the optimization problem.
-    def solve(self, c=None, b=None, y=None):
+        Parameters
+        ----------
+        c : None or scalar or (n,) numpy array or (n,p) numpy array
+            Assumed to be scalar 0 if None
+        b : None or scalar or (m,) numpy array or (m,p) numpy array
+            Assumed to be scalar 0 if None
+        y : None or scalar or (o,) numpy array or (o,p) numpy array
+            Assumed to be scalar 0 if None
+
+        Returns
+        -------
+        u : (n,) numpy array or (n,p) numpy array
+            Solution to the optimization problem
+
+        Examples
+        --------
+        TODO
+        
+        """
+        
         def cp(x):
             if x is None or np.isscalar(x):
                 return 0

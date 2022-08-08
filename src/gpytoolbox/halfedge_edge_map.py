@@ -3,35 +3,44 @@ from gpytoolbox.halfedges import halfedges
 from gpytoolbox.array_correspondence import array_correspondence
 
 def halfedge_edge_map(F, assume_manifold=True):
-    # Computes unique edge indices, and a unique map from halfedges to edges,
-    # as well as its inverse.
-    # There is no particular ordering convention for edges.
-    # Boundary edges are guaranteed to be oriented as in F.
-    #
-    # The ordering convention for halfedges is the following:
-    # [halfedge opposite vertex 0,
-    #  halfedge opposite vertex 1,
-    #  halfedge opposite vertex 2]
-    #
-    # Inputs:
-    #       F  #F by 3 face index list of a triangle mesh
-    #       Optional:
-    #                assume_manifold  if this is true, will assume that F is
-    #                                 manifold, and thus every edge can be
-    #                                 incident to at most two halfedges.
-    #                                 The algorithm is very slow if this is
-    #                                 False.
-    # Outputs:
-    #       he  #F by 3 by 2 halfedge list as per above conventions
-    #       E  #E by 2 indices of edges into the vertex array
-    #       he_to_E  #F by 3 index map from he to corresponding row in E
-    #       E_to_he  if assume_manifold, #E by 2 by 2 index map from e to
-    #                corresponding row and col in he for two halfedges (or -1
-    #                if only one halfedge exists)
-    #                if not assume_manifold, python list of E k by 2 index
-    #                arrays, where i is however many halfedges are adjacent to
-    #                each edge.
-    #                
+    """Computes unique edge indices, and a unique map from halfedges to edges,
+    as well as its inverse.
+    There is no particular ordering convention for edges.
+    Boundary edges are guaranteed to be oriented as in F.
+
+    The ordering convention for halfedges is the following:
+    [halfedge opposite vertex 0,
+     halfedge opposite vertex 1,
+     halfedge opposite vertex 2]
+
+    Parameters
+    ----------
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
+    assume_manifold : bool, optional (default True)
+        if this is true, will assume that F is manifold, and thus every edge can 
+        be incident to at most two halfedges.
+        The algorithm is very slow if this is False.
+
+    Returns
+    -------
+    he : (m,3,2) numpy int array
+        halfedge list as per above conventions
+    E : (e,2) numpy int array
+        indices of edges into the vertex array
+    he_to_E : (m,3) numpy int array
+        index map from he to corresponding row in E
+    E_to_he : (e,2,2) numpy int array of list of m (k,2) numpy int arrays
+        if assume_manifold, (e,2,2) index map from e to corresponding row and
+        col in he for two halfedges (or -1 if only one halfedge exists);
+        if not assume_manifold, python list with m entries of (k,2) arrays,
+        where k is however many halfedges are adjacent to each edge. 
+
+    Examples
+    --------
+    TODO
+    
+    """
     
     m = F.shape[0]
     assert m > 0

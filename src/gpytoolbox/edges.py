@@ -5,33 +5,38 @@ def edges(F,
     return_boundary_indices=False,
     return_interior_indices=False,
     return_nonmanifold_indices=False):
-    # Given a triangle mesh with face indices F, returns all unique unoriented
-    # edges as indices into the vertex array.
-    # There is no particular ordering convention for edges.
-    # Boundary edges are guaranteed to be oriented as in F.
-    #
-    # NOTE: "nonmanifold edges" here specifically mean edges that correspond to
-    # 3 or more halfedges, not any complex-destroying edge in general.
-    #
-    # Inputs:
-    #       F  #F by 3 face index list of a triangle mesh
-    #       Optional:
-    #                return_boundary_indices  whether to return a list of
-    #                                         indices into E denoting the
-    #                                         boundary edges
-    #                return_interior_indices  whether to return a list of
-    #                                         indices into E denoting the
-    #                                         interior edges
-    #                return_nonmanifold_indices  whether to return a list of
-    #                                            indices into E denoting the
-    #                                            nonmanifold edges
-    # Outputs:
-    #       E  #E by 2 indices of edges into the vertex array
-    #       Optional:
-    #                boundary_indices  list of indices into E of boundary edges
-    #                interior_indices  list of indices into E of interior edges
-    #                nonmanifold_indices  list of indices into E of nonmanifold
-    #                                     edges
+    """Given a triangle mesh with face indices F, returns all unique unoriented
+    edges as indices into the vertex array.
+    There is no particular ordering convention for edges.
+    Boundary edges are guaranteed to be oriented as in F.
+
+    Parameters
+    ----------
+    F : (m,3) numpy int array
+        face index list of a triangle mesh
+    return_boundary_indices : bool, optional (default False)
+        whether to return a list of indices into E denoting the boundary edges
+    return_interior_indices : bool, optional (default False)
+        whether to return a list of indices into E denoting the interior edges
+    return_nonmanifold_indices : bool, optional (default False)
+        whether to return a list of indices into E denoting the nonmanifold edges
+
+    Returns
+    -------
+    E : (e,2) numpy int array
+        indices of edges into the vertex array
+    boundary_indices : if requested, (b,) numpy int array
+        list of indices into E of boundary edges
+    interior_indices : if requested, (i,) numpy int array
+        list of indices into E of interior edges
+    nonmanifold_indices : if requested, (nm,) numpy int array
+        list of indices into E of nonmanifold edges
+
+    Examples
+    --------
+    TODO
+    
+    """
 
     assert F.shape[0] > 0
     assert F.shape[1] == 3
