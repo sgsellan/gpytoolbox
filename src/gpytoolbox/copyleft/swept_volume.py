@@ -65,7 +65,7 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,align
     """
 
     try:
-        from gpytoolbox_bindings import _swept_volume_impl
+        from gpytoolbox_bindings_copyleft import _swept_volume_impl
     except:
         raise ImportError("Gpytoolbox cannot import its C++ binding.")
 

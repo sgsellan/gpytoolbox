@@ -38,7 +38,7 @@ def do_meshes_intersect(V1,F1,V2,F2):
     """
     
     try:
-        from gpytoolbox_bindings import _do_meshes_intersect_cpp_impl
+        from gpytoolbox_bindings_copyleft import _do_meshes_intersect_cpp_impl
     except:
         raise ImportError("Gpytoolbox cannot import its C++ binding.")
 
