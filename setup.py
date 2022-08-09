@@ -108,7 +108,7 @@ def main():
         version=__version__,
         author='Silvia Sellán and Oded Stein',
         author_email='sgsellan@cs.toronto.edu',
-        url='https://github.com/sgsellan/gpytoolbox',
+        url='https://gpytoolbox.org',
         description='Gpytoolbox: A Python Geometry Processing Toolbox.',
         long_description=long_description,
         long_description_content_type='text/markdown',
