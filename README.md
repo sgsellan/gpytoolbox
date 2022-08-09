@@ -9,7 +9,7 @@ tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/windows_build.ym
 
 [https://gpytoolbox.org](https://gpytoolbox.org/)
 
-![logo](docs/assets/images/logo.png)
+![logo](https://github.com/sgsellan/gpytoolbox/raw/main/docs/assets/images/logo.png)
 
 *Authors:* [Silvia Sellán](https://www.silviasellan.com), University of Toronto
 and [Oded Stein](https://odedstein.com), Massachusetts Institute of Technology
