@@ -48,18 +48,6 @@ class test_closest_point_traversal:
 
 
 class TestTraverseAabbTree(unittest.TestCase):
-    def test_find_closest_point_3d(self):
-        np.random.seed(0)
-        for ss in range(10,2000,100):       
-            P = np.random.rand(ss,3)
-            ptest = P[9,:] + 1e-5
-            C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(P)
-            t = test_closest_point_traversal(P,ptest)
-            traverse_fun = t.traversal_function
-            add_to_queue_fun = t.add_to_queue
-            _ = gpytoolbox.traverse_aabbtree(C,W,CH,traverse_fun,add_to_queue=add_to_queue_fun)
-            i = t.current_best_box
-            self.assertTrue(tri_ind[i]==9)
     def test_find_closest_point_2d(self):
         np.random.seed(0)
         for ss in range(10,2000,100):       
