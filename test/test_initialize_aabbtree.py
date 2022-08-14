@@ -37,10 +37,28 @@ class TestInitializeAabbTree(unittest.TestCase):
         self.assertTrue((np.isclose(CH-CH_gt,0).all()))
         self.assertTrue((np.isclose(PAR-PAR_gt,0).all()))
 
-    def test_consistency(self):
+    def test_consistency_2d(self):
         np.random.seed(0)
-        for ss in range(10,20000,100):       
-            P = np.random.rand(11,2)
+        for ss in range(10,2000,100):       
+            P = np.random.rand(ss,2)
+            ptest = P[9,:] + 1e-5
+            C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(P)
+            # Parenthood stuff
+            for i in range(W.shape[0]):
+                for ss in range(CH.shape[1]):
+                    if CH[i,ss]!=-1:
+                        self.assertTrue(PAR[CH[i,ss]]==i)
+                # The parent of i must have i as a child
+                if PAR[i]>0: #We are not in the supreme dad node
+                    self.assertTrue(i in CH[PAR[i],:])
+            # Now, for every point in P, there must be one that contains it as tri_ind
+            for i in range(P.shape[0]):
+                self.assertTrue(i in tri_ind)
+
+    def test_consistency_3d(self):
+        np.random.seed(0)
+        for ss in range(10,2000,100):       
+            P = np.random.rand(ss,3)
             ptest = P[9,:] + 1e-5
             C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(P)
             # Parenthood stuff
