@@ -18,6 +18,8 @@ from .random_points_on_polyline import random_points_on_polyline
 from .normalize_points import normalize_points
 from .write_ply import write_ply
 from .initialize_quadtree import initialize_quadtree
+from .initialize_aabbtree import initialize_aabbtree
+from .traverse_aabbtree import traverse_aabbtree
 from .subdivide_quad import subdivide_quad
 from .in_quadtree import in_quadtree
 from .quadtree_gradient import quadtree_gradient
