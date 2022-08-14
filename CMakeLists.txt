@@ -84,7 +84,7 @@ npe_add_module(gpytoolbox_bindings
 npe_add_module(gpytoolbox_bindings_copyleft
 	BINDING_SOURCES
   	src/cpp/binding_booleans.cpp
-	src/cpp/binding_swept_volume.cpp
+	# src/cpp/binding_swept_volume.cpp
 )
 
 # target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
