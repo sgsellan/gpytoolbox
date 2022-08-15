@@ -24,7 +24,7 @@ def initialize_aabbtree(V,F=None,vmin=None,vmax=None):
         Vector of immediate parent indeces (to traverse upwards)
     D : numpy int array
         Vector of tree depths
-    tri_indeces : numpy int array
+    tri_indices : numpy int array
         Vector of element indices (-1 if *not* leaf node)
 
     See Also

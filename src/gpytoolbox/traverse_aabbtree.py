@@ -1,6 +1,6 @@
 import numpy as np
 
-def traverse_aabbtree(C,W,CH,traversal_bool_fun,add_to_queue=None):
+def traverse_aabbtree(C,W,CH,tri_indices,traversal_bool_fun,add_to_queue=None):
     """Axis-Aligned Bounding-Box hierarchy traversal.
 
     Simple function which traverses an AABB tree given rejection and queue addition strategies. 
@@ -13,6 +13,8 @@ def traverse_aabbtree(C,W,CH,traversal_bool_fun,add_to_queue=None):
         Matrix of half cell widths
     CH : (c,2) numpy int array
         Matrix of child indices (-1 if leaf node)
+    tri_indices : numpy int array
+        Vector of element indices (-1 if *not* leaf node)
     traversal_bool_fun : func
         Function which takes (box_index,C,W,CH,is_leaf) as input and returns whether to continue traversing to the next depth (True) or reject branch entirely (False)
     add_to_queue : func, optional (default None)
@@ -99,7 +101,7 @@ def traverse_aabbtree(C,W,CH,traversal_bool_fun,add_to_queue=None):
         q = queue.pop(0)
         is_leaf = (CH[q,1]==-1)
         # Check if, e.g., point is inside this cell
-        if traversal_bool_fun(q,C,W,CH,is_leaf):
+        if traversal_bool_fun(q,C,W,CH,tri_indices,is_leaf):
             # Is it leaf?
             if (not is_leaf):
                 # If not, add children to queue

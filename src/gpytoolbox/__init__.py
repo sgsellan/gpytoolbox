@@ -20,6 +20,8 @@ from .write_ply import write_ply
 from .initialize_quadtree import initialize_quadtree
 from .initialize_aabbtree import initialize_aabbtree
 from .traverse_aabbtree import traverse_aabbtree
+from .squared_distance import squared_distance
+from .squared_distance_to_element import squared_distance_to_element
 from .subdivide_quad import subdivide_quad
 from .in_quadtree import in_quadtree
 from .quadtree_gradient import quadtree_gradient
