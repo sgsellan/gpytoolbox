@@ -3,7 +3,7 @@ from gpytoolbox.initialize_aabbtree import initialize_aabbtree
 from gpytoolbox.traverse_aabbtree import traverse_aabbtree
 from gpytoolbox.squared_distance_to_element import squared_distance_to_element
 
-# This class efines the functions needed to do a depth-first closest point traversal
+# This defines the functions needed to do a depth-first closest point traversal
 class closest_point_traversal:
     def __init__(self,V,F,ptest):
         self.V = V
