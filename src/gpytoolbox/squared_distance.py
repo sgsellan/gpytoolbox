@@ -26,7 +26,7 @@ class closest_point_traversal:
             # print("Point:",self.ptest)
             # print("Verts:",self.V)
             # print("Element:",self.F[tri_indices[q],:])
-            sqrD = squared_distance_to_element(self.ptest,self.V,self.F[tri_indices[q],:])
+            sqrD,lmb = squared_distance_to_element(self.ptest,self.V,self.F[tri_indices[q],:])
             # print("Distance",sqrD)
         else:
             center = C[q,:]
@@ -36,6 +36,7 @@ class closest_point_traversal:
         if sqrD<self.current_best_guess:
             if is_leaf:
                 self.current_best_guess = sqrD
+                self.current_best_lmb = lmb
                 # print(self.current_best_guess)
                 self.current_best_element = tri_indices[q]
             else:
@@ -70,6 +71,8 @@ def squared_distance(P,V,F=None,use_aabb=False):
         Vector of minimum squared distances
     indices : (p,) numpy int array
         Indices into F (or V, if F is None) of closest elements to each query point
+    lmbs : (p,s) numpy double array
+        Barycentric coordinates into the closest element of each closest mesh point to each query point
 
     See Also
     --------
@@ -93,6 +96,7 @@ def squared_distance(P,V,F=None,use_aabb=False):
     P = np.reshape(P,(-1,dim),order='F')
     squared_distances = -np.ones(P.shape[0])
     indices = -np.ones(P.shape[0],dtype=int)
+    lmbs = np.zeros((P.shape[0],F.shape[1]))
     if use_aabb:
         # Build tree once
         C,W,CH,PAR,D,tri_ind = initialize_aabbtree(V,F=F)
@@ -107,17 +111,21 @@ def squared_distance(P,V,F=None,use_aabb=False):
             _ = traverse_aabbtree(C,W,CH,tri_ind,traverse_fun,add_to_queue=add_to_queue_fun)
             indices[j] = t.current_best_element
             squared_distances[j] = t.current_best_guess
+            lmbs[j,:] = t.current_best_lmb
     else:
         # Loop over every element
         for j in range(P.shape[0]):
             min_sqrd_dist = np.Inf
             ind = -1
+            best_lmb = []
             for i in range(F.shape[0]):
-                this_sqrd_dist = squared_distance_to_element(P[j,:],V,F[i,:])
+                this_sqrd_dist,lmb = squared_distance_to_element(P[j,:],V,F[i,:])
                 if this_sqrd_dist<min_sqrd_dist:
                     ind = i
                     min_sqrd_dist = this_sqrd_dist
+                    best_lmb = lmb
             squared_distances[j] = min_sqrd_dist
             indices[j] = ind
-    return squared_distances, indices
+            lmbs[j,:] = best_lmb
+    return squared_distances, indices, lmbs
         

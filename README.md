@@ -198,16 +198,17 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Implement tet mesh version of `linear_elasticity.py`
 - Improve `poisson_surface_reconstruction` and make it 3D.
 - Random points on mesh.
-- Make inelement_aabb python implementation
-- Barycentric coordinates for point in triangle
-- Output barycentric coordinates in `squared_distance`
-- Merge our `squared_distance` with libigl winding number and have logarithmic signed distances to mesh
+- Make in_element_aabb python implementation
+- Write `ray_triangle_intersect.py`, `ray_box_intersect.py`,
+  `ray_edge_intersect.py` and `ray_mesh_intersect.py` using AABB
+- Merge our `squared_distance` with libigl winding number and have logarithmic
+  signed distances to mesh
 - Switch to pybind11
 - Port fracture modes code
 - Add tets to `subdivide.py`
 - `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`
 - Intrinsic Delaunay triangulation
-- Nearest point on mesh / Hausdorff distance
+- Hausdorff distance (with AABB)
 - Package for conda distribution
 - Add notes on every docstring mentioning libigl implementations

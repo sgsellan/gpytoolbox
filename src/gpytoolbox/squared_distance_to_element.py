@@ -1,4 +1,5 @@
 import numpy as np
+from gpytoolbox.barycentric_coordinates import barycentric_coordinates
 
 def squared_distance_to_element(point,V,element):
     """Squared distance from a point to a mesh element (point, edge, triangle)
@@ -71,8 +72,9 @@ def squared_distance_to_element(point,V,element):
             V[element[2],:]
         ))
         # print(tri)
-        sqrD,lmb = pointTriangleDistance(tri,point)
-    return sqrD
+        sqrD,nearest_point = pointTriangleDistance(tri,point)
+        lmb = barycentric_coordinates(nearest_point,V[element[0],:],V[element[1],:],V[element[2],:])
+    return sqrD,lmb
     #TODO Make it return barycentric coordinates
 #    return sqrD, lmb
 
