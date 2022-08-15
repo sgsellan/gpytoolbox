@@ -97,7 +97,7 @@ class TestSquaredDistance(unittest.TestCase):
             # Generate random point
             P = 2*np.random.rand(num_samples,3)-4
             for i in range(P.shape[0]):
-                print(i)
+                # print(i)
                 sqrD_gt,ind = gpytoolbox.squared_distance(P[i,:],v,F=f)
     #         # print(groundtruth_vals[i])
                 sqrD_aabb,ind = gpytoolbox.squared_distance(P[i,:],v,F=f,use_aabb=True)
