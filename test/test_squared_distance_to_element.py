@@ -16,7 +16,7 @@ class TestSquaredDistanceToElement(unittest.TestCase):
         for i in range(200):
             p = np.random.rand(1,3)
             V = np.random.rand(1,3)
-            sqrD,_ = gpytoolbox.squared_distance_to_element(p,V,np.array([0]))
+            sqrD = gpytoolbox.squared_distance_to_element(p,V,np.array([0]))
             distance_gt = np.linalg.norm(p-V)
             self.assertTrue(np.isclose(np.sqrt(sqrD) - distance_gt,0.0,atol=1e-4))
     def test_random_edges_2d(self):
@@ -35,7 +35,7 @@ class TestSquaredDistanceToElement(unittest.TestCase):
                 dist_gt = rndpt[1]**2.0
             # Random rotation
             R = np.array([[np.cos(th[i]),np.sin(th[i])],[-np.sin(th[i]),np.cos(th[i])]])
-            sqrD,_ = gpytoolbox.squared_distance_to_element(rndpt @ R.T,V @ R.T,edge)
+            sqrD = gpytoolbox.squared_distance_to_element(rndpt @ R.T,V @ R.T,edge)
             self.assertTrue(np.isclose(sqrD-dist_gt,0.0,atol=1e-5))
     def test_random_edges_3d(self):
         #np.random.seed(0)
@@ -57,7 +57,7 @@ class TestSquaredDistanceToElement(unittest.TestCase):
             Rz = np.array([[np.cos(thx[i]),np.sin(thx[i]),0],[-np.sin(thx[i]),np.cos(thx[i]),0],[0,0,1]])
             Ry = np.array([[ np.cos(thy[i]),0,np.sin(thy[i]) ],[0,1,0], [ -np.sin(thy[i]),0,np.cos(thy[i]) ]])
             Rx = np.array([[1,0,0],[0,np.cos(thz[i]),np.sin(thz[i])],[0,-np.sin(thz[i]),np.cos(thz[i])]])
-            sqrD,_ = gpytoolbox.squared_distance_to_element(rndpt @ Rz.T @ Ry.T @ Rx.T,V @ Rz.T @ Ry.T @ Rx.T,edge)
+            sqrD = gpytoolbox.squared_distance_to_element(rndpt @ Rz.T @ Ry.T @ Rx.T,V @ Rz.T @ Ry.T @ Rx.T,edge)
             self.assertTrue(np.isclose(sqrD-dist_gt,0.0,atol=1e-5))
 
     def test_random_triangle(self):
@@ -70,7 +70,7 @@ class TestSquaredDistanceToElement(unittest.TestCase):
             # Generate random query point
             P = np.random.rand(3)
             # Calculate distance with our method
-            sqrD,_ = gpytoolbox.squared_distance_to_element(P,V,F)
+            sqrD = gpytoolbox.squared_distance_to_element(P,V,F)
             # Now, generate many random points on the triangle
             num_samples = 1000000
             s = np.random.rand(num_samples,1)

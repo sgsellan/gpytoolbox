@@ -198,7 +198,10 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Implement tet mesh version of `linear_elasticity.py`
 - Improve `poisson_surface_reconstruction` and make it 3D.
 - Random points on mesh.
-- Write proper BVH structure and efficient signed distances
+- Make inelement_aabb python implementation
+- Barycentric coordinates for point in triangle
+- Output barycentric coordinates in `squared_distance`
+- Merge our `squared_distance` with libigl winding number and have logarithmic signed distances to mesh
 - Switch to pybind11
 - Port fracture modes code
 - Add tets to `subdivide.py`

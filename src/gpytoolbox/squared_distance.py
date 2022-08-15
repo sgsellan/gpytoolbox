@@ -26,7 +26,7 @@ class closest_point_traversal:
             # print("Point:",self.ptest)
             # print("Verts:",self.V)
             # print("Element:",self.F[tri_indices[q],:])
-            sqrD,_ = squared_distance_to_element(self.ptest,self.V,self.F[tri_indices[q],:])
+            sqrD = squared_distance_to_element(self.ptest,self.V,self.F[tri_indices[q],:])
             # print("Distance",sqrD)
         else:
             center = C[q,:]
@@ -48,29 +48,76 @@ class closest_point_traversal:
 
 
 
-def squared_distance(p,V,F=None,use_aabb=False):
+def squared_distance(P,V,F=None,use_aabb=False):
+    """Squared distances from a set of points in space.
+
+    General-purpose function which computes the squared distance from a set of points to a mesh, point cloud or polyline, in two or three dimensions. Optionally, uses an aabb tree for efficient computation.
+
+    Parameters
+    ----------
+    P : (p,dim) numpy double array
+        Matrix of query point positions
+    V : (v,dim) numpy double array
+        Matrix of mesh/polyline/pointcloud coordinates
+    F : (f,s) numpy int array (optional, default None)
+        Matrix of mesh/polyline/pointcloud indices into V. If None, input is assumed to be point cloud.
+    use_aabb : bool, optional (default False)
+        Whether to use an AABB tree for logarithmic computation 
+
+    Returns
+    -------
+    squared_distances : (p,) numpy double array
+        Vector of minimum squared distances
+    indices : (p,) numpy int array
+        Indices into F (or V, if F is None) of closest elements to each query point
+
+    See Also
+    --------
+    squared_distance_to_element, initialize_aabb.
+
+    Examples
+    --------
+    ```python
+    v,f = gpytoolbox.read_mesh("bunny.obj") # Read a mesh
+    v = gpytoolbox.normalize_points(v) # Normalize mesh
+    # Generate query points
+    P = 2*np.random.rand(num_samples,3)-4
+    # Compute distances
+    sqrD_gt,ind = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True)
+    ```
+    """
     if (F is None):
         F = np.linspace(0,V.shape[0]-1,V.shape[0],dtype=int)[:,None]
+
+    dim = V.shape[1]
+    P = np.reshape(P,(-1,dim),order='F')
+    squared_distances = -np.ones(P.shape[0])
+    indices = -np.ones(P.shape[0],dtype=int)
     if use_aabb:
+        # Build tree once
         C,W,CH,PAR,D,tri_ind = initialize_aabbtree(V,F=F)
-        t = closest_point_traversal(V,F,p)
-        traverse_fun = t.traversal_function
-        add_to_queue_fun = t.add_to_queue
-        # print(C)
-        # print(W)
-        # print(CH)
-        # print(tri_ind)
-        _ = traverse_aabbtree(C,W,CH,tri_ind,traverse_fun,add_to_queue=add_to_queue_fun)
-        ind = t.current_best_element
-        min_sqrd_dist = t.current_best_guess
+        for j in range(P.shape[0]):
+            t = closest_point_traversal(V,F,P[j,:])
+            traverse_fun = t.traversal_function
+            add_to_queue_fun = t.add_to_queue
+            # print(C)
+            # print(W)
+            # print(CH)
+            # print(tri_ind)
+            _ = traverse_aabbtree(C,W,CH,tri_ind,traverse_fun,add_to_queue=add_to_queue_fun)
+            indices[j] = t.current_best_element
+            squared_distances[j] = t.current_best_guess
     else:
         # Loop over every element
-        min_sqrd_dist = np.Inf
-        ind = -1
-        for i in range(F.shape[0]):
-            this_sqrd_dist,_ = squared_distance_to_element(p,V,F[i,:])
-            if this_sqrd_dist<min_sqrd_dist:
-                ind = i
-                min_sqrd_dist = this_sqrd_dist
-    return min_sqrd_dist, ind
+        for j in range(P.shape[0]):
+            min_sqrd_dist = np.Inf
+            ind = -1
+            for i in range(F.shape[0]):
+                this_sqrd_dist = squared_distance_to_element(P[j,:],V,F[i,:])
+                if this_sqrd_dist<min_sqrd_dist:
+                    ind = i
+                    min_sqrd_dist = this_sqrd_dist
+            squared_distances[j] = min_sqrd_dist
+            indices[j] = ind
+    return squared_distances, indices
         

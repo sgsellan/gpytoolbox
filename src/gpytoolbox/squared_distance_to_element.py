@@ -1,6 +1,38 @@
 import numpy as np
 
 def squared_distance_to_element(point,V,element):
+    """Squared distance from a point to a mesh element (point, edge, triangle)
+
+    Parameters
+    ----------
+    point : (dim,) numpy double array
+        Query point coordinates
+    V : (v,dim) numpy double array
+        Matrix of mesh/polyline/pointcloud vertex coordinates
+    element : (s,) numpy int array
+        Vector of element indices into V
+
+    Returns
+    -------
+    sqrD : double
+        Squared minimum distance from point to mesh element
+
+    See Also
+    --------
+    squared_distance.
+
+    Examples
+    --------
+    ```python
+    # Generate random mesh
+    V = np.random.rand(3,3)
+    F = np.array([0,1,2],dtype=int)
+    # Generate random query point
+    P = np.random.rand(3)
+    # Calculate distance from point to triangle
+    sqrD = gpytoolbox.squared_distance_to_element(P,V,F)
+    ```
+    """
     dim = V.shape[1]
     if element.ndim>1:
         element = np.ravel(element)
@@ -40,7 +72,9 @@ def squared_distance_to_element(point,V,element):
         ))
         # print(tri)
         sqrD,lmb = pointTriangleDistance(tri,point)
-    return sqrD, lmb
+    return sqrD
+    #TODO Make it return barycentric coordinates
+#    return sqrD, lmb
 
 
 

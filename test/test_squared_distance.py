@@ -9,7 +9,7 @@ class TestSquaredDistance(unittest.TestCase):
         for ss in range(10,2000,100):       
             P = np.random.rand(ss,2)
             ptest = P[9,:] + 1e-5
-            sqrD,ind = gpytoolbox.squared_distance(ptest,P)
+            sqrD,ind = gpytoolbox.squared_distance(ptest,P,use_aabb=False)
             # print(np.sqrt(sqrD))
             self.assertTrue(ind==9)
             self.assertTrue(np.isclose(np.sqrt(sqrD) - np.sqrt(2)*1e-5,0,atol=1e-5))
@@ -23,7 +23,7 @@ class TestSquaredDistance(unittest.TestCase):
         for ss in range(10,2000,100):       
             P = np.random.rand(ss,3)
             ptest = P[9,:] + 1e-5
-            sqrD,ind = gpytoolbox.squared_distance(ptest,P)
+            sqrD,ind = gpytoolbox.squared_distance(ptest,P,use_aabb=False)
             # print(np.sqrt(sqrD))
             self.assertTrue(ind==9)
             self.assertTrue(np.isclose(np.sqrt(sqrD) - np.sqrt(3)*1e-5,0,atol=1e-5))
@@ -41,13 +41,18 @@ class TestSquaredDistance(unittest.TestCase):
         groundtruth_vals = np.array([1.0,0.7,0.5,0.2])**2.0
         E = gpytoolbox.edge_indices(V.shape[0])
         for i in range(sample_points.shape[0]):
-            sqrD,ind = gpytoolbox.squared_distance(sample_points[i,:],V,F=E)
+            sqrD,ind = gpytoolbox.squared_distance(sample_points[i,:],V,F=E,use_aabb=False)
             # print(groundtruth_vals[i])
             self.assertTrue(np.isclose(sqrD-groundtruth_vals[i],0).all())
             sqrD,ind = gpytoolbox.squared_distance(sample_points[i,:],V,F=E,use_aabb=True)
             # print(sqrD)
             # print(groundtruth_vals[i])
             self.assertTrue(np.isclose(sqrD-groundtruth_vals[i],0).all())
+        # All together
+        sqrsD,inds = gpytoolbox.squared_distance(sample_points,V,F=E,use_aabb=False)
+        self.assertTrue(np.isclose(sqrsD-groundtruth_vals,0).all())
+        sqrsD,inds = gpytoolbox.squared_distance(sample_points,V,F=E,use_aabb=True)
+        self.assertTrue(np.isclose(sqrsD-groundtruth_vals,0).all())
 
     def test_polygon_from_image(self):
         filename = "test/unit_tests_data/poly.png"
@@ -58,10 +63,15 @@ class TestSquaredDistance(unittest.TestCase):
         E = gpytoolbox.edge_indices(V.shape[0])
         P = 2*np.random.rand(100,2)-4
         for i in range(P.shape[0]):
-            sqrD_gt,ind = gpytoolbox.squared_distance(P[i,:],V,F=E)
+            sqrD_gt,ind = gpytoolbox.squared_distance(P[i,:],V,F=E,use_aabb=False)
             # print(groundtruth_vals[i])
             sqrD_aabb,ind = gpytoolbox.squared_distance(P[i,:],V,F=E,use_aabb=True)
             self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
+        # All together now
+        sqrD_gt,ind = gpytoolbox.squared_distance(P,V,F=E,use_aabb=False)
+            # print(groundtruth_vals[i])
+        sqrD_aabb,ind = gpytoolbox.squared_distance(P,V,F=E,use_aabb=True)
+        self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
 
     def test_polygon_from_image_3d(self):
         filename = "test/unit_tests_data/poly.png"
@@ -81,10 +91,15 @@ class TestSquaredDistance(unittest.TestCase):
             Ry = np.array([[ np.cos(thy[i]),0,np.sin(thy[i]) ],[0,1,0], [ -np.sin(thy[i]),0,np.cos(thy[i]) ]])
             Rx = np.array([[1,0,0],[0,np.cos(thz[i]),np.sin(thz[i])],[0,-np.sin(thz[i]),np.cos(thz[i])]])
             V = V @ Rx.T @ Ry.T @ Rz.T
-            sqrD_gt,ind = gpytoolbox.squared_distance(P[i,:],V,F=E)
+            sqrD_gt,ind = gpytoolbox.squared_distance(P[i,:],V,F=E,use_aabb=False)
             # print(groundtruth_vals[i])
             sqrD_aabb,ind = gpytoolbox.squared_distance(P[i,:],V,F=E,use_aabb=True)
             self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
+        # All together now
+        sqrD_gt,ind = gpytoolbox.squared_distance(P,V,F=E,use_aabb=False)
+            # print(groundtruth_vals[i])
+        sqrD_aabb,ind = gpytoolbox.squared_distance(P,V,F=E,use_aabb=True)
+        self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
 
     def test_meshes(self):
         meshes = ["bunny_oded.obj", "armadillo.obj", "bunny.obj", "mountain.obj"]
@@ -98,10 +113,14 @@ class TestSquaredDistance(unittest.TestCase):
             P = 2*np.random.rand(num_samples,3)-4
             for i in range(P.shape[0]):
                 # print(i)
-                sqrD_gt,ind = gpytoolbox.squared_distance(P[i,:],v,F=f)
+                sqrD_gt,ind = gpytoolbox.squared_distance(P[i,:],v,F=f,use_aabb=False)
     #         # print(groundtruth_vals[i])
                 sqrD_aabb,ind = gpytoolbox.squared_distance(P[i,:],v,F=f,use_aabb=True)
                 self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
+            sqrD_gt,ind = gpytoolbox.squared_distance(P,v,F=f,use_aabb=False)
+    #         # print(groundtruth_vals[i])
+            sqrD_aabb,ind = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True)
+            self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
 
 
 
