@@ -1,5 +1,3 @@
-from cgitb import small
-from re import T
 from .context import gpytoolbox
 from .context import unittest
 from .context import numpy as np
