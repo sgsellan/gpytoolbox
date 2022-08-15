@@ -1,3 +1,5 @@
+from cgitb import small
+from re import T
 from .context import gpytoolbox
 from .context import unittest
 from .context import numpy as np
@@ -59,6 +61,34 @@ class TestSquaredDistanceToElement(unittest.TestCase):
             Rx = np.array([[1,0,0],[0,np.cos(thz[i]),np.sin(thz[i])],[0,-np.sin(thz[i]),np.cos(thz[i])]])
             sqrD,_ = gpytoolbox.squared_distance_to_element(rndpt @ Rz.T @ Ry.T @ Rx.T,V @ Rz.T @ Ry.T @ Rx.T,edge)
             self.assertTrue(np.isclose(sqrD-dist_gt,0.0,atol=1e-5))
+
+    def test_random_triangle(self):
+        # Generate random triangle
+        np.random.seed(0)
+        num_tests = 100
+        for i in range(num_tests):
+            V = np.random.rand(3,3)
+            F = np.array([0,1,2],dtype=int)
+            # Generate random query point
+            P = np.random.rand(3)
+            # Calculate distance with our method
+            sqrD,_ = gpytoolbox.squared_distance_to_element(P,V,F)
+            # Now, generate many random points on the triangle
+            num_samples = 1000000
+            s = np.random.rand(num_samples,1)
+            t = np.random.rand(num_samples,1)
+            #b = np.array([1 - np.sqrt(t),(1-s)*np.sqrt(t),s*np.sqrt(t)])
+            b = np.hstack( (1 - np.sqrt(t),(1-s)*np.sqrt(t),s*np.sqrt(t)) )
+            rand_points = np.vstack( (
+                b[:,0]*V[0,0] + b[:,1]*V[1,0] + b[:,2]*V[2,0],
+                b[:,0]*V[0,1] + b[:,1]*V[1,1] + b[:,2]*V[2,1],
+                b[:,0]*V[0,2] + b[:,1]*V[1,2] + b[:,2]*V[2,2]
+            )).T
+            smallest_rand_distance = np.amin( np.sum((np.tile(P[None,:],(num_samples,1)) - rand_points)**2.0,axis=1) )
+            # Is our computed distance close to the minimum distance to the random points
+            self.assertTrue(np.isclose(sqrD-smallest_rand_distance,0.0,atol=1e-3))
+
+
 
 
         

@@ -38,7 +38,8 @@ def squared_distance_to_element(point,V,element):
             V[element[1],:],
             V[element[2],:]
         ))
-        sqrD,lmb = pointTriangleDistance(point,tri)
+        # print(tri)
+        sqrD,lmb = pointTriangleDistance(tri,point)
     return sqrD, lmb
 
 
