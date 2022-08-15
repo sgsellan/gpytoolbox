@@ -86,6 +86,23 @@ class TestSquaredDistance(unittest.TestCase):
             sqrD_aabb,ind = gpytoolbox.squared_distance(P[i,:],V,F=E,use_aabb=True)
             self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
 
+    def test_meshes(self):
+        meshes = ["bunny_oded.obj", "armadillo.obj", "bunny.obj", "mountain.obj"]
+        num_samples = 10 # Should be more but this is already pretty slow
+        for mesh in meshes:
+            v,f = gpytoolbox.read_mesh("test/unit_tests_data/" + mesh)
+            v = gpytoolbox.normalize_points(v)
+            v,f,_,_ = gpytoolbox.decimate(v,f,face_ratio=0.1)
+            # print(f.shape[0])
+            # Generate random point
+            P = 2*np.random.rand(num_samples,3)-4
+            for i in range(P.shape[0]):
+                print(i)
+                sqrD_gt,ind = gpytoolbox.squared_distance(P[i,:],v,F=f)
+    #         # print(groundtruth_vals[i])
+                sqrD_aabb,ind = gpytoolbox.squared_distance(P[i,:],v,F=f,use_aabb=True)
+                self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
+
 
 
 
