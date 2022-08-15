@@ -56,7 +56,7 @@ class TestSquaredDistanceToElement(unittest.TestCase):
             # Random rotation
             Rz = np.array([[np.cos(thx[i]),np.sin(thx[i]),0],[-np.sin(thx[i]),np.cos(thx[i]),0],[0,0,1]])
             Ry = np.array([[ np.cos(thy[i]),0,np.sin(thy[i]) ],[0,1,0], [ -np.sin(thy[i]),0,np.cos(thy[i]) ]])
-            Rx = np.array([[1,0,0],[0,np.cos(thx[i]),np.sin(thx[i])],[0,-np.sin(thx[i]),np.cos(thx[i])]])
+            Rx = np.array([[1,0,0],[0,np.cos(thz[i]),np.sin(thz[i])],[0,-np.sin(thz[i]),np.cos(thz[i])]])
             sqrD,_ = gpytoolbox.squared_distance_to_element(rndpt @ Rz.T @ Ry.T @ Rx.T,V @ Rz.T @ Ry.T @ Rx.T,edge)
             self.assertTrue(np.isclose(sqrD-dist_gt,0.0,atol=1e-5))
 

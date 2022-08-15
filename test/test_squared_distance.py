@@ -63,6 +63,29 @@ class TestSquaredDistance(unittest.TestCase):
             sqrD_aabb,ind = gpytoolbox.squared_distance(P[i,:],V,F=E,use_aabb=True)
             self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
 
+    def test_polygon_from_image_3d(self):
+        filename = "test/unit_tests_data/poly.png"
+        poly = gpytoolbox.png2poly(filename)
+        V = gpytoolbox.normalize_points(poly[0])
+        V = V[0:V.shape[0]:300,:]
+        V = np.hstack(( V,np.zeros((V.shape[0],1)) ))
+        num_samples = 200
+        thx = 2*np.pi*np.random.rand(num_samples)
+        thy = 2*np.pi*np.random.rand(num_samples)
+        thz = 2*np.pi*np.random.rand(num_samples)
+        # print(V.shape[0])
+        E = gpytoolbox.edge_indices(V.shape[0])
+        P = 2*np.random.rand(num_samples,3)-4
+        for i in range(P.shape[0]):
+            Rz = np.array([[np.cos(thx[i]),np.sin(thx[i]),0],[-np.sin(thx[i]),np.cos(thx[i]),0],[0,0,1]])
+            Ry = np.array([[ np.cos(thy[i]),0,np.sin(thy[i]) ],[0,1,0], [ -np.sin(thy[i]),0,np.cos(thy[i]) ]])
+            Rx = np.array([[1,0,0],[0,np.cos(thz[i]),np.sin(thz[i])],[0,-np.sin(thz[i]),np.cos(thz[i])]])
+            V = V @ Rx.T @ Ry.T @ Rz.T
+            sqrD_gt,ind = gpytoolbox.squared_distance(P[i,:],V,F=E)
+            # print(groundtruth_vals[i])
+            sqrD_aabb,ind = gpytoolbox.squared_distance(P[i,:],V,F=E,use_aabb=True)
+            self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
+
 
 
 
