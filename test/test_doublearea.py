@@ -39,6 +39,10 @@ class TestDoublearea(unittest.TestCase):
         A = gpytoolbox.doublearea(v,f_backwards)
         # Check should be unsigned
         self.assertTrue(np.isclose(A - gt_dblarea,0.0).all())
+        # Now do signed
+        A = gpytoolbox.doublearea(v,f_backwards,signed=True)
+        # Check should be unsigned
+        self.assertTrue(np.isclose(A + gt_dblarea,0.0).all())
 
 
     def test_orientation(self):
