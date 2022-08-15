@@ -70,3 +70,4 @@ from .colormap import colormap
 from .apply_colormap import apply_colormap
 from .offset_surface import offset_surface
 from .barycentric_coordinates import barycentric_coordinates
+from .ray_box_intersect import ray_box_intersect
