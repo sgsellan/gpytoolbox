@@ -2,6 +2,8 @@ import numpy as np
 
 def squared_distance_to_element(point,V,element):
     dim = V.shape[1]
+    if element.ndim>1:
+        element = np.ravel(element)
     simplex_size = element.shape[0]
     if simplex_size==1:
         # Then this is just distance between two points

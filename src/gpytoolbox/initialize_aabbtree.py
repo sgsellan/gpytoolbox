@@ -62,7 +62,7 @@ def initialize_aabbtree(V,F=None,vmin=None,vmax=None):
     D = np.array([1],dtype=int)
     PAR = np.array([-1],dtype=int) # supreme Neanderthal ancestral node
     tri_indices = np.array([-1]) # this will have the index in leaf nodes (at least temporarily)
-
+    tri_index_list = [ list(range(F.shape[0])) ]
     # Now, we will loop
     box_ind = -1
     while True:
@@ -71,27 +71,28 @@ def initialize_aabbtree(V,F=None,vmin=None,vmax=None):
             break
         is_child = (CH[box_ind,1]==-1)
         assert(is_child) # This check should be superfluous I think
-        tris_in_box = is_in_box(V,F,C[box_ind,:],W[box_ind,:])
+        #tris_in_box = is_in_box(V,F,C[box_ind,:],W[box_ind,:])
+        tris_in_box = tri_index_list[box_ind]
         # print(box_ind)
         # print(tris_in_box)
         # print(tri_indices)
         # print(tris_in_box)
-        num_tris_in_box = np.sum(tris_in_box)
+        num_tris_in_box = len(tris_in_box)
         # print(num_tris_in_box)
         assert(num_tris_in_box>0) # There can't be a node with zero triangles...
         if (is_child and num_tris_in_box>=2):
             # Does this quad contain more than one triangle? Then subdivide it
-            C,W,CH,PAR,D,tri_indices = subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices)
+            C,W,CH,PAR,D,tri_indices,tri_index_list = subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list)
         if (is_child and num_tris_in_box==1):
-            tri_indices[box_ind] = np.nonzero(tris_in_box)[0] # Check this??
+            tri_indices[box_ind] = tris_in_box[0] # Check this??
 
     return C,W,CH,PAR,D,tri_indices
 
 
-def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices):
+def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list):
     tol = 1e-8
     # First: find largest dimension
-    num_tris_in_box = np.sum(tris_in_box)
+    num_tris_in_box = len(tris_in_box)
     dim = V.shape[1]
     ncp = 2 # Dimension-agnostic number of children per parent
     simplex_size = F.shape[1]
@@ -108,10 +109,16 @@ def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices):
     best_dim = np.argmax(spread)
     # Third: pick median along best axis and separate into "left" triangles and "right" triangles
     max_values_along_best_dim = vmax[:,best_dim]
-    split_value = np.median(max_values_along_best_dim)+tol
-    left_inds = np.nonzero(max_values_along_best_dim<split_value)[0]
-    right_inds = np.nonzero(max_values_along_best_dim>=split_value)[0]
-
+    sorted_max_values = np.argsort(max_values_along_best_dim)
+    left_inds = sorted_max_values[0:((num_tris_in_box//2))]
+    right_inds = sorted_max_values[((num_tris_in_box//2)):num_tris_in_box]
+    # split_value = np.median(max_values_along_best_dim)+tol
+    # left_inds = np.nonzero(max_values_along_best_dim<split_value)[0]
+    # right_inds = np.nonzero(max_values_along_best_dim>=split_value)[0]
+    # print(max_values_along_best_dim)
+    # #print(split_value)
+    # print(left_inds)
+    # print(right_inds)
     # Find new center and widths
     vmax_l = np.amax(vmax[left_inds,:],axis=0)
     vmin_l = np.amin(vmin[left_inds,:],axis=0)
@@ -148,7 +155,16 @@ def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices):
     # And depth:
     D = np.concatenate((D,np.tile(np.array([D[box_ind]+1],dtype=int),ncp)))
     tri_indices = np.vstack((tri_indices,np.array([[-1],[-1]])))
-    return C,W,CH,PAR,D,tri_indices
+
+    tris_in_box_left = []
+    for i in range(len(left_inds)):
+        tris_in_box_left.append(tris_in_box[left_inds[i]])
+    tris_in_box_right = []
+    for i in range(len(right_inds)):
+        tris_in_box_right.append(tris_in_box[right_inds[i]])
+    tri_index_list.append( tris_in_box_left )
+    tri_index_list.append( tris_in_box_right )
+    return C,W,CH,PAR,D,tri_indices,tri_index_list
 
 def is_in_box(V,F,center,width):
     # Checks if triangle is FULLY contained in box

@@ -11,26 +11,31 @@ class TestInitializeAabbTree(unittest.TestCase):
         F = np.array([[0,1],[2,3],[4,5]],dtype=np.int32)
         C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(P,F)
         C_gt = np.array([[0.5,  0.5,  0.5 ],
-            [0.05, 0.05, 0.,  ],
-            [1.,   1.,   0.95,],
-            [0.01, 0.05, 0.,  ],
-            [0.05, 0.,   0.,  ]])
-        W_gt = np.array([[1.,   1.,   1.,  ],
-            [0.1,  0.1,  0.  ],
-            [0.,   0.,   0.1 ],
-            [0.02, 0.1,  0.  ],
-            [0.1,  0.,   0.  ]])
+            [0.01, 0.05, 0.  ],
+            [0.5,  0.5,  0.5 ],
+            [0.05, 0, 0.  ],
+            [1.,   1.,   0.95,]])
+        W_gt = np.array([[1.,   1.,   1.  ],
+                    [0.02, 0.1,  0.  ],
+                    [1. ,  1. ,  1.  ],
+                    [0.1,  0. ,  0.  ],
+                    [0. ,  0. ,  0.1 ]])
         tri_ind_gt = np.array([[-1],
+            [1],
             [-1],
-            [ 2],
-            [ 1],
-            [ 0]])
+            [0],
+            [2]])
         CH_gt = np.array([[ 1,  2],
+            [-1, -1],
             [ 3,  4],
             [-1, -1],
-            [-1, -1],
             [-1, -1]])
-        PAR_gt = np.array([-1,  0,  0,  1,  1])
+        # print(C)
+        # print(W)
+        # print(tri_ind)
+        # print(CH)
+        # print(PAR)
+        PAR_gt = np.array([-1,  0,  0,  2,  2])
         self.assertTrue((np.isclose(C-C_gt,0).all()))
         self.assertTrue((np.isclose(W-W_gt,0).all()))
         self.assertTrue((np.isclose(tri_ind-tri_ind_gt,0).all()))
@@ -73,8 +78,21 @@ class TestInitializeAabbTree(unittest.TestCase):
             for i in range(P.shape[0]):
                 self.assertTrue(i in tri_ind)
 
-
-
+    def test_hard_polyline_2d(self):
+        # This is a hard case, it should still work
+        V = np.array([ [-1.0, -1.0], [-1.0, 1.0], [1.0, 1.0], [1.0, -1.0] ])
+        E = gpytoolbox.edge_indices(V.shape[0])
+        C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(V,F=E)
+        for i in range(W.shape[0]):
+            for ss in range(CH.shape[1]):
+                if CH[i,ss]!=-1:
+                    self.assertTrue(PAR[CH[i,ss]]==i)
+            # The parent of i must have i as a child
+            if PAR[i]>0: #We are not in the supreme dad node
+                self.assertTrue(i in CH[PAR[i],:])
+        # Now, for every edge, there must be one that contains it as tri_ind
+        for i in range(V.shape[0]-1):
+            self.assertTrue(i in tri_ind)
 
 if __name__ == '__main__':
     unittest.main()

@@ -23,7 +23,11 @@ class closest_point_traversal:
     def traversal_function(self,q,C,W,CH,tri_indices,is_leaf):        
         # Distance is L1 norm of ptest minus center 
         if is_leaf:
+            # print("Point:",self.ptest)
+            # print("Verts:",self.V)
+            # print("Element:",self.F[tri_indices[q],:])
             sqrD,_ = squared_distance_to_element(self.ptest,self.V,self.F[tri_indices[q],:])
+            # print("Distance",sqrD)
         else:
             center = C[q,:]
             width = W[q,:]
@@ -32,6 +36,7 @@ class closest_point_traversal:
         if sqrD<self.current_best_guess:
             if is_leaf:
                 self.current_best_guess = sqrD
+                # print(self.current_best_guess)
                 self.current_best_element = tri_indices[q]
             else:
                 self.others.append(q)
@@ -51,6 +56,10 @@ def squared_distance(p,V,F=None,use_aabb=False):
         t = closest_point_traversal(V,F,p)
         traverse_fun = t.traversal_function
         add_to_queue_fun = t.add_to_queue
+        # print(C)
+        # print(W)
+        # print(CH)
+        # print(tri_ind)
         _ = traverse_aabbtree(C,W,CH,tri_ind,traverse_fun,add_to_queue=add_to_queue_fun)
         ind = t.current_best_element
         min_sqrd_dist = t.current_best_guess
