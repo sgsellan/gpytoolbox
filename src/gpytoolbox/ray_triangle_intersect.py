@@ -50,6 +50,10 @@ def ray_triangle_intersect(origin,dir, v0, v1, v2, return_negative=False):
     t,is_hit,hit_coord = ay_triangle_intersect(origin,dir,v1,v2,v3)
     ```
     """
+    v0 = np.ravel(v0)
+    v1 = np.ravel(v1)
+    v2 = np.ravel(v2)
+    
     v0v1 = v1 - v0
     v0v2 = v2 - v0
     pvec = np.cross(dir,v0v2)

@@ -1,6 +1,51 @@
 import numpy as np
+from gpytoolbox.ray_box_intersect import ray_box_intersect
+from gpytoolbox.ray_triangle_intersect import ray_triangle_intersect
+from gpytoolbox.barycentric_coordinates import barycentric_coordinates
+from gpytoolbox.initialize_aabbtree import initialize_aabbtree
+from gpytoolbox.traverse_aabbtree import traverse_aabbtree
 
-def ray_mesh_intersect(cam_pos,cam_dir,V,F):
+# This defines the functions needed to do a depth-first closest point traversal
+class ray_mesh_intersect_traversal:
+    def __init__(self,cam_pos,cam_dir,V,F):
+        self.cam_pos = cam_pos
+        self.cam_dir = cam_dir
+        self.V = V
+        self.F = F
+        self.dim = V.shape[1]
+        self.t = np.Inf
+        self.id = -1
+        self.lmbd = np.array([0,0,0])
+    def traversal_function(self,q,C,W,CH,tri_indices,is_leaf):        
+        # Distance is L1 norm of ptest minus center 
+        if is_leaf:
+            # print("Point:",self.ptest)
+            # print("Verts:",self.V)
+            # print("Element:",self.F[tri_indices[q],:])
+            v0 = self.V[self.F[tri_indices[q],0],:]
+            v1 = self.V[self.F[tri_indices[q],1],:]
+            v2 = self.V[self.F[tri_indices[q],2],:]
+            t,is_hit,hit_coord = ray_triangle_intersect(self.cam_pos,self.cam_dir,v0,v1,v2)
+            # print("Distance",sqrD)
+        else:
+            center = C[q,:]
+            width = W[q,:]
+            is_hit,_ = ray_box_intersect(self.cam_pos,self.cam_dir,center,width)
+        if (is_hit):
+            if (is_leaf  and (t<self.t)):
+                self.t = t
+                b = barycentric_coordinates(hit_coord,v0,v1,v2)
+                self.lmbd = b
+                self.id = tri_indices[q] 
+            return True
+        return False
+    # def add_to_queue(self,queue,new_ind):
+    #     # Depth first: insert at beginning (much less queries).
+    #     queue.insert(0,new_ind)
+
+
+
+def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True):
     """Shoot a ray from a position and see where it crashes into a given mesh
 
     Uses a bounding volume hierarchy to efficiently compute intersections of many different rays with a given mesh.
@@ -15,6 +60,8 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F):
         vertex list of a triangle mesh
     F : (m,3) numpy int array
         face index list of a triangle mesh
+    use_embree : bool, optional (default True)
+        Whether to use the much more optimzed C++ AABB embree implementation of ray mesh intersections. If False, uses gpytoolbox's native AABB tree and gpytoolbox's intersection queries.
 
     Returns
     -------
@@ -29,12 +76,24 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F):
     --------
     TODO
     """
+    if use_embree:
+        try:
+            from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
+        except:
+            raise ImportError("Gpytoolbox cannot import its C++ decimate binding.")
 
-    try:
-        from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
-    except:
-        raise ImportError("Gpytoolbox cannot import its C++ decimate binding.")
-
-    ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
+        ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
+    else:
+        ts = np.Inf*np.ones(cam_pos.shape[0])
+        ids = -np.ones(cam_pos.shape[0],dtype=int)
+        lambdas = np.zeros((cam_pos.shape[0],3))
+        C,W,CH,PAR,D,tri_ind = initialize_aabbtree(V,F=F)
+        for i in range(cam_pos.shape[0]):
+            trav = ray_mesh_intersect_traversal(cam_pos[i,:],cam_dir[i,:],V,F)
+            traverse_fun = trav.traversal_function
+            _ = traverse_aabbtree(C,W,CH,tri_ind,traverse_fun)
+            ts[i] = trav.t
+            ids[i] = trav.id
+            lambdas[i,:] = trav.lmbd
 
     return ts, ids, lambdas

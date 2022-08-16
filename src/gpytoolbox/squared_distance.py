@@ -42,6 +42,7 @@ class closest_point_traversal:
             else:
                 self.others.append(q)
             return True
+        return False
     def add_to_queue(self,queue,new_ind):
         # Depth first: insert at beginning (much less queries).
         queue.insert(0,new_ind)
