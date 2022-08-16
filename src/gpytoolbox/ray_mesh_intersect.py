@@ -30,8 +30,9 @@ class ray_mesh_intersect_traversal:
         else:
             center = C[q,:]
             width = W[q,:]
-            is_hit,_ = ray_box_intersect(self.cam_pos,self.cam_dir,center,width)
-        if (is_hit):
+            is_hit,hit_coord = ray_box_intersect(self.cam_pos,self.cam_dir,center,width)
+            t = ((hit_coord - self.cam_pos)/self.cam_dir)[0]
+        if (is_hit  and (t<self.t)):
             if (is_leaf  and (t<self.t)):
                 self.t = t
                 b = barycentric_coordinates(hit_coord,v0,v1,v2)
@@ -39,9 +40,9 @@ class ray_mesh_intersect_traversal:
                 self.id = tri_indices[q] 
             return True
         return False
-    # def add_to_queue(self,queue,new_ind):
-    #     # Depth first: insert at beginning (much less queries).
-    #     queue.insert(0,new_ind)
+    def add_to_queue(self,queue,new_ind):
+        # Depth first: insert at beginning (much less queries).
+        queue.insert(0,new_ind)
 
 
 
@@ -74,7 +75,13 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True):
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import ray_mesh_intersect
+    v,f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
+    cam_pos = np.array([[1,0.1,0.1],[1,0.2,0.0]])
+    cam_dir = np.array([[-1,0,0],[-1,0,0]])
+    t, ids, l = ray_mesh_intersect(cam_pos,cam_dir,v,f)
+    ```
     """
     if use_embree:
         try:
@@ -87,13 +94,17 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True):
         ts = np.Inf*np.ones(cam_pos.shape[0])
         ids = -np.ones(cam_pos.shape[0],dtype=int)
         lambdas = np.zeros((cam_pos.shape[0],3))
+        # print("building tree")
         C,W,CH,PAR,D,tri_ind = initialize_aabbtree(V,F=F)
+        # print("built tree")
+        # print("computing distances")
         for i in range(cam_pos.shape[0]):
             trav = ray_mesh_intersect_traversal(cam_pos[i,:],cam_dir[i,:],V,F)
             traverse_fun = trav.traversal_function
-            _ = traverse_aabbtree(C,W,CH,tri_ind,traverse_fun)
+            add_to_queue_fun = trav.add_to_queue
+            _ = traverse_aabbtree(C,W,CH,tri_ind,traverse_fun,add_to_queue=add_to_queue_fun)
             ts[i] = trav.t
             ids[i] = trav.id
             lambdas[i,:] = trav.lmbd
-
+        # print("computed distances")
     return ts, ids, lambdas
