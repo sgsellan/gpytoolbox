@@ -10,6 +10,7 @@ class ray_mesh_intersect_traversal:
     def __init__(self,cam_pos,cam_dir,V,F):
         self.cam_pos = cam_pos
         self.cam_dir = cam_dir
+        self.valid_divide_by_ind = np.argmax(np.abs(self.cam_dir))
         self.V = V
         self.F = F
         self.dim = V.shape[1]
@@ -31,9 +32,9 @@ class ray_mesh_intersect_traversal:
             center = C[q,:]
             width = W[q,:]
             is_hit,hit_coord = ray_box_intersect(self.cam_pos,self.cam_dir,center,width)
-            t = ((hit_coord - self.cam_pos)/self.cam_dir)[0]
+            t = ((hit_coord[self.valid_divide_by_ind] - self.cam_pos[self.valid_divide_by_ind])/self.cam_dir[self.valid_divide_by_ind])
         if (is_hit  and (t<self.t)):
-            if (is_leaf  and (t<self.t)):
+            if (is_leaf):
                 self.t = t
                 b = barycentric_coordinates(hit_coord,v0,v1,v2)
                 self.lmbd = b

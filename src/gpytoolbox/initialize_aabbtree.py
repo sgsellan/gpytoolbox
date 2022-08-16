@@ -50,6 +50,8 @@ def initialize_aabbtree(V,F=None,vmin=None,vmax=None):
 
     # We start with a bounding box
     dim = V.shape[1]
+    simplex_size = F.shape[1]
+    num_s = F.shape[0]
     if (vmin is None):
         vmin = np.amin(V,axis=0)
     if (vmax is None):
@@ -57,6 +59,16 @@ def initialize_aabbtree(V,F=None,vmin=None,vmax=None):
     C = (vmin + vmax)/2.0
     C = C[None,:]
     #print(C)
+
+    # We need to compute this once, we'll need it for the subdivision:
+    vmin_big = 10000*np.ones((num_s,dim))
+    vmax_big = -10000*np.ones((num_s,dim))
+    for j in range(dim):
+        for i in range(simplex_size):
+            vmax_big[:,j] = np.amax(np.hstack((V[F[:,i],j][:,None],vmax_big[:,j][:,None])),axis=1)[:]
+            vmin_big[:,j] = np.amin(np.hstack((V[F[:,i],j][:,None],vmin_big[:,j][:,None])),axis=1)[:]
+
+
     W = np.reshape(vmax-vmin,(1,dim))
     CH = np.tile(np.array([[-1]],dtype=int),(1,2)) # for now it's leaf node
     D = np.array([1],dtype=int)
@@ -82,28 +94,22 @@ def initialize_aabbtree(V,F=None,vmin=None,vmax=None):
         assert(num_tris_in_box>0) # There can't be a node with zero triangles...
         if (is_child and num_tris_in_box>=2):
             # Does this quad contain more than one triangle? Then subdivide it
-            C,W,CH,PAR,D,tri_indices,tri_index_list = subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list)
+            C,W,CH,PAR,D,tri_indices,tri_index_list = subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list,vmin_big,vmax_big)
         if (is_child and num_tris_in_box==1):
             tri_indices[box_ind] = tris_in_box[0] # Check this??
 
     return C,W,CH,PAR,D,tri_indices
 
 
-def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list):
-    tol = 1e-8
+def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list,vmin_big,vmax_big):
     # First: find largest dimension
     num_tris_in_box = len(tris_in_box)
-    dim = V.shape[1]
     ncp = 2 # Dimension-agnostic number of children per parent
-    simplex_size = F.shape[1]
     num_boxes = C.shape[0]
     # We will build a vector of maximums where each row is the maximum along all dimensions for each element
-    vmin = 10000*np.ones((num_tris_in_box,dim))
-    vmax = -10000*np.ones((num_tris_in_box,dim))
-    for j in range(dim):
-        for i in range(simplex_size):
-            vmax[:,j] = np.amax(np.hstack((V[F[tris_in_box,i],j][:,None],vmax[:,j][:,None])),axis=1)[:]
-            vmin[:,j] = np.amin(np.hstack((V[F[tris_in_box,i],j][:,None],vmin[:,j][:,None])),axis=1)[:]
+    vmin = vmin_big[tris_in_box,:]
+    vmax = vmax_big[tris_in_box,:]
+
 
     spread = np.amax(vmax,axis=0) - np.amin(vmin,axis=0)
     best_dim = np.argmax(spread)
