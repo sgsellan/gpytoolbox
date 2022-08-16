@@ -37,7 +37,18 @@ def ray_triangle_intersect(origin,dir, v0, v1, v2, return_negative=False):
 
     Examples
     --------
-    
+    ```python
+    from gpytoolbox import ray_triangle_intersect
+    # Random origin and direction
+    origin = np.random.rand(3)
+    dir = np.random.rand(3)
+    # Random vertices
+    V = np.random.rand(3,3)
+    v1 = V[0,:]
+    v2 = V[1,:]
+    v3 = V[2,:]
+    t,is_hit,hit_coord = ay_triangle_intersect(origin,dir,v1,v2,v3)
+    ```
     """
     v0v1 = v1 - v0
     v0v2 = v2 - v0
