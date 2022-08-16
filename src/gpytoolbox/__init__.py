@@ -18,6 +18,10 @@ from .random_points_on_polyline import random_points_on_polyline
 from .normalize_points import normalize_points
 from .write_ply import write_ply
 from .initialize_quadtree import initialize_quadtree
+from .initialize_aabbtree import initialize_aabbtree
+from .traverse_aabbtree import traverse_aabbtree
+from .squared_distance import squared_distance
+from .squared_distance_to_element import squared_distance_to_element
 from .subdivide_quad import subdivide_quad
 from .in_quadtree import in_quadtree
 from .quadtree_gradient import quadtree_gradient
@@ -57,14 +61,14 @@ from .array_correspondence import array_correspondence
 from .subdivide import subdivide
 from .read_mesh import read_mesh
 from .write_mesh import write_mesh
-# from .do_meshes_intersect import do_meshes_intersect
-# from .mesh_boolean import mesh_boolean
 from .decimate import decimate
 from .in_element_aabb import in_element_aabb
 from .ray_mesh_intersect import ray_mesh_intersect
 from .remesh_botsch import remesh_botsch
 from .upper_envelope import upper_envelope
-# from .lazy_cage import lazy_cage
 from .colormap import colormap
 from .apply_colormap import apply_colormap
 from .offset_surface import offset_surface
+from .barycentric_coordinates import barycentric_coordinates
+from .ray_box_intersect import ray_box_intersect
+from .ray_triangle_intersect import ray_triangle_intersect
