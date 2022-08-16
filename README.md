@@ -196,8 +196,6 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Improve `poisson_surface_reconstruction` and make it 3D.
 - Random points on mesh.
 - Make in_element_aabb python implementation
-- Write `ray_triangle_intersect.py`, `ray_box_intersect.py`,
-  `ray_edge_intersect.py` and `ray_mesh_intersect.py` using AABB
 - Merge our `squared_distance` with libigl winding number and have logarithmic
   signed distances to mesh
 - Switch to pybind11
