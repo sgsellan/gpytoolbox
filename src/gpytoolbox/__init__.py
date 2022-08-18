@@ -72,3 +72,4 @@ from .offset_surface import offset_surface
 from .barycentric_coordinates import barycentric_coordinates
 from .ray_box_intersect import ray_box_intersect
 from .ray_triangle_intersect import ray_triangle_intersect
+from .catmull_rom_spline import catmull_rom_spline
