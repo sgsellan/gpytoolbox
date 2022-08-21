@@ -24,7 +24,12 @@ def catmull_rom_spline(T,P):
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import catmull_rom_spline
+    P = np.array([[0.0,0.0],[1.0,1.0],[-1.0,2.0],[0.0,3.0]])
+    T = np.linspace(0,1,100)
+    PT = catmull_rom_spline(T,P)
+    ```
     """
 
     num_keyframes = P.shape[0]
@@ -36,14 +41,16 @@ def catmull_rom_spline(T,P):
 
     b = np.floor(T*(num_keyframes-1)).astype(np.int32)
     b[T==1] = b[T==1] - 1
-    print(b)
+    # print(b)
     tt = (T - time_keyframes[b])/tau
 
     X0 = P[b,:]
     X1 = P[b+1,:]
 
     tangent_0 = (P[np.minimum(b+1,num_keyframes-1,dtype=int),:] - P[np.maximum(b-1,0,dtype=int),:])/2.0
+    tangent_0[b==0] = 2*tangent_0[b==0]
     tangent_1 = (P[np.minimum(b+2,num_keyframes-1,dtype=int),:] - P[np.maximum(b,0,dtype=int),:])/2.0
+    tangent_1[b==(num_keyframes-2)] = 2*tangent_1[b==(num_keyframes-2)]
 
     tt_tiled = np.tile(tt.reshape(-1,1),(1,dim))
 
