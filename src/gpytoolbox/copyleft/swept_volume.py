@@ -1,7 +1,7 @@
 import numpy as np
 from gpytoolbox.decimate import decimate
 
-def swept_volume(V,F,transformations=None,rotations=None,translations=None,align_rotations_with_velocity=False,eps=0.05,num_seeds=100,num_faces=None,verbose=False):
+def swept_volume(V,F,transformations=None,rotations=None,translations=None,scales=None,align_rotations_with_velocity=False,eps=0.05,num_seeds=100,num_faces=None,verbose=False):
     """Find region covered by object a long a trajectory
 
     Computes the swept volume of a triangle mesh along a trajectory, given as translations keyframes which are interpolated as a Catmull-Rom spline, and rotations which are interpolated using quaternion spherical linear interpolation.
@@ -18,6 +18,8 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,align
         List of rotation matrices
     translations : list of numpy double array, optional (default None)
         List of translation vectors (must be set if transformations is None)
+    scales : list of doubles, optional (default None)
+        List of scaling factors (if None, no scaling is performed)
     align_rotations_with_velocity : bool, optional (default False)
         If rotations is None and this option is True, rotations are chosen *roughyl* such that the shape aligns with the velocity vector
     eps : double, optional (default 0.05)
@@ -91,6 +93,8 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,align
                 vel_1 = vel_1/np.linalg.norm(vel_1)
                 rotation = rotation_matrix_from_vectors(vel_0, vel_1)
                 this_transformation[0:3,0:3] = rotation
+            if (scales is not None):
+                this_transformation[0:3,0:3] = scales[i]*this_transformation[0:3,0:3]
             transformations.append(this_transformation)
 
     transformations_big_mat = np.vstack(transformations)
