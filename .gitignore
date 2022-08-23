@@ -8,3 +8,4 @@ build-linux/
 .vs-code/
 .vscode/
 site/
+.eggs/
