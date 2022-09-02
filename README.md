@@ -204,6 +204,6 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`
 - Intrinsic Delaunay triangulation
-- Hausdorff distance (with AABB)
+- Triangle-triangle distance and Hausdorff distance (with AABB)
 - Package for conda distribution
 - Add notes on every docstring mentioning libigl implementations
