@@ -136,6 +136,7 @@ python -m pip install polyscope
 python -m pip install tetgen
 python -m pip install scikit-image
 ```
+
 Then, use the functions in this library by adding `gpytoolbox` to the python
 path and importing; for example,
 ```python
