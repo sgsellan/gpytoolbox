@@ -2,6 +2,7 @@ import numpy as np
 from skimage import measure
 from skimage.color.colorconv import rgb2gray, rgba2rgb
 from skimage.io import imread
+from skimage.transform import rotate
 
 def png2poly(filename):
     """Export polylines from png image
@@ -27,6 +28,9 @@ def png2poly(filename):
     TODO
     """
     polypic = imread(filename)
+    # For some reason reading the image flips it by 90 degrees. This fixes it
+    polypic = rotate(polypic, angle=-90, resize=True)
+    # print(polypic)
    
     # convert to greyscale and remove alpha if neccessary
     if len(polypic.shape)>2:

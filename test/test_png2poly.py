@@ -4,11 +4,11 @@ from .context import unittest
 
 class TestPng2Poly(unittest.TestCase):
     def test_simple_pngs(self):
-        # Build a polyline; for example, a square
+        # Build a polyline
         filename = "test/unit_tests_data/poly.png"
         poly = gpytoolbox.png2poly(filename)
         # There should be two contours: one for each transition
-        assert(len(poly)==2)
+        self.assertTrue(len(poly)==2)
         # plt.plot(poly[0][:,0],poly[0][:,1])
         # plt.plot(poly[1][:,0],poly[1][:,1])
         # plt.show(block=False)
@@ -19,14 +19,20 @@ class TestPng2Poly(unittest.TestCase):
         filename = "test/unit_tests_data/illustrator.png"
         poly = gpytoolbox.png2poly(filename)
         # There should be four contours: one for each transition in each component
-        assert(len(poly)==4)
-        # plt.plot(poly[0][:,0],poly[0][:,1])
-        # plt.plot(poly[1][:,0],poly[1][:,1])
-        # plt.plot(poly[2][:,0],poly[2][:,1])
-        # plt.plot(poly[3][:,0],poly[3][:,1])
-        # plt.show(block=False)
-        # plt.pause(20)
-        # plt.close()
+        self.assertTrue(len(poly)==4)
+
+    def test_rotation(self):
+        poly = gpytoolbox.png2poly("test/unit_tests_data/rectangle.png")
+        self.assertTrue(len(poly)==1)
+        V = poly[0]
+        # X dimension should be bigger:
+        vmin = np.amin(V,axis=0)
+        vmax = np.amax(V,axis=0)
+        xlength = vmax[0] - vmin[0]
+        ylength = vmax[1] - vmin[1]
+        # This used to fail. It shouldn't now:
+        self.assertTrue(xlength>ylength)
+        
 
 
 
