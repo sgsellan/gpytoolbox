@@ -1,5 +1,6 @@
 # https://realpython.com/python-project-documentation-with-mkdocs/
-# to deploy: mkdocs gh-deploy
+# to deploy:
+# mike deploy --update-aliases --rebase --push 0.0.1 latest
 # https://mkdocstrings.github.io/python/usage/
 site_name: Gpytoolbox
 theme:
@@ -28,3 +29,6 @@ extra:
   analytics:
     provider: google
     property: G-YDMBBH2H8E
+  version:
+    provider: mike
+# https://github.com/jimporter/mike

@@ -11,7 +11,7 @@ def boundary_loops(f, allow_wrong_orientations=True):
 
     Parameters
     ----------
-    F : (m,3) numpy int array
+    f : (m,3) numpy int array
         face index list of a triangle mesh
     allow_wrong_orientations: bool, optional (default True).
         whether to allow F to contain wrongly oriented triangles
