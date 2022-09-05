@@ -24,11 +24,26 @@ utility functions that evolves from our personal student codebases.
 
 ## Installation
 
-You should be able install the latest stable release of *Gpytoolbox* with pip:
+### Latest stable release (recommended)
+
+You should be able install the latest release of *Gpytoolbox* with pip:
 ```bash
 python -m pip install gpytoolbox
 ```
 A conda installation will be supported in the future.
+
+### From Git
+
+If you want to build Gpytoolbox from a specific git commit; for example, because
+you want to develop for Gpytoolbox or because you want some functionality that
+is in the `main` branch but hasn't been pushed to any release yet, you should be
+able to do so by cloning [Gpytoolbox's github
+repo](https://github.com/sgsellan/gpytoolbox) and running
+```bash
+python -m pip install numpy
+python -m pip install .
+```
+
 
 ## Documentation
 
