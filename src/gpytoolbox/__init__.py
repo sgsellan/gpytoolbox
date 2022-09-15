@@ -73,4 +73,5 @@ from .barycentric_coordinates import barycentric_coordinates
 from .ray_box_intersect import ray_box_intersect
 from .ray_triangle_intersect import ray_triangle_intersect
 from .catmull_rom_spline import catmull_rom_spline
+from .sample_mesh import sample_mesh
 from .compactly_supported_normal import compactly_supported_normal
