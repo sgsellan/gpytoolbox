@@ -2,9 +2,9 @@ import numpy as np
 import random
 
 def metropolis_hastings(unnorm_distr, next_sample, x0 , num_samples=100):
-    """Finds intersection, union or subtraction of two triangle meshes.
+    """Randomly sample according to an unnormalized distribution.
 
-    Given two triangle meshes dA and dB, uses exact predicates to compute the intersection, union or subtraction of the two solids A and B, and output its surface dC
+    Given a function which is proportional to a probabilistic density and a strategy for generating candidate points, returns a set of samples which will asymptotically tend to being a sample a random sample of the unknown distribution.
 
     Parameters
     ----------
@@ -26,7 +26,22 @@ def metropolis_hastings(unnorm_distr, next_sample, x0 , num_samples=100):
 
     Examples
     --------
-    TO-DO
+    ```python
+    from gpytoolbox import metropolis_hastings
+    from scipy.stats import multivariate_normal
+    import matplotlib.pyplot as plt
+    # This is usually a normal
+    def next_sample(x0):
+        return np.array([multivariate_normal.rvs(x0,0.01)])
+    # We want to sample a distribution that is proportional to this weird function we don't know how to integrate and normalize
+    def unnorm_distr(x):
+        return np.max((1-np.abs(x[0]),1e-8))
+
+    S, F = metropolis_hastings(unnorm_distr,next_sample,np.array([0.1]),1000000)
+    # This should look like an absolute value pyramid function
+    plt.hist(np.squeeze(S),100)
+    plt.show()
+    ```
     """
     
     S = np.zeros((num_samples,x0.shape[0]))
