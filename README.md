@@ -216,6 +216,7 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
   signed distances to mesh
 - Switch to pybind11
 - Port fracture modes code
+- Let aabb functions accept precomputed tree as input
 - Add tets to `subdivide.py`
 - `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`
