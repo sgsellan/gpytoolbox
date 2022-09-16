@@ -7,7 +7,7 @@ class TestRandomPointsOnMesh(unittest.TestCase):
     def test_is_uniform(self):
 
         # Do not error on zero input
-        x = gpy.sample_mesh(np.array([]), np.array([], dtype=int), n=0)
+        x = gpy.random_points_on_mesh(np.array([]), np.array([], dtype=int), n=0)
         self.assertTrue(len(x)==0)
 
         # Test 1: Straight line
@@ -15,9 +15,9 @@ class TestRandomPointsOnMesh(unittest.TestCase):
         E = gpy.edge_indices(V.shape[0],closed=False)
         n = 100000
         rng = np.random.default_rng(5)
-        x = gpy.sample_mesh(V, E, n, rng=rng)
+        x = gpy.random_points_on_mesh(V, E, n, rng=rng)
         rng = np.random.default_rng(5)
-        y,I,u = gpy.sample_mesh(V, E, n, rng=rng, return_indices=True)
+        y,I,u = gpy.random_points_on_mesh(V, E, n, rng=rng, return_indices=True)
 
         self.check_consistency(V, E, [x,y], I, u)
         for d in range(2):
@@ -30,9 +30,9 @@ class TestRandomPointsOnMesh(unittest.TestCase):
         V,F = gpy.regular_square_mesh(30)
         n = 100000
         rng = np.random.default_rng(526)
-        x = gpy.sample_mesh(V, F, n, rng=rng)
+        x = gpy.random_points_on_mesh(V, F, n, rng=rng)
         rng = np.random.default_rng(526)
-        y,I,u = gpy.sample_mesh(V, F, n, rng=rng, return_indices=True)
+        y,I,u = gpy.random_points_on_mesh(V, F, n, rng=rng, return_indices=True)
 
         self.check_consistency(V, F, [x,y], I, u)
         for d in range(2):
@@ -45,9 +45,9 @@ class TestRandomPointsOnMesh(unittest.TestCase):
         V,F = gpy.read_mesh("test/unit_tests_data/cube.obj")
         n = 100000
         rng = np.random.default_rng(80)
-        x = gpy.sample_mesh(V, F, n, rng=rng)
+        x = gpy.random_points_on_mesh(V, F, n, rng=rng)
         rng = np.random.default_rng(80)
-        y,I,u = gpy.sample_mesh(V, F, n, rng=rng, return_indices=True)
+        y,I,u = gpy.random_points_on_mesh(V, F, n, rng=rng, return_indices=True)
 
         self.check_consistency(V, F, [x,y], I, u)
         for d in range(3):

@@ -1,6 +1,7 @@
 import numpy as np
+import warnings
 from .edge_indices import edge_indices
-from .sample_mesh import sample_mesh
+from .random_points_on_mesh import random_points_on_mesh
 
 def random_points_on_polyline(V, n, EC=None):
     """Generate points on the edges of a polyline.
@@ -33,10 +34,12 @@ def random_points_on_polyline(V, n, EC=None):
     TODO
     """
 
+    warnings.warn("random_points_on_polyline will be deprecated in gpytoolbox-0.0.3 in favour of the more general random_points_on_mesh",DeprecationWarning)
+
     if (EC is None):
         EC = edge_indices(V.shape[0],closed=False)
 
-    x,I,_ = sample_mesh(V, EC, n, return_indices=True)
+    x,I,_ = random_points_on_mesh(V, EC, n, return_indices=True)
 
     vecs = V[EC[:,1],:] - V[EC[:,0],:]
     vecs /= np.linalg.norm(vecs, axis=1)[:,None]

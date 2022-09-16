@@ -1,7 +1,7 @@
 import numpy as np
 from .doublearea import doublearea
 
-def sample_mesh(V,F,
+def random_points_on_mesh(V,F,
     n,
     rng=np.random.default_rng(),
     distribution='uniform',
