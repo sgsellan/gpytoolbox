@@ -47,7 +47,7 @@ class ray_mesh_intersect_traversal:
 
 
 
-def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True):
+def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None,tri_ind=None):
     """Shoot a ray from a position and see where it crashes into a given mesh
 
     Uses a bounding volume hierarchy to efficiently compute intersections of many different rays with a given mesh.
@@ -64,6 +64,14 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True):
         face index list of a triangle mesh
     use_embree : bool, optional (default True)
         Whether to use the much more optimzed C++ AABB embree implementation of ray mesh intersections. If False, uses gpytoolbox's native AABB tree and gpytoolbox's intersection queries.
+    C : numpy double array, optional (default None)
+        Matrix of AABB box centers (if None and use_embree=False, will be computed)
+    W : numpy double array, optional (default None)
+        Matrix of AABB box widths (if None and use_embree=False, will be computed)
+    CH : numpy int array, optional (default None)
+        Matrix of child indeces (-1 if leaf node). If None and use_embree=False, will be computed
+    tri_indices : numpy int array, optional (default None)
+        Vector of AABB element indices (-1 if *not* leaf node). If None and use_embree=False, will be computed
 
     Returns
     -------
@@ -96,7 +104,8 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True):
         ids = -np.ones(cam_pos.shape[0],dtype=int)
         lambdas = np.zeros((cam_pos.shape[0],3))
         # print("building tree")
-        C,W,CH,PAR,D,tri_ind = initialize_aabbtree(V,F=F)
+        if ((C is None) or (W is None) or (tri_ind is None) or (CH is None)):
+            C,W,CH,_,_,tri_ind = initialize_aabbtree(V,F=F)
         # print("built tree")
         # print("computing distances")
         for i in range(cam_pos.shape[0]):

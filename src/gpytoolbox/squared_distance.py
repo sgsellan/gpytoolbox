@@ -50,7 +50,7 @@ class closest_point_traversal:
 
 
 
-def squared_distance(P,V,F=None,use_aabb=False):
+def squared_distance(P,V,F=None,use_aabb=False,C=None,W=None,CH=None,tri_ind=None):
     """Squared distances from a set of points in space.
 
     General-purpose function which computes the squared distance from a set of points to a mesh, point cloud or polyline, in two or three dimensions. Optionally, uses an aabb tree for efficient computation.
@@ -74,6 +74,14 @@ def squared_distance(P,V,F=None,use_aabb=False):
         Indices into F (or V, if F is None) of closest elements to each query point
     lmbs : (p,s) numpy double array
         Barycentric coordinates into the closest element of each closest mesh point to each query point
+    C : numpy double array, optional (default None)
+        Matrix of AABB box centers (if None, will be computed)
+    W : numpy double array, optional (default None)
+        Matrix of AABB box widths (if None, will be computed)
+    CH : numpy int array, optional (default None)
+        Matrix of child indeces (-1 if leaf node). If None, will be computed
+    tri_indices : numpy int array, optional (default None)
+        Vector of AABB element indices (-1 if *not* leaf node). If None, will be computed
 
     See Also
     --------
@@ -100,7 +108,8 @@ def squared_distance(P,V,F=None,use_aabb=False):
     lmbs = np.zeros((P.shape[0],F.shape[1]))
     if use_aabb:
         # Build tree once
-        C,W,CH,PAR,D,tri_ind = initialize_aabbtree(V,F=F)
+        if ((C is None) or (W is None) or (tri_ind is None) or (CH is None)):
+            C,W,CH,_,_,tri_ind = initialize_aabbtree(V,F=F)
         for j in range(P.shape[0]):
             t = closest_point_traversal(V,F,P[j,:])
             traverse_fun = t.traversal_function

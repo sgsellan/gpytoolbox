@@ -56,6 +56,14 @@ class TestRayMeshIntersect(unittest.TestCase):
             self.assertTrue(np.isclose(te-t,0,atol=1e-4).all())
             self.assertTrue(np.isclose(ids-idse,0,atol=1e-4).all())
             self.assertTrue(np.isclose(l-le,0,atol=1e-4).all())
+            # Now precomputing tree:
+            C,W,CH,_,_,tri_ind = gpytoolbox.initialize_aabbtree(v,F=f)
+            t, ids, l = gpytoolbox.ray_mesh_intersect(cam_pos,-cam_pos,v,f,use_embree=False,C=C,CH=CH,W=W,tri_ind=tri_ind)
+            self.assertTrue(np.isclose(te-t,0,atol=1e-4).all())
+            self.assertTrue(np.isclose(ids-idse,0,atol=1e-4).all())
+            self.assertTrue(np.isclose(l-le,0,atol=1e-4).all())
+
+
 
 
 if __name__ == '__main__':
