@@ -150,6 +150,17 @@ class TestSquaredDistance(unittest.TestCase):
             self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
             self.assertTrue(np.isclose(inter_points_aabb-inter_points_gt,0).all())
 
+            # Use precomputed tree
+            C,W,CH,_,_,tri_ind = gpytoolbox.initialize_aabbtree(v,F=f)
+            sqrD_aabb,ind_aabb,lmb_aabb = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True,C=C,W=W,tri_ind=tri_ind,CH=CH)
+            inter_points_aabb = np.vstack( (
+                lmb_aabb[:,0]*v[f[ind_aabb,0],0] + lmb_aabb[:,1]*v[f[ind_aabb,1],0] + lmb_aabb[:,2]*v[f[ind_aabb,2],0],
+                lmb_aabb[:,0]*v[f[ind_aabb,0],1] + lmb_aabb[:,1]*v[f[ind_aabb,1],1]+ lmb_aabb[:,2]*v[f[ind_aabb,2],1],
+                lmb_aabb[:,0]*v[f[ind_aabb,0],2] + lmb_aabb[:,1]*v[f[ind_aabb,1],2]+ lmb_aabb[:,2]*v[f[ind_aabb,2],2]
+            )).T
+            self.assertTrue(np.isclose(sqrD_aabb-sqrD_gt,0).all())
+            self.assertTrue(np.isclose(inter_points_aabb-inter_points_gt,0).all())
+
 
 
 
