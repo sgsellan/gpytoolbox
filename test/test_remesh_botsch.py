@@ -33,7 +33,35 @@ class TestRemeshBotsch(unittest.TestCase):
         # There shouldn't be now
         self.assertTrue(u.shape[0]==sv.shape[0])
 
-        
+    def test_with_boundary(self):
+        np.random.seed(0)
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/airplane.obj")
+        ind = gpytoolbox.boundary_vertices(f)
+        boundary_verts = v[ind,:]
+        u,g = gpytoolbox.remesh_botsch(v,f.astype(np.int32),1,0.1,True)
+        # gpytoolbox.write_mesh("test/unit_tests_data/airplane_output.obj",u,g)
+        ind_output = gpytoolbox.boundary_vertices(g)
+        boundary_verts_output = u[ind_output,:]
+        # Boundary vertices should not move
+        for i in range(len(ind)):
+            dist = np.min(np.linalg.norm(np.tile(boundary_verts[i,:][None,:],(boundary_verts_output.shape[0],1)) - boundary_verts_output,axis=1))
+            self.assertTrue(dist==0.0)
+
+
+    # def test_github_issue_30(self):
+    #     np.random.seed(0)
+    #     v,f = gpytoolbox.read_mesh("test/unit_tests_data/github_issue_30_input.obj")
+    #     ind = gpytoolbox.boundary_vertices(f)
+    #     boundary_verts = v[ind,:]
+    #     # This used to crash
+    #     u,g = gpytoolbox.remesh_botsch(v,f)
+    #     gpytoolbox.write_mesh("test/unit_tests_data/github_issue_30_output.obj",u,g)
+    #     ind_output = gpytoolbox.boundary_vertices(g)
+    #     boundary_verts_output = u[ind_output,:]
+    #     # Boundary vertices should not move
+    #     for i in range(len(ind)):
+    #         dist = np.min(np.linalg.norm(np.tile(boundary_verts[i,:][None,:],(boundary_verts_output.shape[0],1)) - boundary_verts_output,axis=1))
+    #         self.assertTrue(dist==0.0)
 
 
 if __name__ == '__main__':
