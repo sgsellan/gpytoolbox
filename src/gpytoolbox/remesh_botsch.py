@@ -31,7 +31,12 @@ def remesh_botsch(V,F,i=10,h=None,project=True,feature = np.array([],dtype=int))
 
     Examples
     --------
-    TODO
+    ```python
+    # Read a mesh
+    v,f = gpytoolbox.read_mesh("bunny_oded.obj")
+    # Do 20 iterations of remeshing with a target length of 0.01
+    u,g = gpytoolbox.remesh_botsch(v,f,20,0.01,True)
+    ```
     """
     try:
         from gpytoolbox_bindings import _remesh_botsch_cpp_impl
@@ -41,11 +46,9 @@ def remesh_botsch(V,F,i=10,h=None,project=True,feature = np.array([],dtype=int))
     if (h is None):
         h = np.mean(halfedge_lengths(V,F))
 
-    feature = np.array([],dtype=int)
-
-    feature = np.concatenate((feature,boundary_vertices(F)))
-    print(feature)
-    print(boundary_vertices(F))
+    feature = np.concatenate((feature,boundary_vertices(F)),dtype=np.int32)
+    # print(feature)
+    # print(boundary_vertices(F))
     # bV = boundary_vertices(F)
 
 
