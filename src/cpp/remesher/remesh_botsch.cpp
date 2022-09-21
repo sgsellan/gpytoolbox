@@ -75,6 +75,13 @@ void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double
 	remesh_botsch(V,F,target,iters,feature,project);
 }
 
+void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double,int iters, Eigen::VectorXi feature, bool project){
+	Eigen::VectorXd target;
+	int n = V.rows();
+	target = Eigen::VectorXd::Constant(n,target_double);
+	remesh_botsch(V,F,target,iters,feature,project);
+}
+
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double){
 	int iters = 10;
 	Eigen::VectorXd target;
