@@ -210,13 +210,11 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Implement tet mesh version of `linear_elasticity_stiffness.py`
 - Implement tet mesh version of `linear_elasticity.py`
 - Improve `poisson_surface_reconstruction` and make it 3D.
-- Random points on mesh.
 - Make in_element_aabb python implementation
 - Merge our `squared_distance` with libigl winding number and have logarithmic
   signed distances to mesh
 - Switch to pybind11
 - Port fracture modes code
-- Let aabb functions accept precomputed tree as input
 - Add tets to `subdivide.py`
 - `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`
