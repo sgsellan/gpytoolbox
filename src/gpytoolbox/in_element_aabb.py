@@ -1,9 +1,9 @@
 import numpy as np
 
 def in_element_aabb(queries,V,F):
-    """Finite element gradient matrix
+    """Find which triangle or tet a set of query points lay on
 
-    Given a triangle mesh or a polyline, computes the finite element gradient matrix assuming piecewise linear hat function basis.
+    Given a set of query points and a triangle or tetrahedral mesh, construct an AABB data structure to learn which specific mesh elements each query point is in.
 
     Parameters
     ----------
@@ -27,7 +27,12 @@ def in_element_aabb(queries,V,F):
 
     Examples
     --------
-    TO-DO
+    ```python
+    V,F = gpytoolbox.regular_square_mesh(23)
+    num_samples = 100
+    queries = np.random.rand(num_samples,3)
+    I = in_element_aabb(queries,V,F)
+    ```
     """
     try:
         from gpytoolbox_bindings import _in_element_aabb_cpp_impl
