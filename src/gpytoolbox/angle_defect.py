@@ -14,7 +14,7 @@ def angle_defect(V,F,
         vertex list of a triangle mesh
     F : (m,3) numpy int array
         face index list of a triangle mesh
-    use_small_angle_approx : bool, optional (default: True)
+    use_small_angle_approx : bool, optional (default True)
         If True, uses a different, more more stable formula for small angles.
 
     Returns
@@ -24,11 +24,10 @@ def angle_defect(V,F,
 
     Examples
     --------
-    ```
+    ```python
     V,F = gpy.read_obj("mesh.obj")
     k = gpy.angle_defect(V,F)
     ```
-    
     """
 
     l_sq = halfedge_lengths_squared(V,F)

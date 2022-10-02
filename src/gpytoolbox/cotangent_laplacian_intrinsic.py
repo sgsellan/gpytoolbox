@@ -22,7 +22,12 @@ def cotangent_laplacian_intrinsic(l_sq,F,n=None):
 
     Examples
     --------
-    TODO
+    ```python
+    # Mesh in V,F
+    from gpytoolbox import halfedge_lengths_squared, cotangent_laplacian_intrinsic
+    l = halfedge_lengths_squared(V,F)
+    L = cotangent_laplacian_intrinsic(l_sq,F,n=V.shape[0])
+    ```
     
     """
 

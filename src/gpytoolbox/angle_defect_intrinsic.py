@@ -18,7 +18,7 @@ def angle_defect_intrinsic(l_sq,F,n=None,
     n : int, optional (default None)
         number of vertices in the mesh.
         If absent, will try to infer from F.
-    use_small_angle_approx : bool, optional (default: True)
+    use_small_angle_approx : bool, optional (default True)
         If True, uses a different, more more stable formula for small angles.
 
     Returns
@@ -28,12 +28,11 @@ def angle_defect_intrinsic(l_sq,F,n=None,
 
     Examples
     --------
-    ```
+    ```python
     V,F = gpy.read_obj("mesh.obj")
     l_sq = gpy.halfedge_lengths_squared(V,F)
     k = gpy.angle_defect_intrinsic(l_sq,F)
     ```
-    
     """
 
     assert F.shape[1] == 3
