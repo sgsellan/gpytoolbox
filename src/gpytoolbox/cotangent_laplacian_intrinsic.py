@@ -11,6 +11,9 @@ def cotangent_laplacian_intrinsic(l_sq,F,n=None):
         squared halfedge lengths as computed by halfedge_lengths_squared
     F : (m,3) numpy int array
         face index list of a triangle mesh
+    n : int, optional (default None)
+        number of vertices in the mesh.
+        If absent, will try to infer from F.
 
     Returns
     -------
@@ -19,7 +22,12 @@ def cotangent_laplacian_intrinsic(l_sq,F,n=None):
 
     Examples
     --------
-    TODO
+    ```python
+    # Mesh in V,F
+    from gpytoolbox import halfedge_lengths_squared, cotangent_laplacian_intrinsic
+    l = halfedge_lengths_squared(V,F)
+    L = cotangent_laplacian_intrinsic(l_sq,F,n=V.shape[0])
+    ```
     
     """
 

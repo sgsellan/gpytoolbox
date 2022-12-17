@@ -216,7 +216,6 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Switch to pybind11
 - Port fracture modes code
 - Add tets to `subdivide.py`
-- `angle_defect.py` (which is **zero** at boundary vertices!)
 - `dihedral_angles.py`
 - Intrinsic Delaunay triangulation
 - Triangle-triangle distance and Hausdorff distance (with AABB)

@@ -76,3 +76,5 @@ from .catmull_rom_spline import catmull_rom_spline
 from .random_points_on_mesh import random_points_on_mesh
 from .compactly_supported_normal import compactly_supported_normal
 from .matrix_from_function import matrix_from_function
+from .angle_defect import angle_defect
+from .angle_defect_intrinsic import angle_defect_intrinsic
