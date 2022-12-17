@@ -8,10 +8,7 @@ from .matrix_from_function import matrix_from_function
 from .compactly_supported_normal import compactly_supported_normal
 
 
-# TO DO:
-# - Covariance solve on reduced laplacian eigenvalue subspace
-
-def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=True,sigma_n=0.0,sigma=0.1,verbose=True):
+def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=True,sigma_n=0.0,sigma=0.1,solve_subspace_dim=0,verbose=True):
 
     # Kernel function for the Gaussian process
     def kernel_fun(X,Y):
@@ -38,6 +35,8 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         h = (np.max(envelope_mult*P,axis=0) - np.min(envelope_mult*P,axis=0))/gs
         corner = np.min(envelope_mult*P,axis=0)
     assert(gs.shape[0] == dim)
+
+    grid_length = corner + gs*h
 
     eps = 0.000001 # very tiny value to regularize matrix rank
 
@@ -150,12 +149,32 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         t10 = time.time()
 
     if stochastic:
+        
         cov_divergence = G.T @ vector_cov @ G
-        lu = splu(L+eps*eye(L.shape[0]))
-        D = lu.solve(cov_divergence.toarray())
-        cov_scalar = lu.solve(D.transpose())
+
+
+        # Solve directly for the covariance on the grid (slow)
+        if (solve_subspace_dim>0):
+            _, vecs = eigenfunctions_laplacian(solve_subspace_dim,gs,grid_length)
+            vecs = np.real(vecs)
+            #vals = vecs.transpose() @ (L+0.0001*eye(L.shape[0])) @ vecs
+            vals = np.sum(np.multiply(vecs.transpose()@(L+eps*eye(L.shape[0])),vecs.transpose()),axis=1)
+            B = (vecs.transpose()@cov_divergence.astype(np.float32))@vecs
+            vals = diags(vals)
+            D = spsolve(vals,B)
+            #D = np.linalg.solve(vals,B)
+            # cov_small = np.linalg.solve(vals,D.transpose())
+            cov_small = spsolve(vals,D.transpose()).astype(np.float32)
+            var_scalar = np.sum(np.multiply(vecs@cov_small,vecs),axis=1)
+        else:
+            lu = splu(L+eps*eye(L.shape[0]))
+            D = lu.solve(cov_divergence.toarray())
+            cov_scalar = lu.solve(D.transpose())
+            var_scalar = np.diag(cov_scalar)
+        # 
+
         #cov = np.diag(spsolve(L+0.0001*eye(L.shape[0]),csc_matrix(D.transpose())).toarray())
-        var_scalar = np.diag(cov_scalar)
+        
         # Shift values of covariance
         var_scalar = var_scalar - np.min(var_scalar) + sigma_n*sigma_n
         if verbose:
@@ -169,3 +188,53 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
             print("Total step 2 time: ", time.time() - t1)
             print("Total time: ", time.time() - t0)
         return mean_scalar
+
+
+def eigenfunctions_laplacian(num_modes,gs,l):
+    # Get grid
+    dim = gs.shape[0]
+
+    def psi(N,l,v):
+        d = v.shape[1]
+        out = np.ones(v.shape[0])
+        val = 0
+        for dd in range(d):
+            out = out*np.cos(N[dd]*np.pi*v[:,dd]/l[dd])
+            val = val + (np.pi**2.0)*((N[dd]/l[dd])**2.0)
+        return out, val
+
+
+    if dim==3:
+        gx, gy, gz = np.meshgrid(np.linspace(0,l[0],gs[0]),np.linspace(0,l[1],gs[1]),np.linspace(0,l[2],gs[2]),indexing='ij')
+        v = np.concatenate((np.reshape(gx,(-1, 1),order='F'),np.reshape(gy,(-1, 1),order='F'),np.reshape(gz,(-1, 1),order='F')),axis=1)
+        h = np.array([gx[1,1,1]-gx[0,0,0],gy[1,1,1]-gy[0,0,0],gz[1,1,1]-gz[0,0,0]])
+        #num_in_each_dim = num_modes // 10 # this should be enough
+        num_in_each_dim = round(np.sqrt(num_modes//8))
+        vecs = np.zeros((v.shape[0],num_in_each_dim*num_in_each_dim*num_in_each_dim),dtype=np.float32)
+        vals = np.zeros(num_in_each_dim*num_in_each_dim*num_in_each_dim)
+        for i in range(num_in_each_dim):
+            for j in range(num_in_each_dim):
+                for k in range(num_in_each_dim):
+                    ind = (num_in_each_dim*i+j)*num_in_each_dim + k
+                    vecs[:,ind], vals[ind] = psi([i,j,k],l,v)
+    else:
+        gx, gy = np.meshgrid(np.linspace(0,l[0],gs[0]),np.linspace(0,l[1],gs[1]))
+        h = np.array([gx[1,1]-gx[0,0],gy[1,1]-gy[0,0]])
+        v = np.concatenate((np.reshape(gx,(-1, 1)),np.reshape(gy,(-1, 1))),axis=1)
+        num_in_each_dim = num_modes // 10 # this should be enough
+        vecs = np.zeros((v.shape[0],num_in_each_dim*num_in_each_dim))
+        vals = np.zeros(num_in_each_dim*num_in_each_dim)
+        for i in range(num_in_each_dim):
+            for j in range(num_in_each_dim):
+                vecs[:,num_in_each_dim*i+j], vals[num_in_each_dim*i+j] = psi([i,j],l,v)
+
+
+    order = np.argsort(vals)
+    vecs = vecs[:,order]
+    vals = vals[order]
+    vecs = vecs[:,0:num_modes]
+    vals = vals[0:num_modes]
+
+    vecs = vecs/np.tile(np.linalg.norm(vecs,axis=0),(vecs.shape[0],1))
+
+    return vals, vecs

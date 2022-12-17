@@ -15,10 +15,10 @@ class TestPoissonSurfaceReconstruction(unittest.TestCase):
         N = np.concatenate((np.cos(th),np.sin(th)),axis=1)
 
         # corner = np.array([-1.5,-1.5])
-        gs = np.array([60, 60])
+        gs = np.array([100,100])
         # h = np.array([0.05,0.05])
 
-        scalar_mean, scalar_var = gpytoolbox.poisson_surface_reconstruction(P,N,gs=gs)
+        scalar_mean, scalar_var = gpytoolbox.poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=3000)
 
         # Plot mean and variance side by side with colormap
         fig, ax = plt.subplots(1,2)
