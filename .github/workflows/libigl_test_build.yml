@@ -25,6 +25,7 @@ jobs:
           sudo apt-get install \
               libmpfr-dev \
               libgmp-dev \
+              libgl1-mesa-dev \
 
       - name: Build libigl
         shell: bash -l {0}
