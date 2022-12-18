@@ -222,7 +222,7 @@ def eigenfunctions_laplacian(num_modes,gs,l):
         # h = np.array([gx[1,1]-gx[0,0],gy[1,1]-gy[0,0]])
         v = np.concatenate((np.reshape(gx,(-1, 1)),np.reshape(gy,(-1, 1))),axis=1)
         num_in_each_dim = num_modes // 10 # this should be enough
-        vecs = np.ones((v.shape[0],num_in_each_dim*num_in_each_dim))
+        # vecs = np.ones((v.shape[0],num_in_each_dim*num_in_each_dim))
         # vecs_debug = np.ones((v.shape[0],num_in_each_dim*num_in_each_dim))
         vals = np.zeros(num_in_each_dim*num_in_each_dim)
         # vals_debug = np.zeros(num_in_each_dim*num_in_each_dim)
@@ -237,33 +237,34 @@ def eigenfunctions_laplacian(num_modes,gs,l):
         
         # print(Is)
         # print(J_vector)
-        # import time
-        # t0 = time.time()
+        
 
 
         for dd in range(dim):
             vals = vals + (np.pi**2.0)*((ind_vectors[dd]/l[dd])**2.0)
         order = np.argsort(vals)
         relevant_indices = order[0:num_modes]
-        I_mat = np.tile(I_vector[relevant_indices],(v.shape[0],1))
-        J_mat = np.tile(J_vector[relevant_indices],(v.shape[0],1)) 
-        ind_mat = []
-        ind_mat.append(I_mat)
-        ind_mat.append(J_mat)
-        vecs = np.ones((v.shape[0],num_modes))
-        for dd in range(dim):
-            vdim = np.tile(v[:,dd],(num_modes,1)).T
-            vecs = vecs*np.cos(ind_mat[dd]*np.pi*vdim/l[dd])
+        # import time
+        # t0 = time.time()
+        # I_mat = np.tile(I_vector[relevant_indices],(v.shape[0],1))
+        # J_mat = np.tile(J_vector[relevant_indices],(v.shape[0],1)) 
+        # ind_mat = []
+        # ind_mat.append(I_mat)
+        # ind_mat.append(J_mat)
+        # vecs = np.ones((v.shape[0],num_modes))
+        # for dd in range(dim):
+        #     vdim = np.tile(v[:,dd],(num_modes,1)).T
+        #     vecs = vecs*np.cos(ind_mat[dd]*np.pi*vdim/l[dd])
 
         # print("Vectorized: ", time.time()-t0)
-    #     t1 = time.time()
-    #     for i in range(num_in_each_dim):
-    #         for j in range(num_in_each_dim):
-    #             vecs_debug[:,num_in_each_dim*i+j], vals_debug[num_in_each_dim*i+j] = psi([i,j],l,v)
-    #     print("Not vectorized: ", time.time()-t1)
-    # # assert((vecs_debug==vecs).all())
+        # t1 = time.time()
+        vecs_debug = np.ones((v.shape[0],num_modes))
+        for s in range(len(relevant_indices)):
+            vecs_debug[:,s], _ = psi([I_vector[relevant_indices[s]],J_vector[relevant_indices[s]]],l,v)
+        # print("Not vectorized: ", time.time()-t1)
+    # assert((vecs_debug==vecs).all())
     # # assert((vals_debug==vals).all())
-    # vecs = vecs_debug
+    vecs = vecs_debug
     # vals = vals_debug
 
     # order = np.argsort(vals)
