@@ -1,4 +1,4 @@
-name: Full build (Linux)
+name: Libigl test action
 on:
   push:
     branches:
