@@ -26,7 +26,8 @@ jobs:
               libmpfr-dev \
               libgmp-dev \
               libgl1-mesa-dev \
-              xrandr-dev \
+              xorg-dev \
+              libglu1-mesa-dev
 
       - name: Build libigl
         shell: bash -l {0}
