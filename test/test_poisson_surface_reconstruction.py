@@ -21,16 +21,16 @@ class TestPoissonSurfaceReconstruction(unittest.TestCase):
         scalar_mean, scalar_var = gpytoolbox.poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=3000)
 
         # Plot mean and variance side by side with colormap
-        fig, ax = plt.subplots(1,2)
-        ax[0].imshow(scalar_mean.reshape(gs,order='F'))
-        ax[0].set_title('Mean')
-        # Add colorbar
-        fig.colorbar(ax[0].imshow(scalar_mean.reshape(gs,order='F')), ax=ax[0])
-        ax[1].imshow(scalar_var.reshape(gs,order='F'))
-        ax[1].set_title('Variance')
-        # Add colorbar
-        fig.colorbar(ax[1].imshow(scalar_var.reshape(gs,order='F')), ax=ax[1])
-        plt.show()
+        # fig, ax = plt.subplots(1,2)
+        # ax[0].imshow(scalar_mean.reshape(gs,order='F'))
+        # ax[0].set_title('Mean')
+        # # Add colorbar
+        # fig.colorbar(ax[0].imshow(scalar_mean.reshape(gs,order='F')), ax=ax[0])
+        # ax[1].imshow(scalar_var.reshape(gs,order='F'))
+        # ax[1].set_title('Variance')
+        # # Add colorbar
+        # fig.colorbar(ax[1].imshow(scalar_var.reshape(gs,order='F')), ax=ax[1])
+        # plt.show()
         
 
 if __name__ == '__main__':
