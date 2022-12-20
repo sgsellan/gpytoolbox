@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: "macos-11"
+    runs-on: "macos-latest"
     steps:
 
       - uses: actions/checkout@v3
@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=$(python3 -c "import sys; print(sys.executable)") ..  
+          cmake -DCMAKE_BUILD_TYPE=Release ..  
           cmake --build "." --config Release
 
       - name: Run unit tests
