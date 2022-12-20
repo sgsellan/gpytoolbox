@@ -21,7 +21,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
     assert(dim == N.shape[1])
 
     
-    if (gs is None and h is None and corner is None):
+    if ((gs is None) and (h is None) and (corner is None)):
         # Default to a grid that is 100x100x...x100
         gs = 100*np.ones(dim,dtype=int)
 
@@ -30,15 +30,18 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         assert(h is not None)
         assert(corner is not None)
         gs = np.floor((np.max(envelope_mult*P,axis=0) - corner)/h).astype(int)
+        print(gs)
         # print(gs)
-    else:
-        assert(h is None)
-        assert(corner is None)
+    elif ((h is None) or (corner is None)):
         h = (np.max(envelope_mult*P,axis=0) - np.min(envelope_mult*P,axis=0))/gs
         corner = np.min(envelope_mult*P,axis=0)
     assert(gs.shape[0] == dim)
 
-    grid_length = corner + gs*h
+    grid_length = gs*h
+    print(gs)
+    print(h)
+    print(corner)
+    print(grid_length)
 
     eps = 0.000001 # very tiny value to regularize matrix rank
 
@@ -65,8 +68,12 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         gs_dd = gs.copy()
         gs_dd[dd] -= 1
         # generate grid vertices of dimension dim
-        grid_vertices = np.meshgrid(*[np.linspace(corner_dd[dd], corner_dd[dd] + (gs_dd[dd]-1)*h[dd], gs_dd[dd]) for dd in range(dim)])
-        grid_vertices = np.array(grid_vertices).reshape(dim, -1).T
+        if dim==2:
+            grid_vertices = np.meshgrid(*[np.linspace(corner_dd[dd], corner_dd[dd] + (gs_dd[dd]-1)*h[dd], gs_dd[dd]) for dd in range(dim)])
+            grid_vertices = np.array(grid_vertices).reshape(dim, -1).T
+        elif dim==3:
+            grid_vertices = np.meshgrid(*[np.linspace(corner_dd[dd], corner_dd[dd] + (gs_dd[dd]-1)*h[dd], gs_dd[dd]) for dd in range(dim)],indexing='ij')
+            grid_vertices = np.array(grid_vertices).reshape(dim, -1,order='F').T
         
         if verbose:
             
@@ -209,16 +216,41 @@ def eigenfunctions_laplacian(num_modes,gs,l):
     if dim==3:
         gx, gy, gz = np.meshgrid(np.linspace(0,l[0],gs[0]),np.linspace(0,l[1],gs[1]),np.linspace(0,l[2],gs[2]),indexing='ij')
         v = np.concatenate((np.reshape(gx,(-1, 1),order='F'),np.reshape(gy,(-1, 1),order='F'),np.reshape(gz,(-1, 1),order='F')),axis=1)
-        h = np.array([gx[1,1,1]-gx[0,0,0],gy[1,1,1]-gy[0,0,0],gz[1,1,1]-gz[0,0,0]])
         #num_in_each_dim = num_modes // 10 # this should be enough
         num_in_each_dim = round(np.sqrt(num_modes//8))
-        vecs = np.zeros((v.shape[0],num_in_each_dim*num_in_each_dim*num_in_each_dim),dtype=np.float32)
-        vals = np.zeros(num_in_each_dim*num_in_each_dim*num_in_each_dim)
-        for i in range(num_in_each_dim):
-            for j in range(num_in_each_dim):
-                for k in range(num_in_each_dim):
-                    ind = (num_in_each_dim*i+j)*num_in_each_dim + k
-                    vecs[:,ind], vals[ind] = psi([i,j,k],l,v)
+        # vecs = np.zeros((v.shape[0],num_in_each_dim*num_in_each_dim*num_in_each_dim),dtype=np.float32)
+        # vals = np.zeros(num_in_each_dim*num_in_each_dim*num_in_each_dim)
+        # for i in range(num_in_each_dim):
+        #     for j in range(num_in_each_dim):
+        #         for k in range(num_in_each_dim):
+        #             ind = (num_in_each_dim*i+j)*num_in_each_dim + k
+        #             vecs[:,ind], vals[ind] = psi([i,j,k],l,v)
+        vals_debug = np.zeros(num_in_each_dim*num_in_each_dim*num_in_each_dim)
+        K_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) % num_in_each_dim
+        J_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) // num_in_each_dim % num_in_each_dim
+        I_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) // (num_in_each_dim*num_in_each_dim)
+
+        ind_vectors = []
+        ind_vectors.append(I_vector)
+        ind_vectors.append(J_vector)
+        ind_vectors.append(K_vector)
+        for dd in range(dim):
+            vals_debug = vals_debug + (np.pi**2.0)*((ind_vectors[dd]/l[dd])**2.0)
+        # assert((vals_debug==vals).all())
+        order = np.argsort(vals_debug)
+        relevant_indices = order[0:num_modes]
+        vecs_debug = np.ones((v.shape[0],num_modes))
+        for s in range(len(relevant_indices)):
+            vecs_debug[:,s], _ = psi([I_vector[relevant_indices[s]],J_vector[relevant_indices[s]],K_vector[relevant_indices[s]]],l,v)
+        vecs = vecs_debug
+        vals = vals_debug
+        # print(vecs[:,relevant_indices].shape)
+        # print(vecs_debug.shape)
+        # print(vecs[:,relevant_indices])
+        # print(vecs_debug)
+        # # assert((vecs[:,relevant_indices]==vecs_debug).all())
+        # assert(np.isclose(vecs[:,relevant_indices],vecs_debug,atol=1e-8).all())
+
     else:
         gx, gy = np.meshgrid(np.linspace(0,l[0],gs[0]),np.linspace(0,l[1],gs[1]))
         # h = np.array([gx[1,1]-gx[0,0],gy[1,1]-gy[0,0]])
@@ -266,7 +298,7 @@ def eigenfunctions_laplacian(num_modes,gs,l):
         # print("Not vectorized: ", time.time()-t1)
     # assert((vecs_debug==vecs).all())
     # # assert((vals_debug==vals).all())
-    vecs = vecs_debug
+        vecs = vecs_debug
     # vals = vals_debug
 
     # order = np.argsort(vals)
