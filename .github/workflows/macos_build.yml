@@ -10,17 +10,16 @@ on:
 jobs:
   build:
     runs-on: "macos-latest"
-      python-version: '3.7'
     steps:
 
       - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
 
-      # - uses: actions/setup-python@v2
-      #   name: Install Python
-      #   with:
-      #     python-version: '3.7'
+      - uses: actions/setup-python@v4
+        name: Install Python
+        with:
+          python-version: '3.7'
 
       - name: Install dependencies
         shell: bash -l {0}
