@@ -7,6 +7,8 @@ from .fd_interpolate import fd_interpolate
 from .matrix_from_function import matrix_from_function
 from .compactly_supported_normal import compactly_supported_normal
 
+# TO DO:
+# - Test 3D functionality
 
 def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=True,sigma_n=0.0,sigma=0.1,solve_subspace_dim=0,verbose=True):
 
