@@ -25,9 +25,9 @@ jobs:
       - name: Install dependencies
         shell: bash -l {0}
         run: |
-          python3 -m pip install numpy
-          python3 -m pip install scipy
-          python3 -m pip install scikit-image
+          ${{ steps.installpython.outputs.python-path }} -m pip install numpy
+          ${{ steps.installpython.outputs.python-path }} -m pip install scipy
+          ${{ steps.installpython.outputs.python-path }} -m pip install scikit-image
 
       - name: Install c++ bindings
         shell: bash -l {0}
@@ -40,7 +40,7 @@ jobs:
       - name: Run unit tests
         shell: bash -l {0}
         run: |
-          python3 -m pip install tetgen
-          python3 -m unittest -v
+          ${{ steps.installpython.outputs.python-path }} -m pip install tetgen
+          ${{ steps.installpython.outputs.python-path }} -m unittest -v
 
 # see https://github.com/libigl/libigl/blob/main/.github/workflows/continuous.yml
