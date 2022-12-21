@@ -7,13 +7,103 @@ from .fd_interpolate import fd_interpolate
 from .matrix_from_function import matrix_from_function
 from .compactly_supported_normal import compactly_supported_normal
 from .grid_neighbors import grid_neighbors
-
-
 import matplotlib.pyplot as plt
-# TO DO:
-# - Test 3D functionality
 
-def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=True,sigma_n=0.0,sigma=0.1,solve_subspace_dim=0,verbose=True):
+def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=True,sigma_n=0.0,sigma=0.05,solve_subspace_dim=0,verbose=True):
+    """
+    Runs Poisson Surface Reconstruction from a set of points and normals to output a scalar field that takes negative values inside the surface and positive values outside the surface.
+    
+    Parameters
+    ----------
+    P : (n,dim) numpy array
+        Coordinates of points in R^dim
+    N : (n,dim) numpy array
+        (Unit) normals at each point
+    gs : (dim,) numpy array
+        Number of grid points in each dimension
+    h : (dim,) numpy array
+        Grid spacing in each dimension
+    corner : (dim,) numpy array
+        Coordinates of the lower left corner of the grid
+    stochastic : bool, optional (default True)
+        Whether to use Stochastic Poisson Surface Reconstruction [2] to output a mean and variance scalar field
+    sigma_n : float, optional (default 0.0)
+        Noise level in the normals
+    sigma : float, optional (default 0.05)
+        Scalar global variance parameter
+    solve_subspace_dim : int, optional (default 0)
+        If > 0, use a subspace solver to solve the linear system. This is useful for large problems and essential in 3D.
+    verbose : bool, optional (default True)
+        Whether to print progress
+    
+    Returns
+    -------
+    scalar_mean : (gs[0],gs[1],...,gs[dim-1]) numpy array
+        Mean of the reconstructed scalar field
+    scalar_variance : (gs[0],gs[1],...,gs[dim-1]) numpy array
+        Variance of the reconstructed scalar field
+    grid_vertices : list of (gs[0],gs[1],...,gs[dim-1],dim) numpy arrays
+        Grid vertices (each element in the list is one dimension), as in the output of np.meshgrid
+
+    See also
+    --------
+    fd_interpolate, fd_grad, matrix_from_function, compactly_supported_normal, grid_neighbors
+
+    Examples
+    -------
+    from scipy.stats import norm
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+    from gpytoolbox.poisson_surface_reconstruction import poisson_surface_reconstruction, random_points_on_polyline, png2poly
+    # Generate random points on a polyline
+    poly = gpytoolbox.png2poly("test/unit_tests_data/illustrator.png")[0]
+    poly = poly - np.min(poly)
+    poly = poly/np.max(poly)
+    poly = 0.5*poly + 0.25
+    poly = 3*poly - 1.5
+    num_samples = 40
+    np.random.seed(2)
+    P, N = gpytoolbox.random_points_on_polyline(poly,num_samples)
+    N = - N
+
+    # Problem parameters
+    gs = np.array([50,50])
+    # Call to PSR
+    scalar_mean, scalar_var, grid_vertices = gpytoolbox.poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=0,verbose=True)
+    
+    # The probability of each grid vertex being inside the shape 
+    prob_out = 1 - norm.cdf(scalar_mean,0,np.sqrt(scalar_var))
+
+    gx = grid_vertices[0]
+    gy = grid_vertices[1]
+
+    # Plot mean and variance side by side with colormap
+    fig, ax = plt.subplots(1,3)
+    m0 = ax[0].pcolormesh(gx,gy,np.reshape(scalar_mean,gx.shape), cmap='RdBu',shading='gouraud', vmin=-np.max(np.abs(scalar_mean)), vmax=np.max(np.abs(scalar_mean)))
+    ax[0].scatter(P[:,0],P[:,1],30 + 0*P[:,0])
+    q0 = ax[0].quiver(P[:,0],P[:,1],N[:,0],N[:,1])
+    ax[0].set_title('Mean')
+    divider = make_axes_locatable(ax[0])
+    cax = divider.append_axes('right', size='5%', pad=0.05)
+    fig.colorbar(m0, cax=cax, orientation='vertical')
+
+    m1 = ax[1].pcolormesh(gx,gy,np.reshape(np.sqrt(scalar_var),gx.shape), cmap='plasma',shading='gouraud')
+    ax[1].scatter(P[:,0],P[:,1],30 + 0*P[:,0])
+    q1 = ax[1].quiver(P[:,0],P[:,1],N[:,0],N[:,1])
+    ax[1].set_title('Variance')
+    divider = make_axes_locatable(ax[1])
+    cax = divider.append_axes('right', size='5%', pad=0.05)
+    fig.colorbar(m1, cax=cax, orientation='vertical')
+
+    m2 = ax[2].pcolormesh(gx,gy,np.reshape(prob_out,gx.shape), cmap='viridis',shading='gouraud')
+    ax[2].scatter(P[:,0],P[:,1],30 + 0*P[:,0])
+    q2 = ax[2].quiver(P[:,0],P[:,1],N[:,0],N[:,1])
+    ax[2].set_title('Probability of being inside')
+    divider = make_axes_locatable(ax[2])
+    cax = divider.append_axes('right', size='5%', pad=0.05)
+    fig.colorbar(m2, cax=cax, orientation='vertical')
+    plt.show()
+    """
 
     # Kernel function for the Gaussian process
     def kernel_fun(X,Y):
@@ -41,6 +131,8 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
     assert(gs.shape[0] == dim)
 
     grid_length = gs*h
+    grid_vertices = np.meshgrid(*[np.linspace(corner[dd], corner[dd] + (gs[dd]-1)*h[dd], gs[dd]) for dd in range(dim)])
+    # np.meshgrid(*[np.linspace(corner_dd[dd], corner_dd[dd] + (gs_dd[dd]-1)*h[dd], gs_dd[dd]) for dd in range(dim)])
 
     eps = 0.000001 # very tiny value to regularize matrix rank
 
@@ -68,46 +160,23 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         gs_dd[dd] -= 1
         # generate grid vertices of dimension dim
         if dim==2:
-            grid_vertices = np.meshgrid(*[np.linspace(corner_dd[dd], corner_dd[dd] + (gs_dd[dd]-1)*h[dd], gs_dd[dd]) for dd in range(dim)])
-            grid_vertices = np.array(grid_vertices).reshape(dim, -1).T
+            staggered_grid_vertices = np.meshgrid(*[np.linspace(corner_dd[dd], corner_dd[dd] + (gs_dd[dd]-1)*h[dd], gs_dd[dd]) for dd in range(dim)])
+            staggered_grid_vertices = np.array(staggered_grid_vertices).reshape(dim, -1).T
         elif dim==3:
-            grid_vertices = np.meshgrid(*[np.linspace(corner_dd[dd], corner_dd[dd] + (gs_dd[dd]-1)*h[dd], gs_dd[dd]) for dd in range(dim)],indexing='ij')
-            grid_vertices = np.array(grid_vertices).reshape(dim, -1,order='F').T
+            staggered_grid_vertices = np.meshgrid(*[np.linspace(corner_dd[dd], corner_dd[dd] + (gs_dd[dd]-1)*h[dd], gs_dd[dd]) for dd in range(dim)],indexing='ij')
+            staggered_grid_vertices = np.array(staggered_grid_vertices).reshape(dim, -1,order='F').T
         
         if verbose:
             t00 = time.time()
         # k1 is the kernel matrix between grid vertices, which we could compute with
-        # k1 = matrix_from_function(kernel_fun, grid_vertices, grid_vertices)
-        # but that takes a long to compute if we don't leverage that we know the sparsity pattern beforehand. In fact, we know that the only non-zero entries are of vertices and their second-level neighbors.
-        # order_neighbors = 2
-        # neighbors = np.arange(-order_neighbors,order_neighbors+1,dtype=int)
-        # for dd2 in range(dim-1):
-        #     neighbors_along_dim =np.arange(-order_neighbors,order_neighbors+1,dtype=int)*np.prod(gs_dd[:dd2+1])
-        #     previous_neighbors = np.kron(neighbors,np.ones(neighbors_along_dim.shape[0],dtype=int))
-        #     neighbors_along_dim_repeated = np.kron(np.ones(neighbors.shape[0],dtype=int),neighbors_along_dim)
-        #     neighbors = previous_neighbors + neighbors_along_dim_repeated
-        #     # neighbors = np.append(neighbors,neighbors*np.prod(gs[:dd2+1]))
-        # all_grid_vertices = np.arange(np.prod(gs_dd))
-        # # print(all_grid_vertices)
-        # I = np.tile(all_grid_vertices,(neighbors.shape[0],1)).T
-        # J = I + np.tile(neighbors,(all_grid_vertices.shape[0],1))
-        # valid_indices = (J>=0)*(J<np.prod(gs_dd))
-        # J = J[valid_indices]
-        # I = I[valid_indices]
-
-        # k1 = matrix_from_function(kernel_fun, grid_vertices, grid_vertices,sparsity_pattern=[I,J])
-
-        # print("Slow:",time.time()-t00)
-        # t00 = time.time()
-
         neighbor_rows = grid_neighbors(gs_dd,include_diagonals=True,include_self=True, order=1)
         # Find one cell with no out of bounds neighbors
         min_ind = np.min(neighbor_rows,axis=0)
         valid_ind = np.argwhere(min_ind>=0)[0]
         unique_ind = np.unique(neighbor_rows[:,valid_ind],return_index=True)[1]
         neighbor_rows = neighbor_rows[unique_ind,:]
-        center_sample_cell = grid_vertices[valid_ind,:]
-        neighbors_sample_cell = grid_vertices[np.squeeze(neighbor_rows[:,valid_ind]),:]
+        center_sample_cell = staggered_grid_vertices[valid_ind,:]
+        neighbors_sample_cell = staggered_grid_vertices[np.squeeze(neighbor_rows[:,valid_ind]),:]
         center_sample_cell_tiled = np.tile(center_sample_cell,(neighbors_sample_cell.shape[0],1))
         values_sample_cell = kernel_fun(center_sample_cell_tiled,neighbors_sample_cell)
         V = np.tile(values_sample_cell,(np.prod(gs_dd),1)).T
@@ -116,43 +185,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         V[J<0] = 0
         J[J<0] = 0
         k1_fast = csr_matrix((V.ravel(), (I.ravel(), J.ravel())), shape=(np.prod(gs_dd),np.prod(gs_dd)))
-        # k1_fast = coo_matrix((V.ravel(), (I.ravel(), J.ravel())), shape=(np.prod(gs_dd),np.prod(gs_dd))).todia().tocsr()
-        # print("Misc3:",time.time()-t00)
-        # t00 = time.time()
-        # k1 = k1_fast
-        # print(neighbors_sample_cell.shape)
-        # print(min_ind.shape)
-
-
-
- 
-
-
-        # I = np.tile(np.arange(np.prod(gs_dd)), (neighbor_rows.shape[0],1))
-        # J = neighbor_rows
-        # V = np.ones((neighbor_rows.shape[0],np.prod(gs_dd)))
-        # V[J<0] = 0
-        # J[J<0] = 0
-        # A = coo_matrix(coo_matrix((V.ravel(), (I.ravel(), J.ravel())), shape=(np.prod(gs_dd),np.prod(gs_dd))))
-        # print(A.max())
-        # # print(A.diagonal())
-        # # A = coo_matrix(A @ A)
-        # I = A.row
-        # J = A.col
-        # k1_debug = matrix_from_function(kernel_fun, grid_vertices, grid_vertices,sparsity_pattern=[I,J])
-        
-        # assert(np.isclose(k1.toarray(),k1_debug.toarray(),atol=1e-5).all())
-        # print(np.max(np.abs(k1-k1_debug)))
-        # print(np.max(np.abs(k1-k1_fast)))
-        # print("DISTANCE BETWEEN OLD MATRIX AND FAST MATRIX:", np.max(np.abs(k1-k1_fast)))
         k1 = k1_fast
-        # k1 = k1_debug
-        # assert((k1.toarray()==k1_debug.toarray()).all())
-
-        # Could debug that we are building the proper matrix with this:
-        # k1_debug = matrix_from_function(kernel_fun, grid_vertices, grid_vertices)
-        # print(np.linalg.norm(k1.toarray()-k1_debug.toarray()))
-
 
         # Compute k2, the kernel matrix between the points in P and the points in the regular grid
         if verbose:
@@ -181,11 +214,11 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         # Build I and J
 
 
-        k2_debug = matrix_from_function(kernel_fun, P, grid_vertices,sparsity_pattern=[I,J])
+        k2_debug = matrix_from_function(kernel_fun, P, staggered_grid_vertices,sparsity_pattern=[I,J])
         
 
 
-        # k2 = matrix_from_function(kernel_fun, P, grid_vertices)
+        # k2 = matrix_from_function(kernel_fun, P, staggered_grid_vertices)
         # print("DISTANCE BETWEEN OLD MATRIX AND FAST MATRIX:", np.max(np.abs(k2-k2_debug)))
         k2 = k2_debug
         if verbose:
@@ -287,12 +320,12 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         if verbose:
             print("Total step 2 time: ", time.time() - t1)
             print("Total time: ", time.time() - t0)
-        return mean_scalar, var_scalar
+        return mean_scalar, var_scalar, grid_vertices
     else:
         if verbose:
             print("Total step 2 time: ", time.time() - t1)
             print("Total time: ", time.time() - t0)
-        return mean_scalar
+        return mean_scalar, grid_vertices
 
 
 def eigenfunctions_laplacian(num_modes,gs,l):
