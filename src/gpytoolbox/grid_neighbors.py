@@ -1,9 +1,9 @@
 import numpy as np
 from scipy.sparse import coo_matrix, csr_matrix
 
-def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False):
+def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False,output_unique=False):
     """
-    TODO
+    Computes the n-th order neighbors of each cell in a grid.
     
     Parameters
     ----------
@@ -15,12 +15,14 @@ def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False):
         whether diagonal cells are considered to be neighbors
     include_self: bool, optional (default False)
         whether a cell is considered to be its own neighbor
+    output_unique: bool, optional (default False)
+        whether to output only unique neighbors (i.e., remove duplicates). This should only matter for order>=2
     
     Returns
     -------
     N : (num_neighbors, n) numpy int array
-        The i-th column contains the neighbors of the i-th cell. Negative entries denote out-of-bounds cells.
-    
+        The i-th column contains the list of neighbors of the i-th cell. Negative entries denote out-of-bounds cells.
+
     
     Examples
     --------
@@ -89,6 +91,11 @@ def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False):
         neighbor_rows = neighbor_rows_bigger
         out_of_bounds = out_of_bounds_bigger
         current_order += 1
+
+    if output_unique:
+        unique_ind = np.unique(neighbor_rows[:,0],return_index=True)[1]
+        neighbor_rows = neighbor_rows[unique_ind,:]
+        out_of_bounds = out_of_bounds[unique_ind,:]
 
     neighbor_rows[out_of_bounds] = -1
     # neighbor_rows = neighbor_rows[unique_ind,:]
