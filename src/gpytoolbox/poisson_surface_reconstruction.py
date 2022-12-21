@@ -1,12 +1,15 @@
 import numpy as np
-from scipy.sparse import diags, eye, block_diag
+from scipy.sparse import diags, eye, block_diag, coo_matrix, csr_matrix
 from scipy.sparse.linalg import spsolve, bicg, splu
 from scipy.ndimage.filters import gaussian_filter
 from .fd_grad import fd_grad
 from .fd_interpolate import fd_interpolate
 from .matrix_from_function import matrix_from_function
 from .compactly_supported_normal import compactly_supported_normal
+from .grid_neighbors import grid_neighbors
 
+
+import matplotlib.pyplot as plt
 # TO DO:
 # - Test 3D functionality
 
@@ -38,10 +41,6 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
     assert(gs.shape[0] == dim)
 
     grid_length = gs*h
-    print(gs)
-    print(h)
-    print(corner)
-    print(grid_length)
 
     eps = 0.000001 # very tiny value to regularize matrix rank
 
@@ -76,28 +75,80 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
             grid_vertices = np.array(grid_vertices).reshape(dim, -1,order='F').T
         
         if verbose:
-            
             t00 = time.time()
         # k1 is the kernel matrix between grid vertices, which we could compute with
         # k1 = matrix_from_function(kernel_fun, grid_vertices, grid_vertices)
         # but that takes a long to compute if we don't leverage that we know the sparsity pattern beforehand. In fact, we know that the only non-zero entries are of vertices and their second-level neighbors.
-        order_neighbors = 2
-        neighbors = np.arange(-order_neighbors,order_neighbors+1,dtype=int)
-        for dd2 in range(dim-1):
-            neighbors_along_dim =np.arange(-order_neighbors,order_neighbors+1,dtype=int)*np.prod(gs_dd[:dd2+1])
-            previous_neighbors = np.kron(neighbors,np.ones(neighbors_along_dim.shape[0],dtype=int))
-            neighbors_along_dim_repeated = np.kron(np.ones(neighbors.shape[0],dtype=int),neighbors_along_dim)
-            neighbors = previous_neighbors + neighbors_along_dim_repeated
-            # neighbors = np.append(neighbors,neighbors*np.prod(gs[:dd2+1]))
-        all_grid_vertices = np.arange(np.prod(gs_dd))
-        # print(all_grid_vertices)
-        I = np.tile(all_grid_vertices,(neighbors.shape[0],1)).T
-        J = I + np.tile(neighbors,(all_grid_vertices.shape[0],1))
-        valid_indices = (J>=0)*(J<np.prod(gs_dd))
-        J = J[valid_indices]
-        I = I[valid_indices]
-        k1 = matrix_from_function(kernel_fun, grid_vertices, grid_vertices,sparsity_pattern=[I,J])
+        # order_neighbors = 2
+        # neighbors = np.arange(-order_neighbors,order_neighbors+1,dtype=int)
+        # for dd2 in range(dim-1):
+        #     neighbors_along_dim =np.arange(-order_neighbors,order_neighbors+1,dtype=int)*np.prod(gs_dd[:dd2+1])
+        #     previous_neighbors = np.kron(neighbors,np.ones(neighbors_along_dim.shape[0],dtype=int))
+        #     neighbors_along_dim_repeated = np.kron(np.ones(neighbors.shape[0],dtype=int),neighbors_along_dim)
+        #     neighbors = previous_neighbors + neighbors_along_dim_repeated
+        #     # neighbors = np.append(neighbors,neighbors*np.prod(gs[:dd2+1]))
+        # all_grid_vertices = np.arange(np.prod(gs_dd))
+        # # print(all_grid_vertices)
+        # I = np.tile(all_grid_vertices,(neighbors.shape[0],1)).T
+        # J = I + np.tile(neighbors,(all_grid_vertices.shape[0],1))
+        # valid_indices = (J>=0)*(J<np.prod(gs_dd))
+        # J = J[valid_indices]
+        # I = I[valid_indices]
+
+        # k1 = matrix_from_function(kernel_fun, grid_vertices, grid_vertices,sparsity_pattern=[I,J])
+
+        # print("Slow:",time.time()-t00)
+        # t00 = time.time()
+
+        neighbor_rows = grid_neighbors(gs_dd,include_diagonals=True,include_self=True, order=1)
+        # Find one cell with no out of bounds neighbors
+        min_ind = np.min(neighbor_rows,axis=0)
+        valid_ind = np.argwhere(min_ind>=0)[0]
+        unique_ind = np.unique(neighbor_rows[:,valid_ind],return_index=True)[1]
+        neighbor_rows = neighbor_rows[unique_ind,:]
+        center_sample_cell = grid_vertices[valid_ind,:]
+        neighbors_sample_cell = grid_vertices[np.squeeze(neighbor_rows[:,valid_ind]),:]
+        center_sample_cell_tiled = np.tile(center_sample_cell,(neighbors_sample_cell.shape[0],1))
+        values_sample_cell = kernel_fun(center_sample_cell_tiled,neighbors_sample_cell)
+        V = np.tile(values_sample_cell,(np.prod(gs_dd),1)).T
+        I = np.tile(np.arange(np.prod(gs_dd)), (neighbor_rows.shape[0],1))
+        J = neighbor_rows
+        V[J<0] = 0
+        J[J<0] = 0
+        k1_fast = csr_matrix((V.ravel(), (I.ravel(), J.ravel())), shape=(np.prod(gs_dd),np.prod(gs_dd)))
+        # k1_fast = coo_matrix((V.ravel(), (I.ravel(), J.ravel())), shape=(np.prod(gs_dd),np.prod(gs_dd))).todia().tocsr()
+        # print("Misc3:",time.time()-t00)
+        # t00 = time.time()
+        # k1 = k1_fast
+        # print(neighbors_sample_cell.shape)
+        # print(min_ind.shape)
+
+
+
+ 
+
+
+        # I = np.tile(np.arange(np.prod(gs_dd)), (neighbor_rows.shape[0],1))
+        # J = neighbor_rows
+        # V = np.ones((neighbor_rows.shape[0],np.prod(gs_dd)))
+        # V[J<0] = 0
+        # J[J<0] = 0
+        # A = coo_matrix(coo_matrix((V.ravel(), (I.ravel(), J.ravel())), shape=(np.prod(gs_dd),np.prod(gs_dd))))
+        # print(A.max())
+        # # print(A.diagonal())
+        # # A = coo_matrix(A @ A)
+        # I = A.row
+        # J = A.col
+        # k1_debug = matrix_from_function(kernel_fun, grid_vertices, grid_vertices,sparsity_pattern=[I,J])
         
+        # assert(np.isclose(k1.toarray(),k1_debug.toarray(),atol=1e-5).all())
+        # print(np.max(np.abs(k1-k1_debug)))
+        # print(np.max(np.abs(k1-k1_fast)))
+        # print("DISTANCE BETWEEN OLD MATRIX AND FAST MATRIX:", np.max(np.abs(k1-k1_fast)))
+        k1 = k1_fast
+        # k1 = k1_debug
+        # assert((k1.toarray()==k1_debug.toarray()).all())
+
         # Could debug that we are building the proper matrix with this:
         # k1_debug = matrix_from_function(kernel_fun, grid_vertices, grid_vertices)
         # print(np.linalg.norm(k1.toarray()-k1_debug.toarray()))
@@ -107,7 +158,36 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         if verbose:
             print("Time to compute k1: ", time.time() - t00)
             t00 = time.time()
-        k2 = matrix_from_function(kernel_fun, P, grid_vertices)
+        # It's faster if we first find the cells that P falls into
+        P_cells = np.floor((P - np.tile(corner,(P.shape[0],1))) / np.tile(h,(P.shape[0],1))).astype(int)
+        if dim==2:
+            P_cells = np.ravel_multi_index((P_cells[:,0], P_cells[:,1]), dims=gs_dd,order='F')
+        else:
+            P_cells = np.ravel_multi_index((P_cells[:,0], P_cells[:,1], P_cells[:,2]), dims=gs_dd,order='F')
+
+        order_neighbors = 2
+        neighbors = np.arange(-order_neighbors,order_neighbors+1,dtype=int)
+        for dd2 in range(dim-1):
+            neighbors_along_dim =np.arange(-order_neighbors,order_neighbors+1,dtype=int)*np.prod(gs_dd[:dd2+1])
+            previous_neighbors = np.kron(neighbors,np.ones(neighbors_along_dim.shape[0],dtype=int))
+            neighbors_along_dim_repeated = np.kron(np.ones(neighbors.shape[0],dtype=int),neighbors_along_dim)
+            neighbors = previous_neighbors + neighbors_along_dim_repeated
+        # # print(all_grid_vertices)
+        I = np.tile(np.arange(P.shape[0]),(neighbors.shape[0],1)).T
+        J = np.tile(P_cells,(neighbors.shape[0],1)).T + np.tile(neighbors,(P_cells.shape[0],1))
+        valid_indices = (J>=0)*(J<np.prod(gs_dd))
+        J = J[valid_indices]
+        I = I[valid_indices]
+        # Build I and J
+
+
+        k2_debug = matrix_from_function(kernel_fun, P, grid_vertices,sparsity_pattern=[I,J])
+        
+
+
+        # k2 = matrix_from_function(kernel_fun, P, grid_vertices)
+        # print("DISTANCE BETWEEN OLD MATRIX AND FAST MATRIX:", np.max(np.abs(k2-k2_debug)))
+        k2 = k2_debug
         if verbose:
             print("Time to compute k2: ", time.time() - t00)
         # This is what we'd get if we did a true GP:
@@ -118,12 +198,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         K3_inv = diags(1/(np.squeeze(sampling_density) + sigma_n*sigma_n))
         
 
-        # Solve for the mean and covariance:
-        # Debugging matrix sizes:
-        # print(k1.shape)
-        # print(k2.T.shape)
-        # print(K3_inv.shape)
-        # print(N[:,dd][:,None].shape)
+        # Solve for the mean and covariance of the vector field:
         means.append(k2.T @ K3_inv @ N[:,dd][:,None])
         if stochastic:
             covs.append(k1 - k2.T @ K3_inv @ k2)
@@ -164,18 +239,39 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
 
         # Solve directly for the covariance on the grid (slow)
         if (solve_subspace_dim>0):
+            if verbose:
+                print("Solving for covariance on grid using subspace method")
+                t20 = time.time()
             _, vecs = eigenfunctions_laplacian(solve_subspace_dim,gs,grid_length)
+            if verbose:
+                print("Time to compute eigenfunctions: ", time.time() - t20)
+                t20 = time.time()
             vecs = np.real(vecs)
             #vals = vecs.transpose() @ (L+0.0001*eye(L.shape[0])) @ vecs
             vals = np.sum(np.multiply(vecs.transpose()@(L+eps*eye(L.shape[0])),vecs.transpose()),axis=1)
-            B = (vecs.transpose()@cov_divergence.astype(np.float32))@vecs
             vals = diags(vals)
+            if verbose:
+                print("Time to compute eigenvalues: ", time.time() - t20)
+                t20 = time.time()
+            B = (vecs.transpose()@cov_divergence.astype(np.float32))@vecs
+            if verbose:
+                print("Time to project problem onto subspace: ", time.time() - t20)
+                t20 = time.time()
+            
             D = spsolve(vals,B)
             #D = np.linalg.solve(vals,B)
             # cov_small = np.linalg.solve(vals,D.transpose())
             cov_small = spsolve(vals,D.transpose()).astype(np.float32)
+            if verbose:
+                print("Time to solve in subspace: ", time.time() - t20)
+                t20 = time.time()
             var_scalar = np.sum(np.multiply(vecs@cov_small,vecs),axis=1)
+            if verbose:
+                print("Time to reproject to full space", time.time() - t20)
         else:
+            if verbose:
+                print("Solving for covariance directly")
+
             lu = splu(L+eps*eye(L.shape[0]))
             D = lu.solve(cov_divergence.toarray())
             cov_scalar = lu.solve(D.transpose())
@@ -218,13 +314,6 @@ def eigenfunctions_laplacian(num_modes,gs,l):
         v = np.concatenate((np.reshape(gx,(-1, 1),order='F'),np.reshape(gy,(-1, 1),order='F'),np.reshape(gz,(-1, 1),order='F')),axis=1)
         #num_in_each_dim = num_modes // 10 # this should be enough
         num_in_each_dim = round(np.sqrt(num_modes//8))
-        # vecs = np.zeros((v.shape[0],num_in_each_dim*num_in_each_dim*num_in_each_dim),dtype=np.float32)
-        # vals = np.zeros(num_in_each_dim*num_in_each_dim*num_in_each_dim)
-        # for i in range(num_in_each_dim):
-        #     for j in range(num_in_each_dim):
-        #         for k in range(num_in_each_dim):
-        #             ind = (num_in_each_dim*i+j)*num_in_each_dim + k
-        #             vecs[:,ind], vals[ind] = psi([i,j,k],l,v)
         vals_debug = np.zeros(num_in_each_dim*num_in_each_dim*num_in_each_dim)
         K_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) % num_in_each_dim
         J_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) // num_in_each_dim % num_in_each_dim
@@ -244,12 +333,6 @@ def eigenfunctions_laplacian(num_modes,gs,l):
             vecs_debug[:,s], _ = psi([I_vector[relevant_indices[s]],J_vector[relevant_indices[s]],K_vector[relevant_indices[s]]],l,v)
         vecs = vecs_debug
         vals = vals_debug
-        # print(vecs[:,relevant_indices].shape)
-        # print(vecs_debug.shape)
-        # print(vecs[:,relevant_indices])
-        # print(vecs_debug)
-        # # assert((vecs[:,relevant_indices]==vecs_debug).all())
-        # assert(np.isclose(vecs[:,relevant_indices],vecs_debug,atol=1e-8).all())
 
     else:
         gx, gy = np.meshgrid(np.linspace(0,l[0],gs[0]),np.linspace(0,l[1],gs[1]))
@@ -268,45 +351,16 @@ def eigenfunctions_laplacian(num_modes,gs,l):
         ind_vectors = []
         ind_vectors.append(I_vector)
         ind_vectors.append(J_vector)
-        
-        # print(Is)
-        # print(J_vector)
-        
-
 
         for dd in range(dim):
             vals = vals + (np.pi**2.0)*((ind_vectors[dd]/l[dd])**2.0)
         order = np.argsort(vals)
         relevant_indices = order[0:num_modes]
-        # import time
-        # t0 = time.time()
-        # I_mat = np.tile(I_vector[relevant_indices],(v.shape[0],1))
-        # J_mat = np.tile(J_vector[relevant_indices],(v.shape[0],1)) 
-        # ind_mat = []
-        # ind_mat.append(I_mat)
-        # ind_mat.append(J_mat)
-        # vecs = np.ones((v.shape[0],num_modes))
-        # for dd in range(dim):
-        #     vdim = np.tile(v[:,dd],(num_modes,1)).T
-        #     vecs = vecs*np.cos(ind_mat[dd]*np.pi*vdim/l[dd])
-
-        # print("Vectorized: ", time.time()-t0)
-        # t1 = time.time()
         vecs_debug = np.ones((v.shape[0],num_modes))
         for s in range(len(relevant_indices)):
             vecs_debug[:,s], _ = psi([I_vector[relevant_indices[s]],J_vector[relevant_indices[s]]],l,v)
-        # print("Not vectorized: ", time.time()-t1)
-    # assert((vecs_debug==vecs).all())
-    # # assert((vals_debug==vals).all())
         vecs = vecs_debug
-    # vals = vals_debug
-
-    # order = np.argsort(vals)
-    # vecs = vecs[:,order]
-    # vals = vals[order]
-    # vecs = vecs[:,0:num_modes]
-    # vals = vals[0:num_modes]
-
+    # This is not necessary
     # vecs = vecs/np.tile(np.linalg.norm(vecs,axis=0),(vecs.shape[0],1))
     # print(np.linalg.norm(vecs,axis=0),(vecs.shape[0],1))
 

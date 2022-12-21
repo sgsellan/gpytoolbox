@@ -222,3 +222,4 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Package for conda distribution
 - Add notes on every docstring mentioning libigl implementations
 - `regular_square_mesh` should support different resolutions in `x` and `y` direction (sensible default when n_y is None, to n_y=n_x)
+- Make all grid sizes, resolutions, etc. into tuples not necessarily numpy arrays
