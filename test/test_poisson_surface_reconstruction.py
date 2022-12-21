@@ -1,10 +1,10 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-from scipy.stats import norm
-import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import polyscope as ps
+# from scipy.stats import norm
+# import matplotlib.pyplot as plt
+# from mpl_toolkits.axes_grid1 import make_axes_locatable
+# import polyscope as ps
 
 class TestPoissonSurfaceReconstruction(unittest.TestCase):
     def test_paper_figure(self):
@@ -21,7 +21,7 @@ class TestPoissonSurfaceReconstruction(unittest.TestCase):
         # h = np.array([0.05,0.05])
         gs = np.array([50,50])
         scalar_mean, scalar_var, grid_vertices = gpytoolbox.poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=0,verbose=True)
-        prob_out = 1 - norm.cdf(scalar_mean,0,np.sqrt(scalar_var))
+        # prob_out = 1 - norm.cdf(scalar_mean,0,np.sqrt(scalar_var))
         # # corner = P.min(axis=0)
         # # h = (P.max(axis=0) - P.min(axis=0))/gs
         # # grid_vertices = np.meshgrid(*[np.linspace(corner[dd], corner[dd] + (gs[dd]-1)*h[dd], gs[dd]) for dd in range(P.shape[1])])
