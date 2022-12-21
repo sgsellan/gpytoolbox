@@ -169,6 +169,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Tru
         if verbose:
             t00 = time.time()
         # k1 is the kernel matrix between grid vertices, which we could compute with
+        print("REMINDER FIX THIS, ORDER SHOULD BE 2")
         neighbor_rows = grid_neighbors(gs_dd,include_diagonals=True,include_self=True, order=1)
         # Find one cell with no out of bounds neighbors
         min_ind = np.min(neighbor_rows,axis=0)
