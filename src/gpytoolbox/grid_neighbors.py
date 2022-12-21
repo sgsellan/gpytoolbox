@@ -16,7 +16,7 @@ def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False,output_
     include_self: bool, optional (default False)
         whether a cell is considered to be its own neighbor
     output_unique: bool, optional (default False)
-        whether to output only unique neighbors (i.e., remove duplicates). This should only matter for order>=2
+        whether to output only unique neighbors (i.e., remove duplicates). This should only matter for order>=2 (for order=1, the output is always unique but this flag will change the ordering)
     
     Returns
     -------
@@ -26,7 +26,12 @@ def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False,output_
     
     Examples
     --------
-    TODO
+    gs = np.array([90,85])
+    # This should be *only* the 8 neighbors at a distance of h
+    N = gpytoolbox.grid_neighbors(gs, include_diagonals=False, include_self=False,order=1)
+    # Now in each column of N, we have the indices of the four non-diagonal neighbors of the corresponding cell. For example, for the first (bottom left) cell, the neighbors are:
+    N[:,0]
+    # which should be two values of -1 (out of bounds), one value of 1 (the cell to the right), and one value of 85 (the cell above).
     """
     dim = gs.shape[0]
     cells = np.arange(np.prod(gs)) # all cell indices
@@ -85,7 +90,7 @@ def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False,output_
         for i in range(neighbor_rows.shape[0]):
             new_out_of_bounds = np.zeros(neighbor_rows.shape,dtype=bool)
             new_out_of_bounds[:,out_of_bounds[i,:]] = True
-            new_out_of_bounds = new_out_of_bounds | out_of_bounds
+            new_out_of_bounds = new_out_of_bounds | out_of_bounds[:,neighbor_rows[i,:]]
             neighbor_rows_bigger = np.vstack((neighbor_rows_bigger,neighbor_rows[:,neighbor_rows[i,:]]))
             out_of_bounds_bigger = np.vstack((out_of_bounds_bigger,new_out_of_bounds))
         neighbor_rows = neighbor_rows_bigger
