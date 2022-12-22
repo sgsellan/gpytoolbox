@@ -9,3 +9,4 @@ build-linux/
 .vscode/
 site/
 .eggs/
+ignore/
