@@ -40,12 +40,12 @@ class TestGridNeighbors(unittest.TestCase):
         
         # Let's try with include_self
         N = gpytoolbox.grid_neighbors(gs, include_diagonals=True, include_self=True,order=1)
-        should_be_self = N[-1,:]
+        should_be_self = N[0,:]
         self_ind = np.arange(N.shape[1])
         self.assertTrue(np.all(should_be_self == self_ind))
         # Without diagonals
         N = gpytoolbox.grid_neighbors(gs, include_diagonals=False, include_self=True,order=1)
-        should_be_self = N[-1,:]
+        should_be_self = N[0,:]
         self_ind = np.arange(N.shape[1])
         self.assertTrue(np.all(should_be_self == self_ind))
         # print(should_be_self)
