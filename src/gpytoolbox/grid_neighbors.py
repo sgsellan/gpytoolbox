@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.sparse import coo_matrix, csr_matrix
 
-def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False,output_unique=False):
+def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False,output_unique=True):
     """
     Computes the n-th order neighbors of each cell in a grid.
     
