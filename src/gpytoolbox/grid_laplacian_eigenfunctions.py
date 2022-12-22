@@ -56,8 +56,9 @@ def grid_laplacian_eigenfunctions(num_modes,gs,l):
     if dim==3:
         gx, gy, gz = np.meshgrid(np.linspace(0,l[0],gs[0]),np.linspace(0,l[1],gs[1]),np.linspace(0,l[2],gs[2]),indexing='ij')
         v = np.concatenate((np.reshape(gx,(-1, 1),order='F'),np.reshape(gy,(-1, 1),order='F'),np.reshape(gz,(-1, 1),order='F')),axis=1)
-        # num_in_each_dim = round(np.sqrt(num_modes//8))
-        num_in_each_dim = num_modes
+        # This is ad-hoc so it's faster... We should come up with a smarter way of doing this.
+        num_in_each_dim = round(np.sqrt(num_modes//8))
+        # num_in_each_dim = num_modes
         vals_debug = np.zeros(num_in_each_dim*num_in_each_dim*num_in_each_dim)
         K_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) % num_in_each_dim
         J_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) // num_in_each_dim % num_in_each_dim
