@@ -70,8 +70,14 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
     poly = 3*poly - 1.5
     num_samples = 40
     np.random.seed(2)
-    P, N = gpytoolbox.random_points_on_polyline(poly,num_samples)
-    N = - N
+    EC = edge_indices(poly.shape[0],closed=False)
+    P,I,_ = random_points_on_mesh(poly, EC, num_samples, return_indices=True)
+    vecs = poly[EC[:,0],:] - poly[EC[:,1],:]
+    vecs /= np.linalg.norm(vecs, axis=1)[:,None]
+    J = np.array([[0., -1.], [1., 0.]])
+    N = vecs @ J.T
+    N = N[I,:]
+
 
     # Problem parameters
     gs = np.array([50,50])
@@ -316,7 +322,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
             vecs = np.real(vecs)
             #vals = vecs.transpose() @ (L+0.0001*eye(L.shape[0])) @ vecs
             vals = np.sum(np.multiply(vecs.transpose()@(L+eps*eye(L.shape[0])),vecs.transpose()),axis=1)
-            vals = diags(vals)
+            vals = csr_matrix(diags(vals))
             if verbose:
                 print("Time to compute eigenvalues: ", time.time() - t20)
                 t20 = time.time()
