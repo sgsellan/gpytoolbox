@@ -32,6 +32,9 @@ jobs:
           sudo apt-get install \
               libmpfr-dev \
               libgmp-dev \
+              libgl1-mesa-dev \
+              xorg-dev \
+              libglu1-mesa-dev
 
       - name: Install c++ bindings
         shell: bash -l {0}
