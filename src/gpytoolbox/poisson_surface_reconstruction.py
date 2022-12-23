@@ -47,6 +47,11 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
     grid_vertices : list of (gs[0],gs[1],...,gs[dim-1],dim) numpy arrays
         Grid vertices (each element in the list is one dimension), as in the output of np.meshgrid
 
+    
+    Notes
+    -----
+    See [this jupyter notebook](https://colab.research.google.com/drive/1DOXbDmqzIygxoQ6LeX0Ewq7HP4201mtr?usp=sharing) for a full tutorial on how to use this function.
+
     See also
     --------
     fd_interpolate, fd_grad, matrix_from_function, compactly_supported_normal, grid_neighbors
