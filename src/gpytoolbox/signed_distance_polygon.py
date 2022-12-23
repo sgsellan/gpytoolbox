@@ -33,6 +33,9 @@ def signed_distance_polygon(P,V):
         else:
             j = i-1
         e = V[j,:] - V[i,:]
+        # Skip if the edge is zero length
+        if np.sum(e*e)==0:
+            continue
         w = (P - np.tile(V[i,:],(P.shape[0],1)))
         dotwe = np.sum( w*np.tile(e,(P.shape[0],1)) ,axis=1)
         dotee = np.tile((e[0]**2) + (e[1]**2),(P.shape[0]))
