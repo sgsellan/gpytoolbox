@@ -9,7 +9,7 @@ from .compactly_supported_normal import compactly_supported_normal
 from .grid_neighbors import grid_neighbors
 from .grid_laplacian_eigenfunctions import grid_laplacian_eigenfunctions
 
-def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=False,sigma_n=0.0,sigma=0.05,solve_subspace_dim=0,verbose=True):
+def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=False,sigma_n=0.0,sigma=0.05,solve_subspace_dim=0,verbose=False,prior_fun=None):
     """
     Runs Poisson Surface Reconstruction from a set of points and normals to output a scalar field that takes negative values inside the surface and positive values outside the surface.
     
@@ -26,7 +26,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
     corner : (dim,) numpy array
         Coordinates of the lower left corner of the grid
     stochastic : bool, optional (default False)
-        Whether to use Stochastic Poisson Surface Reconstruction [2] to output a mean and variance scalar field
+        Whether to use "Stochastic Poisson Surface Reconstruction" to output a mean and variance scalar field instead of just one scalar field
     sigma_n : float, optional (default 0.0)
         Noise level in the normals
     sigma : float, optional (default 0.05)
@@ -35,13 +35,15 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
         If > 0, use a subspace solver to solve the linear system. This is useful for large problems and essential in 3D.
     verbose : bool, optional (default True)
         Whether to print progress
+    prior_fun : function, optional (default None)
+        Function that takes a (m,dim) numpy array and returns a (m,dim) numpy array. This is used to specify a prior on the gradient of the scalar field (see Sec. 5 in "Stochastic Poisson Surface Reconstruction").
     
     Returns
     -------
     scalar_mean : (gs[0],gs[1],...,gs[dim-1]) numpy array
         Mean of the reconstructed scalar field
     scalar_variance : (gs[0],gs[1],...,gs[dim-1]) numpy array
-        Variance of the reconstructed scalar field
+        Variance of the reconstructed scalar field. This will only be part of the output if stochastic=True.
     grid_vertices : list of (gs[0],gs[1],...,gs[dim-1],dim) numpy arrays
         Grid vertices (each element in the list is one dimension), as in the output of np.meshgrid
 
@@ -245,7 +247,13 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
         
 
         ### Step 1.4: Solve for the mean and covariance of the vector field:
-        means.append(k2.T @ K3_inv @ N[:,dd][:,None])
+        if (prior_fun is None):
+            means.append(k2.T @ K3_inv @ N[:,dd][:,None])
+        else:
+            # print(prior_fun(staggered_grid_vertices)[:,dd][:,None])
+            # print(prior_fun(staggered_grid_vertices)[:,dd][:,None].shape)
+            # print(N[:,dd][:,None].shape)
+            means.append(prior_fun(staggered_grid_vertices)[:,dd][:,None] + k2.T @ K3_inv @ (N[:,dd][:,None] - prior_fun(P)[:,dd][:,None]))
         if stochastic:
             covs.append(k1 - k2.T @ K3_inv @ k2)
 
