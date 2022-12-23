@@ -131,7 +131,7 @@ class TestPoissonSurfaceReconstruction(unittest.TestCase):
             self.assertTrue(distance_to_closest_data_point < 0.1)
     def test_3d(self):
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
-        print(f.shape)
+        # print(f.shape)
         P = (v[f[:,0],:] + v[f[:,1],:] + v[f[:,2],:])/3.0
         N = gpytoolbox.per_face_normals(v,f)
         gs = np.array([44,44,44]) #44

@@ -128,7 +128,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
         assert(h is not None)
         assert(corner is not None)
         gs = np.floor((np.max(envelope_mult*P,axis=0) - corner)/h).astype(int)
-        print(gs)
+        # print(gs)
         # print(gs)
     elif ((h is None) or (corner is None)):
         h = (np.max(envelope_mult*P,axis=0) - np.min(envelope_mult*P,axis=0))/gs
