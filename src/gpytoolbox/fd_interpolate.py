@@ -3,7 +3,7 @@ from numpy.core.function_base import linspace
 from scipy.sparse import csr_matrix
 
 
-def fd_interpolate(P,gs,h,corner=np.array([0.0,0.0])):
+def fd_interpolate(P,gs,h,corner=None):
     """Bi/Trilinear interpolation matrix
 
     Given a regular finite-difference grid described by the number of nodes on each side, the grid spacing, and the location of the bottom-left-front-most corner node, and a list of points, construct a sparse matrix of bilinear interpolation weights so that P = W @ x
@@ -16,6 +16,8 @@ def fd_interpolate(P,gs,h,corner=np.array([0.0,0.0])):
         Grid size [nx,ny(,nz)]
     h : numpy double array
         Spacing between grid points [hx,hy(,hz)]
+    corner: numpy double array (optional, default None)
+        Location of the bottom-left-front-most corner node
 
     Returns
     -------
@@ -36,6 +38,9 @@ def fd_interpolate(P,gs,h,corner=np.array([0.0,0.0])):
     """
 
     dim = P.shape[1]
+
+    if corner is None:
+        corner = np.zeros(dim)
 
     indeces = np.floor( (P - np.tile(corner,(P.shape[0],1)))/np.tile(h,(P.shape[0],1)) ).astype(int)
     I = linspace(0,P.shape[0]-1,P.shape[0],dtype=int)
