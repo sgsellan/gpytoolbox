@@ -34,18 +34,20 @@ def random_points_on_polyline(V, n, EC=None):
     TODO
     """
 
-    warnings.warn("random_points_on_polyline will be deprecated in gpytoolbox-0.0.3 in favour of the more general random_points_on_mesh",DeprecationWarning)
+    raise Exception("random_points_on_polyline was deprecated in gpytoolbox-0.0.3 in favour of the more general random_points_on_mesh. This error message will disappear in gpytoolbox-0.0.4")
 
-    if (EC is None):
-        EC = edge_indices(V.shape[0],closed=False)
+    # warnings.warn("random_points_on_polyline will be deprecated in gpytoolbox-0.0.3 in favour of the more general random_points_on_mesh",DeprecationWarning)
 
-    x,I,_ = random_points_on_mesh(V, EC, n, return_indices=True)
+    # if (EC is None):
+    #     EC = edge_indices(V.shape[0],closed=False)
 
-    vecs = V[EC[:,1],:] - V[EC[:,0],:]
-    vecs /= np.linalg.norm(vecs, axis=1)[:,None]
-    J = np.array([[0., -1.], [1., 0.]])
-    N = vecs @ J.T
+    # x,I,_ = random_points_on_mesh(V, EC, n, return_indices=True)
 
-    sampled_N = N[I,:]
+    # vecs = V[EC[:,1],:] - V[EC[:,0],:]
+    # vecs /= np.linalg.norm(vecs, axis=1)[:,None]
+    # J = np.array([[0., -1.], [1., 0.]])
+    # N = vecs @ J.T
+
+    # sampled_N = N[I,:]
     
     return x, sampled_N
