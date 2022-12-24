@@ -646,33 +646,6 @@
     grid_neighbors()
   </a>
   
-    <nav class="md-nav" aria-label="grid_neighbors()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.gpytoolbox.grid_neighbors.grid_neighbors--this-should-be-only-the-8-neighbors-at-a-distance-of-h" class="md-nav__link">
-    This should be only the 8 neighbors at a distance of h
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.gpytoolbox.grid_neighbors.grid_neighbors--now-in-each-column-of-n-we-have-the-indices-of-the-four-non-diagonal-neighbors-of-the-corresponding-cell-for-example-for-the-first-bottom-left-cell-the-neighbors-are" class="md-nav__link">
-    Now in each column of N, we have the indices of the four non-diagonal neighbors of the corresponding cell. For example, for the first (bottom left) cell, the neighbors are:
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.gpytoolbox.grid_neighbors.grid_neighbors--which-should-be-two-values-of-1-out-of-bounds-one-value-of-1-the-cell-to-the-right-and-one-value-of-85-the-cell-above" class="md-nav__link">
-    which should be two values of -1 (out of bounds), one value of 1 (the cell to the right), and one value of 85 (the cell above).
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -1554,33 +1527,6 @@
     grid_neighbors()
   </a>
   
-    <nav class="md-nav" aria-label="grid_neighbors()">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#src.gpytoolbox.grid_neighbors.grid_neighbors--this-should-be-only-the-8-neighbors-at-a-distance-of-h" class="md-nav__link">
-    This should be only the 8 neighbors at a distance of h
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.gpytoolbox.grid_neighbors.grid_neighbors--now-in-each-column-of-n-we-have-the-indices-of-the-four-non-diagonal-neighbors-of-the-corresponding-cell-for-example-for-the-first-bottom-left-cell-the-neighbors-are" class="md-nav__link">
-    Now in each column of N, we have the indices of the four non-diagonal neighbors of the corresponding cell. For example, for the first (bottom left) cell, the neighbors are:
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#src.gpytoolbox.grid_neighbors.grid_neighbors--which-should-be-two-values-of-1-out-of-bounds-one-value-of-1-the-cell-to-the-right-and-one-value-of-85-the-cell-above" class="md-nav__link">
-    which should be two values of -1 (out of bounds), one value of 1 (the cell to the right), and one value of 85 (the cell above).
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
     </ul>
@@ -1714,12 +1660,13 @@
   </table>
 
 <p><strong>Examples:</strong></p>
-    <p>gs = np.array([90,85])</p>
-<h3 id="src.gpytoolbox.grid_neighbors.grid_neighbors--this-should-be-only-the-8-neighbors-at-a-distance-of-h">This should be <em>only</em> the 8 neighbors at a distance of h</h3>
-<p>N = gpytoolbox.grid_neighbors(gs, include_diagonals=False, include_self=False,order=1)</p>
-<h3 id="src.gpytoolbox.grid_neighbors.grid_neighbors--now-in-each-column-of-n-we-have-the-indices-of-the-four-non-diagonal-neighbors-of-the-corresponding-cell-for-example-for-the-first-bottom-left-cell-the-neighbors-are">Now in each column of N, we have the indices of the four non-diagonal neighbors of the corresponding cell. For example, for the first (bottom left) cell, the neighbors are:</h3>
-<p>N[:,0]</p>
-<h3 id="src.gpytoolbox.grid_neighbors.grid_neighbors--which-should-be-two-values-of-1-out-of-bounds-one-value-of-1-the-cell-to-the-right-and-one-value-of-85-the-cell-above">which should be two values of -1 (out of bounds), one value of 1 (the cell to the right), and one value of 85 (the cell above).</h3>
+    <pre><code class="language-python">gs = np.array([90,85])
+# This should be *only* the 8 neighbors at a distance of h
+N = gpytoolbox.grid_neighbors(gs, include_diagonals=False, include_self=False,order=1)
+# Now in each column of N, we have the indices of the four non-diagonal neighbors of the corresponding cell. For example, for the first (bottom left) cell, the neighbors are:
+N[:,0]
+# which should be two values of -1 (out of bounds), one value of 1 (the cell to the right), and one value of 85 (the cell above).
+</code></pre>
 
       <details class="quote">
         <summary>Source code in <code>src/gpytoolbox/grid_neighbors.py</code></summary>
@@ -1831,7 +1778,9 @@
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
-<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">grid_neighbors</span><span class="p">(</span><span class="n">gs</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">include_diagonals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_self</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">output_unique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">grid_neighbors</span><span class="p">(</span><span class="n">gs</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">include_diagonals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">include_self</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">output_unique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the n-th order neighbors of each cell in a grid.</span>
 
@@ -1856,12 +1805,14 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+<span class="sd">    ```python</span>
 <span class="sd">    gs = np.array([90,85])</span>
 <span class="sd">    # This should be *only* the 8 neighbors at a distance of h</span>
 <span class="sd">    N = gpytoolbox.grid_neighbors(gs, include_diagonals=False, include_self=False,order=1)</span>
 <span class="sd">    # Now in each column of N, we have the indices of the four non-diagonal neighbors of the corresponding cell. For example, for the first (bottom left) cell, the neighbors are:</span>
 <span class="sd">    N[:,0]</span>
 <span class="sd">    # which should be two values of -1 (out of bounds), one value of 1 (the cell to the right), and one value of 85 (the cell above).</span>
+<span class="sd">    ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="n">gs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">gs</span><span class="p">))</span> <span class="c1"># all cell indices</span>
