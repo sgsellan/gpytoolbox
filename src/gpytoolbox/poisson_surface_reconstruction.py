@@ -58,6 +58,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
 
     Examples
     --------
+    ```python
     from scipy.stats import norm
     import matplotlib.pyplot as plt
     from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -116,6 +117,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
     cax = divider.append_axes('right', size='5%', pad=0.05)
     fig.colorbar(m2, cax=cax, orientation='vertical')
     plt.show()
+    ```
     """
 
     

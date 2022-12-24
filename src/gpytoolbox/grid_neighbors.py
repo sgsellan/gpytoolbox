@@ -26,12 +26,14 @@ def grid_neighbors(gs,order=1,include_diagonals=False,include_self=False,output_
     
     Examples
     --------
+    ```python
     gs = np.array([90,85])
     # This should be *only* the 8 neighbors at a distance of h
     N = gpytoolbox.grid_neighbors(gs, include_diagonals=False, include_self=False,order=1)
     # Now in each column of N, we have the indices of the four non-diagonal neighbors of the corresponding cell. For example, for the first (bottom left) cell, the neighbors are:
     N[:,0]
     # which should be two values of -1 (out of bounds), one value of 1 (the cell to the right), and one value of 85 (the cell above).
+    ```
     """
     dim = gs.shape[0]
     cells = np.arange(np.prod(gs)) # all cell indices

@@ -30,12 +30,14 @@ def grid_laplacian_eigenfunctions(num_modes,gs,l):
 
     Examples
     --------
+    ```python
     import numpy as np
     import gpytoolbox
     gs = np.array([10,10])
     l = np.array([1.0,1.0])
     num_modes = 10
     vecs, vals = gpytoolbox.grid_laplacian_eigenfunctions(num_modes,gs,l)
+    ```
     """
 
     # There's probably some refactoring that could be done on this code so that the dimensionality is not hard-coded.
