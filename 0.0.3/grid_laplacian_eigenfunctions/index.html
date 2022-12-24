@@ -1688,12 +1688,13 @@
 <p>This function uses the formula in "Eigenvalues of the Laplacian with Neumann Boundary Conditions" by H. P. W. Gottlieb, 1985. Right now, this function only works for 3D and 2D grids. It should be easy/trivial to extend to higher dimensions.</p>
 
 <p><strong>Examples:</strong></p>
-    <p>import numpy as np
+    <pre><code class="language-python">import numpy as np
 import gpytoolbox
 gs = np.array([10,10])
 l = np.array([1.0,1.0])
 num_modes = 10
-vecs, vals = gpytoolbox.grid_laplacian_eigenfunctions(num_modes,gs,l)</p>
+vecs, vals = gpytoolbox.grid_laplacian_eigenfunctions(num_modes,gs,l)
+</code></pre>
 
       <details class="quote">
         <summary>Source code in <code>src/gpytoolbox/grid_laplacian_eigenfunctions.py</code></summary>
@@ -1805,7 +1806,9 @@ vecs, vals = gpytoolbox.grid_laplacian_eigenfunctions(num_modes,gs,l)</p>
 <span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span>
-<span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">grid_laplacian_eigenfunctions</span><span class="p">(</span><span class="n">num_modes</span><span class="p">,</span><span class="n">gs</span><span class="p">,</span><span class="n">l</span><span class="p">):</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">grid_laplacian_eigenfunctions</span><span class="p">(</span><span class="n">num_modes</span><span class="p">,</span><span class="n">gs</span><span class="p">,</span><span class="n">l</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the eigenfunctions and eigenvalues of the Laplacian on a regular grid with Neumann boundary conditions.</span>
 
@@ -1833,12 +1836,14 @@ vecs, vals = gpytoolbox.grid_laplacian_eigenfunctions(num_modes,gs,l)</p>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+<span class="sd">    ```python</span>
 <span class="sd">    import numpy as np</span>
 <span class="sd">    import gpytoolbox</span>
 <span class="sd">    gs = np.array([10,10])</span>
 <span class="sd">    l = np.array([1.0,1.0])</span>
 <span class="sd">    num_modes = 10</span>
 <span class="sd">    vecs, vals = gpytoolbox.grid_laplacian_eigenfunctions(num_modes,gs,l)</span>
+<span class="sd">    ```</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># There&#39;s probably some refactoring that could be done on this code so that the dimensionality is not hard-coded.</span>
