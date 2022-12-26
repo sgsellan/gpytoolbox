@@ -23,9 +23,9 @@ def decimate(V,F,face_ratio=0.1,num_faces=None):
     G : numpy int array
         Matrix of triangle indices
     I : numpy int array
-        Vector of indeces into F of the original faces in G
+        Vector of indices into F of the original faces in G
     J : numpy int array
-        Vector of indeces into V of the original vertices in U
+        Vector of indices into V of the original vertices in U
 
     See Also
     --------
