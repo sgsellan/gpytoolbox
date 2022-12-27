@@ -9,7 +9,7 @@ from .compactly_supported_normal import compactly_supported_normal
 from .grid_neighbors import grid_neighbors
 from .grid_laplacian_eigenfunctions import grid_laplacian_eigenfunctions
 
-def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=False,sigma_n=0.0,sigma=0.05,solve_subspace_dim=0,verbose=False,prior_fun=None):
+def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=False,sigma_n=0.0,sigma=0.05,solve_subspace_dim=0,verbose=False,prior_fun=None,diagonal_probing=False):
     """
     Runs Poisson Surface Reconstruction from a set of points and normals to output a scalar field that takes negative values inside the surface and positive values outside the surface.
     
@@ -59,10 +59,15 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
     Examples
     --------
     ```python
+    import numpy as np
     from scipy.stats import norm
     import matplotlib.pyplot as plt
     from mpl_toolkits.axes_grid1 import make_axes_locatable
-    from gpytoolbox.poisson_surface_reconstruction import poisson_surface_reconstruction, random_points_on_polyline, png2poly
+    # Remove this with pip
+    import sys
+    import os
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+    import gpytoolbox
     # Generate random points on a polyline
     poly = gpytoolbox.png2poly("test/unit_tests_data/illustrator.png")[0]
     poly = poly - np.min(poly)
@@ -71,8 +76,8 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
     poly = 3*poly - 1.5
     num_samples = 40
     np.random.seed(2)
-    EC = edge_indices(poly.shape[0],closed=False)
-    P,I,_ = random_points_on_mesh(poly, EC, num_samples, return_indices=True)
+    EC = gpytoolbox.edge_indices(poly.shape[0],closed=False)
+    P,I,_ = gpytoolbox.random_points_on_mesh(poly, EC, num_samples, return_indices=True)
     vecs = poly[EC[:,0],:] - poly[EC[:,1],:]
     vecs /= np.linalg.norm(vecs, axis=1)[:,None]
     J = np.array([[0., -1.], [1., 0.]])
@@ -83,8 +88,8 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
     # Problem parameters
     gs = np.array([50,50])
     # Call to PSR
-    scalar_mean, scalar_var, grid_vertices = gpytoolbox.poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=0,verbose=True)
-    
+    scalar_mean, scalar_var, grid_vertices = gpytoolbox.poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=0,verbose=True,stochastic=True)
+
     # The probability of each grid vertex being inside the shape 
     prob_out = 1 - norm.cdf(scalar_mean,0,np.sqrt(scalar_var))
 
@@ -348,10 +353,35 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
             if verbose:
                 print("Solving for covariance directly")
 
-            lu = splu(L+eps*eye(L.shape[0]))
-            D = lu.solve(cov_divergence.toarray())
-            cov_scalar = lu.solve(D.transpose())
-            var_scalar = np.diag(cov_scalar)
+            # This solves the system L cov_scalar L^T = cov_divergence
+            if diagonal_probing:
+                # We can estimate the diagonal. We need the function
+                lu = splu(L+eps*eye(L.shape[0]))
+                lu_t = splu(L.transpose()+eps*eye(L.shape[0]))
+                def x_hadamard_Ax(x):
+                    # This does x.*( cov_scalar @ x)
+                    # So we want to compute cov_scalar @ x
+                    # L cov_scalar @ x = cov_divergence L^-1^T @ x
+                    # cov_scalar @ x = L^-1 (cov_divergence (L^-T @ x))
+                    Ax = lu.solve(cov_divergence @ lu_t.solve(x))
+                    return np.multiply(x,Ax)
+                def estimate_diagonal(x_hadamard_Ax, num_samples, size):
+                    diag_estimated = np.zeros(size)
+                    x_big = np.random.normal(size=(size,num_samples))
+                    # Rademacher
+                    x_big = np.sign(x_big)
+                    # Normalized
+                    # norm = np.sum(np.linalg.norm(x_big,axis=1))
+                    diag_estimated = np.sum(x_hadamard_Ax(x_big), axis=1)/num_samples
+                    # diag_estimated = np.sum(x_hadamard_Ax(x_big), axis=1)/norm
+                    return diag_estimated
+                var_scalar = estimate_diagonal(x_hadamard_Ax, 100000, L.shape[0])
+            else:
+                lu = splu(L+eps*eye(L.shape[0]))
+                D = lu.solve(cov_divergence.toarray())
+                cov_scalar = lu.solve(D.transpose())
+                var_scalar = np.diag(cov_scalar)
+
 
         # Shift values of covariance (Q: is a constant shift enough?)
         var_scalar = var_scalar - np.min(var_scalar) + sigma_n*sigma_n + eps
