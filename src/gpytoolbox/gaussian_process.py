@@ -44,7 +44,23 @@ def gaussian_process(X_train,y_train,X_test,kernel=None,X_induced=None,grad_y_tr
 
     Examples
     --------
-    TODO
+    ```python
+    import numpy as np
+    import gpytoolbox
+    # Choose a simple function
+    def true_fun(x):
+        return 10*x
+    def true_grad(x):
+        return 10 + 0*x
+    # Trye to fit it with a gaussian process to a limited training set
+    x_train = np.linspace(0,1,5)
+    y_train = true_fun(x_train)
+    y_grad = true_grad(x_train)
+    # Test points
+    x_test = np.linspace(0,1,140)
+    # Call to Gaussian Process
+    y_test_mean,y_test_cov = gpytoolbox.gaussian_process(np.reshape(x_train,(-1,1)),y_train,np.reshape(x_test,(-1,1)),grad_y_train=y_grad,verbose=True)
+    ```
     """
     return gaussian_process_precompute(X_train,y_train,X_induced=X_induced,grad_y_train=grad_y_train,kernel=kernel,verbose=verbose,sigma_n=sigma_n).predict(X_test)
 
