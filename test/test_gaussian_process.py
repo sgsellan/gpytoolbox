@@ -124,6 +124,59 @@ class TestGaussianProcess(unittest.TestCase):
         # plt.imshow(np.reshape(mean,(-1,gs)))
         # plt.show()
             
+    def test_with_gradients(self):
+        def true_fun(x):
+            return 10*x
+        def true_grad(x):
+            return 10 + 0*x
+
+        # Test something
+        x_train = np.linspace(0,1,20)
+        y_train = true_fun(x_train)
+        y_grad = true_grad(x_train)
+        # gp.train(np.reshape(x_train,(-1,1)),y_train)
+
+        x_test = np.linspace(0,1,140)
+        y_test_mean,y_test_cov = gpytoolbox.gaussian_process(np.reshape(x_train,(-1,1)),y_train,np.reshape(x_test,(-1,1)),grad_y_train=y_grad)
+        # print(y_test_cov)
+        y_test_mean_plot = y_test_mean[0:len(x_test)]
+        y_test_cov_plot = np.asarray(y_test_cov).diagonal()[0:len(x_test)]
+        # plt.plot(x_test,true_fun(x_test))
+        # plt.plot(x_test,y_test_mean_plot)
+        # plt.show()
+        self.assertTrue(np.isclose(y_test_mean_plot - true_fun(x_test),0,atol=0.01).all())
+    def test_precomputation(self):
+        def true_fun(x):
+            return 10*x
+        def true_grad(x):
+            return 10 + 0*x
+
+        # Test something
+        x_train = np.linspace(0,1,20)
+        y_train = true_fun(x_train)
+        y_grad = true_grad(x_train)
+        # gp.train(np.reshape(x_train,(-1,1)),y_train)
+
+        x_test = np.linspace(0,1,140)
+        y_test_mean,y_test_cov = gpytoolbox.gaussian_process(np.reshape(x_train,(-1,1)),y_train,np.reshape(x_test,(-1,1)),grad_y_train=y_grad)
+        y_test_mean_2, y_test_cov_2 = gpytoolbox.gaussian_process_precompute(np.reshape(x_train,(-1,1)),y_train,grad_y_train=y_grad).predict(np.reshape(x_test,(-1,1)))
+        self.assertTrue(np.isclose(y_test_mean_2 - y_test_mean,0,atol=0.01).all())
+        self.assertTrue(np.isclose(y_test_cov - y_test_cov_2,0,atol=0.01).all())
+
+    def test_verbose(self):
+        def true_fun(x):
+            return 10*x
+        def true_grad(x):
+            return 10 + 0*x
+
+        # Test something
+        x_train = np.linspace(0,1,20)
+        y_train = true_fun(x_train)
+        y_grad = true_grad(x_train)
+        # gp.train(np.reshape(x_train,(-1,1)),y_train)
+
+        x_test = np.linspace(0,1,140)
+        y_test_mean,y_test_cov = gpytoolbox.gaussian_process(np.reshape(x_train,(-1,1)),y_train,np.reshape(x_test,(-1,1)),grad_y_train=y_grad,verbose=True)
 
 if __name__ == '__main__':
     unittest.main()

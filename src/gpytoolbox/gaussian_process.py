@@ -114,11 +114,11 @@ class gaussian_process_precompute:
             Kmn = cov_matrix_from_function(self.kernel,X_induced,X_train,use_gradients=self.use_gradients)
             self.SIGMA_INV = self.Kmm + ((1/(self.sigma_n**2.0))*Kmn*Kmn.T)
            
-            self.sigma_LU = splu(self.SIGMA_INV)
+            self.sigma_LU = splu(csc_matrix(self.SIGMA_INV))
             # print((Kmn*y_train).shape)
             
             self.mu_m = (1/(self.sigma_n**2.0))*self.Kmm*cg(self.SIGMA_INV,Kmn*self.y_train)[0]
-            self.LU = splu(self.Kmm)
+            self.LU = splu(csc_matrix(self.Kmm))
             
             
             self.Kmm_inv_mu_m,_ = cg(self.Kmm,self.mu_m)
@@ -129,7 +129,7 @@ class gaussian_process_precompute:
                 print("--------- Training Gaussian Process with", X_train.shape[0],"data points. ---------")
             K3 = cov_matrix_from_function(self.kernel,X_train,X_train,sparse=True,use_gradients=self.use_gradients)           
             self.inducing_points = False
-            self.LU = splu(K3 + (self.sigma_n**2.0)*eye(K3.shape[0]))
+            self.LU = splu(csc_matrix(K3 + (self.sigma_n**2.0)*eye(K3.shape[0])))
             # plt.spy(K3)
             # plt.show()
             # self.K3_inv_y = self.LU.solve(self.y_train)
@@ -164,6 +164,7 @@ class gaussian_process_precompute:
         
         self.num_test = X_test.shape[0]
         if self.verbose:
+            import time
             t_test_0 = time.time()
             print("Building K1 matrix...")
             t0 = time.time()
@@ -223,7 +224,7 @@ def cov_matrix_from_function(ker,X1,X2,use_gradients=False,sparse=True):
             for j in range(dim+1):
                 # this should be the derivative of ker wrt the i-1 dimension of x1 and then the j-1 dimension of x2 (if -1, no derivative)
                 def fun(x1,x2):
-                    return ker(x1,x2,derivative=(i-1,j-1))
+                    return ker(x1,x2,derivatives=(i-1,j-1))
                 # fun = ker.partial_derivative(i-1,j-1)
                 mats.append(matrix_from_function(fun,X1,X2,sparse=sparse))
             big_mats.append(hstack(mats))
