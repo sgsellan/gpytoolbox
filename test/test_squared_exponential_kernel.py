@@ -89,3 +89,8 @@ class TestSquaredExponentialKernel(unittest.TestCase):
         # Note the minus sign!
         fun_der_xy = -gpytoolbox.squared_exponential_kernel(Vxy,np.zeros(Vxy.shape),derivatives=(1,0))
         self.assertTrue((np.abs(fun_der_xy-fd_xy)<0.001).all())
+
+
+if __name__ == '__main__':
+    unittest.main()
+

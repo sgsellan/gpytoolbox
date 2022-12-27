@@ -36,7 +36,7 @@ def squared_exponential_kernel(X1,X2,length=0.2,scale=1,derivatives=(-1,-1)):
     x_train = np.linspace(0,1,20)
     y_train = 2*x_train
     x_test = np.linspace(0,1,120)
-    y_test = gpytoolbox.gaussian_process(X_train,y_train,x_test,kernel=ker_fun)
+    y_test_mean, y_test_cov = gpytoolbox.gaussian_process(X_train,y_train,x_test,kernel=ker_fun)
     """
     indi = derivatives[0]
     indj = derivatives[1]
