@@ -83,3 +83,4 @@ from .grid_laplacian_eigenfunctions import grid_laplacian_eigenfunctions
 from .squared_exponential_kernel import squared_exponential_kernel
 from .gaussian_process import gaussian_process
 from .gaussian_process import gaussian_process_precompute
+from .remove_unreferenced import remove_unreferenced
