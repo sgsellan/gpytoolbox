@@ -16,3 +16,7 @@ not already in this library, is remotely related to geometry processing, and you
 have used or used in any of your past projects, we encourage you to submit it
 *as-is* in a Pull Request. We will gladly credit you in the individual function
 as well as on this home page.
+
+Note that the code that you contribute will be licensed under the MIT license.
+Everybody will be able to use this code as long as they credit gpytoolbox
+(and not you individually).
