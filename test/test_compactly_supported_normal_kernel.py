@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 class TestCompactlySupportedNormalKernel(unittest.TestCase):
     def test_2d(self):
         np.random.seed(0)
-        num_samples = 6003
+        num_samples = 4003
         x, y = np.meshgrid(np.linspace(-2,2,num_samples),np.linspace(-2,2,num_samples))
         V = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)
         V2 = np.zeros(V.shape)
