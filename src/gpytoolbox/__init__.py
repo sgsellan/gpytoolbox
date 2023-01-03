@@ -84,3 +84,4 @@ from .squared_exponential_kernel import squared_exponential_kernel
 from .gaussian_process import gaussian_process
 from .gaussian_process import gaussian_process_precompute
 from .remove_unreferenced import remove_unreferenced
+from .compactly_supported_normal_kernel import compactly_supported_normal_kernel
