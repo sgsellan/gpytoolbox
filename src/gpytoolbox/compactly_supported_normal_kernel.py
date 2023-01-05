@@ -10,8 +10,8 @@ def compactly_supported_normal_kernel(X1,X2,length=0.2,scale=1,derivatives=(-1,-
         The first set of points to evaluate the kernel at.
     X2 : (num_points,dim) numpy array
         The second set of points to evaluate the kernel at.
-    length : float
-        The scalar length scale of the kernel.
+    length : float or (num_points,) numpy array
+        The scalar length scale of the kernel (can be a vector if the length is different for different points).
     scale : float
         The scalar scale factor of the kernel.
     derivatives : (2,) numpy array
@@ -30,14 +30,20 @@ def compactly_supported_normal_kernel(X1,X2,length=0.2,scale=1,derivatives=(-1,-
     r = X1 - X2
     ndim = r.ndim
     if ndim==0:
-        r = np.array([[x]])
+        r = np.array([[r]])
     if ndim==1:
         r = np.reshape(r,(-1,1))
+
+    
     # print(ndim)
     dim = r.shape[1]
+
+    if (np.isscalar(length)):
+        length = np.ones(r.shape[0])*length
+    
     
     center = np.zeros(dim)
-    r_new = (r - np.tile(center[None,:],(r.shape[0],1)))/length
+    r_new = (r - np.tile(center[None,:],(r.shape[0],1)))/np.tile(length[:,None],(1,dim))
 
     # This is the function centered at 0 and with sigma=1
     def compactly_supported_normal_kernel_centered(x,derivatives=(-1,-1)):
