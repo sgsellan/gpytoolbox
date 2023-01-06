@@ -18,7 +18,8 @@ def remesh_botsch(V,F,i=10,h=None,project=True,feature = np.array([],dtype=int))
     h : double, optional (default 0.1)
         Desired edge length (if None, will pick average edge length)
     feature : numpy int array, optional (default np.array([],dtype=int))
-        List of indeces of feature vertices that should not change (i.e., they will also be in the output) 
+        List of indices of feature vertices that should not change (i.e., they will also be in the output)
+        They will be placed at the beginning of the output array in the same order (as long as they were unique).
     project : bool, optional (default True)
         Whether to reproject the mesh to the input (otherwise, it will smooth over iterations).
 
@@ -51,6 +52,29 @@ def remesh_botsch(V,F,i=10,h=None,project=True,feature = np.array([],dtype=int))
     # print(boundary_vertices(F))
     # bV = boundary_vertices(F)
 
+    # reorder feature nodes to the beginning of the array
+    if feature.shape[0] > 0:
+        # feature indices need to be unique (including the boundary_vertices)
+        tmp, ind = np.unique(feature, return_index=True)
+        # unique feature array while preserving the order [feature, boundary_vertices]
+        feature = tmp[np.argsort(ind)]
+
+        # number of vertices
+        n_vertices = V.shape[0]
+        # 0 ... n_vertices array
+        old_order = np.arange(n_vertices)
+        # new order
+        order = np.concatenate((feature, np.delete(old_order, feature)))
+        # generate tmp array for reordering mesh indices
+        tmp = np.empty(n_vertices, dtype=order.dtype)
+        tmp[order] = old_order  # this line will fail if features are not unique
+
+        # reorder vertex coordinates
+        V = V[order]
+        # reorder faces
+        F = tmp[F]
+        # features are now 0 to n_features
+        feature = old_order[:feature.shape[0]]
 
     v,f = _remesh_botsch_cpp_impl(V,F.astype(np.int32),i,h,feature,project)
 
