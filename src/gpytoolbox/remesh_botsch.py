@@ -62,11 +62,11 @@ def remesh_botsch(V,F,i=10,h=None,project=True,feature = np.array([],dtype=int))
         # number of vertices
         n_vertices = V.shape[0]
         # 0 ... n_vertices array
-        old_order = np.arange(n_vertices)
+        old_order = np.arange(n_vertices, dtype=np.int32)
         # new order
-        order = np.concatenate((feature, np.delete(old_order, feature)))
+        order = np.concatenate((feature, np.delete(old_order, feature)), dtype=np.int32)
         # generate tmp array for reordering mesh indices
-        tmp = np.empty(n_vertices, dtype=order.dtype)
+        tmp = np.empty(n_vertices, dtype=np.int32)
         tmp[order] = old_order  # this line will fail if features are not unique
 
         # reorder vertex coordinates
