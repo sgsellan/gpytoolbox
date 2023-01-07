@@ -47,6 +47,14 @@ class TestRemeshBotsch(unittest.TestCase):
             dist = np.min(np.linalg.norm(np.tile(boundary_verts[i,:][None,:],(boundary_verts_output.shape[0],1)) - boundary_verts_output,axis=1))
             self.assertTrue(dist==0.0)
 
+    def test_with_unique_features_closed(self):
+        np.random.seed(0)
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
+        # pick random faces of the model that are fixed
+        feature = f[np.random.choice(range(f.shape[0]), v.shape[0]//1000, replace=False)].flatten()
+        u,g = gpytoolbox.remesh_botsch(v,f.astype(np.int32),20,0.01,True,feature=feature)
+        self.assertTrue(np.allclose(v[feature], u[:feature.shape[0]]))
+
     def test_with_unique_features(self):
         np.random.seed(0)
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny.obj")
