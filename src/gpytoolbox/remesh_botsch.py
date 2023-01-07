@@ -30,6 +30,11 @@ def remesh_botsch(V,F,i=10,h=None,project=True,feature = np.array([],dtype=int))
     G : numpy int array
         Matrix of output triangle mesh indices into U
 
+
+    Notes
+    -----
+    The ordering of the output can be somewhat confusing. The output vertices are ordered as follows: [feature vertices, boundary vertices, other vertices]. If a vertex is both a feature and boundary one, it is treated as a feature vertex for the purposes of the ordering. For a more in-depth explanation see [PR #45](https://github.com/sgsellan/gpytoolbox/pull/45).
+
     Examples
     --------
     ```python
