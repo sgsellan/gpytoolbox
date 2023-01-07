@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 from gpytoolbox.boundary_vertices import boundary_vertices
 from gpytoolbox.halfedge_lengths import halfedge_lengths
 
@@ -18,8 +19,7 @@ def remesh_botsch(V,F,i=10,h=None,project=True,feature = np.array([],dtype=int))
     h : double, optional (default 0.1)
         Desired edge length (if None, will pick average edge length)
     feature : numpy int array, optional (default np.array([],dtype=int))
-        List of indices of feature vertices that should not change (i.e., they will also be in the output)
-        They will be placed at the beginning of the output array in the same order (as long as they were unique).
+        List of indices of feature vertices that should not change (i.e., they will also be in the output). They will be placed at the beginning of the output array in the same order (as long as they were unique).
     project : bool, optional (default True)
         Whether to reproject the mesh to the input (otherwise, it will smooth over iterations).
 
@@ -47,10 +47,12 @@ def remesh_botsch(V,F,i=10,h=None,project=True,feature = np.array([],dtype=int))
     if (h is None):
         h = np.mean(halfedge_lengths(V,F))
 
+    # check that feature is unique
+    if feature.shape[0] > 0:
+        if np.unique(feature).shape[0] != feature.shape[0]:
+            warnings.warn("Feature array is not unique. We will compute its unique entries and use those as an input. We recommend you do this yourself to avoid this warning.")
+
     feature = np.concatenate((feature,boundary_vertices(F)),dtype=np.int32)
-    # print(feature)
-    # print(boundary_vertices(F))
-    # bV = boundary_vertices(F)
 
     # reorder feature nodes to the beginning of the array
     if feature.shape[0] > 0:
