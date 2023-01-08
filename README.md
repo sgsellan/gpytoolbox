@@ -137,6 +137,10 @@ library. We are thankful to them:
   extremely helpful in guiding us through setting up and distributing a Python
   package. Thanks, Nick!
 
+### Contributors
+
+We would like to thank [Michael Jäger](https://github.com/EmJay276) for being our Gpytoolbox's first external contributor (see [PR #45](https://github.com/sgsellan/gpytoolbox/pull/45)).
+
 <!-- Most of the functionality in this library is python-only, and it requires no
 installation. To use it, simply clone this repository
 ```bash

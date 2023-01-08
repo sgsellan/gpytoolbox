@@ -59,7 +59,7 @@ def remesh_botsch(V,F,i=10,h=None,project=True,feature = np.array([],dtype=int))
 
     feature = np.concatenate((feature,boundary_vertices(F)),dtype=np.int32)
 
-    # reorder feature nodes to the beginning of the array
+    # reorder feature nodes to the beginning of the array (contributed by Michael Jäger)
     if feature.shape[0] > 0:
         # feature indices need to be unique (including the boundary_vertices)
         tmp, ind = np.unique(feature, return_index=True)
