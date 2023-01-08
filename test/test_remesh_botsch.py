@@ -47,6 +47,48 @@ class TestRemeshBotsch(unittest.TestCase):
             dist = np.min(np.linalg.norm(np.tile(boundary_verts[i,:][None,:],(boundary_verts_output.shape[0],1)) - boundary_verts_output,axis=1))
             self.assertTrue(dist==0.0)
 
+    def test_with_unique_features_closed(self):
+        np.random.seed(0)
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
+        # pick random faces of the model that are fixed
+        feature = f[np.random.choice(range(f.shape[0]), v.shape[0]//1000, replace=False)].flatten()
+        u,g = gpytoolbox.remesh_botsch(v,f.astype(np.int32),20,0.01,True,feature=feature)
+        self.assertTrue(np.allclose(v[feature], u[:feature.shape[0]]))
+
+    def test_with_unique_features(self):
+        np.random.seed(0)
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny.obj")
+        # pick random faces of the model that are fixed
+        feature = f[np.random.choice(range(f.shape[0]), v.shape[0]//1000, replace=False)].flatten()
+        u,g = gpytoolbox.remesh_botsch(v,f.astype(np.int32),20,0.01,True,feature=feature)
+        self.assertTrue(np.allclose(v[feature], u[:feature.shape[0]]))
+
+    def test_with_not_unique_features(self):
+        np.random.seed(8)
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny.obj")
+        # pick random faces of the model that are fixed
+        feature = f[np.random.choice(range(f.shape[0]), v.shape[0]//1000, replace=False)].flatten()
+        # check that they are not unique
+        self.assertFalse(feature.shape[0] == np.unique(feature).shape[0])
+        u,g = gpytoolbox.remesh_botsch(v,f.astype(np.int32),20,0.01,True,feature=feature)
+        # unique feature nodes
+        tmp, ind = np.unique(feature, return_index=True)
+        feature_unique = tmp[np.argsort(ind)]
+        self.assertTrue(np.allclose(v[feature_unique], u[:feature_unique.shape[0]]))
+
+    def test_with_not_unique_features_and_boundary(self):
+        np.random.seed(8)
+        v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny.obj")
+        # pick random faces of the model that are fixed and add some boundary nodes
+        feature = f[np.random.choice(range(f.shape[0]), v.shape[0]//1000, replace=False)].flatten()
+        feature = np.concatenate((feature, np.random.choice(gpytoolbox.boundary_vertices(f), 20, replace=False)))
+        # check that they are not unique
+        self.assertFalse(feature.shape[0] == np.unique(feature).shape[0])
+        u,g = gpytoolbox.remesh_botsch(v,f.astype(np.int32),20,0.01,True,feature=feature)
+        # unique feature nodes
+        tmp, ind = np.unique(feature, return_index=True)
+        feature_unique = tmp[np.argsort(ind)]
+        self.assertTrue(np.allclose(v[feature_unique], u[:feature_unique.shape[0]]))
 
     # def test_github_issue_30(self):
     #     np.random.seed(0)
