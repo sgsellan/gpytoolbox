@@ -10,8 +10,8 @@ def squared_exponential_kernel(X1,X2,length=0.2,scale=1,derivatives=(-1,-1)):
         The first set of points to evaluate the kernel at.
     X2 : (num_points,dim) numpy array
         The second set of points to evaluate the kernel at.
-    length : float
-        The scalar length scale of the kernel.
+    length : float or (num_points,) numpy array
+        The scalar length scale of the kernel (can be a vector if the length is different for different points)..
     scale : float
         The scalar scale factor of the kernel.
     derivatives : (2,) numpy array
@@ -40,16 +40,30 @@ def squared_exponential_kernel(X1,X2,length=0.2,scale=1,derivatives=(-1,-1)):
     """
     indi = derivatives[0]
     indj = derivatives[1]
+
+    r = X1 - X2
+    ndim = r.ndim
+    if ndim==0:
+        r = np.array([[r]])
+    if ndim==1:
+        r = np.reshape(r,(-1,1))
+
+    if (np.isscalar(length)):
+        length = np.ones(r.shape[0])*length
+    
+    # dim = r.shape[1]
+
     gamma = 1/(length**2.0)
     if (indi==-1 and indj==-1):
         # This is just evaluating the kernel
-        return scale*np.exp(-0.5*np.sum(((X1-X2) * (X1-X2)),axis=1)/(length**2.0))
+        # print(np.sum(((r) * (r)),axis=1)/(length**2.0))
+        return scale*np.exp(-0.5*np.sum(((r) * (r)),axis=1)/(length**2.0))
 
     elif (indj==-1 or indi==-1):
         # Derivative wrt ind
         ind = np.maximum(indi,indj)
         sgn = np.sign(indi-indj) # Positive if indi is the nonzero one, negative otherwise
-        return -sgn*gamma*(X1[:,ind] - X2[:,ind])*squared_exponential_kernel(X1,X2,length=length,scale=scale,derivatives=(-1,-1))
+        return -sgn*gamma*(r[:,ind])*squared_exponential_kernel(X1,X2,length=length,scale=scale,derivatives=(-1,-1))
     else:
         # Derivative wrt indi and indj
-        return ( (indi==indj)*gamma - gamma*gamma*(X1[:,indi] - X2[:,indi])*(X1[:,indj] - X2[:,indj]))*squared_exponential_kernel(X1,X2,length=length,scale=scale,derivatives=(-1,-1))
+        return ( (indi==indj)*gamma - gamma*gamma*(r[:,indi])*(r[:,indj] ))*squared_exponential_kernel(X1,X2,length=length,scale=scale,derivatives=(-1,-1))

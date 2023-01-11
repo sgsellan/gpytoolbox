@@ -1,6 +1,7 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
+# import matplotlib.pyplot as plt
 
 class TestSquaredExponentialKernel(unittest.TestCase):
     def test_1d(self):
@@ -89,6 +90,18 @@ class TestSquaredExponentialKernel(unittest.TestCase):
         # Note the minus sign!
         fun_der_xy = -gpytoolbox.squared_exponential_kernel(Vxy,np.zeros(Vxy.shape),derivatives=(1,0))
         self.assertTrue((np.abs(fun_der_xy-fd_xy)<0.001).all())
+
+    def test_varying_length_scale(self):
+        x1 = np.zeros(100)
+        x2 = np.ones(100)
+        lengths = np.linspace(1,1000,100)
+        vals = gpytoolbox.squared_exponential_kernel(x1,x2,scale=1,length=lengths)
+        # Must be positive
+        self.assertTrue(np.all(vals>=0))
+        # Must decrease monotonically
+        # plt.plot(vals)
+        # plt.show()
+        self.assertTrue(np.all(vals[:-1] <= vals[1:]))
 
 
 if __name__ == '__main__':
