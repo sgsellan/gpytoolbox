@@ -24,8 +24,11 @@ def cotangent_weights(V,F):
 
     Examples
     --------
-    TODO
-    
+    ```python
+    # Mesh in V,F
+    from gpytoolbox import cotangent_laplacian
+    C = cotangent_weights(V,F)
+    ```
     """
 
     l_sq = halfedge_lengths_squared(V,F)

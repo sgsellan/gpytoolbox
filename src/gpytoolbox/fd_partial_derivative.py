@@ -32,7 +32,13 @@ def fd_partial_derivative(gs,h,direction):
 
     Examples
     --------
-    TO-DO
+    ```python
+    gs = np.array([19,15])
+    h = 1.0/(gs-1)
+    # Compute partial derivatives in the x dimension
+    from gpytoolbox import fd_partial_derivative
+    G = fd_partial_derivative(gs=gs,h=h,0)
+    ```
     """
     # Given a regular finite-difference grid described by the number of nodes 
     # on each side, the grid spacing and a desired direction, construct a sparse matrix 

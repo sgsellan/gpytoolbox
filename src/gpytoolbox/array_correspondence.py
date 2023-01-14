@@ -22,8 +22,14 @@ def array_correspondence(A,B,axis=None):
 
     Examples
     --------
-    TODO
-    
+    ```python
+    from gpytoolbox import array_correspondence
+    # Choose two matrices
+    A = np.array([[1,2],[1,3],[1,4],[2,0],[3,2],[4,3],[0,1],[2,1],[3,1]])
+    B = np.array([[2,1],[3,1],[1,4],[1,4],[3,4],[1,0],[1,2],[1,3]])
+    # This returns the indices in B of the rows of A that are in B, with -1 entries for those rows in A that are not anywhere in B
+    f = array_correspondence(A,B,axis=1)
+    ```
     """
 
     if axis is None:

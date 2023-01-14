@@ -33,7 +33,11 @@ def grad(V,F=None):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Mesh in V,F
+    from gpytoolbox import grad
+    G = grad(V,F)
+    ```
     """
     # Builds the finite elements gradient matrix using a piecewise linear hat functions basis.
     #

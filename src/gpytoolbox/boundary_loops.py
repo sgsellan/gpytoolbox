@@ -23,8 +23,11 @@ def boundary_loops(f, allow_wrong_orientations=True):
 
     Examples
     --------
-    TODO
-    
+    ```python
+    from gpytoolbox import read_mesh, boundary_loops
+    v,f = read_mesh("test/unit_tests_data/bunny_oded.obj")
+    loops = boundary_loops(f)
+    ```
     """
 
     assert f.shape[0] > 0

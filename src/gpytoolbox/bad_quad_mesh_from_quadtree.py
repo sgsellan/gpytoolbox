@@ -35,7 +35,19 @@ def bad_quad_mesh_from_quadtree(C,W,CH):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Build a quadtree from a random set of points
+    P = 2*np.random.rand(100,2) - 1
+    C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=8,min_depth=2,vmin=np.array([-1,-1]),vmax=np.array([1,1]))
+    # Make it into a mesh
+    V,Q,_ = bad_quad_mesh_from_quadtree(C,W,CH)
+    # V is a list of vertices and Q is a list of quad indices into V
+    # Plotting this with polyscope
+    import polyscope as ps
+    ps.init()
+    ps.register_surface_mesh(V,Q)
+    ps.show()
+    ```
     """
     dim = C.shape[1]
     is_child = (CH[:,1]==-1)

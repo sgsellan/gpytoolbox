@@ -22,7 +22,12 @@ def doublearea_intrinsic(l_sq,F):
 
     Examples
     --------
-    TO-DO
+     ```python
+    # Mesh in V,F
+    from gpytoolbox import halfedge_lengths_squared, doublearea_intrinsic
+    l = halfedge_lengths_squared(V,F)
+    L = doublearea_intrinsic(l_sq,F)
+    ```
     """
 
     assert F.shape == l_sq.shape

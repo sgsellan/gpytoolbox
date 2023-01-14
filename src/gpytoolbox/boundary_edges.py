@@ -17,8 +17,11 @@ def boundary_edges(F):
 
     Examples
     --------
-    TODO
-    
+    ```python
+    from gpytoolbox import read_mesh, boundary_edges
+    v,f = read_mesh("test/unit_tests_data/bunny_oded.obj")
+    be = boundary_edges(f)
+    ```
     """
 
     E,b = edges(F, return_boundary_indices=True)

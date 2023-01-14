@@ -28,7 +28,11 @@ def doublearea(V,F=None,signed=False):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Mesh in V,F
+    from gpytoolbox import doublearea
+    dblA = doublearea(V,F)
+    ```
     """
 
     # if you didn't pass an F then this is a ordered polyline

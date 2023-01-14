@@ -19,8 +19,11 @@ def cotangent_laplacian(V,F):
 
     Examples
     --------
-    TODO
-    
+    ```python
+    # Mesh in V,F
+    from gpytoolbox import cotangent_laplacian
+    L = cotangent_laplacian(V,F)
+    ```
     """
 
     l_sq = halfedge_lengths_squared(V,F)

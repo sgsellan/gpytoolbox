@@ -37,7 +37,11 @@ def decimate(V,F,face_ratio=0.1,num_faces=None):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Mesh in v,f
+    u,g,i,j = gpytoolbox.decimate(v,f,num_faces=100)
+    # New mesh in u,g
+    ```
     """
 
     # Try to import C++ binding
