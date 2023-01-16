@@ -21,7 +21,17 @@ def volume(V,T):
 
     Examples
     --------
-    TODO
+    ```python
+    v = np.array([[0.0,0.0,0.0],
+                    [1.0,0.0,0.0],
+                    [0.0,1.0,0.0],
+                    [0.0,0.0,1.0]
+                    ])
+    # This tet is properly oriented
+    t = np.array([[0,1,2,3]])
+    vols = gpytoolbox.volume(v,t)
+    # This volume should be 1/6
+    ```
     """
 
     

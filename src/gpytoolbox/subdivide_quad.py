@@ -46,7 +46,19 @@ def subdivide_quad(ind,C1,W1,CH1,PAR1,D1,A1,graded=True):
 
     Examples
     --------
-    TODO
+    ```python
+    th = 2*np.pi*np.random.rand(200,1)
+    # Circle
+    P = 0.5*np.concatenate((np.cos(th),np.sin(th)),axis=1)
+    # Initialize quadtree
+    C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=False,max_depth=7,min_depth=4,vmin=np.array([-1,-1]),vmax=np.array([1,1]))
+    # Get leaf indices
+    leaf_ind = gpytoolbox.quadtree_children(CH)
+    # Let's choose an index:
+    ind = leaf_ind[20]
+    # And let's subdivide it
+    C1,W1,CH1,PAR1,D1,A1 = gpytoolbox.subdivide_quad(ind,C,W,CH,PAR,D,A,graded=False)
+    ```
     """
 
     # If quad A lays to the <lookup[:,1]> of quad B, then children

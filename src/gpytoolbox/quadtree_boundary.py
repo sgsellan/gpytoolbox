@@ -27,7 +27,14 @@ def quadtree_boundary(CH,A):
 
     Examples
     --------
-    TODO 
+    ```python
+    # Create a random point cloud
+    P = 2*np.random.rand(100,2) - 1
+    # Initialize the quadtree
+    C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=8)
+    # Get the boundary
+    bd_children, bd_all = gpytoolbox.quadtree_boundary(CH,A)
+    ``` 
     """
     # Returns indeces of cells that fall on the boundary (defined as cells that
     # have no neighbor in at least one direction)

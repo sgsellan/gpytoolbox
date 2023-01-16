@@ -27,7 +27,17 @@ def upper_envelope(V,T,D):
 
     Examples
     --------
-    TODO
+    ```python
+    # Build a tet mesh
+    V,T  = gpytoolbox.regular_cube_mesh(20)
+    # Build a soft label for each vertex
+    l = np.zeros((V.shape[0],2))
+    l[:,0] = np.linalg.norm(V,axis=1)
+    l[:,1] = 1.0 - l[:,0]
+    # Slice the mesh
+    U,G,LT = gpytoolbox.upper_envelope(V,T,l)
+    # U is the sliced mesh
+    ```
     """
 
     try:

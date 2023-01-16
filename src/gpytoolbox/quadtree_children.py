@@ -24,7 +24,14 @@ def quadtree_children(CH):
 
     Examples
     --------
-    TODO 
+    ```python
+    # Create a random point cloud
+    P = 2*np.random.rand(100,2) - 1
+    # Initialize the quadtree
+    C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=8)
+    # Get the children
+    children = gpytoolbox.quadtree_children(CH)
+    ```  
     """
     # Builds a list of indeces to the child cells of the quadtree
     #

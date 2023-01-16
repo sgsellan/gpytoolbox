@@ -36,7 +36,11 @@ def mesh_boolean(V1,F1,V2,F2,boolean_type='union'):
 
     Examples
     --------
-    TO-DO
+     ```python
+    # Meshes in v,f and u,g
+    vv,ff = gpytoolbox.do_meshes_intersect(v,f,u,g,boolean_type='union')
+    # vv,ff is the union of both meshes
+    ```
     """
 
     try:

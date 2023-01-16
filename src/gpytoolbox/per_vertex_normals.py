@@ -27,7 +27,11 @@ def per_vertex_normals(V,F):
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import read_mesh, per_vertex_normals
+    v,f = read_mesh("test/unit_tests_data/bunny_oded.obj")
+    n = per_vertex_normals(v,f)
+    ```
     """
 
     # First compute face normals

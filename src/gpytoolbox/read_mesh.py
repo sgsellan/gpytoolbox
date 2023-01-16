@@ -50,7 +50,10 @@ def read_mesh(file,
 
     Examples
     --------
-    TODO
+    ```python
+    # Read a mesh in OBJ format
+    v,f = gpytoolbox.read_mesh('mesh.obj')
+    ```
     
     """
 

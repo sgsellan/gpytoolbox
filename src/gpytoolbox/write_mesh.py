@@ -48,8 +48,11 @@ def write_mesh(file,
 
     Examples
     --------
-    TODO
-    
+    ```python
+    # Write a mesh in OBJ format
+    V, F = regular_square_mesh(10)
+    gpytoolbox.write_mesh('mesh.obj',V,F)
+    ```
     """
 
     # Detect format if it has not been specified

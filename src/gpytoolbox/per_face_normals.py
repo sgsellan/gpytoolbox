@@ -27,7 +27,11 @@ def per_face_normals(V,F,unit_norm=True):
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import read_mesh, per_face_normals
+    v,f = read_mesh("test/unit_tests_data/bunny_oded.obj")
+    n = per_face_normals(v,f,unit_norm=True)
+    ```
     """
     # Computes per face (optionally unit) normal vectors for a triangle mesh
     #
