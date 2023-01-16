@@ -25,9 +25,20 @@ def halfedge_lengths_squared(V,F):
     l_sq : (m,3) numpy array
         squared lengths of halfedges
 
+    See Also
+    --------
+    halfedge_lengths.
+
     Examples
     --------
-    TODO
+    ```python
+    # Sample mesh
+    v = np.array([[0.0,0.0],[1.0,0.0],[0.0,1.0]])
+    f = np.array([[0,1,2]],dtype=int)
+    # Call to halfedge_lengths_squared
+    from gpytoolbox import halfedge_lengths_squared
+    l_sq = halfedge_lengths_squared(v,f)
+    ```
     
     """
 

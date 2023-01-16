@@ -19,7 +19,13 @@ def normalize_points(v,center=None):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Generate a mesh
+    V, F = regular_square_mesh(3)
+    # By default, this mesh is centered at zero and has side length two
+    V = normalize_points(V,center=np.array([0.5,0.5]))
+    # Now it's centered at (0.5,0.5) and has side length one
+    ```
     """
     
     # Dimension:

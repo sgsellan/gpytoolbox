@@ -29,7 +29,14 @@ def offset_surface(V,F,iso,grid_size=100):
 
     Examples
     --------
-    TO-DO
+    ```python
+    from gpytoolbox import read_mesh, normalize_points, offset_surface
+    # Read a mesh
+    v,f = read_mesh("test/unit_tests_data/armadillo.obj")
+    # Normalize the mesh
+    v = normalize_points(v)
+    u1,g1 = offset_surface(v,f,iso=0.05,grid_size=100)
+    ```
     """
 
 

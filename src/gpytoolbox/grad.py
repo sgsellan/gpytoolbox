@@ -39,16 +39,6 @@ def grad(V,F=None):
     G = grad(V,F)
     ```
     """
-    # Builds the finite elements gradient matrix using a piecewise linear hat functions basis.
-    #
-    # Input:
-    #       V #V by 3 numpy array of mesh vertex positions
-    #       F #F by 3 int numpy array of face/edge vertex indeces into V
-    #
-    # Output:
-    #       G #F*dim by #V sparse gradient matrix
-
-    # if you didn't pass an F then this is a ordered polyline
     if (F is None):
         F = edge_indices(V.shape[0])
 

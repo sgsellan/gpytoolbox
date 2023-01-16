@@ -33,7 +33,16 @@ def in_quadtree(point,C,W,CH):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Random points
+    P = np.random.rand(100,2)
+    # Get quadtree for random points
+    C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=8)
+    # Query point
+    point = np.array([0.5,0.5])
+    # Find cell containing point
+    i,others = gpytoolbox.in_quadtree(point,C,W,CH)
+    ```
     """
 
     others = []
