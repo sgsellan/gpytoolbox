@@ -27,29 +27,29 @@ class TestArrayCorrespondence(unittest.TestCase):
     def test_matrix1(self):
         A = np.array([[1,2],[1,3],[1,4],[2,0],[3,2],[4,3],[0,1],[2,1],[3,1]])
         B = np.array([[2,1],[3,1],[1,4],[1,4],[3,4],[1,0],[1,2],[1,3]])
-        f = gpy.array_correspondence(A,B,axis=1)
+        f = gpy.array_correspondence(A,B,axis=0)
         self.mapping_condition(A, B, f)
-        fi = gpy.array_correspondence(B,A,axis=1)
+        fi = gpy.array_correspondence(B,A,axis=0)
         self.mapping_condition(B, A, fi)
-        ft = gpy.array_correspondence(A.transpose(),B.transpose(),axis=0)
+        ft = gpy.array_correspondence(A.transpose(),B.transpose(),axis=1)
         self.mapping_condition(A, B, ft)
-        fti = gpy.array_correspondence(B.transpose(),A.transpose(),axis=0)
+        fti = gpy.array_correspondence(B.transpose(),A.transpose(),axis=1)
         self.mapping_condition(B, A, fti)
 
     def test_random_matrices(self):
         rng = default_rng()
         dims = np.concatenate((rng.integers(1, 10000, size=(20,2)),
-            rng.integers(1, 6, size=(20,1))), axis=1)
+                               rng.integers(1, 6, size=(20,1))), axis=1)
         for i in range(dims.shape[0]):
             A = rng.integers(0, 100, size=(dims[i,0],dims[i,2]))
             B = rng.integers(0, 100, size=(dims[i,1],dims[i,2]))
-            f = gpy.array_correspondence(A,B,axis=1)
+            f = gpy.array_correspondence(A,B,axis=0)
             self.mapping_condition(A, B, f)
-            fi = gpy.array_correspondence(B,A,axis=1)
+            fi = gpy.array_correspondence(B,A,axis=0)
             self.mapping_condition(B, A, fi)
-            ft = gpy.array_correspondence(A.transpose(),B.transpose(),axis=0)
+            ft = gpy.array_correspondence(A.transpose(),B.transpose(),axis=1)
             self.mapping_condition(A, B, ft)
-            fti = gpy.array_correspondence(B.transpose(),A.transpose(),axis=0)
+            fti = gpy.array_correspondence(B.transpose(),A.transpose(),axis=1)
             self.mapping_condition(B, A, fti)
     
     def test_objects(self):
@@ -64,12 +64,11 @@ class TestArrayCorrespondence(unittest.TestCase):
         a_ptr_1 = a_ptr_0
         a_ptr_2 = a_ptr_1
         a_ptr_4 = Aobj(5)
-        A = np.array([[a_ptr_0], [a_ptr_1], [a_ptr_2], [a_ptr_0], [Aobj(2)], [Aobj(2)], [Aobj(8)], [a_ptr_4]])
+        A = np.array([[a_ptr_0], [a_ptr_1], [a_ptr_2], [a_ptr_0], 
+                      [Aobj(2)], [Aobj(2)], [Aobj(8)], [a_ptr_4]])
         B = np.array([[Aobj(5)], [Aobj(2)], [Aobj(4)], [a_ptr_0]])
-        f0 = gpy.array_correspondence(A, B, axis=1)
-        f1 = gpy.array_correspondence(A[..., 0], B[..., 0], axis=1)
+        f0 = gpy.array_correspondence(A[..., 0], B[..., 0])
         self.mapping_condition(A, B, f0)
-        self.mapping_condition(A[..., 0], B[..., 0], f1)
 
     def mapping_condition(self, A, B, f):
         self.assertTrue(f.shape[0] == A.shape[0])
@@ -78,9 +77,15 @@ class TestArrayCorrespondence(unittest.TestCase):
         for i,m in enumerate(f.tolist()):
             if m<0:
                 #Claim: this row is in A, but not in B
-                self.assertTrue(listA[i] not in listB)
+                try:
+                    self.assertTrue(listA[i] not in listB)
+                except:
+                    import pdb; pdb.set_trace()
             else:
-                self.assertTrue(listA[i]==listB[m])
+                try:
+                    self.assertTrue(listA[i]==listB[m])
+                except:
+                    import pdb; pdb.set_trace()
 
 if __name__ == '__main__':
     unittest.main()

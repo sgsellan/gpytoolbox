@@ -25,18 +25,34 @@ def array_correspondence(A,B,axis=None):
     TODO
     
     """
-    A = A.ravel()
-    B = B.ravel()
+    if axis not in (None, 0, 1):
+        raise Exception("Axis can only be None, 0, 1")
+    if len(A.shape) > 2 or len(B.shape) > 2:
+        raise Exception("Inputs A, B can only be up to 2 dimensional")
+
+    if axis == 1:
+        # np.unique behaves weird with axis=1... but we only work with
+        # up to dim 2, so always simply use the axis=0 case.
+        A = A.T
+        B = B.T
+        axis = 0
 
     # While we have to keep track of duplicates in A (to map them to the
     # correct place), we do not care about duplicates in B
-    uB,mapB = np.unique(B, return_index=True, axis=axis)
-    _,idx,inv = np.unique(np.concatenate((uB,A)),
+
+    # uB is deduplicated B. mapB allows us to map to the first occurence of each vector.
+    uB, mapB = np.unique(B, return_index=True, axis=axis)
+
+    # We concatenate uB with A. Any entries from A that get de-duped is a 'hit'.
+    _, idx, inv = np.unique(np.concatenate((uB,A), axis=axis),
         return_index=True, return_inverse=True, axis=axis)
-    imap = idx[inv[uB.size:]]
-    imap[imap>=uB.size] = -1
+
+    # We don't care about the range of the output that is about uB- that was a decoy to
+    # grill out the hits from A.
+    imap = idx[inv[uB.shape[0]:]]
+    imap[imap>=uB.shape[0]] = -1
     f = np.where(imap<0, -1, mapB[imap])
-    
+
     return f
 
 
