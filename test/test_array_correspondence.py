@@ -77,15 +77,9 @@ class TestArrayCorrespondence(unittest.TestCase):
         for i,m in enumerate(f.tolist()):
             if m<0:
                 #Claim: this row is in A, but not in B
-                try:
-                    self.assertTrue(listA[i] not in listB)
-                except:
-                    import pdb; pdb.set_trace()
+                self.assertTrue(listA[i] not in listB)
             else:
-                try:
-                    self.assertTrue(listA[i]==listB[m])
-                except:
-                    import pdb; pdb.set_trace()
+                self.assertTrue(listA[i]==listB[m])
 
 if __name__ == '__main__':
     unittest.main()
