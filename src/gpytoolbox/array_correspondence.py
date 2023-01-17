@@ -40,7 +40,7 @@ def array_correspondence(A,B,axis=None):
     ```
     
     """
-    if axis not in (None, 0, 1, -1):
+    if axis not in (None, 0, 1, -1, -2):
         raise Exception("Axis can only be None, 0, 1, -1, -2")
     if len(A.shape) > 2 or len(B.shape) > 2:
         raise Exception("Inputs A, B can only be up to 2 dimensional")
