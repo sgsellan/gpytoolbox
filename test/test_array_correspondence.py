@@ -51,6 +51,17 @@ class TestArrayCorrespondence(unittest.TestCase):
             self.mapping_condition(A, B, ft)
             fti = gpy.array_correspondence(B.transpose(),A.transpose(),axis=0)
             self.mapping_condition(B, A, fti)
+    
+    def test_objects(self):
+        class A():
+            pass
+        a_ptr_0 = A()
+        a_ptr_1 = a_ptr_0
+        a_ptr_2 = a_ptr_1
+        A = np.array([a_ptr_0, a_ptr_1, a_ptr_2, a_ptr_0, A(), A(), A()])
+        B = np.array([A(), A(), A(), a_ptr_0])
+        f = gpy.array_correspondence(A, B, axis=None)
+        self.mapping_condition(A, B, f)
 
     def mapping_condition(self, A, B, f):
         self.assertTrue(f.shape[0] == A.shape[0])
