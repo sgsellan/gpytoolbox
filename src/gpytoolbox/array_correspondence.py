@@ -56,6 +56,7 @@ def array_correspondence(A,B,axis=None):
     # correct place), we do not care about duplicates in B
 
     # uB is deduplicated B. mapB allows us to map to the first occurence of each vector.
+    # (contribution by Towaki Takikawa)
     uB, mapB = np.unique(B, return_index=True, axis=axis)
 
     # We concatenate uB with A. Any entries from A that get de-duped is a 'hit'.
