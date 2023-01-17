@@ -53,15 +53,23 @@ class TestArrayCorrespondence(unittest.TestCase):
             self.mapping_condition(B, A, fti)
     
     def test_objects(self):
-        class A():
-            pass
-        a_ptr_0 = A()
+        class Aobj():
+            def __init__(self, val=5):
+                self.val = val
+            def __eq__(self, other):
+                return self.val == other.val
+            def __lt__(self, other):
+                return self.val < other.val
+        a_ptr_0 = Aobj(9)
         a_ptr_1 = a_ptr_0
         a_ptr_2 = a_ptr_1
-        A = np.array([a_ptr_0, a_ptr_1, a_ptr_2, a_ptr_0, A(), A(), A()])
-        B = np.array([A(), A(), A(), a_ptr_0])
-        f = gpy.array_correspondence(A, B, axis=None)
-        self.mapping_condition(A, B, f)
+        a_ptr_4 = Aobj(5)
+        A = np.array([[a_ptr_0], [a_ptr_1], [a_ptr_2], [a_ptr_0], [Aobj(2)], [Aobj(2)], [Aobj(8)], [a_ptr_4]])
+        B = np.array([[Aobj(5)], [Aobj(2)], [Aobj(4)], [a_ptr_0]])
+        f0 = gpy.array_correspondence(A, B, axis=1)
+        f1 = gpy.array_correspondence(A[..., 0], B[..., 0], axis=1)
+        self.mapping_condition(A, B, f0)
+        self.mapping_condition(A[..., 0], B[..., 0], f1)
 
     def mapping_condition(self, A, B, f):
         self.assertTrue(f.shape[0] == A.shape[0])
