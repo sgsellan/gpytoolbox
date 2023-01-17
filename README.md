@@ -124,7 +124,7 @@ you will be bound by the more restrictive GPL license.
 
 ## Attribution
 
-If you use our library in your research paper, please cite us! You can use the bibtex blow below:
+If you use our library in your research paper, please cite us! You can use the bibtex block below:
 
 ```bibtex
 @misc{gpytoolbox,
