@@ -22,17 +22,32 @@ def array_correspondence(A,B,axis=None):
 
     Examples
     --------
-    TODO
+    Example with simple array correspondence:
+    ```python
+    >>> A = np.array([1,7,2,7,9,3,7,0])
+    >>> B = np.array([7,7,3,2,7,8])
+    >>> f = gpy.array_correspondence(A, B)
+    >>> f
+    array([-1,  0,  3,  0, -1,  2,  0, -1])
+    ```
+    Example with row correspondence:
+    ```python
+    >>> A = np.array([[1,3],[5,2],[1,2],[5,2]])
+    >>> B = np.array([[1,2],[6,9],[5,2]])
+    >>> f = gpy.array_correspondence(A, B, axis=0)
+    >>> f
+    array([-1,  2,  0,  2])
+    ```
     
     """
-    if axis not in (None, 0, 1):
-        raise Exception("Axis can only be None, 0, 1")
+    if axis not in (None, 0, 1, -1):
+        raise Exception("Axis can only be None, 0, 1, -1, -2")
     if len(A.shape) > 2 or len(B.shape) > 2:
         raise Exception("Inputs A, B can only be up to 2 dimensional")
 
-    if axis == 1:
-        # np.unique behaves weird with axis=1... but we only work with
-        # up to dim 2, so always simply use the axis=0 case.
+    if axis==1 or axis==-1:
+        # np.unique behaves weird with axis==1... but we only work with
+        # up to dim 2, so always simply use the axis==0 case.
         A = A.T
         B = B.T
         axis = 0
