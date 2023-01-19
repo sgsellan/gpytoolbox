@@ -2,6 +2,7 @@ import numpy as np
 from gpytoolbox.initialize_aabbtree import initialize_aabbtree
 from gpytoolbox.traverse_aabbtree import traverse_aabbtree
 from gpytoolbox.squared_distance_to_element import squared_distance_to_element
+from gpytoolbox.barycentric_coordinates import barycentric_coordinates
 
 # This defines the functions needed to do a depth-first closest point traversal
 class closest_point_traversal:
@@ -50,7 +51,7 @@ class closest_point_traversal:
 
 
 
-def squared_distance(P,V,F=None,use_aabb=False,C=None,W=None,CH=None,tri_ind=None):
+def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=None,tri_ind=None):
     """Squared distances from a set of points in space.
 
     General-purpose function which computes the squared distance from a set of points to a mesh, point cloud or polyline, in two or three dimensions. Optionally, uses an aabb tree for efficient computation.
@@ -63,8 +64,18 @@ def squared_distance(P,V,F=None,use_aabb=False,C=None,W=None,CH=None,tri_ind=Non
         Matrix of mesh/polyline/pointcloud coordinates
     F : (f,s) numpy int array (optional, default None)
         Matrix of mesh/polyline/pointcloud indices into V. If None, input is assumed to be point cloud.
+    use_cpp : bool, optional (default False)
+        Whether to use the C++ libigl implementation of the AABB tree (much faster). If True, the following parameters are ignored.
     use_aabb : bool, optional (default False)
         Whether to use an AABB tree for logarithmic computation 
+    C : numpy double array, optional (default None)
+        Matrix of AABB box centers (if None, will be computed)
+    W : numpy double array, optional (default None)
+        Matrix of AABB box widths (if None, will be computed)
+    CH : numpy int array, optional (default None)
+        Matrix of child indeces (-1 if leaf node). If None, will be computed
+    tri_indices : numpy int array, optional (default None)
+        Vector of AABB element indices (-1 if *not* leaf node). If None, will be computed
 
     Returns
     -------
@@ -74,14 +85,7 @@ def squared_distance(P,V,F=None,use_aabb=False,C=None,W=None,CH=None,tri_ind=Non
         Indices into F (or V, if F is None) of closest elements to each query point
     lmbs : (p,s) numpy double array
         Barycentric coordinates into the closest element of each closest mesh point to each query point
-    C : numpy double array, optional (default None)
-        Matrix of AABB box centers (if None, will be computed)
-    W : numpy double array, optional (default None)
-        Matrix of AABB box widths (if None, will be computed)
-    CH : numpy int array, optional (default None)
-        Matrix of child indeces (-1 if leaf node). If None, will be computed
-    tri_indices : numpy int array, optional (default None)
-        Vector of AABB element indices (-1 if *not* leaf node). If None, will be computed
+    
 
     See Also
     --------
@@ -95,14 +99,41 @@ def squared_distance(P,V,F=None,use_aabb=False,C=None,W=None,CH=None,tri_ind=Non
     # Generate query points
     P = 2*np.random.rand(num_samples,3)-4
     # Compute distances
-    sqrD_gt,ind = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True)
+    sqrD_gt,ind,b = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True)
     ```
     """
     if (F is None):
         F = np.linspace(0,V.shape[0]-1,V.shape[0],dtype=int)[:,None]
-
     dim = V.shape[1]
     P = np.reshape(P,(-1,dim),order='F')
+
+
+
+    try:
+        from gpytoolbox_bindings import _point_mesh_squared_distance_cpp_impl
+    except:
+        raise ImportError("Gpytoolbox cannot import its C++ point_mesh_squared_distance binding.")
+
+
+
+    if use_cpp:
+        squared_distances, indices, closest_points = _point_mesh_squared_distance_cpp_impl(V,F.astype(np.int32),P)
+        lmbs = np.zeros((P.shape[0],F.shape[1]))
+        if (F.shape[1] == 1):
+            lmbs = np.ones((P.shape[0],1))
+        elif(F.shape[1] == 2):
+            lmbs = np.zeros((P.shape[0],2))
+            lmbs[:,0] = np.linalg.norm(V[F[indices,0],:]-closest_points,axis=1)
+            lmbs[:,1] = np.linalg.norm(V[F[indices,1],:]-closest_points,axis=1)
+            lmbs = lmbs/np.sum(lmbs,axis=1)[:,None]
+            lmbs = np.fliplr(lmbs)
+        elif(F.shape[1] == 3):
+            lmbs = barycentric_coordinates(closest_points,V[F[indices,0],:],V[F[indices,1],:],V[F[indices,2],:])
+            # for j in range(P.shape[0]):
+            #     lmbs[j,:] = barycentric_coordinates(closest_points[j,:],V[F[indices[j],0],:],V[F[indices[j],1],:],V[F[indices[j],2],:])
+        return squared_distances, indices, lmbs
+
+    
     squared_distances = -np.ones(P.shape[0])
     indices = -np.ones(P.shape[0],dtype=int)
     lmbs = np.zeros((P.shape[0],F.shape[1]))
