@@ -11,7 +11,7 @@ class TestEdgeEdgeDistance(unittest.TestCase):
         Q1 = np.array([0.0,1.0,0.0])
         Q2 = np.array([1.0,1.0,0.0])
         dist,R1,R2 = gpytoolbox.edge_edge_distance(P1,Q1,P2,Q2)
-        print(dist,R1,R2)
+        # print(dist,R1,R2)
         self.assertTrue(np.isclose(dist,1.0))
         self.assertTrue(np.isclose(R1,np.array([0.0,0.0,0.0])).all())
         self.assertTrue(np.isclose(R2,np.array([1.0,0.0,0.0])).all())

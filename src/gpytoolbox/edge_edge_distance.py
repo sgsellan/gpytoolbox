@@ -83,7 +83,10 @@ def edge_edge_distance(P1,Q1,P2,Q2):
     # u = (t*A_dot_B - B_dot_T) / B_dot_B;
 
     denom = A_dot_A*B_dot_B - A_dot_B*A_dot_B
-    t = (A_dot_T*B_dot_B - B_dot_T*A_dot_B) / denom
+    if denom == 0:
+        t = 0
+    else:
+        t = (A_dot_T*B_dot_B - B_dot_T*A_dot_B) / denom
     # print("t: ",t)
     if((t < 0) or np.isnan(t)):
         t = 0
