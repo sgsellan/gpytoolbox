@@ -232,7 +232,7 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Add examples to docstrings.
 - Implement tet mesh version of `linear_elasticity_stiffness.py`
 - Implement tet mesh version of `linear_elasticity.py`
-- Make in_element_aabb python implementation
+- Make in_element_aabb python implementation.
 - Switch to pybind11
 - Port fracture modes code
 - Add tets to `subdivide.py`
