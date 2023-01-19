@@ -15,6 +15,16 @@ class TestEdgeEdgeDistance(unittest.TestCase):
         self.assertTrue(np.isclose(dist,1.0))
         self.assertTrue(np.isclose(R1,np.array([0.0,0.0,0.0])).all())
         self.assertTrue(np.isclose(R2,np.array([1.0,0.0,0.0])).all())
+
+        # Parallel edges
+        P1 = np.array([1.0,0.0,0.0])
+        Q1 = np.array([0.0,1.0,0.0])
+
+        P2 = np.array([0.25,-1,1.0])
+        Q2 = np.array([0.25,1,1.0])
+        dist,R1,R2 = gpytoolbox.edge_edge_distance(P1,Q1,P2,Q2)
+        # print(dist,R1,R2)
+        self.assertTrue(np.isclose(dist,1.0))
     def test_consistency_meshes(self):
         meshes = ["bunny_oded.obj", "armadillo.obj", "armadillo_with_tex_and_normal.obj", "bunny.obj", "mountain.obj"]
         np.random.seed(0)

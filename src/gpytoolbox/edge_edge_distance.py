@@ -93,7 +93,10 @@ def edge_edge_distance(P1,Q1,P2,Q2):
     elif(t > 1):
         t = 1
     # print("t: ",t)
-    u = (t*A_dot_B - B_dot_T) / B_dot_B
+    if B_dot_B == 0:
+        u = 0
+    else:
+        u = (t*A_dot_B - B_dot_T) / B_dot_B
     # print("u: ",u)
 #     if ((u <= 0) || isnan(u)) {
 
