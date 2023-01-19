@@ -32,6 +32,7 @@ from .grad import grad
 from .doublearea import doublearea
 from .doublearea_intrinsic import doublearea_intrinsic
 from .volume import volume
+from .marching_cubes import marching_cubes
 from .massmatrix import massmatrix
 from .massmatrix_intrinsic import massmatrix_intrinsic
 from .halfedges import halfedges
@@ -41,6 +42,7 @@ from .boundary_edges import boundary_edges
 from .boundary_vertices import boundary_vertices
 from .min_quad_with_fixed import min_quad_with_fixed
 from .min_quad_with_fixed import min_quad_with_fixed_precompute
+from .fast_winding_number import fast_winding_number
 from .fixed_dof_solve import fixed_dof_solve
 from .fixed_dof_solve import fixed_dof_solve_precompute
 from .halfedge_lengths import halfedge_lengths
@@ -58,6 +60,7 @@ from .per_vertex_normals import per_vertex_normals
 from .triangle_triangle_adjacency import triangle_triangle_adjacency
 from .halfedge_edge_map import halfedge_edge_map
 from .array_correspondence import array_correspondence
+from .signed_distance import signed_distance
 from .subdivide import subdivide
 from .read_mesh import read_mesh
 from .write_mesh import write_mesh
