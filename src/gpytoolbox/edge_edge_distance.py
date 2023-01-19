@@ -30,7 +30,15 @@ def edge_edge_distance(P1,Q1,P2,Q2):
 
     Examples
     --------
-    TODO
+    ```python
+    import numpy as np
+    from gpytoolbox import edge_edge_distance
+    P1 = np.array([0.0,0.0,0.0])
+    P2 = np.array([1.0,0.0,0.0])
+    Q1 = np.array([0.0,1.0,0.0])
+    Q2 = np.array([1.0,1.0,0.0])
+    dist,R1,R2 = gpytoolbox.edge_edge_distance(P1,Q1,P2,Q2)
+    ```
     """
 
     
