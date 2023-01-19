@@ -41,6 +41,7 @@ from .boundary_edges import boundary_edges
 from .boundary_vertices import boundary_vertices
 from .min_quad_with_fixed import min_quad_with_fixed
 from .min_quad_with_fixed import min_quad_with_fixed_precompute
+from .fast_winding_number import fast_winding_number
 from .fixed_dof_solve import fixed_dof_solve
 from .fixed_dof_solve import fixed_dof_solve_precompute
 from .halfedge_lengths import halfedge_lengths
