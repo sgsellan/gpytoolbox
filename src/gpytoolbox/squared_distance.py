@@ -99,7 +99,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
     # Generate query points
     P = 2*np.random.rand(num_samples,3)-4
     # Compute distances
-    sqrD_gt,ind = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True)
+    sqrD_gt,ind,b = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True)
     ```
     """
     if (F is None):

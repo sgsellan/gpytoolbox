@@ -60,6 +60,7 @@ from .per_vertex_normals import per_vertex_normals
 from .triangle_triangle_adjacency import triangle_triangle_adjacency
 from .halfedge_edge_map import halfedge_edge_map
 from .array_correspondence import array_correspondence
+from .signed_distance import signed_distance
 from .subdivide import subdivide
 from .read_mesh import read_mesh
 from .write_mesh import write_mesh
