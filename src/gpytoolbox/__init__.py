@@ -81,3 +81,4 @@ from .angle_defect_intrinsic import angle_defect_intrinsic
 from .grid_neighbors import grid_neighbors
 from .grid_laplacian_eigenfunctions import grid_laplacian_eigenfunctions
 from .remove_unreferenced import remove_unreferenced
+from .edge_edge_distance import edge_edge_distance
