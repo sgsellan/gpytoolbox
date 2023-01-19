@@ -2,7 +2,7 @@ from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
 
-class TestReadMesh(unittest.TestCase):
+class TestFastWindingNumber(unittest.TestCase):
     def test_bunny(self):
         num_points = 1000
         V,F = gpytoolbox.read_mesh("test/unit_tests_data/" + "bunny_oded.obj")

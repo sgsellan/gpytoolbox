@@ -28,7 +28,19 @@ def marching_cubes(S,GV,nx,ny,nz,isovalue=0.0):
     See Also
     --------
     lazy_cage, fast_winding_number, squared_distance
-    
+
+    Examples
+    --------
+    ```python
+    # Some scalar function fun
+    def fun(V):
+        return np.sum(V**2,axis=1)
+    # Generate a grid
+    GV,_ = gpytoolbox.regular_cube_mesh(100)
+    # Evaluate scalar function on grid
+    S = fun(GV)
+    # Compute isosurface
+    V,F = gpytoolbox.marching_cubes(S,GV,100,100,100,0.5)
     """
     # Try to import C++ binding
     try:
