@@ -108,15 +108,11 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
     P = np.reshape(P,(-1,dim),order='F')
 
 
-
-    try:
-        from gpytoolbox_bindings import _point_mesh_squared_distance_cpp_impl
-    except:
-        raise ImportError("Gpytoolbox cannot import its C++ point_mesh_squared_distance binding.")
-
-
-
     if use_cpp:
+        try:
+            from gpytoolbox_bindings import _point_mesh_squared_distance_cpp_impl
+        except:
+            raise ImportError("Gpytoolbox cannot import its C++ point_mesh_squared_distance binding.")
         squared_distances, indices, closest_points = _point_mesh_squared_distance_cpp_impl(V,F.astype(np.int32),P)
         lmbs = np.zeros((P.shape[0],F.shape[1]))
         if (F.shape[1] == 1):
