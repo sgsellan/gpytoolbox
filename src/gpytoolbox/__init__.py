@@ -86,3 +86,4 @@ from .grid_laplacian_eigenfunctions import grid_laplacian_eigenfunctions
 from .remove_unreferenced import remove_unreferenced
 from .edge_edge_distance import edge_edge_distance
 from .triangle_triangle_distance import triangle_triangle_distance
+from .hausdorff_distance import hausdorff_distance
