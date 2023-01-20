@@ -8,18 +8,18 @@ def barycentric_coordinates(p,v1,v2,v3):
 
     Parameters
     ---------
-    p : (dim,) numpy double array
-        Query point coordinates
-    v1 : (dim,) numpy double array
-        First triangle vertex coordinate
-    v2 : (dim,) numpy double array
-        Second triangle vertex coordinate
-    v3 : (dim,) numpy double array
-        Third triangle vertex coordinate
+    p : (n,dim) numpy double array
+        Query points coordinates
+    v1 : (n,dim) numpy double array
+        First triangle vertex coordinates
+    v2 : (n,dim) numpy double array
+        Second triangle vertex coordinates
+    v3 : (n,dim) numpy double array
+        Third triangle vertex coordinates
 
     Returns
     -------
-    b : (3,) numpy double array
+    b : (n,3) numpy double array
         Vector of barycentric coordinates
 
     Examples
@@ -36,45 +36,77 @@ def barycentric_coordinates(p,v1,v2,v3):
     b = gpytoolbox.barycentric_coordinates(q,v1,v2,v3)
     ```
     """
-    p = np.ravel(p)
-    v1 = np.ravel(v1)
-    v2 = np.ravel(v2)
-    v3 = np.ravel(v3)
-    dim = p.shape[0]
+    # If p is a single point, reshape to (1,dim)
+    if (p.ndim == 1):
+        p = p[None,:]
+    # If v1 is a single point, reshape to (1,dim)
+    if (v1.ndim == 1):
+        v1 = v1[None,:]
+    # If v2 is a single point, reshape to (1,dim)
+    if (v2.ndim == 1):
+        v2 = v2[None,:]
+    # If v3 is a single point, reshape to (1,dim)
+    if (v3.ndim == 1):
+        v3 = v3[None,:]
+    
+
+    # p = np.ravel(p)
+    # v1 = np.ravel(v1)
+    # v2 = np.ravel(v2)
+    # v3 = np.ravel(v3)
+    dim = p.shape[1]
+    n = p.shape[0]
     if dim==2:
         tri1_verts = np.vstack((
-            p[None,:],
-            v2[None,:],
-            v3[None,:]
+            p,
+            v2,
+            v3
         ))
         tri2_verts = np.vstack((
-            v1[None,:],
-            p[None,:],
-            v3[None,:]
+            v1,
+            p,
+            v3
         ))
         tri3_verts = np.vstack((
-            v1[None,:],
-            v2[None,:],
-            p[None,:]
+            v1,
+            v2,
+            p
         ))
         tri_verts = np.vstack((
-            v1[None,:],
-            v2[None,:],
-            v3[None,:]
+            v1,
+            v2,
+            v3
         ))
-        a1 = np.squeeze(doublearea(tri1_verts,np.array([[0,1,2]]),signed=True))
-        a2 = np.squeeze(doublearea(tri2_verts,np.array([[0,1,2]]),signed=True))
-        a3 = np.squeeze(doublearea(tri3_verts,np.array([[0,1,2]]),signed=True))
-        a = np.squeeze(doublearea(tri_verts,np.array([[0,1,2]]),signed=True))
-        b = np.array([a1/a, a2/a, a3/a])
+        tri_inds = np.zeros((n,3),dtype=int)
+        tri_inds[:,0] = np.arange(n)
+        tri_inds[:,1] = np.arange(n)+n
+        tri_inds[:,2] = np.arange(n)+2*n
+        a1 = doublearea(tri1_verts,tri_inds,signed=True)
+        a2 = doublearea(tri2_verts,tri_inds,signed=True)
+        a3 = doublearea(tri3_verts,tri_inds,signed=True)
+        a = doublearea(tri_verts,tri_inds,signed=True)
+        b = np.zeros((n,3))
+        b[:,0] = a1/a
+        b[:,1] = a2/a
+        b[:,2] = a3/a
+
+        # a1 = np.squeeze(doublearea(tri1_verts,np.array([[0,1,2]]),signed=True))
+        # a2 = np.squeeze(doublearea(tri2_verts,np.array([[0,1,2]]),signed=True))
+        # a3 = np.squeeze(doublearea(tri3_verts,np.array([[0,1,2]]),signed=True))
+        # a = np.squeeze(doublearea(tri_verts,np.array([[0,1,2]]),signed=True))
+        # b = np.array([a1/a, a2/a, a3/a])
     elif dim==3:
         u = v2-v1
         v = v3-v1
-        n = np.cross(u,v)
+        N = np.cross(u,v,axis=1)
         w = p-v1
-        n2 = np.sum(n**2.0)
-        gamma = np.dot(np.cross(u,w),n)/n2
-        beta = np.dot(np.cross(w,v),n)/n2
+        n2 = np.sum(N**2.0,axis=1)
+        gamma = np.sum(np.multiply(np.cross(u,w,axis=1),N),axis=1)/n2
+        beta = np.sum(np.multiply(np.cross(w,v,axis=1),N),axis=1)/n2
         alpha = 1 - beta - gamma
-        b = np.array([alpha,beta,gamma])
+        b = np.zeros((n,3))
+        b[:,0] = alpha
+        b[:,1] = beta
+        b[:,2] = gamma
+        # b = np.array([alpha,beta,gamma])
     return b

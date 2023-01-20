@@ -17,6 +17,8 @@ def squared_distance_to_element(point,V,element):
     -------
     sqrD : double
         Squared minimum distance from point to mesh element
+    lmb : (s,) numpy double array
+        Barycentric coordinates into the element of the closest point to the query point
 
     See Also
     --------
@@ -75,8 +77,6 @@ def squared_distance_to_element(point,V,element):
         sqrD,nearest_point = pointTriangleDistance(tri,point)
         lmb = barycentric_coordinates(nearest_point,V[element[0],:],V[element[1],:],V[element[2],:])
     return sqrD,lmb
-    #TODO Make it return barycentric coordinates
-#    return sqrD, lmb
 
 
 

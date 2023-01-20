@@ -98,6 +98,10 @@ have used or used in any of your past projects, we encourage you to submit it
 *as-is* in a Pull Request. We will gladly credit you in the individual function
 as well as on this home page.
 
+Note that the code that you contribute will be licensed under the MIT license.
+Everybody will be able to use this code as long as they credit gpytoolbox
+(and not you individually).
+
 ## License
 
 Gpytoolbox's is released under an MIT license ([see details](/LICENSE.MIT)),
@@ -118,6 +122,19 @@ from gpytoolbox.copyleft import mesh_boolean
 ```
 you will be bound by the more restrictive GPL license.
 
+## Attribution
+
+If you use our library in your research paper, please cite us! You can use the bibtex block below:
+
+```bibtex
+@misc{gpytoolbox,
+  title = {{gptyoolbox}: A Python Geometry Processing Toolbox},
+  author = {Silvia Sell\'{a}n and Oded Stein and others},
+  note = {https://gpytoolbox.org/},
+  year = {2023}
+}
+```
+
 ## Acknowledgements
 
 Several people have, knowingly or unknowingly, greatly contributed to this
@@ -132,6 +149,12 @@ library. We are thankful to them:
   geometry visualization library [polyscope](https://polyscope.run/py/), was
   extremely helpful in guiding us through setting up and distributing a Python
   package. Thanks, Nick!
+
+### Contributors
+
+We would like to thank [Michael Jäger](https://github.com/EmJay276) for being our Gpytoolbox's first external contributor (see [PR #45](https://github.com/sgsellan/gpytoolbox/pull/45)).
+
+
 
 <!-- Most of the functionality in this library is python-only, and it requires no
 installation. To use it, simply clone this repository
@@ -209,16 +232,12 @@ I = in_element_aabb(queries,V,F) # This is a C++ binding
 - Add examples to docstrings.
 - Implement tet mesh version of `linear_elasticity_stiffness.py`
 - Implement tet mesh version of `linear_elasticity.py`
-- Improve `poisson_surface_reconstruction` and make it 3D.
-- Make in_element_aabb python implementation
-- Merge our `squared_distance` with libigl winding number and have logarithmic
-  signed distances to mesh
+- Make in_element_aabb python implementation.
 - Switch to pybind11
 - Port fracture modes code
 - Add tets to `subdivide.py`
 - `dihedral_angles.py`
 - Intrinsic Delaunay triangulation
-- Triangle-triangle distance and Hausdorff distance (with AABB)
 - Package for conda distribution
 - Add notes on every docstring mentioning libigl implementations
 - `regular_square_mesh` should support different resolutions in `x` and `y` direction (sensible default when n_y is None, to n_y=n_x)

@@ -122,6 +122,19 @@ from gpytoolbox.copyleft import mesh_boolean
 ```
 you will be bound by the more restrictive GPL license.
 
+## Attribution
+
+If you use our library in your research paper, please cite us! You can use the bibtex block below:
+
+```bibtex
+@misc{gpytoolbox,
+  title = {{gptyoolbox}: A Python Geometry Processing Toolbox},
+  author = {Silvia Sell\'{a}n and Oded Stein and others},
+  note = {https://gpytoolbox.org/},
+  year = {2023}
+}
+```
+
 ## Acknowledgements
 
 Several people have, knowingly or unknowingly, greatly contributed to this
@@ -136,3 +149,7 @@ library. We are thankful to them:
   geometry visualization library [polyscope](https://polyscope.run/py/), was
   extremely helpful in guiding us through setting up and distributing a Python
   package. Thanks, Nick!
+
+### Contributors
+
+We would like to thank [Michael Jäger](https://github.com/EmJay276) for being our Gpytoolbox's first external contributor (see [PR #45](https://github.com/sgsellan/gpytoolbox/pull/45)).

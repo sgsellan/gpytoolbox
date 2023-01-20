@@ -79,6 +79,9 @@ npe_add_module(gpytoolbox_bindings
 	src/cpp/binding_remesher_botsch.cpp
 	src/cpp/binding_write_obj.cpp
 	src/cpp/binding_read_obj.cpp
+	src/cpp/binding_fast_winding_number.cpp
+	src/cpp/binding_point_mesh_squared_distance.cpp
+	src/cpp/binding_marching_cubes.cpp
 )
 
 npe_add_module(gpytoolbox_bindings_copyleft
