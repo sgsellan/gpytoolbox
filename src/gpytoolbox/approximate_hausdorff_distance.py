@@ -37,7 +37,7 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
 
     Notes
     -----
-    This function could be extended with polyline and pointcloud functionality without much trouble.
+    If you want an **exact** Hausdorff distance, you can heavily upsample both meshes using gpytoolbox.subdivide(method='upsample'). The approximated Hausdorff distance returned by this function will converge to the exact Hausdorff distance as the number of iterations of subdivision goes to infinity.
 
     Examples
     --------
@@ -70,6 +70,7 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
     for i in range(v1.shape[0]):
         # print("Vertex %d of %d" % (i+1,v1.shape[0]))
         current_best_guess_dviB = np.Inf # current best guess for d(vi,B)
+
         queue = [0]
         while (len(queue)>0 and current_best_guess_dviB>current_best_guess_hd):
             q2 = queue.pop()
@@ -90,7 +91,10 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
                 # Compute distance between vi and bounding box of q2
                 # Distance from vi to the bounding box of q2
                 d = point_to_box_distance(v1[i,:],C2[q2,:],W2[q2,:])
-                if d < current_best_guess_dviB:
+                d_max = point_to_box_max_distance(v1[i,:],C2[q2,:],W2[q2,:])
+                # print(d_max)
+                # If d_max is smaller than the current best guess for HD, then we don't need to pursue this part of the tree
+                if ((d < current_best_guess_dviB) and (d_max > current_best_guess_hd)):
                     # Add children to queue
                     queue.append(CH2[q2,0])
                     queue.append(CH2[q2,1])
@@ -118,7 +122,9 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
                 # Compute distance between vi and bounding box of q2
                 # Distance from vi to the bounding box of q2
                 d = point_to_box_distance(v2[i,:],C1[q2,:],W1[q2,:])
-                if d < current_best_guess_dviA:
+                d_max = point_to_box_max_distance(v2[i,:],C1[q2,:],W1[q2,:])
+                # If d_max is smaller than the current best guess for HD, then we don't need to pursue this part of the tree
+                if (d < current_best_guess_dviA and d_max > current_best_guess_hd):
                     # Add children to queue
                     queue.append(CH1[q2,0])
                     queue.append(CH1[q2,1])
@@ -128,6 +134,34 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
     
     # We are done!
     return current_best_guess_hd
+
+def point_to_box_max_distance(p,C,W):
+    """
+    Compute the maximum distance between a point and a box.
+
+    Parameters
+    ----------
+    p : (3,) array
+        Point.
+    C : (3,) array
+        Center of box.
+    W : (3,) array
+        Width of box.
+
+    Returns
+    -------
+    d : float
+        Maximum distance between point and box.
+    """
+    d = 0.0
+    for i in range(3):
+        if p[i] < C[i]:
+            # Distance to oppoisite corner
+            d += (p[i]-C[i]-0.5*W[i])**2
+        elif p[i] > C[i]:
+            # Distance to oppoisite corner
+            d += (p[i]-C[i]+0.5*W[i])**2
+    return np.sqrt(d)
 
 
 def point_to_box_distance(p,C,W):
