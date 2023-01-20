@@ -15,7 +15,7 @@ class TestHausdorffDistance(unittest.TestCase):
             for j in range(3):
                 U2 = U.copy()
                 U2[:,j] += random_displacements[i]
-                dist = gpytoolbox.hausdorff_distance(V,F,U2,G)
+                dist = gpytoolbox.minimum_distance(V,F,U2,G)
                 # self.assertTrue(np.isclose(dist,0.0,atol=1e-2))
                 dist_gt = np.clip(random_displacements[i]-1,0,np.Inf)
                 # print(dist_gt,dist)
@@ -34,7 +34,7 @@ class TestHausdorffDistance(unittest.TestCase):
             tiny_mesh_v[0,:] = V[F[f,0],:] + 0.001*n[f,:]
             tiny_mesh_v[1,:] = V[F[f,1],:] + 0.001*n[f,:]
             tiny_mesh_v[2,:] = V[F[f,2],:] + 0.001*n[f,:]
-            dist = gpytoolbox.hausdorff_distance(V,F,tiny_mesh_v,tiny_mesh_f)
+            dist = gpytoolbox.minimum_distance(V,F,tiny_mesh_v,tiny_mesh_f)
             # print(dist)
             self.assertTrue(np.isclose(dist,0.001,atol=1e-2))
             
