@@ -22,13 +22,13 @@ def read_mesh(file,
     fmt : string, optional (default: None)
         The file format of the mesh to open.
         If None, try to guess the format from the file extension.
-        Supported formats: obj
+        Supported formats: obj, stl
     return_UV : bool, optional (default: None)
         Try reading texture coordinates, if they are present and the file
-        format supports it.
+        format supports it. Only supported for OBJ files.
     return_N : bool, optional (default: None)
         Try reading normal coordinates, if they are present and the file format
-        supports it.
+        supports it. Only supported for OBJ files.
     reader : string, optional (default: None)
         Which reader engine to use. None, 'C++' or 'Python'.
         If None, will use C++ if available, and else Python.
@@ -62,6 +62,8 @@ def read_mesh(file,
     # Call appropriate helper function to read mesh
     if fmt=='obj':
         V,F,UV,Ft,N,Fn = _read_obj(file,return_UV,return_N,reader)
+    elif fmt=='stl':
+        V,F = _read_stl(file)
     else:
         assert False, "Mesh format not supported."
 
@@ -189,3 +191,19 @@ def _read_obj_python(file,return_UV,return_N):
     return V,F,UV,Ft,N,Fn
 
 
+def _read_stl(file):
+    try:
+        from gpytoolbox_bindings import _read_stl_cpp_impl
+    except:
+        raise ImportError("Gpytoolbox cannot import its C++ read_stl binding, and pure python stl reading is not supported.")
+    err,V,F = _read_stl_cpp_impl(file)
+    if err != 0:
+        if err == -1:
+            raise Exception(f"The file {file} exceeds the the ASCII line limit.")
+        elif err == -2:
+            raise Exception(f"The file {file} was opened but could not be parsed.")
+        elif err == -3:
+            raise Exception(f"The file {file} seems empty.")
+        elif err == -4:
+            raise Exception(f"The file {file} does not exist.")
+    return V,F
