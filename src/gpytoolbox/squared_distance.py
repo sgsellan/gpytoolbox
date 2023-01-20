@@ -108,11 +108,6 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
     P = np.reshape(P,(-1,dim),order='F')
 
 
-
-    
-
-
-
     if use_cpp:
         try:
             from gpytoolbox_bindings import _point_mesh_squared_distance_cpp_impl
