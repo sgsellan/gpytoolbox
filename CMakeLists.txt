@@ -82,6 +82,7 @@ npe_add_module(gpytoolbox_bindings
 	src/cpp/binding_fast_winding_number.cpp
 	src/cpp/binding_point_mesh_squared_distance.cpp
 	src/cpp/binding_marching_cubes.cpp
+	src/cpp/binding_hausdorff_distance.cpp
 )
 
 npe_add_module(gpytoolbox_bindings_copyleft

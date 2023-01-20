@@ -2,7 +2,7 @@ import numpy as np
 from .context import gpytoolbox
 from .context import unittest
 
-class TestHausdorffDistance(unittest.TestCase):
+class TestMinimumDistance(unittest.TestCase):
     def test_cube(self):
         V,F = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
         # Normalize mesh

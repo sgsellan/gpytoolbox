@@ -16,8 +16,6 @@ def minimum_distance(v1,f1,v2,f2):
         Vertices of second mesh.
     f2 : (m2,3) array
         Faces of second mesh.
-    use_cpp : bool, optional (default: True)
-        Whether to use the C++ implementation of triangle_triangle_distance.
     
     Returns
     -------
