@@ -35,6 +35,6 @@ def upper_envelope(V,T,D):
     except:
         raise ImportError("Gpytoolbox cannot import its C++ binding.")
 
-    ut, gt, lt = _upper_envelope_cpp_impl(V,T.astype(np.int32),D)
+    ut, gt, lt = _upper_envelope_cpp_impl(V.astype(np.float64),T.astype(np.int32),D.astype(np.float64))
 
     return ut, gt, lt

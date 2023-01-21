@@ -48,6 +48,6 @@ def marching_cubes(S,GV,nx,ny,nz,isovalue=0.0):
     except:
         raise ImportError("Gpytoolbox cannot import its C++ marching cubes binding.")
 
-    V,F = _marching_cubes_cpp_impl(S,GV,nx,ny,nz,isovalue)
+    V,F = _marching_cubes_cpp_impl(S.astype(np.float64),GV.astype(np.float64),nx,ny,nz,isovalue)
 
     return V,F
