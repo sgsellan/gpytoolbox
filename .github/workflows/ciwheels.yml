@@ -54,6 +54,8 @@ jobs:
       CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "python -m delvewheel repair --no-mangle-all --add-path build\\temp.win-amd64-3.6\\Release;build\\temp.win-amd64-3.6\\Release\\Release;build\\temp.win-amd64-3.6\\Release\\_deps\\gmp-src\\lib;build\\temp.win-amd64-3.6\\Release\\_deps\\mpfr-src\\lib -w {dest_dir} {wheel} "
       # CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "cd C: && cmd //c tree //F"
       CIBW_SKIP: "*-win32 *-manylinux_i686"
+      MACOSX_DEPLOYMENT_TARGET: 10.15
+
 
     steps:
       - uses: actions/checkout@v3
