@@ -99,8 +99,8 @@ have used or used in any of your past projects, we encourage you to submit it
 as well as on this home page.
 
 Note that the code that you contribute will be licensed under the MIT license.
-Everybody will be able to use this code as long as they credit gpytoolbox
-(and not you individually).
+Everybody will be able to use this code as long as they credit gpytoolbox (and
+not you individually).
 
 ## License
 
@@ -124,7 +124,8 @@ you will be bound by the more restrictive GPL license.
 
 ## Attribution
 
-If you use our library in your research paper, please cite us! You can use the bibtex block below:
+If you use our library in your research paper, please cite us! You can use the
+bibtex block below:
 
 ```bibtex
 @misc{gpytoolbox,
@@ -152,7 +153,9 @@ library. We are thankful to them:
 
 ### Contributors
 
-We would like to thank [Michael Jäger](https://github.com/EmJay276) for being our Gpytoolbox's first external contributor (see [PR #45](https://github.com/sgsellan/gpytoolbox/pull/45)).
+We would like to thank [Michael Jäger](https://github.com/EmJay276) for being
+our Gpytoolbox's first external contributor (see [PR
+#45](https://github.com/sgsellan/gpytoolbox/pull/45)).
 
 
 
@@ -227,18 +230,37 @@ query = np.array([[0.1,0.1]])
 I = in_element_aabb(queries,V,F) # This is a C++ binding
 ``` -->
 
-# TO-DO
+# Basic Optimistic Roadmap
 
-- Add examples to docstrings.
-- Implement tet mesh version of `linear_elasticity_stiffness.py`
-- Implement tet mesh version of `linear_elasticity.py`
-- Make in_element_aabb python implementation.
-- Switch to pybind11
-- Port fracture modes code
-- Add tets to `subdivide.py`
-- `dihedral_angles.py`
-- Intrinsic Delaunay triangulation
-- Package for conda distribution
+Here are some things we think would be nice to incorporate to future versions of
+gpytoolbox. If there's one you are missing, feel free to submit a PR adding your item to
+this bullet list. If you want to contribute to gpytoolbox, a great way to start is by picking any of the items below that does not have an associated PR yet
+
+## We would like to have this in the next version (0.1.0)
+- Gaussian Processes implementation (merge [#39](https://github.com/sgsellan/gpytoolbox/pull/39))
+- Examples in all functions (merge [#47](https://github.com/sgsellan/gpytoolbox/pull/47))
+- Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))
+- STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))
+- PLY reader and writer using [tinyply](https://github.com/ddiakopoulos/tinyply).
+- Iterative closest point for mesh alignment
+- Basic FEM (cotangent matrix, mass matrix, linear elasticity) for tetrahedral meshes
+- ARAP for deformation and parametrization
+- Exact geodesic distances
+- Heat (approximate) geodesic distance
+- Blue noise in random mesh sampling
+- [Intrinsic](https://www.cs.cmu.edu/~kmcrane/Projects/NavigatingIntrinsicTriangulations/paper.pdf) triangulation routines
+- [Fracture mode](https://www.silviasellan.com/pdf/papers/fracture-harmonics.pdf) computation
+- Pure-python version of in_element_aabb
+- Make all grid sizes, resolutions, etc. into tuples not necessarily numpy
+  arrays
 - Add notes on every docstring mentioning libigl implementations
-- `regular_square_mesh` should support different resolutions in `x` and `y` direction (sensible default when n_y is None, to n_y=n_x)
-- Make all grid sizes, resolutions, etc. into tuples not necessarily numpy arrays
+- Basic procedural meshes (sphere, cube, torus)
+- Tetrahedral mesh implementation of `subdivide.py`
+- Dihedral angle computation
+- `regular_square_mesh` and `regular_cube_mesh` should support different resolutions in `x` and `y`
+  direction (sensible default when n_y is None, to n_y=n_x)
+- ~~Explicit cast to int32 and float64 before every C++ binding~~
+
+## Future versions
+- Switch to pybind11
+- Package for conda distribution

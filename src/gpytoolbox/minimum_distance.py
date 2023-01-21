@@ -2,9 +2,9 @@ import numpy as np
 from gpytoolbox.initialize_aabbtree import initialize_aabbtree
 from gpytoolbox.triangle_triangle_distance import triangle_triangle_distance
 
-def hausdorff_distance(v1,f1,v2,f2):
+def minimum_distance(v1,f1,v2,f2):
     """
-    Compute the minimum between two triangle meshes in 3D.
+    Compute the minimum distance between two triangle meshes in 3D.
     
     Parameters
     ----------
@@ -16,13 +16,11 @@ def hausdorff_distance(v1,f1,v2,f2):
         Vertices of second mesh.
     f2 : (m2,3) array
         Faces of second mesh.
-    use_cpp : bool, optional (default: True)
-        Whether to use the C++ implementation of triangle_triangle_distance.
     
     Returns
     -------
     d : float
-        Hausdorff distance.
+        Minimum distance value.
 
     Notes
     -----
@@ -32,16 +30,10 @@ def hausdorff_distance(v1,f1,v2,f2):
     --------
     ```python
     # meshes in v,f and u,g
-    # Haussdorff distance value
-    d = gpytoolbox.hausdorff_distance(v,f,u,g)
+    # Minimum distance value
+    d = gpytoolbox.minimum_distance(v,f,u,g)
     ```
     """
-    # if use_cpp:
-    #     try:
-    #         from gpytoolbox_bindings import _hausdorff_cpp_impl
-    #     except:
-    #         raise ImportError("Gpytoolbox cannot import its C++ point_mesh_squared_distance binding.")
-    #     return _hausdorff_cpp_impl(v1,f1,v2,f2)
         
     dim = v1.shape[1]
     # Initialize AABB tree for mesh 1

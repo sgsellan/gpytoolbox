@@ -98,7 +98,7 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
             transformations.append(this_transformation)
 
     transformations_big_mat = np.vstack(transformations)
-    v,f = _swept_volume_impl(V,F.astype(np.int32),transformations_big_mat,eps,num_seeds,verbose)
+    v,f = _swept_volume_impl(V.astype(np.float64),F.astype(np.int32),transformations_big_mat.astype(np.float64),eps,num_seeds,verbose)
 
     if(num_faces is not None):
         v,f,_,_ = decimate(v,f,num_faces=num_faces)
