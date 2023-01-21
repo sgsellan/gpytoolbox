@@ -113,7 +113,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
             from gpytoolbox_bindings import _point_mesh_squared_distance_cpp_impl
         except:
             raise ImportError("Gpytoolbox cannot import its C++ point_mesh_squared_distance binding.")
-        squared_distances, indices, closest_points = _point_mesh_squared_distance_cpp_impl(V,F.astype(np.int32),P)
+        squared_distances, indices, closest_points = _point_mesh_squared_distance_cpp_impl(V.astype(np.float64),F.astype(np.int32),P.astype(np.float64))
         lmbs = np.zeros((P.shape[0],F.shape[1]))
         if (F.shape[1] == 1):
             lmbs = np.ones((P.shape[0],1))

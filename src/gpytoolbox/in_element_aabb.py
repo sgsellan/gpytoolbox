@@ -41,6 +41,6 @@ def in_element_aabb(queries,V,F):
 
     
 
-    I = _in_element_aabb_cpp_impl(queries,V,F.astype(np.int32))
+    I = _in_element_aabb_cpp_impl(queries.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
 
     return I
