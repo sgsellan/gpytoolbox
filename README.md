@@ -223,7 +223,7 @@ Python one; e.g.,
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../ext/gpytoolbox')))
 from gpytoolbox import regular_square_mesh, in_element_aabb
 v, f = regular_square_mesh(10) # This is a pure python function
-query = np.array([[0.1,0.1]])
+query = np.aarray([[0.1,0.1]])
 I = in_element_aabb(queries,V,F) # This is a C++ binding
 ``` -->
 
