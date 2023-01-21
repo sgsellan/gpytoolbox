@@ -206,4 +206,6 @@ def _read_stl(file):
             raise Exception(f"The file {file} seems empty.")
         elif err == -4:
             raise Exception(f"The file {file} does not exist.")
+        elif err == -5:
+            raise Exception(f"Unknown error reading stl file.")
     return V,F

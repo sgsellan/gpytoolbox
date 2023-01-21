@@ -9,6 +9,7 @@ def write_mesh(file,
     Ft=None,
     N=None,
     Fn=None,
+    stl_binary=True,
     fmt=None,
     writer=None):
     """Writes a mesh to a file.
@@ -27,13 +28,15 @@ def write_mesh(file,
     F : (m,3) numpy int array
         face index list of a triangle mesh (into V)
     UV : (n_uv,2) numpy array, optional (default: None)
-        vertex list for texture coordinates
+        vertex list for texture coordinates. Only supported for obj format.
     Ft : (m,3) numpy int array, optional (default: None)
-        face index list for texture coordinates (into UV)
+        face index list for texture coordinates (into UV). Only supported for obj format.
     N : (n_n,3) numpy array, optional (default: None)
-        vertex list for normal coordinates
+        vertex list for normal coordinates. Only supported for obj format.
     Fn : (m,3) numpy int array, optional (default: None)
-        face index list for normal coordinates (into N)
+        face index list for normal coordinates (into N). Only supported for obj format.
+    stl_binary : bool, optional (default: True)
+        whether to write the STL file in binary format (as opposed to ascii). Only supported for stl format.
     fmt : string, optional (default: None)
         The file format of the mesh to write.
         If None, try to guess the format from the file extension.
@@ -60,6 +63,8 @@ def write_mesh(file,
     # Call appropriate helper function to read mesh
     if fmt=='obj':
         _write_obj(file,V,F,UV,Ft,N,Fn,writer)
+    elif fmt=='stl':
+        _write_stl(file,V,F,stl_binary)
     else:
         assert False, "Mesh format not supported."
 
@@ -146,3 +151,16 @@ def _write_obj_python(file,V,F,UV,Ft,N,Fn):
                 fs = [f'{f+1}' for f in F[r]]
             write_row('f', fs)
 
+def _write_stl(file,V,F,binary=True):
+    # Private helper function for writing an STL file.
+    # Currently, only triangle meshes are supported.
+    try:
+        from gpytoolbox_bindings import _write_stl_cpp_impl
+    except:
+        raise ImportError("Gpytoolbox cannot import its C++ write_stl binding, and pure python stl writing is not supported.")
+    err = _write_stl_cpp_impl(file,V,F,binary)
+    if err != 0:
+        if err == -1:
+            raise Exception(f"The file {file} is invalid.")
+        else:
+            raise Exception(f"Unknown error writing stl file.")

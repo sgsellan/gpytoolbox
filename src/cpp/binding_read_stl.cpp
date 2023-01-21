@@ -1,6 +1,6 @@
 #include <npe.h>
 #include <pybind11/stl.h>
-#include "read_stl.h"
+#include "microstl/microstl_wrappers.h"
 
 npe_function(_read_stl_cpp_impl)
 npe_arg(file, std::string)
