@@ -36,7 +36,7 @@ def gaussian_process(X_train,y_train,X_test,kernel=None,X_induced=None,grad_y_tr
 
     See also
     --------
-    squared_exponential_kernel
+    squared_exponential_kernel, compactly_supported_normal
 
     Notes
     -----
