@@ -44,6 +44,6 @@ def fast_winding_number(Q,V,F):
     except:
         raise ImportError("Gpytoolbox cannot import its C++ fast winding number binding.")
 
-    S = _fast_winding_number_cpp_impl(V,F.astype(np.int32),Q)
+    S = _fast_winding_number_cpp_impl(V.astype(np.float64),F.astype(np.int32),Q.astype(np.float64))
 
     return S
