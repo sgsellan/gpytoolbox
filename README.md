@@ -242,7 +242,6 @@ this bullet list. If you want to contribute to gpytoolbox, a great way to start 
 - Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))
 - STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))
 - PLY reader and writer using [tinyply](https://github.com/ddiakopoulos/tinyply).
-- Explicit cast to int32 and float64 before every C++ binding
 - Iterative closest point for mesh alignment
 - Basic FEM (cotangent matrix, mass matrix, linear elasticity) for tetrahedral meshes
 - ARAP for deformation and parametrization
@@ -260,6 +259,7 @@ this bullet list. If you want to contribute to gpytoolbox, a great way to start 
 - Dihedral angle computation
 - `regular_square_mesh` and `regular_cube_mesh` should support different resolutions in `x` and `y`
   direction (sensible default when n_y is None, to n_y=n_x)
+- ~~Explicit cast to int32 and float64 before every C++ binding~~
 
 ## Future versions
 - Switch to pybind11
