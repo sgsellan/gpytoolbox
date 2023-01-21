@@ -88,6 +88,7 @@ npe_add_module(gpytoolbox_bindings
 	src/cpp/binding_marching_cubes.cpp
 	src/cpp/binding_read_stl.cpp
 	src/cpp/binding_write_stl.cpp
+	src/cpp/binding_hausdorff_distance.cpp
 )
 
 npe_add_module(gpytoolbox_bindings_copyleft
