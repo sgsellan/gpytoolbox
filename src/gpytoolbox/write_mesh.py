@@ -158,7 +158,7 @@ def _write_stl(file,V,F,binary=True):
         from gpytoolbox_bindings import _write_stl_cpp_impl
     except:
         raise ImportError("Gpytoolbox cannot import its C++ write_stl binding, and pure python stl writing is not supported.")
-    err = _write_stl_cpp_impl(file,V,F,binary)
+    err = _write_stl_cpp_impl(file,V.astype(np.float64),F.astype(np.int32),binary)
     if err != 0:
         if err == -1:
             raise Exception(f"The file {file} is invalid.")
