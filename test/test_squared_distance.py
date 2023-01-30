@@ -1,6 +1,7 @@
 from .context import gpytoolbox
 from .context import unittest
 from .context import numpy as np
+import matplotlib.pyplot as plt
 
 class TestSquaredDistance(unittest.TestCase):
     def is_consistent(self,sqrD1,sqrD2,ind1,ind2,lmbd1,lmbd2,V,F):
@@ -21,9 +22,41 @@ class TestSquaredDistance(unittest.TestCase):
         # print(closest_points1)
         # print(closest_points2)
         self.assertTrue(np.isclose(closest_points1-closest_points2,0,atol=1e-5).all())
+    def plot_tree(self,CH,W,C,args):
+        for i in range(CH.shape[0]):
+            # Plot the bounding box
+            bb = np.array([[C[i,0]-0.5*W[i,0],C[i,1]-0.5*W[i,1]],
+                          [C[i,0]-0.5*W[i,0],C[i,1]+0.5*W[i,1]],
+                          [C[i,0]+0.5*W[i,0],C[i,1]+0.5*W[i,1]],
+                          [C[i,0]+0.5*W[i,0],C[i,1]-0.5*W[i,1]],
+                          [C[i,0]-0.5*W[i,0],C[i,1]-0.5*W[i,1]]])
+            plt.plot(bb[:,0],bb[:,1],args)
+            # plt.plot(C[i,0],C[i,1],'x')
+        # plt.show()
 
 
-
+    def test_debug_speed(self):
+        np.random.seed(0)
+        # ss = 20
+        # P = np.random.rand(ss,2)
+        # ptest = P[9,:] + 1e-5
+        theta = np.linspace(0, 2*np.pi, 1000)
+        x = np.cos(theta)
+        y = np.sin(theta)
+        v = np.array([x, y]).T
+        ptest = v[9,:] + 1e-5
+        ptest = np.array([0.5,0.5])
+        EC = gpytoolbox.edge_indices(v.shape[0],closed=True)
+        C,W,CH,_,_,tri_ind,split_dir = gpytoolbox.initialize_aabbtree(v,F=EC)
+        sqrD,ind,lmb = gpytoolbox.squared_distance(ptest,v,F=EC,use_aabb=False,C=C,W=W,CH=CH,tri_ind=tri_ind,split_dir=split_dir)
+        sqrD_2,ind_2,lmb_2 = gpytoolbox.squared_distance(ptest,v,F=EC,use_aabb=True)
+        # plt.plot(v[:,0],v[:,1],'x')
+        # self.plot_tree(CH,W,C,'-k')
+        # plt.plot(ptest[0],ptest[1],'o')
+        # self.plot_tree(CH[traversal.traversed,:],W[traversal.traversed,:],C[traversal.traversed,:],'-r')
+        # plt.show()
+        
+        self.is_consistent(sqrD,sqrD_2,ind,ind_2,lmb,lmb_2,v,EC)
 
         
 
@@ -165,8 +198,8 @@ class TestSquaredDistance(unittest.TestCase):
     #         # print(groundtruth_vals[i])
 
             # Use precomputed tree
-            C,W,CH,_,_,tri_ind = gpytoolbox.initialize_aabbtree(v,F=f)
-            sqrD_aabb_2,ind_aabb_2,lmb_aabb_2 = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True,C=C,W=W,tri_ind=tri_ind,CH=CH)
+            C,W,CH,_,_,tri_ind,split_dir = gpytoolbox.initialize_aabbtree(v,F=f)
+            sqrD_aabb_2,ind_aabb_2,lmb_aabb_2 = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True,C=C,W=W,tri_ind=tri_ind,CH=CH,split_dir=split_dir)
             self.is_consistent(sqrD_aabb,sqrD_gt,ind_aabb,ind_gt,lmb_aabb,lmb_gt,v,f)
             self.is_consistent(sqrD_aabb_2,sqrD_gt,ind_aabb_2,ind_gt,lmb_aabb_2,lmb_gt,v,f)
             self.is_consistent(sqrD_gt,sqrD_cpp,ind_gt,ind_cpp,lmb_gt,lmb_cpp,v,f)
