@@ -9,7 +9,7 @@ class TestInitializeAabbTree(unittest.TestCase):
         th = 2*np.pi*np.random.rand(200,1)
         P = np.array([[0,0,0],[0.1,0,0],[0,0,0],[0.02,0.1,0],[1,1,0.9],[1,1,1]])
         F = np.array([[0,1],[2,3],[4,5]],dtype=np.int32)
-        C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(P,F)
+        C,W,CH,PAR,D,tri_ind,split_dim = gpytoolbox.initialize_aabbtree(P,F)
         C_gt = np.array([[0.5,  0.5,  0.5 ],
             [0.01, 0.05, 0.  ],
             [0.5,  0.5,  0.5 ],
@@ -47,7 +47,7 @@ class TestInitializeAabbTree(unittest.TestCase):
         for ss in range(10,2000,100):       
             P = np.random.rand(ss,2)
             ptest = P[9,:] + 1e-5
-            C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(P)
+            C,W,CH,PAR,D,tri_ind,split_dim = gpytoolbox.initialize_aabbtree(P)
             # Parenthood stuff
             for i in range(W.shape[0]):
                 for ss in range(CH.shape[1]):
@@ -65,7 +65,7 @@ class TestInitializeAabbTree(unittest.TestCase):
         for ss in range(10,2000,100):       
             P = np.random.rand(ss,3)
             ptest = P[9,:] + 1e-5
-            C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(P)
+            C,W,CH,PAR,D,tri_ind,split_dim = gpytoolbox.initialize_aabbtree(P)
             # Parenthood stuff
             for i in range(W.shape[0]):
                 for ss in range(CH.shape[1]):
@@ -82,7 +82,7 @@ class TestInitializeAabbTree(unittest.TestCase):
         # This is a hard case, it should still work
         V = np.array([ [-1.0, -1.0], [-1.0, 1.0], [1.0, 1.0], [1.0, -1.0] ])
         E = gpytoolbox.edge_indices(V.shape[0])
-        C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(V,F=E)
+        C,W,CH,PAR,D,tri_ind,split_dim = gpytoolbox.initialize_aabbtree(V,F=E)
         for i in range(W.shape[0]):
             for ss in range(CH.shape[1]):
                 if CH[i,ss]!=-1:

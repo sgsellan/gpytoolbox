@@ -37,9 +37,9 @@ def minimum_distance(v1,f1,v2,f2):
         
     dim = v1.shape[1]
     # Initialize AABB tree for mesh 1
-    C1,W1,CH1,PAR1,D1,tri_ind1 = initialize_aabbtree(v1,f1)
+    C1,W1,CH1,PAR1,D1,tri_ind1,_ = initialize_aabbtree(v1,f1)
     # Initialize AABB tree for mesh 2
-    C2,W2,CH2,PAR2,D2,tri_ind2 = initialize_aabbtree(v2,f2)
+    C2,W2,CH2,PAR2,D2,tri_ind2,_ = initialize_aabbtree(v2,f2)
 
     first_queue_pair = [0,0]
     queue = [first_queue_pair]
