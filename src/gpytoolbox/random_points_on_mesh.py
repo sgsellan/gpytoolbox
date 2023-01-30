@@ -4,6 +4,7 @@ from .doublearea import doublearea
 def random_points_on_mesh(V,F,
     n,
     rng=np.random.default_rng(),
+    color='white',
     per_element_likelihood=None,
     return_indices=False):
     """Samples a mesh V,F according to a given distribution.
@@ -21,6 +22,8 @@ def random_points_on_mesh(V,F,
         which numpy random number generator to use
     n : int
         how many points to sample
+    color: str
+        "Noise color" of the distribution used for sampling. Right now, only "white" is supported, which corresponds to a uniform distribution.
     per_element_likelihood: (m,) numpy double array, optional (default: None)
         If given, the likelihood of sampling a point from each element (does not need to be normalized). If not given, all elements are equally likely.
     return_indices : bool, optional (default: False)
@@ -48,6 +51,7 @@ def random_points_on_mesh(V,F,
         per_element_likelihood = np.ones(F.shape[0])
 
     assert n>=0
+    assert color=='white', "Only white noise is supported right now"
 
     if n==0:
         if return_indices:
