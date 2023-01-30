@@ -1,7 +1,6 @@
 from .context import gpytoolbox
 from .context import unittest
 from .context import numpy as np
-import matplotlib.pyplot as plt
 
 class TestSquaredDistance(unittest.TestCase):
     def is_consistent(self,sqrD1,sqrD2,ind1,ind2,lmbd1,lmbd2,V,F):

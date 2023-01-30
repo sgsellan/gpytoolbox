@@ -3,8 +3,6 @@ from gpytoolbox.initialize_aabbtree import initialize_aabbtree
 from gpytoolbox.traverse_aabbtree import traverse_aabbtree
 from gpytoolbox.squared_distance_to_element import squared_distance_to_element
 from gpytoolbox.barycentric_coordinates import barycentric_coordinates
-from gpytoolbox.bad_quad_mesh_from_quadtree import bad_quad_mesh_from_quadtree
-import polyscope as ps
 
 # This defines the functions needed to do a depth-first closest point traversal
 class closest_point_traversal:
