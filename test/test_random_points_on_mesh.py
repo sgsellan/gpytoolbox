@@ -65,6 +65,46 @@ class TestRandomPointsOnMesh(unittest.TestCase):
                 y = y + u[:,d][:,None]*V[F[I,d],:]
             self.assertTrue(np.isclose(y,xs[0]).all())
 
+    def test_non_uniform_2d(self):
+        # Polyline of circle
+        th = np.linspace(0,2*np.pi,1000)
+        V = np.array([np.cos(th),np.sin(th)]).T
+        # Build edges
+        E = gpy.edge_indices(V.shape[0],closed=True)
+        # Build probability map that is twice the value for values with x>0
+        weights = np.ones(E.shape[0])
+        weights[V[E[:,0],0]>0] = 2.
+        # Sample
+        n = 1000000
+        rng = np.random.default_rng(5)
+        x = gpy.random_points_on_mesh(V, E, n, rng=rng, per_element_likelihood=weights)
+        # Count how many x have x[0]>0
+        num_right = np.sum(x[:,0]>0)
+        num_left = n-num_right
+        # Should be roughly twice as many on the right
+        self.assertTrue(np.isclose(num_right/num_left,2.,atol=1e-2))
+    
+    def test_non_uniform_3d(self):
+        # Upsampled cube
+        V,F = gpy.read_mesh("test/unit_tests_data/cube.obj")
+        V,F = gpy.subdivide(V,F,iters=7)
+        # Centered at the origin (so there's approximately the same number of left and right faces)
+        V = gpy.normalize_points(V)
+        # Build probability map that is twice the value for values with x>0
+        weights = np.ones(F.shape[0])
+        weights[V[F[:,0],0]>0] = 2.
+        # Sample
+        n = 1000000
+        rng = np.random.default_rng(5)
+        x = gpy.random_points_on_mesh(V, F, n, rng=rng, per_element_likelihood=weights)
+        # Count how many x have x[0]>0
+        num_right = np.sum(x[:,0]>0)
+        num_left = n-num_right
+        # Should be roughly twice as many on the right
+        # print(num_right/num_left)
+        self.assertTrue(np.isclose(num_right/num_left,2.,atol=1e-2))
+
+
 
 if __name__ == '__main__':
     unittest.main()
