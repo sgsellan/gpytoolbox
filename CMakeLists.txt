@@ -14,14 +14,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-list(APPEND CMAKE_MODULE_PATH "${EXT_DIR}/numpyeigen/cmake")
 
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
 
 add_library(cpytoolbox
-	SHARED
+	STATIC
 	# Headers
 	src/cpp/upper_envelope.h
 	src/cpp/ray_mesh_intersect_aabb.h
@@ -49,7 +48,7 @@ add_library(cpytoolbox
 	)
 
 	add_library(cpytoolbox_copyleft
-	SHARED
+	STATIC
 	# Headers
 	src/cpp/swept_volume/fd_interpolate.cpp
 	src/cpp/swept_volume/gradient_descent_test.cpp
@@ -72,11 +71,11 @@ target_link_libraries(cpytoolbox_copyleft igl::core igl_copyleft::cgal)
 
 # Otman's python bindings using pybind11
 add_subdirectory(./ext/pybind11/)
-pybind11_add_module(gpytoolbox_bindings_pybind
+pybind11_add_module(gpytoolbox_bindings
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/pybind_core.cpp"
 )
-target_link_libraries(gpytoolbox_bindings_pybind PUBLIC cpytoolbox igl::core)
-target_include_directories(gpytoolbox_bindings_pybind PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/")
+target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core)
+target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/")
 
 
 

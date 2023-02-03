@@ -1,0 +1,13 @@
+Metadata-Version: 2.1
+Name: gpytoolbox-bindings-pybind
+Version: 0.0.3
+Summary: Gpytoolbox: A Python Geometry Processing Toolbox.
+Home-page: https://gpytoolbox.org
+Author: Silvia Sellán and Oded Stein
+Author-email: sgsellan@cs.toronto.edu
+License: MIT
+Description-Content-Type: text/markdown
+License-File: LICENSE.GPL
+License-File: LICENSE.MIT
+
+Gpytoolbox: A Python Geometry Processing Toolbox.
