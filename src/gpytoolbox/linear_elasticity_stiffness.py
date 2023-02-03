@@ -48,7 +48,13 @@ def linear_elasticity_stiffness(V,F,K=1.75,mu=0.0115,volumes=None,mass=None):
 
     Examples
     --------
-    TO-DO
+    ```python
+    from gpytoolbox import regular_square_mesh, linear_elasticity_stiffness
+    V, F = regular_square_mesh(3) # Make regular mesh
+    V = (V + 1.)/2. # Normalize mesh
+    # Compute linear elasticity operators
+    K, C, strain, A, M = linear_elasticity_stiffness(V,F)
+    ```
     """
 
     l = K - (2/3)*mu

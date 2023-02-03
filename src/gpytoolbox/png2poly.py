@@ -25,7 +25,11 @@ def png2poly(filename):
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import png2poly
+    filename = "test/unit_tests_data/poly.png"
+    poly = png2poly(filename)
+    ```
     """
     polypic = imread(filename)
     # For some reason reading the image flips it by 90 degrees. This fixes it

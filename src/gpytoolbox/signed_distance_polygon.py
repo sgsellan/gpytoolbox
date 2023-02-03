@@ -21,7 +21,16 @@ def signed_distance_polygon(P,V):
 
     Examples
     --------
-    TODO
+    ```python
+    # Build a polyline; for example, a square
+    V = np.array([ [-1.0, -1.0], [-1.0, 1.0], [1.0, 1.0], [1.0, -1.0] ])
+    sample_points = np.array([  [0.0,0.0],
+                                [0.3,0.0],
+                                [-1.5,0.5],
+                                [1.2,0.0]])
+    groundtruth_vals = np.array([-1.0,-0.7,0.5,0.2])
+    S = gpytoolbox.signed_distance_polygon(sample_points,V)
+    ```
     """
     from warnings import warn
     warn('signed_distance_polygon will be deprecated in gpytoolbox\'s 0.1.0 release in favour of the more general signed_distance, which can be called with the same arguments and output', DeprecationWarning, stacklevel=2)

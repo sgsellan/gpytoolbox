@@ -34,7 +34,10 @@ def do_meshes_intersect(V1,F1,V2,F2):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Meshes in v,f and u,g
+    b, inters = gpytoolbox.do_meshes_intersect(v,f,u,g)
+    ```
     """
     
     try:

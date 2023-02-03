@@ -28,7 +28,11 @@ def triangle_triangle_adjacency(F):
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import regular_square_mesh, triangle_triangle_adjacency
+    v, f = regular_square_mesh(10)
+    TT, TTi = triangle_triangle_adjacency(f)
+    ```
     
     """
     
@@ -40,7 +44,7 @@ def triangle_triangle_adjacency(F):
     he_flat = np.concatenate((he[:,0,:], he[:,1,:], he[:,2,:]), axis=0)
     he_flip_flat = np.flip(he_flat, axis=-1)
 
-    map_to_flip = array_correspondence(he_flat,he_flip_flat,axis=1)
+    map_to_flip = array_correspondence(he_flat,he_flip_flat,axis=0)
     TT = np.reshape(np.where(map_to_flip<0, -1, map_to_flip % m), F.shape, order='F')
     TTi = np.reshape(np.where(map_to_flip<0, -1, map_to_flip // m), F.shape, order='F')
 

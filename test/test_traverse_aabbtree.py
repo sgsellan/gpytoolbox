@@ -21,7 +21,7 @@ class test_closest_point_traversal:
         for i in range(self.dim):
             maxval = np.maximum(maxval,q[i])
         return np.linalg.norm((np.maximum(q,0.0))) + np.minimum(maxval,0.0)
-    def traversal_function(self,q,C,W,CH,tri_indices,is_leaf):
+    def traversal_function(self,q,C,W,CH,tri_indices,split_dir,is_leaf):
         center = C[q,:]
         width = W[q,:]
         # Distance is L1 norm of ptest minus center 
@@ -38,9 +38,9 @@ class test_closest_point_traversal:
             else:
                 self.others.append(q)
             return True
-    def add_to_queue(self,queue,new_ind):
-        # Depth first: insert at beginning.
-        queue.insert(0,new_ind)
+    def add_to_queue(self,queue,CH,par_ind):
+        queue.insert(0,CH[par_ind,1])
+        queue.insert(0,CH[par_ind,0])
                 
 
 
@@ -51,11 +51,11 @@ class TestTraverseAabbTree(unittest.TestCase):
         for ss in range(10,2000,100):       
             P = np.random.rand(ss,2)
             ptest = P[9,:] + 1e-5
-            C,W,CH,PAR,D,tri_ind = gpytoolbox.initialize_aabbtree(P)
+            C,W,CH,PAR,D,tri_ind,split_dir = gpytoolbox.initialize_aabbtree(P)
             t = test_closest_point_traversal(P,ptest)
             traverse_fun = t.traversal_function
             add_to_queue_fun = t.add_to_queue
-            _ = gpytoolbox.traverse_aabbtree(C,W,CH,tri_ind,traverse_fun,add_to_queue=add_to_queue_fun)
+            _ = gpytoolbox.traverse_aabbtree(C,W,CH,tri_ind,split_dir,traverse_fun,add_to_queue=add_to_queue_fun)
             i = t.current_best_box
             self.assertTrue(tri_ind[i]==9)
 

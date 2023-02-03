@@ -25,7 +25,11 @@ def regular_cube_mesh(gs,type='rotationally-symmetric'):
 
     Examples
     --------
-    TODO
+    ```python
+    # Generate a 10x10x10 tetrahedral mesh
+    gs = 10
+    V, T = gpytoolbox.regular_cube_mesh(gs)
+    ```
     """
 
     dictionary ={

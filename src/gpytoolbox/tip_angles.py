@@ -23,7 +23,11 @@ def tip_angles(V, F,
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import regular_square_mesh, tip_angles
+    v, f = regular_square_mesh(10)
+    alpha = tip_angles(v,f)
+    ```
     
     """
 

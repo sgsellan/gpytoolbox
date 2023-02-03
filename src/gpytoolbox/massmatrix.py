@@ -38,7 +38,11 @@ def massmatrix(V,F=None,type='voronoi'):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Mesh in V,F
+    from gpytoolbox import massmatrix
+    M = massmatrix(V,F)
+    ```
     """
 
     # if you didn't pass an F then this is a ordered polyline

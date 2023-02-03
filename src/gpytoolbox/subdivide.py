@@ -6,7 +6,7 @@ def subdivide(V,F,
     method='upsample',
     iters=1,
     return_matrix=False):
-    """Builds the (pos. def.) cotangent Laplacian for a triangle mesh.
+    """Subdivides a triangle mesh, turning every element into more than one element with the specified method.
 
     Parameters
     ----------
@@ -36,7 +36,11 @@ def subdivide(V,F,
 
     Examples
     --------
-    TODO
+    ```python
+    # Get a fine mesh of a square by subdividing a coarse mesh of a square.
+    v, f = gpytoolbox.regular_square_mesh(2)
+    v, f = gpytoolbox.subdivide(v, f, iters=2)
+    ```
     
     """
 

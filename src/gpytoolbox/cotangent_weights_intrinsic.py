@@ -24,7 +24,12 @@ def cotangent_weights_intrinsic(l_sq,F):
 
     Examples
     --------
-    TODO
+     ```python
+    # Mesh in V,F
+    from gpytoolbox import halfedge_lengths_squared, cotangent_weights_intrinsic
+    l = halfedge_lengths_squared(V,F)
+    L = cotangent_weights_intrinsic(l_sq,F)
+    ```
     
     """
 

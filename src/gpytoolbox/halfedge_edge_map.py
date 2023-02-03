@@ -38,7 +38,12 @@ def halfedge_edge_map(F, assume_manifold=True):
 
     Examples
     --------
-    TODO
+    ```python
+    # Mesh in v,f
+    # Compute halfedge-edge map
+    from gpytoolbox import halfedge_edge_map
+    he_nm, E_nm, he_to_E_nm, E_to_he_nm = halfedge_edge_map(f, assume_manifold=False)
+    ```
     
     """
     
@@ -75,9 +80,9 @@ def halfedge_edge_map(F, assume_manifold=True):
             E_to_he[0:n_b,0,:] = unflat_he(bdry_E_to_flat_he)
         if n_i>0:
             E_to_he[n_b:(n_b+n_i),0,:] = \
-            unflat_he(array_correspondence(interior_E,flat_he,axis=1))
+            unflat_he(array_correspondence(interior_E,flat_he,axis=0))
             E_to_he[n_b:(n_b+n_i),1,:] = \
-            unflat_he(array_correspondence(interior_E,np.flip(flat_he, axis=-1),axis=1))
+            unflat_he(array_correspondence(interior_E,np.flip(flat_he, axis=-1),axis=0))
     else:
         E_to_he = []
         bdry_E_to_he = unflat_he(bdry_E_to_flat_he)

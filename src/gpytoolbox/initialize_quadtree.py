@@ -46,7 +46,12 @@ def initialize_quadtree(P,max_depth=8,min_depth=1,graded=False,vmin=None,vmax=No
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Random points
+    P = np.random.rand(100,2)
+    # Get quadtree for random points
+    C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=8)
+    ```
     """
 
     # We start with a bounding box
