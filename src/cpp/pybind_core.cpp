@@ -15,7 +15,7 @@ template <typename MatrixType>
 using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row order matrices easily
 
 
-PYBIND11_MODULE(gpytoolbox_bindings_pybind, m) {
+PYBIND11_MODULE(gpytoolbox_bindings, m) {
     m.def("read_obj_pybind",[](std::string filename,
      bool return_UV, bool return_N)
         {

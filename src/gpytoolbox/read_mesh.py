@@ -77,7 +77,7 @@ def read_mesh(file,
 
 try:
     # Import C++ reader
-    from gpytoolbox_bindings_pybind import _read_obj_cpp_impl
+    from gpytoolbox_bindings import read_obj_pybind
     print("Found pybind bindings!")
     _CPP_READER_AVAILABLE = True
 except Exception as e:
