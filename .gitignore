@@ -12,3 +12,4 @@ site/
 ignore/
 *.idea/
 .idea/*
+dist/*
