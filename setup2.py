@@ -93,9 +93,9 @@ def main():
         long_description = f.read()
 
     # Applies to windows only.
-    # Normally, we set cmake's -A option to specify 64 bit platform when need (and /m for build),
-    # but these are errors with non-visual-studio generators. CMake does not seem to have an idiomatic
-    # way to disable, so we expose an option here. A more robust solution would auto-detect based on the
+    # Normally, we set cmake's -A option to specify 64 bit platform when need (and /m for build), 
+    # but these are errors with non-visual-studio generators. CMake does not seem to have an idiomatic 
+    # way to disable, so we expose an option here. A more robust solution would auto-detect based on the 
     # generator.  Really, this option might be better titled "exclude visual-studio-settings-on-windows"
     if "--exclude-arch" in sys.argv:
         exclude_arch = True

@@ -15,7 +15,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 list(APPEND CMAKE_MODULE_PATH "${EXT_DIR}/numpyeigen/cmake")
-include(numpyeigen)
+
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
@@ -69,32 +69,15 @@ target_link_libraries(cpytoolbox igl::core igl::embree )
 target_link_libraries(cpytoolbox_copyleft igl::core igl_copyleft::cgal)
 
 
-npe_add_module(gpytoolbox_bindings
-	BINDING_SOURCES
-	src/cpp/binding_offset_surface.cpp
-	src/cpp/binding_ray_mesh_intersect.cpp
-	src/cpp/binding_upper_envelope.cpp
-	src/cpp/binding_in_element_aabb.cpp
-	src/cpp/binding_decimate.cpp
-	src/cpp/binding_remesher_botsch.cpp
-	src/cpp/binding_write_obj.cpp
-	src/cpp/binding_read_obj.cpp
-	src/cpp/binding_fast_winding_number.cpp
-	src/cpp/binding_point_mesh_squared_distance.cpp
-	src/cpp/binding_marching_cubes.cpp
-	src/cpp/binding_hausdorff_distance.cpp
+
+# Otman's python bindings using pybind11
+add_subdirectory(./ext/pybind11/)
+pybind11_add_module(gpytoolbox_bindings_pybind
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/pybind_core.cpp"
 )
+target_link_libraries(gpytoolbox_bindings_pybind PUBLIC cpytoolbox igl::core)
+target_include_directories(gpytoolbox_bindings_pybind PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/")
 
-npe_add_module(gpytoolbox_bindings_copyleft
-	BINDING_SOURCES
-  	src/cpp/binding_booleans.cpp
-	src/cpp/binding_swept_volume.cpp
-)
 
-# target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl_copyleft::cgal)
-target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core)
 
-target_link_libraries(gpytoolbox_bindings_copyleft PUBLIC cpytoolbox_copyleft igl::core igl_copyleft::cgal)
 
-target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")
-target_include_directories(gpytoolbox_bindings_copyleft PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")

@@ -89,6 +89,8 @@ int read_obj(
     Eigen::MatrixXd& N,
     Eigen::MatrixXi& Fn)
 {
+
+    std::cout << "Using CPP read_obj" << std::endl;
     //Reset the output arrays and implement smart growing/shrinking strategy.
     V.resize(0,0);
     int n = 0;
