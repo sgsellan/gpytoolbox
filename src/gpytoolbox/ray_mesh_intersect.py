@@ -96,7 +96,7 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
         try:
             from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
         except:
-            raise ImportError("Gpytoolbox cannot import its C++ decimate binding.")
+            raise ImportError("Gpytoolbox cannot import its C++ ray_mesh_intersect binding.")
 
         ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
     else:
