@@ -92,3 +92,4 @@ from .edge_edge_distance import edge_edge_distance
 from .triangle_triangle_distance import triangle_triangle_distance
 from .minimum_distance import minimum_distance
 from .approximate_hausdorff_distance import approximate_hausdorff_distance
+from .icosphere import icosphere
