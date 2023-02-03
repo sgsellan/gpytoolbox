@@ -42,7 +42,10 @@ def lazy_cage(V,F,grid_size=50,max_iter=10,num_faces=100,force_output=True):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Mesh in v,f
+    u,g = gpytoolbox.lazy_cage(v,f)
+    ```
     """
     U = None
     G = None

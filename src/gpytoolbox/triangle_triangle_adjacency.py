@@ -28,7 +28,11 @@ def triangle_triangle_adjacency(F):
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import regular_square_mesh, triangle_triangle_adjacency
+    v, f = regular_square_mesh(10)
+    TT, TTi = triangle_triangle_adjacency(f)
+    ```
     
     """
     

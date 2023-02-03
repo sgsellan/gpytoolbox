@@ -36,7 +36,14 @@ def quadtree_laplacian(C,W,CH,D,A):
     
     Examples
     --------
-    TODO
+    ```python
+    # Create a random point cloud
+    P = 2*np.random.rand(100,2) - 1
+    # Initialize the quadtree
+    C,W,CH,PAR,D,A = gpytoolbox.initialize_quadtree(P,graded=True,max_depth=8)
+    # Get the Laplacian matrix
+    G, stored_at = gpytoolbox.quadtree_laplacian(C,W,CH,D,A)
+    ```
     """
     # Builds a finite difference laplacian on a quadtree following a centered 
     # finite difference scheme, with the adjacency as suggested by 

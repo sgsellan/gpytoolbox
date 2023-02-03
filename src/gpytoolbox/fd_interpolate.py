@@ -34,7 +34,27 @@ def fd_interpolate(P,gs,h,corner=None):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Grid parameters
+    gs = np.array([19,15])
+    h = 1.0/(gs-1)
+    # Build a grid
+    x, y = np.meshgrid(np.linspace(0,1,gs[0]),np.linspace(0,1,gs[1]))
+    V = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)
+    # Random set of points
+    P = np.random.rand(10,2)
+
+    # Random grid corner
+    corner = np.random.rand(2)
+
+    # Displace by corner
+    P = P + np.tile(corner,(P.shape[0],1))
+    V = V + np.tile(corner,(V.shape[0],1))
+    # Interpolation matrix
+    from gpytoolbox import fd_interpolate
+    W = fd_interpolate(P,gs=gs,h=h,corner=corner)
+    # Now, P = W @ V
+    ```
     """
 
     dim = P.shape[1]

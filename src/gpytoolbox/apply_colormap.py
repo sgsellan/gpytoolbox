@@ -46,7 +46,14 @@ def apply_colormap(C, f,
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import apply_colormap, colormap
+    map_name = 'RdBu'
+    # Some random values
+    scalar_values = np.random.rand(100)
+    # Convert them into colors using the given map with 60 steps
+    C = apply_colormap(colormap(map, 60), scalar_values)
+    ```
     """
 
     assert C.shape[0] >= 1

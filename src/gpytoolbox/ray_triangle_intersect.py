@@ -47,7 +47,7 @@ def ray_triangle_intersect(origin,dir, v0, v1, v2, return_negative=False):
     v1 = V[0,:]
     v2 = V[1,:]
     v3 = V[2,:]
-    t,is_hit,hit_coord = ay_triangle_intersect(origin,dir,v1,v2,v3)
+    t,is_hit,hit_coord = ray_triangle_intersect(origin,dir,v1,v2,v3)
     ```
     """
     v0 = np.ravel(v0)

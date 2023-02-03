@@ -29,7 +29,12 @@ def fd_grad(gs,h):
 
     Examples
     --------
-    TO-DO
+    ```python
+    gs = np.array([19,15])
+    h = 1.0/(gs-1)
+    # Compute gradient matrix
+    G = gpytoolbox.fd_grad(gs=gs,h=h)
+    ```
     """
 
     dim = gs.shape[0]

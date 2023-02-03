@@ -14,7 +14,7 @@ def regular_square_mesh(gs):
     -------
     V : numpy double array
         Matrix of triangle mesh vertex coordinates
-    T : numpy int array
+    F : numpy int array
         Matrix of triangle vertex indices into V
 
     See Also
@@ -27,7 +27,11 @@ def regular_square_mesh(gs):
 
     Examples
     --------
-    TODO
+    ```python
+    # Generate a 10x10 triangle mesh
+    gs = 10
+    V, F = gpytoolbox.regular_square_mesh(gs)
+    ```
     """
     x, y = np.meshgrid(np.linspace(-1,1,gs),np.linspace(-1,1,gs))
     v = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)

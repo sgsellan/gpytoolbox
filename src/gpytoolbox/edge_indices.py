@@ -19,7 +19,7 @@ def edge_indices(n,closed=False):
 
     See Also
     --------
-    
+    edges.
 
     Notes
     -----
@@ -27,17 +27,13 @@ def edge_indices(n,closed=False):
 
     Examples
     --------
-    TO-DO
+    ```python
+    # Ordered in V
+    from gpytoolbox import edge_indices
+    EC = edge_indices(V.shape[0],closed=False)
+    # Now we can use EC as the face indices for input to other functions
+    ```
     """
-
-    # Given an ordered polyline, this returns the edge indeces in a similar way
-    # to how the face indeces of a triangle mesh are given.
-    # Inputs:
-    #       n integer number of vertices
-    #       Optional:
-    #           closed boolean with whether to close the path or not
-    # Outputs:
-    #       EC #n-1 (#n if closed) by 2 matrix of edge indeces
 
     # Note: the "order='F'" in all the reshapes is to mimic scanning order from
     # Matlab, otherwise it does the reverse order (rows first)
