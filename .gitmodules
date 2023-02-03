@@ -1,3 +1,6 @@
 [submodule "ext/numpyeigen"]
 	path = ext/numpyeigen
 	url = https://github.com/fwilliams/numpyeigen.git
+[submodule "ext/pybind11"]
+	path = ext/pybind11
+	url = https://github.com/pybind/pybind11.git
