@@ -35,12 +35,30 @@ def fixed_dof_solve(A, b=None, k=None, y=None):
 
     See Also
     --------
-    min_quad_with_fixed
+    `min_quad_with_fixed` for solving a quadratic programming problem with
+    linear constraints and a symmetric matrix.
 
 
     Examples
     --------
-    TODO
+    ```python
+    >>> import gpytoolbox as gpy
+    >>> import numpy as np
+    >>> import scipy as sp
+    >>> 
+    >>> # This matrix is not symmetric!
+    >>> A = sp.sparse.csc_matrix(np.array([[1.,0.,1.],[0.,1.,0.],[0.,0.,1.]]))
+    >>> b = np.array([0.,0.,0.])
+    >>> k = np.array([2])
+    >>> y = np.array([5.])
+    >>> u = gpy.fixed_dof_solve(A, b, k, y)
+    >>> u
+    array([-5.,  0.,  5.])
+    >>> 
+    >>> # A*u matches b, except for indices where constraints apply.
+    >>> A*u - b
+    array([0., 0., 5.])
+    ```
     """
 
     return fixed_dof_solve_precompute(A, k).solve(b, y)
@@ -83,7 +101,26 @@ class fixed_dof_solve_precompute:
 
         Examples
         --------
-        TODO
+        ```python
+        >>> import gpytoolbox as gpy
+        >>> import numpy as np
+        >>> import scipy as sp
+        >>> 
+        >>> # This matrix is not symmetric!
+        >>> A = sp.sparse.csc_matrix(np.array([[1.,0.,1.],[0.,1.,0.],[0.,0.,1.]]))
+        >>> k = np.array([2])
+        >>> precomp = gpy.fixed_dof_solve_precompute(A, k=k)
+        >>> 
+        >>> b = np.array([0.,0.,0.])
+        >>> y = np.array([5.])
+        >>> u = precomp.solve(b=b, y=y)
+        >>> u
+        array([-5.,  0.,  5.])
+        >>> 
+        >>> # A*u matches b, except for indices where constraints apply.
+        >>> A*u - b
+        array([0., 0., 5.])
+        ```
         """
 
         self.n = A.shape[0]
@@ -151,7 +188,27 @@ class fixed_dof_solve_precompute:
 
         Examples
         --------
-        TODO
+        ```python
+        >>> import gpytoolbox as gpy
+        >>> import numpy as np
+        >>> import scipy as sp
+        >>> 
+        >>> # This matrix is not symmetric!
+        >>> A = sp.sparse.csc_matrix(np.array([[1.,0.,1.],[0.,1.,0.],[0.,0.,1.]]))
+        >>> k = np.array([2])
+        >>> precomp = gpy.fixed_dof_solve_precompute(A, k=k)
+        >>> 
+        >>> b = np.array([0.,0.,0.])
+        >>> y = np.array([5.])
+        >>> u = precomp.solve(b=b, y=y)
+        >>> u
+        array([-5.,  0.,  5.])
+        >>> 
+        >>> # A*u matches b, except for indices where constraints apply.
+        >>> A*u - b
+        array([0., 0., 5.])
+        ```
+        
         """
 
         def cp(x):
