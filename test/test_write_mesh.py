@@ -3,7 +3,6 @@ from .context import numpy as np
 from .context import unittest
 
 class TestWriteMesh(unittest.TestCase):
-
     def test_read_then_write(self):
         meshes = ["bunny_oded.obj", "armadillo.obj", "armadillo_with_tex_and_normal.obj", "bunny.obj", "mountain.obj"]
         for mesh in meshes:
@@ -25,6 +24,20 @@ class TestWriteMesh(unittest.TestCase):
                 self.assertTrue(np.isclose(N_cpp_2,N_cpp).all)
             if Fn_cpp_2 is not None:
                 self.assertTrue((Fn_cpp_2==Fn_cpp).all())
+
+    def test_stl_read_then_write(self):
+        stl_meshes = ["sphere_binary.stl", "fox_ascii.stl"]
+        for mesh in stl_meshes:
+            V,F = gpy.read_mesh("test/unit_tests_data/" + mesh)
+            gpy.write_mesh("test/unit_tests_data/temp.stl",V,F,stl_binary=True)
+            V_2,F_2 = gpy.read_mesh("test/unit_tests_data/temp.stl")
+            self.assertTrue(np.isclose(V_2,V).all)
+            self.assertTrue((F_2==F).all())
+            V,F = gpy.read_mesh("test/unit_tests_data/" + mesh)
+            gpy.write_mesh("test/unit_tests_data/temp.stl",V,F,stl_binary=False)
+            V_2,F_2 = gpy.read_mesh("test/unit_tests_data/temp.stl")
+            self.assertTrue(np.isclose(V_2,V).all)
+            self.assertTrue((F_2==F).all())
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,6 +1,11 @@
 # https://realpython.com/python-project-documentation-with-mkdocs/
 # to deploy:
-# mike deploy --update-aliases --rebase --push 0.0.1 latest
+# commit a change with __version__ in setup.py
+# wait for wheels to build and download them 
+# twine upload dist/*
+# label as new release
+# bash docs/create_docs.sh
+# mike deploy --update-aliases --rebase --push [VERSION NUMBER] latest
 # https://mkdocstrings.github.io/python/usage/
 site_name: Gpytoolbox
 theme:

@@ -5,7 +5,7 @@ project(Bindings
 		"Python libigl bindings"
 )
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_BUILD_TYPE "Release")
 #set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -34,6 +34,7 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.h
 	src/cpp/remesher/split_edges.h
 	src/cpp/remesher/tangential_relaxation.h
+	src/cpp/microstl/microstl_wrappers.h
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
@@ -46,6 +47,9 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.cpp
 	src/cpp/remesher/split_edges.cpp
 	src/cpp/remesher/tangential_relaxation.cpp
+	src/cpp/microstl/microstl_wrappers.cpp
+	# microstl
+	src/cpp/microstl/microstl.h
 	)
 
 	add_library(cpytoolbox_copyleft
@@ -79,6 +83,14 @@ npe_add_module(gpytoolbox_bindings
 	src/cpp/binding_remesher_botsch.cpp
 	src/cpp/binding_write_obj.cpp
 	src/cpp/binding_read_obj.cpp
+	src/cpp/binding_fast_winding_number.cpp
+	src/cpp/binding_point_mesh_squared_distance.cpp
+	src/cpp/binding_marching_cubes.cpp
+	src/cpp/binding_read_stl.cpp
+	src/cpp/binding_write_stl.cpp
+	src/cpp/binding_hausdorff_distance.cpp
+	src/cpp/binding_read_stl.cpp
+	src/cpp/binding_write_stl.cpp
 )
 
 npe_add_module(gpytoolbox_bindings_copyleft

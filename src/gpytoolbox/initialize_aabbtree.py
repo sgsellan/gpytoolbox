@@ -26,6 +26,8 @@ def initialize_aabbtree(V,F=None,vmin=None,vmax=None):
         Vector of tree depths
     tri_indices : numpy int array
         Vector of element indices (-1 if *not* leaf node)
+    split_dir : numpy int array
+        Vector of split directions (0,1,2,...)
 
     See Also
     --------
@@ -74,6 +76,7 @@ def initialize_aabbtree(V,F=None,vmin=None,vmax=None):
     D = np.array([1],dtype=int)
     PAR = np.array([-1],dtype=int) # supreme Neanderthal ancestral node
     tri_indices = np.array([-1]) # this will have the index in leaf nodes (at least temporarily)
+    split_dir = np.array([-1])
     tri_index_list = [ list(range(F.shape[0])) ]
     # Now, we will loop
     box_ind = -1
@@ -94,14 +97,14 @@ def initialize_aabbtree(V,F=None,vmin=None,vmax=None):
         assert(num_tris_in_box>0) # There can't be a node with zero triangles...
         if (is_child and num_tris_in_box>=2):
             # Does this quad contain more than one triangle? Then subdivide it
-            C,W,CH,PAR,D,tri_indices,tri_index_list = subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list,vmin_big,vmax_big)
+            C,W,CH,PAR,D,tri_indices,tri_index_list,split_dir = subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list,split_dir,vmin_big,vmax_big)
         if (is_child and num_tris_in_box==1):
             tri_indices[box_ind] = tris_in_box[0] # Check this??
 
-    return C,W,CH,PAR,D,tri_indices
+    return C,W,CH,PAR,D,tri_indices,split_dir
 
 
-def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list,vmin_big,vmax_big):
+def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_list,split_dir,vmin_big,vmax_big):
     # First: find largest dimension
     num_tris_in_box = len(tris_in_box)
     ncp = 2 # Dimension-agnostic number of children per parent
@@ -156,6 +159,10 @@ def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_lis
     # Update children of current node
     CH[box_ind,:] =  num_boxes + np.linspace(0,ncp-1,ncp,dtype=int)
 
+    # Update split direction
+    split_dir[box_ind] = best_dim
+    split_dir = np.concatenate((split_dir,np.tile(np.array([-1],dtype=int),ncp)))
+
     # Update parenthood:
     PAR = np.concatenate((PAR,np.tile(np.array([box_ind],dtype=int),ncp)))
     # And depth:
@@ -170,7 +177,7 @@ def subdivide_box(box_ind,V,F,tris_in_box,C,W,CH,PAR,D,tri_indices,tri_index_lis
         tris_in_box_right.append(tris_in_box[right_inds[i]])
     tri_index_list.append( tris_in_box_left )
     tri_index_list.append( tris_in_box_right )
-    return C,W,CH,PAR,D,tri_indices,tri_index_list
+    return C,W,CH,PAR,D,tri_indices,tri_index_list,split_dir
 
 def is_in_box(V,F,center,width):
     # Checks if triangle is FULLY contained in box
