@@ -53,6 +53,6 @@ def decimate(V,F,face_ratio=0.1,num_faces=None):
     if (num_faces is None):
         num_faces = np.floor(face_ratio*F.shape[0]).astype(np.int32)
 
-    v, f, i, j = _decimate_cpp_impl(V,F.astype(np.int32),num_faces)
+    v, f, i, j = _decimate_cpp_impl(V.astype(np.float64),F.astype(np.int32),num_faces)
 
     return v,f,i,j

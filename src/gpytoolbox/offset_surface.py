@@ -45,6 +45,6 @@ def offset_surface(V,F,iso,grid_size=100):
     except:
         raise ImportError("Gpytoolbox cannot import its C++ binding.")
 
-    v, f = _offset_surface_cpp_impl(V,F.astype(np.int32),iso,grid_size)
+    v, f = _offset_surface_cpp_impl(V.astype(np.float64),F.astype(np.int32),iso,grid_size)
 
     return v,f

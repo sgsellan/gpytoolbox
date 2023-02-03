@@ -10,3 +10,4 @@ build-linux/
 site/
 .eggs/
 ignore/
+*.egg-info

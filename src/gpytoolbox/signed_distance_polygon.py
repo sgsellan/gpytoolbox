@@ -32,6 +32,8 @@ def signed_distance_polygon(P,V):
     S = gpytoolbox.signed_distance_polygon(sample_points,V)
     ```
     """
+    from warnings import warn
+    warn('signed_distance_polygon will be deprecated in gpytoolbox\'s 0.1.0 release in favour of the more general signed_distance, which can be called with the same arguments and output', DeprecationWarning, stacklevel=2)
     n = V.shape[0]
     # vectorized dot product
     d = np.sum( (P - np.tile(V[0,:],(P.shape[0],1)))*(P - np.tile(V[0,:],(P.shape[0],1))) ,axis=1)

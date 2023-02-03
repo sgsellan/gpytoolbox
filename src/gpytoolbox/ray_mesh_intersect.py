@@ -17,7 +17,7 @@ class ray_mesh_intersect_traversal:
         self.t = np.Inf
         self.id = -1
         self.lmbd = np.array([0,0,0])
-    def traversal_function(self,q,C,W,CH,tri_indices,is_leaf):        
+    def traversal_function(self,q,C,W,CH,tri_indices,split_dim,is_leaf):        
         # Distance is L1 norm of ptest minus center 
         if is_leaf:
             # print("Point:",self.ptest)
@@ -41,9 +41,9 @@ class ray_mesh_intersect_traversal:
                 self.id = tri_indices[q] 
             return True
         return False
-    def add_to_queue(self,queue,new_ind):
-        # Depth first: insert at beginning (much less queries).
-        queue.insert(0,new_ind)
+    def add_to_queue(self,queue,CH,par_ind):
+        queue.insert(0,CH[par_ind,1])
+        queue.insert(0,CH[par_ind,0])
 
 
 
@@ -96,7 +96,7 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
         try:
             from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
         except:
-            raise ImportError("Gpytoolbox cannot import its C++ decimate binding.")
+            raise ImportError("Gpytoolbox cannot import its C++ ray_mesh_intersect binding.")
 
         ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
     else:
@@ -105,14 +105,14 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
         lambdas = np.zeros((cam_pos.shape[0],3))
         # print("building tree")
         if ((C is None) or (W is None) or (tri_ind is None) or (CH is None)):
-            C,W,CH,_,_,tri_ind = initialize_aabbtree(V,F=F)
+            C,W,CH,_,_,tri_ind,_ = initialize_aabbtree(V,F=F)
         # print("built tree")
         # print("computing distances")
         for i in range(cam_pos.shape[0]):
             trav = ray_mesh_intersect_traversal(cam_pos[i,:],cam_dir[i,:],V,F)
             traverse_fun = trav.traversal_function
             add_to_queue_fun = trav.add_to_queue
-            _ = traverse_aabbtree(C,W,CH,tri_ind,traverse_fun,add_to_queue=add_to_queue_fun)
+            _ = traverse_aabbtree(C,W,CH,tri_ind,None,traverse_fun,add_to_queue=add_to_queue_fun)
             ts[i] = trav.t
             ids[i] = trav.id
             lambdas[i,:] = trav.lmbd
