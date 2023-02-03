@@ -153,10 +153,8 @@ library. We are thankful to them:
 
 ### Contributors
 
-We would like to thank [Michael Jäger](https://github.com/EmJay276) for being
-our Gpytoolbox's first external contributor (see [PR
-#45](https://github.com/sgsellan/gpytoolbox/pull/45)).
-
+- We would like to thank [Michael Jäger](https://github.com/EmJay276) for being Gpytoolbox's first external contributor (see [PR #45](https://github.com/sgsellan/gpytoolbox/pull/45)).
+- [Towaki Takikawa](https://github.com/tovacinni) ([PR #49](https://github.com/sgsellan/gpytoolbox/pull/49))
 
 
 <!-- Most of the functionality in this library is python-only, and it requires no

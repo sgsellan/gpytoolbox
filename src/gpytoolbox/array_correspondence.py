@@ -22,62 +22,52 @@ def array_correspondence(A,B,axis=None):
 
     Examples
     --------
-    TODO
+    Example with simple array correspondence:
+    ```python
+    >>> A = np.array([1,7,2,7,9,3,7,0])
+    >>> B = np.array([7,7,3,2,7,8])
+    >>> f = gpy.array_correspondence(A, B)
+    >>> f
+    array([-1,  0,  3,  0, -1,  2,  0, -1])
+    ```
+    Example with row correspondence:
+    ```python
+    >>> A = np.array([[1,3],[5,2],[1,2],[5,2]])
+    >>> B = np.array([[1,2],[6,9],[5,2]])
+    >>> f = gpy.array_correspondence(A, B, axis=0)
+    >>> f
+    array([-1,  2,  0,  2])
+    ```
     
     """
+    if axis not in (None, 0, 1, -1, -2):
+        raise Exception("Axis can only be None, 0, 1, -1, -2")
+    if len(A.shape) > 2 or len(B.shape) > 2:
+        raise Exception("Inputs A, B can only be up to 2 dimensional")
 
-    if axis is None:
-        A = A.ravel()
-        B = B.ravel()
+    if axis==1 or axis==-1:
+        # np.unique behaves weird with axis==1... but we only work with
+        # up to dim 2, so always simply use the axis==0 case.
+        A = A.T
+        B = B.T
+        axis = 0
 
-        # Slow for loop
-        # f = np.full(A.size, -1, dtype=np.int64)
-        # for a in range(A.size):
-        #     for b in range(B.size):
-        #         if A[a]==B[b]:
-        #             f[a] = b
+    # While we have to keep track of duplicates in A (to map them to the
+    # correct place), we do not care about duplicates in B
 
-        # While we have to keep track of duplicates in A (to map them to the
-        # correct place), we do not care about duplicates in B
-        uB,mapB = np.unique(B, return_index=True)
-        _,idx,inv = np.unique(np.concatenate((uB,A)),
-            return_index=True, return_inverse=True)
-        imap = idx[inv[uB.size:]]
-        imap[imap>=uB.size] = -1
-        f = np.where(imap<0, -1, mapB[imap])
+    # uB is deduplicated B. mapB allows us to map to the first occurence of each vector.
+    # (contribution by Towaki Takikawa)
+    uB, mapB = np.unique(B, return_index=True, axis=axis)
 
-    else:
-        assert len(A.shape) == 2
-        assert len(B.shape) == 2
-        assert axis==-2 or axis==-1 or axis==0 or axis==1
-        assert A.shape[axis] == B.shape[axis]
+    # We concatenate uB with A. Any entries from A that get de-duped is a 'hit'.
+    _, idx, inv = np.unique(np.concatenate((uB,A), axis=axis),
+        return_index=True, return_inverse=True, axis=axis)
 
-        # This function compares rows, so we reduce the problem to rows here.
-        if axis==-2 or axis==0:
-                A = A.transpose()
-                B = B.transpose()
-
-        # # https://stackoverflow.com/a/64930992 is too memory-intensive
-        # inds = (A[None,:,:] == B[:,None,:])
-        # i,j = np.nonzero(inds.sum(axis=2) == A.shape[1])
-        # f = np.full(A.shape[0], -1, dtype=np.int64)
-        # f[j] = i
-
-        # # Slower (but less memory-intensive) with for loops
-        # f = np.full(A.shape[0], -1, dtype=np.int64)
-        # for a in range(A.shape[0]):
-        #     for b in range(B.shape[0]):
-        #         if (A[a,:]==B[b,:]).all():
-        #             f[a] = b
-
-        # Convert each row to bytes, intersect byte arrays in 1d
-        def to_byte_array(x):
-            # Adapted from https://stackoverflow.com/a/54683422
-            dt = np.dtype('S{:d}'.format(x.shape[1] * x.dtype.itemsize))
-            return np.frombuffer(x.tobytes(), dtype=dt)
-        bytesA = to_byte_array(A)
-        bytesB = to_byte_array(B.astype(A.dtype))
-        f = array_correspondence(bytesA,bytesB,axis=None)
+    # We don't care about the range of the output that is about uB- that was a decoy to
+    # grill out the hits from A.
+    imap = idx[inv[uB.shape[0]:]]
+    imap[imap>=uB.shape[0]] = -1
+    f = np.where(imap<0, -1, mapB[imap])
 
     return f
 
