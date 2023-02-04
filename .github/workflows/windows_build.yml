@@ -56,23 +56,23 @@ jobs:
           mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && 
           cmake --build "." --config Release
 
-      - name: Debug
-        shell: bash -l {0}
-        run: |
-          cd D:
-          ls
-          cd a
-          ls
+      # - name: Debug
+      #   shell: bash -l {0}
+      #   run: |
+      #     cd D:
+      #     ls
+      #     cd a
+      #     ls
 
-      - name: copying dlls
-        shell: bash -l {0}
-        run: |
-          cp .\\build\\_deps\\gmp-src\\lib\\libgmp-10.dll .\\build\\.
-          cp .\\build\\_deps\\mpfr-src\\lib\\libmpfr-4.dll .\\build\\.
-          cp .\\build\\_deps\\gmp-src\\lib\\libgmp-10.dll .\\build\\Release\\.
-          cp .\\build\\_deps\\mpfr-src\\lib\\libmpfr-4.dll .\\build\\Release\\.
-          cp .\\build\\_deps\\gmp-src\\lib\\libgmp-10.dll .
-          cp .\\build\\_deps\\mpfr-src\\lib\\libmpfr-4.dll .
+      # - name: copying dlls
+      #   shell: bash -l {0}
+      #   run: |
+      #     cp .\\build\\_deps\\gmp-src\\lib\\libgmp-10.dll .\\build\\.
+      #     cp .\\build\\_deps\\mpfr-src\\lib\\libmpfr-4.dll .\\build\\.
+      #     cp .\\build\\_deps\\gmp-src\\lib\\libgmp-10.dll .\\build\\Release\\.
+      #     cp .\\build\\_deps\\mpfr-src\\lib\\libmpfr-4.dll .\\build\\Release\\.
+      #     cp .\\build\\_deps\\gmp-src\\lib\\libgmp-10.dll .
+      #     cp .\\build\\_deps\\mpfr-src\\lib\\libmpfr-4.dll .
 
       - name: Run unit tests
         shell: bash -l {0}
