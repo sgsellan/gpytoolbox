@@ -96,12 +96,42 @@ void bind_viewer(py::module& m) {
         .def("set_data", [&](iglv::Viewer& v, Eigen::VectorXd& d, double caxis_min, 
             double caxis_max, int id,  std::string colormap, int num_steps)
         {
-        data_list_check(v, id);
-        igl::ColorMapType cmap = string_to_colormap_type(colormap);
-        v.data_list[id].set_data(d, caxis_min, caxis_max, cmap, num_steps );
+            data_list_check(v, id);
+            igl::ColorMapType cmap = string_to_colormap_type(colormap);
+            v.data_list[id].set_data(d, caxis_min, caxis_max, cmap, num_steps );
         }, py::arg("d"), py::arg("caxis_min"), py::arg("caxis_max"), py::arg("id") = 0, 
             py::arg("colormap") = "viridis", py::arg("num_steps") = 21)
 
+        //miscallaneous
+        .def("show_lines", [&](iglv::Viewer& v, bool show_lines, int id){
+            data_list_check(v, id); 
+            v.data_list[id].show_lines = show_lines;
+            }, py::arg("show_lines"), py::arg("id")=0)
+
+        .def("show_faces", [&](iglv::Viewer& v, bool show_faces, int id) {
+            data_list_check(v, id);
+            v.data_list[id].show_faces = show_faces;
+            }, py::arg("show_faces"), py::arg("id") = 0)
+
+        .def("double_sided", [&](iglv::Viewer& v, bool double_sided, int id) {
+            data_list_check(v, id);
+            v.data_list[id].double_sided = double_sided;
+            }, py::arg("double_sided"), py::arg("id") = 0)
+
+       .def("invert_normals", [&](iglv::Viewer& v, bool invert_normals, int id) {
+            data_list_check(v, id);
+            v.data_list[id].invert_normals = invert_normals;
+            }, py::arg("invert_normals"), py::arg("id") = 0)
+
+       .def("is_visible", [&](iglv::Viewer& v, bool is_visible, int id) {
+            data_list_check(v, id);
+            v.data_list[id].is_visible = is_visible;
+            }, py::arg("is_visible"), py::arg("id") = 0)
+
+       .def("show_faces", [&](iglv::Viewer& v, bool show_faces, int id) {
+            data_list_check(v, id);
+            v.data_list[id].show_faces = show_faces;
+            }, py::arg("show_faces"), py::arg("id") = 0)
 
        .def("launch", [&](iglv::Viewer& v) 
        	    {v.launch(); })
