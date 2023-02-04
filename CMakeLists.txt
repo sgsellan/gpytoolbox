@@ -17,6 +17,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
+option(LIBIGL_PNG  "Build target igl::png"  ON)
+option(LIBIGL_GLFW "Build target igl::glfw" ON)
+option(LIBIGL_IMGUI   "Build target igl::imgui" ON)
 include(libigl)
 
 add_library(cpytoolbox
@@ -73,8 +76,9 @@ target_link_libraries(cpytoolbox_copyleft igl::core igl_copyleft::cgal)
 add_subdirectory(./ext/pybind11/)
 pybind11_add_module(gpytoolbox_bindings
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/pybind_core.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_viewer.cpp"
 )
-target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core)
+target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core igl::glfw igl::imgui)
 target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/")
 
 

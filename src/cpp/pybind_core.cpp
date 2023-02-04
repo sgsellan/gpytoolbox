@@ -8,12 +8,16 @@
 #include <pybind11/functional.h>
 #include <string>
 
+#include <igl/opengl/glfw/Viewer.h>
+
 using namespace Eigen;
 namespace py = pybind11;
 using EigenDStride = Stride<Eigen::Dynamic, Eigen::Dynamic>;
 template <typename MatrixType>
 using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row order matrices easily
 
+//forward declare all other binding functions outside of core
+void bind_viewer(py::module& m);
 
 PYBIND11_MODULE(gpytoolbox_bindings, m) {
     m.def("read_obj_pybind",[](std::string filename,
@@ -34,5 +38,26 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
         {
             return write_obj(filename, v, f, uv, ft, n, fn);
         });
+    bind_viewer(m);
+
+    m.def("help", [&]() {printf("hi"); });
+    //wrap the viewer class. For now we assume that a user won't have multiple cameras, but may have multiple meshes. 
+    //Note that we do not wrap the data class yet, users directly set data quantities by specifying which mesh they're talking about
+    // with a mesh id.
+    //py::class_<igl::opengl::glfw::Viewer>(m, "viewer")
+    //    //set mesh
+    //    .def(py::init<>())
+    //    //.def("set_mesh", [&](iglv::Viewer& v, MatrixXd& V, MatrixXi& F) {
+    //    //	v.data().set_mesh(V, F); 
+    //    //	})
+    //    ////.def("set_mesh", [&](Viewer& v, MatrixXd& V, MatrixXi& F, int i) {
+    //    ////		v.data_list[i].set_mesh(V, F);
+    //    ////	})
+    //    //.def("launch", [&](iglv::Viewer& v) 
+    //    //	{v.launch(); })
+    //    ;
+
+    //bind viewer
+
 }
 
