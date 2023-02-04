@@ -21,7 +21,7 @@ option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
 
 add_library(cpytoolbox
-	SHARED
+	# SHARED
 	# Headers
 	src/cpp/upper_envelope.h
 	src/cpp/ray_mesh_intersect_aabb.h
@@ -53,7 +53,7 @@ add_library(cpytoolbox
 	)
 
 	add_library(cpytoolbox_copyleft
-	SHARED
+	# SHARED
 	# Headers
 	src/cpp/swept_volume/fd_interpolate.cpp
 	src/cpp/swept_volume/gradient_descent_test.cpp

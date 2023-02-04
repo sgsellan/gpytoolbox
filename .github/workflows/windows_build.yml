@@ -56,13 +56,13 @@ jobs:
           mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && 
           cmake --build "." --config Release
 
-      - name: Debug
-        shell: bash -l {0}
-        run: |
-          cd D:
-          ls
-          cd a
-          ls
+      # - name: Debug
+      #   shell: bash -l {0}
+      #   run: |
+      #     cd D:
+      #     ls
+      #     cd a
+      #     ls
 
       - name: copying dlls
         shell: bash -l {0}
