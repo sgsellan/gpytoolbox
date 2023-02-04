@@ -38,7 +38,13 @@ def massmatrix_intrinsic(l_sq,F,n=None,type='voronoi'):
 
     Examples
     --------
-    TO-DO
+    ```python
+    from gpytoolbox import massmatrix_intrinsic
+    l_sq = np.array([[1.,1.,1.]]) # edge lengths
+    f = np.array([[0,1,2]],dtype=int) # simple triangle
+    M_b = massmatrix_intrinsic(l_sq,f, type='barycentric')
+    # M_b will be a diagonal matrix with 0.25/sqrt(3) on the diagonal
+    ```
     """
 
     assert F.shape == l_sq.shape

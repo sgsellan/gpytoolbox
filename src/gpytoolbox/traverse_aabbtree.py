@@ -1,6 +1,6 @@
 import numpy as np
 
-def traverse_aabbtree(C,W,CH,tri_indices,traversal_bool_fun,add_to_queue=None):
+def traverse_aabbtree(C,W,CH,tri_indices,split_dim,traversal_bool_fun,add_to_queue=None):
     """Axis-Aligned Bounding-Box hierarchy traversal.
 
     Simple function which traverses an AABB tree given rejection and queue addition strategies. 
@@ -15,8 +15,10 @@ def traverse_aabbtree(C,W,CH,tri_indices,traversal_bool_fun,add_to_queue=None):
         Matrix of child indices (-1 if leaf node)
     tri_indices : numpy int array
         Vector of element indices (-1 if *not* leaf node)
+    split_dim : numpy int array
+        Vector of split dimensions (0,1,2 for x,y,z)
     traversal_bool_fun : func
-        Function which takes (box_index,C,W,CH,is_leaf) as input and returns whether to continue traversing to the next depth (True) or reject branch entirely (False)
+        Function which takes (box_index,C,W,CH,split_dir,is_leaf) as input and returns whether to continue traversing to the next depth (True) or reject branch entirely (False)
     add_to_queue : func, optional (default None)
         Function which takes (queue,box_index) as input and adds box_index to the queue (to support different search strategies). By default, appends to the end (breadth first).
 
@@ -90,8 +92,10 @@ def traverse_aabbtree(C,W,CH,tri_indices,traversal_bool_fun,add_to_queue=None):
     """
     if (add_to_queue is None):
         # By default breadth first
-        def add_to_queue(curr_queue,new_ind):
-            curr_queue.append(new_ind)
+        def add_to_queue(curr_queue,CHH,parent_ind):
+            for i in range(CHH.shape[1]):
+                    add_to_queue(curr_queue,CHH[parent_ind,i])
+            # curr_queue.append(new_ind)
 
 
     queue = [0]
@@ -101,12 +105,11 @@ def traverse_aabbtree(C,W,CH,tri_indices,traversal_bool_fun,add_to_queue=None):
         q = queue.pop(0)
         is_leaf = (CH[q,1]==-1)
         # Check if, e.g., point is inside this cell
-        if traversal_bool_fun(q,C,W,CH,tri_indices,is_leaf):
+        if traversal_bool_fun(q,C,W,CH,tri_indices,split_dim,is_leaf):
             # Is it leaf?
             if (not is_leaf):
                 # If not, add children to queue
-                for i in range(CH.shape[1]):
-                    add_to_queue(queue,CH[q,i])
+                add_to_queue(queue,CH,q)
                     # queue.append(CH[q,i])
     return True
             

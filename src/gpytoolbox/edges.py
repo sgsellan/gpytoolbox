@@ -34,7 +34,13 @@ def edges(F,
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import read_mesh, edges
+    v,f = read_mesh("test/unit_tests_data/bunny_oded.obj")
+    e = edges(f)
+    #Euler's (?) theorem
+    self.assertTrue(v.shape[0] - e.shape[0] + f.shape[0] == 2)
+    ```
     
     """
 

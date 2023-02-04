@@ -18,7 +18,11 @@ def boundary_vertices(F):
 
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import read_mesh, boundary_vertices
+    v,f = read_mesh("test/unit_tests_data/bunny_oded.obj")
+    bv = boundary_vertices(f)
+    ```
     
     """
 

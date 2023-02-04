@@ -30,14 +30,57 @@ def min_quad_with_fixed(Q,
     y : None or scalar or (o,) numpy array or (o,p) numpy array
         Assumed to be scalar 0 if None
 
+
     Returns
     -------
     u : (n,) numpy array or (n,p) numpy array
         Solution to the optimization problem
 
+
+    See Also
+    --------
+    `fixed_dof_solve` for solving a (non-symmetric) linear system while
+    restricting certain degrees of freedom.
+
+
     Examples
     --------
-    TODO
+    Example with simple degree-of-freedom constraints:
+    ```python
+    >>> import gpytoolbox as gpy
+    >>> import numpy as np
+    >>> import scipy as sp
+    >>> 
+    >>> Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+    >>> c = np.array([0.,0.,1.])
+    >>> k = np.array([2])
+    >>> y = np.array([5.])
+    >>> u = gpy.min_quad_with_fixed(Q, c=c, k=k, y=y)
+    >>> u
+    array([10., -0.,  5.])
+    >>>
+    >>> # The constraints hold:
+    >>> u[k]-y
+    array([0.])
+    ```
+
+    Example with linear equality conditions:
+    ```python
+    >>> import gpytoolbox as gpy
+    >>> import numpy as np
+    >>> import scipy as sp
+    >>>
+    >>> Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+    >>> c = np.array([0.,0.,1.])
+    >>> A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))
+    >>> b = np.array([3.])
+    >>> u = gpy.min_quad_with_fixed(Q, c=c, A=A, b=b)
+    >>> u
+    array([ 2., -0., -1.])
+    >>>
+    >>> # The constraints hold:>>> A*u-b
+    array([0.])
+    ```
     
     """
 
@@ -76,7 +119,48 @@ class min_quad_with_fixed_precompute:
 
         Examples
         --------
-        TODO
+        Example with simple degree-of-freedom constraints:
+        ```python
+        >>> import gpytoolbox as gpy
+        >>> import numpy as np
+        >>> import scipy as sp
+        >>> 
+        >>> Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+        >>> k = np.array([2])
+        >>> precomp = gpy.min_quad_with_fixed_precompute(Q, k=k)
+        >>> 
+        >>> c = np.array([0.,0.,1.])
+        >>> y = np.array([5.])
+        >>> u = precomp.solve(c=c, y=y)
+        >>> u
+        array([10., -0.,  5.])
+        >>> 
+        >>> # The constraints hold:
+        >>> u[k]-y
+        array([0.])
+        ```
+
+        Example with linear equality conditions:
+        ```python
+        >>> import gpytoolbox as gpy
+        >>> import numpy as np
+        >>> import scipy as sp
+        >>> 
+        >>> Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+        >>> A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))
+        >>> precomp = gpy.min_quad_with_fixed_precompute(Q, A=A)
+        >>> 
+        >>> c = np.array([0.,0.,1.])
+        >>> b = np.array([3.])
+        >>> u = precomp.solve(c=c, b=b)
+        >>> u
+        array([ 2., -0., -1.])
+        >>> 
+        >>> # The constraints hold:
+        >>> A*u-b
+        array([0.])
+        ```
+
         
         """
 
@@ -183,7 +267,47 @@ class min_quad_with_fixed_precompute:
 
         Examples
         --------
-        TODO
+                Example with simple degree-of-freedom constraints:
+        ```python
+        >>> import gpytoolbox as gpy
+        >>> import numpy as np
+        >>> import scipy as sp
+        >>> 
+        >>> Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+        >>> k = np.array([2])
+        >>> precomp = gpy.min_quad_with_fixed_precompute(Q, k=k)
+        >>> 
+        >>> c = np.array([0.,0.,1.])
+        >>> y = np.array([5.])
+        >>> u = precomp.solve(c=c, y=y)
+        >>> u
+        array([10., -0.,  5.])
+        >>> 
+        >>> # The constraints hold:
+        >>> u[k]-y
+        array([0.])
+        ```
+
+        Example with linear equality conditions:
+        ```python
+        >>> import gpytoolbox as gpy
+        >>> import numpy as np
+        >>> import scipy as sp
+        >>> 
+        >>> Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+        >>> A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))
+        >>> precomp = gpy.min_quad_with_fixed_precompute(Q, A=A)
+        >>> 
+        >>> c = np.array([0.,0.,1.])
+        >>> b = np.array([3.])
+        >>> u = precomp.solve(c=c, b=b)
+        >>> u
+        array([ 2., -0., -1.])
+        >>> 
+        >>> # The constraints hold:
+        >>> A*u-b
+        array([0.])
+        ```
         
         """
         

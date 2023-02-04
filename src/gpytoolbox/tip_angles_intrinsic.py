@@ -22,7 +22,15 @@ def tip_angles_intrinsic(l_sq, F,
 
     Examples
     --------
-    TODO
+    ```python
+    # Random lengths
+    c = np.random.default_rng().random() + 0.1
+    l_sq = c * np.array([[1., 1., 1.]])
+    # Triangle faces
+    f = np.array([[0,1,2]],dtype=int)
+    # Get tip angles
+    alpha = gpy.tip_angles_intrinsic(l_sq,f)
+    ```
     
     """
     

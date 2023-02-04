@@ -153,10 +153,8 @@ library. We are thankful to them:
 
 ### Contributors
 
-We would like to thank [Michael Jäger](https://github.com/EmJay276) for being
-our Gpytoolbox's first external contributor (see [PR
-#45](https://github.com/sgsellan/gpytoolbox/pull/45)).
-
+- We would like to thank [Michael Jäger](https://github.com/EmJay276) for being Gpytoolbox's first external contributor (see [PR #45](https://github.com/sgsellan/gpytoolbox/pull/45)).
+- [Towaki Takikawa](https://github.com/tovacinni) ([PR #49](https://github.com/sgsellan/gpytoolbox/pull/49))
 
 
 <!-- Most of the functionality in this library is python-only, and it requires no
@@ -226,7 +224,7 @@ Python one; e.g.,
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../ext/gpytoolbox')))
 from gpytoolbox import regular_square_mesh, in_element_aabb
 v, f = regular_square_mesh(10) # This is a pure python function
-query = np.array([[0.1,0.1]])
+query = np.aarray([[0.1,0.1]])
 I = in_element_aabb(queries,V,F) # This is a C++ binding
 ``` -->
 
@@ -242,6 +240,7 @@ this bullet list. If you want to contribute to gpytoolbox, a great way to start 
 - Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))
 - STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))
 - PLY reader and writer using [tinyply](https://github.com/ddiakopoulos/tinyply).
+- Add Python 3.11 build.
 - Iterative closest point for mesh alignment
 - Basic FEM (cotangent matrix, mass matrix, linear elasticity) for tetrahedral meshes
 - ARAP for deformation and parametrization

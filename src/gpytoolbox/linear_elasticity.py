@@ -53,7 +53,21 @@ def linear_elasticity(V,F,U0,dt=0.1,bb=None,bc = None
 
     Examples
     --------
-    TO-DO
+    ```python
+    from gpytoolbox import regular_square_mesh, linear_elasticity
+    # Build very small mesh
+    V, F = regular_square_mesh(3)
+    V = (V + 1.)/2.
+    # Initial conditions
+    fext = 0*V
+    Ud0 = 0*V
+    U0 = V.copy()
+    U0[:,1] = 0.0
+    U0[:,0] = U0[:,0] - 0.5
+    # print(np.reshape(U0,(-1,1),order='F'))
+    dt = 0.2
+    U, sigma_v = linear_elasticity(V,F,U0,fext=fext,dt=dt,Ud0=Ud0)
+    ```
     """
 
     if (Ud0 is None):

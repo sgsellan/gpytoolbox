@@ -14,14 +14,17 @@ class closest_point_traversal:
         self.current_best_guess = np.Inf
         self.current_best_element = -1
         self.others = []
+        self.num_traversal = 0
+        self.traversed = []
     # Auxiliary function which finds the distance of point to rectangle
     def sdBox(self,p,center,width):
-        q = np.abs(p - center) - width
+        q = np.abs(p - center) - 0.5*width
         maxval = -np.Inf
         for i in range(self.dim):
             maxval = np.maximum(maxval,q[i])
         return np.linalg.norm((np.maximum(q,0.0))) + np.minimum(maxval,0.0)
-    def traversal_function(self,q,C,W,CH,tri_indices,is_leaf):        
+    def traversal_function(self,q,C,W,CH,tri_indices,split_dim,is_leaf):        
+        self.num_traversal += 1
         # Distance is L1 norm of ptest minus center 
         if is_leaf:
             # print("Point:",self.ptest)
@@ -34,6 +37,7 @@ class closest_point_traversal:
             width = W[q,:]
             sqrD = self.sdBox(self.ptest,center,width)
             sqrD = np.sign(sqrD)*(sqrD**2.0) #Squared but signed... this isn't very legible but it is useful and efficient
+            self.traversed.append(q)
         if sqrD<self.current_best_guess:
             if is_leaf:
                 self.current_best_guess = sqrD
@@ -41,17 +45,36 @@ class closest_point_traversal:
                 # print(self.current_best_guess)
                 self.current_best_element = tri_indices[q]
             else:
+                # Which dimension is best?
+                dist_in_best_dim = self.ptest[split_dim[q]] - center[split_dim[q]]
+                self.is_left_closest = (dist_in_best_dim<0)
                 self.others.append(q)
             return True
         return False
-    def add_to_queue(self,queue,new_ind):
+    def add_to_queue(self,queue,CH,par_ind):
+        # for i in range(CH.shape[1]):
+        #     queue.insert(0,CH[par_ind,i]) 
+        # self.is_left_closest = False
+        if self.is_left_closest:
+            queue.insert(0,CH[par_ind,1])
+            queue.insert(0,CH[par_ind,0])
+        else:
+            queue.insert(0,CH[par_ind,0])
+            queue.insert(0,CH[par_ind,1])
+        # if self.is_left_closest:
+        #     queue.append(CH[par_ind,0])
+        #     queue.append(CH[par_ind,1])
+        # else:
+        #     queue.append(CH[par_ind,1])
+        #     queue.append(CH[par_ind,0])
+        
         # Depth first: insert at beginning (much less queries).
-        queue.insert(0,new_ind)
+        # queue.insert(0,new_ind)
                 
 
 
 
-def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=None,tri_ind=None):
+def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=None,tri_ind=None,split_dir=None):
     """Squared distances from a set of points in space.
 
     General-purpose function which computes the squared distance from a set of points to a mesh, point cloud or polyline, in two or three dimensions. Optionally, uses an aabb tree for efficient computation.
@@ -76,6 +99,8 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
         Matrix of child indeces (-1 if leaf node). If None, will be computed
     tri_indices : numpy int array, optional (default None)
         Vector of AABB element indices (-1 if *not* leaf node). If None, will be computed
+    split_dir : numpy double array, optional (default None)
+        Vector of AABB split directions (if None, will be computed)
 
     Returns
     -------
@@ -135,8 +160,12 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
     lmbs = np.zeros((P.shape[0],F.shape[1]))
     if use_aabb:
         # Build tree once
-        if ((C is None) or (W is None) or (tri_ind is None) or (CH is None)):
-            C,W,CH,_,_,tri_ind = initialize_aabbtree(V,F=F)
+        if ((C is None) or (W is None) or (tri_ind is None) or (CH is None) or (split_dir is None)):
+            C,W,CH,_,_,tri_ind,split_dir = initialize_aabbtree(V,F=F)
+            # V,Q,H = bad_quad_mesh_from_quadtree(C,W,CH)
+            # ps.init()
+            # ps.register_surface_mesh("test",V,Q)
+            # ps.show()
         for j in range(P.shape[0]):
             t = closest_point_traversal(V,F,P[j,:])
             traverse_fun = t.traversal_function
@@ -145,12 +174,14 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
             # print(W)
             # print(CH)
             # print(tri_ind)
-            _ = traverse_aabbtree(C,W,CH,tri_ind,traverse_fun,add_to_queue=add_to_queue_fun)
+            _ = traverse_aabbtree(C,W,CH,tri_ind,split_dir,traverse_fun,add_to_queue=add_to_queue_fun)
+            # print(t.num_traversal)
             indices[j] = t.current_best_element
             squared_distances[j] = t.current_best_guess
             lmbs[j,:] = t.current_best_lmb
     else:
         # Loop over every element
+        t = None
         for j in range(P.shape[0]):
             min_sqrd_dist = np.Inf
             ind = -1

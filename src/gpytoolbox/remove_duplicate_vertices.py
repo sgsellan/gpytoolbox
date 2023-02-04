@@ -22,6 +22,20 @@ def remove_duplicate_vertices(V,epsilon=0.0,faces=None):
         Vector of indices such that V = SV[SVJ,:]
     SF : numpy int array
         Matrix of new mesh indices into SV, only part of the output if faces is not None.
+
+    See Also
+    --------
+    remove_unreferenced.
+
+    Examples
+    --------
+    ```python
+    # Build a polyline; for example, a square, but duplicate the last point
+    V = np.array([ [-1.0, -1.0], [-1.0, 1.0], [1.0, 1.0], [1.0, -1.0], [-1.0, -1.0] ])
+    # Remove duplicate vertices
+    SV, SVI, SVJ = gpytoolbox.remove_duplicate_vertices(V)
+    # SV is now unique
+    ```
     """
     
     if epsilon==0.0:

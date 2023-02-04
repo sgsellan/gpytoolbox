@@ -5,7 +5,7 @@ project(Bindings
 		"Python libigl bindings"
 )
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_BUILD_TYPE "Release")
 #set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -36,6 +36,7 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.h
 	src/cpp/remesher/split_edges.h
 	src/cpp/remesher/tangential_relaxation.h
+	src/cpp/microstl/microstl_wrappers.h
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
@@ -48,6 +49,9 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges_until_bound.cpp
 	src/cpp/remesher/split_edges.cpp
 	src/cpp/remesher/tangential_relaxation.cpp
+	src/cpp/microstl/microstl_wrappers.cpp
+	# microstl
+	src/cpp/microstl/microstl.h
 	)
 
 	add_library(cpytoolbox_copyleft
@@ -69,8 +73,6 @@ add_library(cpytoolbox
 # target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
 target_link_libraries(cpytoolbox igl::core igl::embree )
 target_link_libraries(cpytoolbox_copyleft igl::core igl_copyleft::cgal)
-
-
 
 # Otman's python bindings using pybind11
 add_subdirectory(./ext/pybind11/)

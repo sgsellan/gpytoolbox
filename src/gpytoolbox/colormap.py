@@ -32,7 +32,10 @@ def colormap(name, n, interpolate=True):
     
     Examples
     --------
-    TODO
+    ```python
+    from gpytoolbox import colormap
+    C = colormap('RdBu',60)
+    ```
     """
 
     if interpolate:

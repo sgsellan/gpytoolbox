@@ -39,7 +39,15 @@ def ray_polyline_intersect(position, direction, polyline_vertices, max_distance 
 
     Examples
     --------
-    TODO
+    ```python
+    # Build a polyline; for example, a square
+    V = np.array([ [-1.0, -1.0], [-1.0, 1.0], [1.0, 1.0], [1.0, -1.0] ])
+    # Camera position and direction
+    cam_pos = np.array([-0.5,-1.5])
+    cam_dir = np.array([0.0,1.0])
+    # Looking upwards: intersection should be [-0.5,-1.0], normal downwards
+    x, n, ind = gpytoolbox.ray_polyline_intersect(cam_pos,cam_dir,V)
+    ```
     """
 
     if (EC is None):
