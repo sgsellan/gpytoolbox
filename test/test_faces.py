@@ -1,0 +1,151 @@
+from .context import gpytoolbox as gpy
+from .context import numpy as np
+from .context import unittest
+
+class TestFaces(unittest.TestCase):
+
+    def test_regular_cube_mesh(self):
+        _,t = gpy.regular_cube_mesh(3)
+        hf = gpy.halffaces(t)
+        f = gpy.faces(t)
+
+        # There can be no duplicate faces
+        self.assertTrue(np.unique(f,axis=0).shape == f.shape)
+
+        # With bdry, interior, and nonmanifold
+        f1,boundary_indices,interior_indices,nonmanifold_indices = gpy.faces(t,
+            return_boundary_indices=True,
+            return_interior_indices=True,
+            return_nonmanifold_indices=True)
+        self.assertTrue(np.all(f==f1))
+        self.assertTrue(f.shape[0]==len(boundary_indices)+len(interior_indices))
+
+        # Ground truth test
+        self.assertTrue(f.shape[0]==120)
+        self.assertTrue(len(boundary_indices)==48)
+        self.assertTrue(len(nonmanifold_indices)==0)
+        f_groundtruth = np.array([[ 1,  0,  4],
+       [ 1, 10,  0],
+       [ 4,  0,  3],
+       [ 3,  0, 12],
+       [ 9,  0, 10],
+       [12,  0,  9],
+       [ 2,  1,  5],
+       [ 2, 11,  1],
+       [ 5,  1,  4],
+       [10,  1, 11],
+       [ 5, 14,  2],
+       [14, 11,  2],
+       [ 4,  3,  7],
+       [ 7,  3,  6],
+       [ 6,  3, 15],
+       [15,  3, 12],
+       [ 5,  4,  8],
+       [ 8,  4,  7],
+       [ 8, 17,  5],
+       [17, 14,  5],
+       [ 6, 16,  7],
+       [15, 16,  6],
+       [ 7, 17,  8],
+       [16, 17,  7],
+       [10, 19,  9],
+       [12,  9, 21],
+       [18,  9, 19],
+       [21,  9, 18],
+       [11, 20, 10],
+       [19, 10, 20],
+       [14, 23, 11],
+       [23, 20, 11],
+       [15, 12, 24],
+       [24, 12, 21],
+       [17, 26, 14],
+       [26, 23, 14],
+       [15, 25, 16],
+       [24, 25, 15],
+       [16, 26, 17],
+       [25, 26, 16],
+       [18, 19, 22],
+       [18, 22, 21],
+       [19, 20, 23],
+       [19, 23, 22],
+       [21, 22, 25],
+       [21, 25, 24],
+       [22, 23, 26],
+       [22, 26, 25],
+       [ 0,  1, 13],
+       [ 0,  3, 13],
+       [ 0,  4, 13],
+       [ 0,  9, 13],
+       [ 0, 10, 13],
+       [ 0, 12, 13],
+       [ 1,  2, 14],
+       [ 1,  4, 13],
+       [ 1,  4, 14],
+       [ 1,  5, 14],
+       [ 1, 10, 13],
+       [ 1, 10, 14],
+       [ 1, 11, 14],
+       [ 1, 13, 14],
+       [ 3,  4, 13],
+       [ 3,  4, 16],
+       [ 3,  6, 16],
+       [ 3,  7, 16],
+       [ 3, 12, 13],
+       [ 3, 12, 16],
+       [ 3, 13, 16],
+       [ 3, 15, 16],
+       [ 4,  5, 14],
+       [ 4,  5, 17],
+       [ 4,  7, 16],
+       [ 4,  7, 17],
+       [ 4,  8, 17],
+       [ 4, 13, 14],
+       [ 4, 13, 16],
+       [ 4, 13, 17],
+       [ 4, 14, 17],
+       [ 4, 16, 17],
+       [ 9, 10, 13],
+       [ 9, 10, 22],
+       [ 9, 12, 13],
+       [ 9, 12, 22],
+       [ 9, 13, 22],
+       [ 9, 18, 22],
+       [ 9, 19, 22],
+       [ 9, 21, 22],
+       [10, 11, 14],
+       [10, 11, 23],
+       [10, 13, 14],
+       [10, 13, 22],
+       [10, 13, 23],
+       [10, 14, 23],
+       [10, 19, 22],
+       [10, 19, 23],
+       [10, 20, 23],
+       [10, 22, 23],
+       [12, 13, 16],
+       [12, 13, 22],
+       [12, 13, 25],
+       [12, 15, 16],
+       [12, 15, 25],
+       [12, 16, 25],
+       [12, 21, 22],
+       [12, 21, 25],
+       [12, 22, 25],
+       [12, 24, 25],
+       [13, 14, 17],
+       [13, 14, 23],
+       [13, 14, 26],
+       [13, 16, 17],
+       [13, 16, 25],
+       [13, 16, 26],
+       [13, 17, 26],
+       [13, 22, 23],
+       [13, 22, 25],
+       [13, 22, 26],
+       [13, 23, 26],
+       [13, 25, 26]])
+        self.assertTrue(np.all(f == f_groundtruth))
+
+
+if __name__ == '__main__':
+    unittest.main()
