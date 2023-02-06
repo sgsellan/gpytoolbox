@@ -40,7 +40,7 @@ def write_mesh(file,
     fmt : string, optional (default: None)
         The file format of the mesh to write.
         If None, try to guess the format from the file extension.
-        Supported formats: obj
+        Supported formats: obj, stl
     writer : string, optional (default: None)
         Which writer engine to use. None, 'C++' or 'Python'.
         If None, will use C++ if available, and else Python.
