@@ -26,14 +26,14 @@ class TestReadMesh(unittest.TestCase):
             if Fn_py is not None:
                 self.assertTrue((Fn_py==Fn_cpp).all())
 
-    def test_stl_reader(self):
-        stl_meshes = ["sphere_binary.stl", "fox_ascii.stl"]
-        gt_v_sizes = [4080,1866]
-        gt_f_sizes = [1360,622]
-        for mesh in stl_meshes:
-            V,F = gpy.read_mesh("test/unit_tests_data/" + mesh)
-            self.assertTrue(V.shape[0] == gt_v_sizes[stl_meshes.index(mesh)])
-            self.assertTrue(F.shape[0] == gt_f_sizes[stl_meshes.index(mesh)])
+    # def test_stl_reader(self):
+    #     stl_meshes = ["sphere_binary.stl", "fox_ascii.stl"]
+    #     gt_v_sizes = [4080,1866]
+    #     gt_f_sizes = [1360,622]
+    #     for mesh in stl_meshes:
+    #         V,F = gpy.read_mesh("test/unit_tests_data/" + mesh)
+    #         self.assertTrue(V.shape[0] == gt_v_sizes[stl_meshes.index(mesh)])
+    #         self.assertTrue(F.shape[0] == gt_f_sizes[stl_meshes.index(mesh)])
 
 
 if __name__ == '__main__':

@@ -1,14 +1,22 @@
-#include <npe.h>
-#include <pybind11/stl.h>
 #include "in_element_aabb.h"
+#include <igl/hausdorff.h>
+#include <pybind11/stl.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
+#include <pybind11/functional.h>
+#include <string>
 
+using namespace Eigen;
+namespace py = pybind11;
+using EigenDStride = Stride<Eigen::Dynamic, Eigen::Dynamic>;
+template <typename MatrixType>
+using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row order matrices easily
 
-npe_function(_in_element_aabb_cpp_impl)
-npe_arg(queries, dense_double)
-npe_arg(vt, dense_double)
-npe_arg(ft, dense_int)
-npe_begin_code()
-    Eigen::VectorXi I;
-    in_element_aabb(queries,vt,ft,I);
-    return npe::move(I);
-npe_end_code()
+void binding_in_element_aabb(py::module& m) {
+    m.def("_in_element_aabb_cpp_impl",[](EigenDRef<MatrixXd> qt, EigenDRef<MatrixXd> vt, EigenDRef<MatrixXi> ft)
+        {
+            Eigen::VectorXi I;
+            in_element_aabb(qt,vt,ft,I);
+            return I;
+        });
+}
