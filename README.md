@@ -240,6 +240,10 @@ this bullet list. If you want to contribute to gpytoolbox, a great way to start 
 - Examples in all functions (merge [#47](https://github.com/sgsellan/gpytoolbox/pull/47))
 - Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))
 - STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))
+- ~~Gaussian Processes implementation (merge [#39](https://github.com/sgsellan/gpytoolbox/pull/39))~~
+- ~~Examples in all functions (merge [#47](https://github.com/sgsellan/gpytoolbox/pull/47))~~
+- ~~Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))~~
+- ~~STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))~~
 - PLY reader and writer using [tinyply](https://github.com/ddiakopoulos/tinyply).
 - Add Python 3.11 build.
 - Iterative closest point for mesh alignment
