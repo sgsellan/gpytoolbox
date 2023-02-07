@@ -40,7 +40,7 @@ def write_mesh(file,
     fmt : string, optional (default: None)
         The file format of the mesh to write.
         If None, try to guess the format from the file extension.
-        Supported formats: obj
+        Supported formats: obj, stl
     writer : string, optional (default: None)
         Which writer engine to use. None, 'C++' or 'Python'.
         If None, will use C++ if available, and else Python.
@@ -90,13 +90,13 @@ def _write_obj(file,V,F,UV,Ft,N,Fn,writer):
     # Select appropriate writer
     if writer=="C++":
         if UV is None:
-            UV = np.ndarray([], dtype=np.float64)
+            UV = np.ndarray(shape=(0,0), dtype=np.float64)
         if Ft is None:
-            Ft = np.ndarray([], dtype=np.int32)
+            Ft = np.ndarray(shape=(0,0), dtype=np.int32)
         if N is None:
-            N = np.ndarray([], dtype=np.float64)
+            N = np.ndarray(shape=(0,0), dtype=np.float64)
         if Fn is None:
-            Fn = np.ndarray([], dtype=np.int32)
+            Fn = np.ndarray(shape=(0,0), dtype=np.int32)
         err = _write_obj_cpp_impl(file,
             V.astype(np.float64),
             F.astype(np.int32),

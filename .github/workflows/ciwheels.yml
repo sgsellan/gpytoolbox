@@ -43,6 +43,10 @@ jobs:
         # Launch separate job for each python. The build is so much longer than
         # machine configuration/setup, so parallel builds will be faster. More
         # importantly, github times out after 6 hours _per job_.
+
+        # debugging
+        # cpversion: [ "cp39"]
+        # os: [ { runs-on: ubuntu-latest, cibw-arch: manylinux_x86_64}]
         cpversion: ["cp36", "cp37", "cp38", "cp39", "cp310", "cp311"]
         os: [ { runs-on: ubuntu-latest, cibw-arch: manylinux_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_arm64}, { runs-on: windows-latest, cibw-arch: win_amd64} ]
         exclude:
@@ -66,7 +70,7 @@ jobs:
       # CIBW_TEST_COMMAND_MACOS: "python -m pip install tetgen && cd {project} && python -m unittest -v"
       # CIBW_TEST_COMMAND_LINUX: "python -m pip install tetgen && cd {project} && python -m unittest -v"
       # CIBW_TEST_COMMAND: "python -m pip install tetgen && python -m unittest -v"
-      CIBW_BEFORE_BUILD_LINUX : "yum remove -y cmake && python -m pip install\ cmake && yum -y install gmp-devel\ mpfr-devel\ libXrandr-devel\ libXinerama && python -m pip install numpy"
+      CIBW_BEFORE_BUILD_LINUX : "yum remove -y cmake && python -m pip install\ cmake && yum -y install gmp-devel\ mpfr-devel\ libXrandr-devel\ libXinerama-devel\ libXcursor-devel\ libXi-devel && python -m pip install numpy"
       CIBW_BUILD: "${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}"
       # CIBW_TEST_SKIP: "*-macosx_arm64"
       CIBW_ENVIRONMENT: "MAX_JOBS=2"
