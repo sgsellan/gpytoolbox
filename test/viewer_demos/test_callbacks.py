@@ -3,10 +3,9 @@ import gpytoolbox as gpy
 import numpy as np
 
 name = "airplane"
+obj_file = "./data/" + name + "/" + name  +".obj"
+[V, F] = gpy.read_mesh(obj_file)
 
-V, F, UV_py, Ft_py, N_py, Fn_py = \
-    gpy.read_mesh("test/unit_tests_data/" + name,
-                  return_UV=True, return_N=True, reader='Python')
 def callback_pre_draw():
     print("callback pre draw")
     return False
