@@ -17,9 +17,6 @@ void binding_hausdorff_distance(py::module& m) {
                          EigenDRef<MatrixXi> gt)
         {
             double s;
-            // Eigen::MatrixXd V(vt);
-            // Eigen::MatrixXi F(ft);
-            // Eigen::MatrixXd Q(qt);
             igl::hausdorff(vt,ft,ut,gt,s);
             return s;
         });
