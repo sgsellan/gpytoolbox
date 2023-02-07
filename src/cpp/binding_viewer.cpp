@@ -135,5 +135,113 @@ void bind_viewer(py::module& m) {
 
        .def("launch", [&](iglv::Viewer& v) 
        	    {v.launch(); })
-		;
+		
+    
+        //camera
+        .def("look_at", [&](iglv::Viewer& v, Eigen::RowVector3d& eye, Eigen::RowVector3d& center)
+        {
+            v.core().camera_eye = eye.cast<float>();
+            v.core().camera_center = center.cast<float>();
+        })
+
+        .def("zoom", [&](iglv::Viewer& v, double zoom)
+        {
+            v.core().camera_zoom = zoom;
+        })
+
+        // callbacks
+        .def("callback_pre_draw", [&](iglv::Viewer& v, std::function<bool(void)>& func){
+            {
+                auto wrapperFunc = [=](igl::opengl::glfw::Viewer&) -> bool {
+                    return func();
+                };
+                v.callback_pre_draw = wrapperFunc; 
+            };})
+
+        .def("callback_post_draw", [&](iglv::Viewer& v, std::function<bool(void)>& func)
+            {
+                auto wrapperFunc = [=](igl::opengl::glfw::Viewer&) -> bool {
+                return func();
+            };
+            v.callback_post_draw = wrapperFunc;
+            })
+
+        .def("callback_key_pressed", [&](iglv::Viewer& v, std::function<bool(unsigned int, int)>& func)
+            {
+                 auto wrapperFunc = [=](igl::opengl::glfw::Viewer&, unsigned int button, int modifier) -> bool {
+                    return func(button, modifier);
+                };
+                v.callback_key_pressed = wrapperFunc; 
+            })
+
+        .def("callback_key_down", [&](iglv::Viewer& v, std::function<bool(unsigned int, int)>& func)
+            {
+                auto wrapperFunc = [=](igl::opengl::glfw::Viewer&, unsigned int button, int modifier) -> bool {
+                return func(button, modifier);
+            };
+            v.callback_key_down = wrapperFunc;
+            })
+
+        .def("callback_key_up", [&](iglv::Viewer& v, std::function<bool(unsigned int, int)>& func)
+            {
+                auto wrapperFunc = [=](igl::opengl::glfw::Viewer&, unsigned int button, int modifier) -> bool {
+                return func(button, modifier);
+            };
+            v.callback_key_up = wrapperFunc;
+            })
+
+        .def("callback_mouse_down", [&](iglv::Viewer& v, std::function<bool(unsigned int, int)>& func)
+            {
+                auto wrapperFunc = [=](igl::opengl::glfw::Viewer&, unsigned int button, int modifier) -> bool {
+                return func(button, modifier);
+            };
+            v.callback_mouse_down = wrapperFunc;
+            })
+
+        .def("callback_mouse_up", [&](iglv::Viewer& v, std::function<bool(unsigned int, int)>& func)
+            {
+                auto wrapperFunc = [=](igl::opengl::glfw::Viewer&, unsigned int button, int modifier) -> bool {
+                return func(button, modifier);
+            };
+            v.callback_mouse_up = wrapperFunc;
+            })
+
+        .def("callback_mouse_move", [&](iglv::Viewer& v, std::function<bool(unsigned int, int)>& func)
+            {
+                auto wrapperFunc = [=](igl::opengl::glfw::Viewer&, unsigned int button, int modifier) -> bool {
+                return func(button, modifier);
+            };
+            v.callback_mouse_move = wrapperFunc;
+            })
+
+
+        .def("callback_mouse_move", [&](iglv::Viewer& v, std::function<bool(unsigned int, int)>& func)
+            {
+                auto wrapperFunc = [=](igl::opengl::glfw::Viewer&, unsigned int button, int modifier) -> bool {
+                return func(button, modifier);
+            };
+            v.callback_mouse_move = wrapperFunc;
+         })
+                
+        .def("callback_mouse_scroll", [&](iglv::Viewer& v, std::function<bool(float)>& func)
+            {
+                auto wrapperFunc = [=](igl::opengl::glfw::Viewer&,float dy) -> bool {
+                return func(dy);
+            };
+            v.callback_mouse_scroll = wrapperFunc;
+            })
+
+
+
+        ;
+
+
+
+
+
+
+        
+
+       
+
 }

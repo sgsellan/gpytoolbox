@@ -3,7 +3,7 @@ import numpy as np
 import gpytoolbox as gpy
 from gpytoolbox_bindings import read_obj_pybind, viewer
 # from gpytoolbox.gpytoolbox_bindings import read_obj_pybind
-[n1, V, F, n2, n3, n4, n5] = read_obj_pybind("./unit_tests_data/armadillo.obj", False, False)
+[n1, V, F, n2, n3, n4, n5] = read_obj_pybind("../unit_tests_data/armadillo.obj", False, False)
 
 
 #test constructor
