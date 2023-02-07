@@ -1,18 +1,41 @@
-#include <npe.h>
-#include <pybind11/stl.h>
 #include "remesher/remesh_botsch.h"
+#include <pybind11/stl.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
+#include <pybind11/functional.h>
+#include <string>
 
-npe_function(_remesh_botsch_cpp_impl)
-npe_arg(v, dense_double)
-npe_arg(f, dense_int)
-npe_arg(i, int)
-npe_arg(h, double)
-npe_arg(feature, dense_int)
-npe_arg(project, bool)
-npe_begin_code()
-    Eigen::MatrixXd V(v);
-    Eigen::MatrixXi F(f);
-    Eigen::VectorXi FEATURE(feature);
-    remesh_botsch(V, F, h, i, FEATURE, project);
-    return std::make_tuple(npe::move(V), npe::move(F));
-npe_end_code()
+using namespace Eigen;
+namespace py = pybind11;
+using EigenDStride = Stride<Eigen::Dynamic, Eigen::Dynamic>;
+template <typename MatrixType>
+using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row order matrices easily
+
+void binding_remesh_botsch(py::module& m) {
+    m.def("_remesh_botsch_cpp_impl",[](EigenDRef<MatrixXd> v,
+                         EigenDRef<MatrixXi> f, int i, double h, EigenDRef<VectorXi> feature, bool project)
+        {
+            Eigen::MatrixXd V(v);
+            Eigen::MatrixXi F(f);
+            Eigen::VectorXi FEATURE(feature);
+            remesh_botsch(V, F, h, i, FEATURE, project);
+            return std::make_tuple(V, F);
+        });
+    
+}
+
+
+// npe_function(_remesh_botsch_cpp_impl)
+// npe_arg(v, dense_double)
+// npe_arg(f, dense_int)
+// npe_arg(i, int)
+// npe_arg(h, double)
+// npe_arg(feature, dense_int)
+// npe_arg(project, bool)
+// npe_begin_code()
+//     Eigen::MatrixXd V(v);
+//     Eigen::MatrixXi F(f);
+//     Eigen::VectorXi FEATURE(feature);
+//     remesh_botsch(V, F, h, i, FEATURE, project);
+//     return std::make_tuple(npe::move(V), npe::move(F));
+// npe_end_code()

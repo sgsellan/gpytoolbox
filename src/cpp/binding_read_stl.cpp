@@ -1,13 +1,22 @@
-#include <npe.h>
-#include <pybind11/stl.h>
 #include "microstl/microstl_wrappers.h"
+#include <pybind11/stl.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/eigen.h>
+#include <pybind11/functional.h>
+#include <string>
 
-npe_function(_read_stl_cpp_impl)
-npe_arg(file, std::string)
-npe_begin_code()
-    Eigen::MatrixXd V;
-    Eigen::MatrixXi F;
-    int s = read_stl(file, V, F);
-    return std::make_tuple(s, npe::move(V), npe::move(F));
-npe_end_code()
+using namespace Eigen;
+namespace py = pybind11;
+using EigenDStride = Stride<Eigen::Dynamic, Eigen::Dynamic>;
+template <typename MatrixType>
+using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row order matrices easily
 
+void binding_read_stl(py::module& m) {
+    m.def("_read_stl_cpp_impl",[](std::string filename)
+        {
+            Eigen::MatrixXd V;
+            Eigen::MatrixXi F;
+            int s = read_stl(filename, V, F);
+            return std::make_tuple(s, V, F);
+        });
+}

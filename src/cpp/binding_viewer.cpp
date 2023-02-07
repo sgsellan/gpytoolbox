@@ -51,7 +51,7 @@ igl::ColorMapType string_to_colormap_type(std::string str)
     
 }
 
-void bind_viewer(py::module& m) {
+void binding_viewer(py::module& m) {
 	py::class_<iglv::Viewer>(m, "viewer")
 		.def(py::init<>())
         // setting mesh
