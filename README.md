@@ -236,16 +236,8 @@ gpytoolbox. If there's one you are missing, feel free to submit a PR adding your
 this bullet list. If you want to contribute to gpytoolbox, a great way to start is by picking any of the items below that does not have an associated PR yet
 
 ## To-do
-- Gaussian Processes implementation (merge [#39](https://github.com/sgsellan/gpytoolbox/pull/39))
-- Examples in all functions (merge [#47](https://github.com/sgsellan/gpytoolbox/pull/47))
-- Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))
-- STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))
-- ~~Gaussian Processes implementation (merge [#39](https://github.com/sgsellan/gpytoolbox/pull/39))~~
-- ~~Examples in all functions (merge [#47](https://github.com/sgsellan/gpytoolbox/pull/47))~~
-- ~~Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))~~
-- ~~STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))~~
+
 - PLY reader and writer using [tinyply](https://github.com/ddiakopoulos/tinyply).
-- Add Python 3.11 build.
 - Iterative closest point for mesh alignment
 - Basic FEM (cotangent matrix, mass matrix, linear elasticity) for tetrahedral meshes
 - ARAP for deformation and parametrization
@@ -265,4 +257,8 @@ this bullet list. If you want to contribute to gpytoolbox, a great way to start 
   direction (sensible default when n_y is None, to n_y=n_x)
 - ~~Explicit cast to int32 and float64 before every C++ binding~~
 - ~~Switch to pybind11~~
-- Package for conda distribution
+- ~~Gaussian Processes implementation (merge [#39](https://github.com/sgsellan/gpytoolbox/pull/39))~~
+- ~~Examples in all functions (merge [#47](https://github.com/sgsellan/gpytoolbox/pull/47))~~
+- ~~Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))~~
+- ~~STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))~~
+- ~~Add Python 3.11 build.~~
