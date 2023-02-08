@@ -155,6 +155,7 @@ library. We are thankful to them:
 
 - We would like to thank [Michael Jäger](https://github.com/EmJay276) for being Gpytoolbox's first external contributor (see [PR #45](https://github.com/sgsellan/gpytoolbox/pull/45)).
 - [Towaki Takikawa](https://github.com/tovacinni) ([PR #49](https://github.com/sgsellan/gpytoolbox/pull/49))
+- [Otman Benchekroun](https://github.com/otmanon) ([PR #59](https://github.com/sgsellan/gpytoolbox/pull/59))
 
 
 <!-- Most of the functionality in this library is python-only, and it requires no
@@ -234,11 +235,15 @@ Here are some things we think would be nice to incorporate to future versions of
 gpytoolbox. If there's one you are missing, feel free to submit a PR adding your item to
 this bullet list. If you want to contribute to gpytoolbox, a great way to start is by picking any of the items below that does not have an associated PR yet
 
-## We would like to have this in the next version (0.1.0)
+## To-do
+- Gaussian Processes implementation (merge [#39](https://github.com/sgsellan/gpytoolbox/pull/39))
+- Examples in all functions (merge [#47](https://github.com/sgsellan/gpytoolbox/pull/47))
+- Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))
+- STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))
 - ~~Gaussian Processes implementation (merge [#39](https://github.com/sgsellan/gpytoolbox/pull/39))~~
 - ~~Examples in all functions (merge [#47](https://github.com/sgsellan/gpytoolbox/pull/47))~~
 - ~~Simpler array correspondences (merge [#49](https://github.com/sgsellan/gpytoolbox/pull/49))~~
-- S~~TL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))~~
+- ~~STL mesh reader and writer (merge [#53](https://github.com/sgsellan/gpytoolbox/pull/53))~~
 - PLY reader and writer using [tinyply](https://github.com/ddiakopoulos/tinyply).
 - Add Python 3.11 build.
 - Iterative closest point for mesh alignment
@@ -259,7 +264,5 @@ this bullet list. If you want to contribute to gpytoolbox, a great way to start 
 - `regular_square_mesh` and `regular_cube_mesh` should support different resolutions in `x` and `y`
   direction (sensible default when n_y is None, to n_y=n_x)
 - ~~Explicit cast to int32 and float64 before every C++ binding~~
-
-## Future versions
-- Switch to pybind11
+- ~~Switch to pybind11~~
 - Package for conda distribution
