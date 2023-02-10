@@ -14,9 +14,9 @@ using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row 
 void binding_read_ply(py::module& m) {
     m.def("_read_ply_cpp_impl",[](std::string filename)
         {
-            Eigen::MatrixXd V;
+            Eigen::MatrixXd V, N, C;
             Eigen::MatrixXi F;
-            int s = read_ply(filename, V, F);
-            return std::make_tuple(s, V, F);
+            int s = read_ply(filename, V, F, N, C);
+            return std::make_tuple(s, V, F, N, C);
         });
 }

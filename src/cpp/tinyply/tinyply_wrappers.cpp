@@ -64,7 +64,9 @@ struct uint4 { uint32_t x, y, z, w; };
 int read_ply(
     const std::string& filepath,
     Eigen::MatrixXd& V,
-    Eigen::MatrixXi& F){
+    Eigen::MatrixXi& F,
+    Eigen::MatrixXd& N,
+    Eigen::MatrixXd& C){
         std::unique_ptr<std::istream> file_stream;
         std::vector<uint8_t> byte_buffer;
 
@@ -86,69 +88,107 @@ int read_ply(
         file.parse_header(*file_stream);
 
 
-        std::cout << "\t[ply_header] Type: " << (file.is_binary_file() ? "binary" : "ascii") << std::endl;
-        for (const auto & c : file.get_comments()) std::cout << "\t[ply_header] Comment: " << c << std::endl;
-        for (const auto & c : file.get_info()) std::cout << "\t[ply_header] Info: " << c << std::endl;
+        // std::cout << "\t[ply_header] Type: " << (file.is_binary_file() ? "binary" : "ascii") << std::endl;
+        // for (const auto & c : file.get_comments()) std::cout << "\t[ply_header] Comment: " << c << std::endl;
+        // for (const auto & c : file.get_info()) std::cout << "\t[ply_header] Info: " << c << std::endl;
 
-        for (const auto & e : file.get_elements())
-        {
-            std::cout << "\t[ply_header] element: " << e.name << " (" << e.size << ")" << std::endl;
-            for (const auto & p : e.properties)
-            {
-                std::cout << "\t[ply_header] \tproperty: " << p.name << " (type=" << tinyply::PropertyTable[p.propertyType].str << ")";
-                if (p.isList) std::cout << " (list_type=" << tinyply::PropertyTable[p.listType].str << ")";
-                std::cout << std::endl;
-            }
-        }
+        // for (const auto & e : file.get_elements())
+        // {
+        //     std::cout << "\t[ply_header] element: " << e.name << " (" << e.size << ")" << std::endl;
+        //     for (const auto & p : e.properties)
+        //     {
+        //         std::cout << "\t[ply_header] \tproperty: " << p.name << " (type=" << tinyply::PropertyTable[p.propertyType].str << ")";
+        //         if (p.isList) std::cout << " (list_type=" << tinyply::PropertyTable[p.listType].str << ")";
+        //         std::cout << std::endl;
+        //     }
+        // }
 
-
+        bool are_vertices = true;
+        bool are_faces = true;
+        bool are_normals = true;
+        bool are_colors = true;
 
 
         std::shared_ptr<PlyData> vertices, normals, colors, texcoords, faces, tripstrip;
 
         try { vertices = file.request_properties_from_element("vertex", { "x", "y", "z" }); }
-        catch (const std::exception & e) { std::cerr << "tinyply exception: " << e.what() << std::endl; }
-
-        // std::cout << * vertices->buffer.get() << std::endl;
-
-        // print first 10 vertices
-        // for (size_t i = 0; i < vertices->count; i++)
-        // {
-        //     std::cout << "Vertex " << i << ": " << vertices->buffer.get()[i] << ", " << vertices->buffer.get()[i + 1] << ", " << vertices->buffer.get()[i + 2] << std::endl;
-        // }
+        catch (const std::exception & e) { are_vertices = false; }
 
         try { faces = file.request_properties_from_element("face", { "vertex_indices" }, 3); }
-        catch (const std::exception & e) { std::cerr << "tinyply exception: " << e.what() << std::endl; }
+        catch (const std::exception & e) { are_faces = false; }
+
+        try { normals = file.request_properties_from_element("vertex", { "nx", "ny", "nz" }); }
+        catch (const std::exception & e) { are_normals = false; }
+
+        try { colors = file.request_properties_from_element("vertex", { "red", "green", "blue", "alpha" }); are_colors = true; }
+        catch (const std::exception & e) { are_colors = false; }
+
+        try { colors = file.request_properties_from_element("vertex", { "r", "g", "b", "a" }); are_colors = true; }
+        catch (const std::exception & e) { are_colors = false; }
+
+        file.read(*file_stream);
 
         const size_t numVerticesBytes = vertices->buffer.size_bytes();
         std::vector<float3> verts(vertices->count);
-        std::vector<float3>* verts_ptr = &verts;
-        verts[0].x = 1.0;
-        std::cout << numVerticesBytes << std::endl;
-        std::cout << vertices->count << std::endl;
-        std::memcpy(verts_ptr, vertices->buffer.get(), numVerticesBytes);
+        std::memcpy(verts.data(), vertices->buffer.get(), numVerticesBytes);
 
-        // Print the first 10 vertices in buffer 
+        
 
-        // std::cout << 
+        
 
-        const size_t numFacesBytes = faces->buffer.size_bytes();
-        std::vector<uint3> ply_faces(faces->count);
-        std::memcpy(ply_faces.data(), faces->buffer.get(), numFacesBytes);
+        
 
         
 
         V.resize(verts.size(), 3);
-        F.resize(ply_faces.size(), 3);
+        
         for (int i = 0; i < verts.size(); i++)
         {
             // std::cout << verts[i].x << " " << verts[i].y << " " << verts[i].z << std::endl;
             V.row(i) << verts[i].x, verts[i].y, verts[i].z;
         }
-        for (int i = 0; i < ply_faces.size(); i++)
-        {
-            F.row(i) << ply_faces[i].x, ply_faces[i].y, ply_faces[i].z;
+
+        if (are_faces){
+            const size_t numFacesBytes = faces->buffer.size_bytes();
+            std::vector<uint3> ply_faces(faces->count);
+            std::memcpy(ply_faces.data(), faces->buffer.get(), numFacesBytes);
+            F.resize(ply_faces.size(), 3);
+            for (int i = 0; i < ply_faces.size(); i++)
+            {
+                F.row(i) << ply_faces[i].x, ply_faces[i].y, ply_faces[i].z;
+            }
+        }else{
+            F.resize(0, 0);
         }
+
+
+        if(are_normals){
+            const size_t numNormalsBytes = normals->buffer.size_bytes();
+            std::vector<float3> normals_(normals->count);
+            std::memcpy(normals_.data(), normals->buffer.get(), numNormalsBytes);
+            N.resize(normals_.size(), 3);
+            for (int i = 0; i < normals_.size(); i++)
+            {
+                N.row(i) << normals_[i].x, normals_[i].y, normals_[i].z;
+            }
+        }else{
+            N.resize(0, 0);
+        }
+        
+        if(are_colors){
+            const size_t numColorsBytes = colors->buffer.size_bytes();
+            std::vector<uint4> colors_(colors->count);
+            std::memcpy(colors_.data(), colors->buffer.get(), numColorsBytes);
+            C.resize(colors_.size(), 4);
+            for (int i = 0; i < colors_.size(); i++)
+            {
+                C.row(i) << colors_[i].x, colors_[i].y, colors_[i].z, colors_[i].w;
+            }
+        }else{
+            C.resize(0, 0);
+        }
+
+
         return 0;
 
     };

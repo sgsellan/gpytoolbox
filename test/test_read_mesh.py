@@ -36,11 +36,9 @@ class TestReadMesh(unittest.TestCase):
     #         self.assertTrue(F.shape[0] == gt_f_sizes[stl_meshes.index(mesh)])
 
     def test_ply_reader(self):
-        ply_meshes = ["bunny.ply"]
+        ply_meshes = ["bunny.ply","happy_vrip.ply"]
         for mesh in ply_meshes:
             V,F = gpy.read_mesh("test/unit_tests_data/" + mesh)
-            print(V)
-            # print(F)
 
 
 if __name__ == '__main__':

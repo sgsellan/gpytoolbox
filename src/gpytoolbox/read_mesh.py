@@ -1,12 +1,14 @@
 import os
 import numpy as np
 import csv
+from gpytoolbox.per_face_normals import per_face_normals 
 
 
 def read_mesh(file,
     fmt=None,
     return_UV=False,
     return_N=False,
+    return_C=False,
     reader=None):
     """Reads a mesh from file.
     
@@ -28,7 +30,10 @@ def read_mesh(file,
         format supports it. Only supported for OBJ files.
     return_N : bool, optional (default: None)
         Try reading normal coordinates, if they are present and the file format
-        supports it. Only supported for OBJ files.
+        supports it. Only supported for OBJ and PLY files.
+    return_C : bool, optional (default: None)
+        Try reading color RGB values, if they are present and the file format
+        supports it. Only supported for PLY files.
     reader : string, optional (default: None)
         Which reader engine to use. None, 'C++' or 'Python'.
         If None, will use C++ if available, and else Python.
@@ -68,7 +73,9 @@ def read_mesh(file,
     elif fmt=='stl':
         V,F = _read_stl(file)
     elif fmt=='ply':
-        V,F = _read_ply(file)
+        V,F,N,C = _read_ply(file)
+        if return_N:
+            Fn = per_face_normals(V,F)
     else:
         assert False, "Mesh format not supported."
 
@@ -79,6 +86,10 @@ def read_mesh(file,
         return V,F,UV,Ft
     if return_N:
         return V,F,N,Fn
+    if return_C:
+        return V,F,C
+    if (return_N and return_C):
+        return V,F,N,Fn,C
     return V,F
 
 
@@ -222,7 +233,7 @@ def _read_ply(file):
         from gpytoolbox_bindings import _read_ply_cpp_impl
     except:
         raise ImportError("Gpytoolbox cannot import its C++ read_ply binding, and pure python ply reading is not supported.")
-    err,V,F = _read_ply_cpp_impl(file)
+    err,V,F,N,C = _read_ply_cpp_impl(file)
     if err != 0:
         raise Exception(f"The file {file} could not be read.")
-    return V,F
+    return V,F,N,C

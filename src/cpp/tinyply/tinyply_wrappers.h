@@ -4,9 +4,11 @@
 #include <Eigen/Core>
 
 int read_ply(
-    const std::string& file,
+    const std::string& filepath,
     Eigen::MatrixXd& V,
-    Eigen::MatrixXi& F);
+    Eigen::MatrixXi& F,
+    Eigen::MatrixXd& N,
+    Eigen::MatrixXd& C);
 
 int write_ply(
     const std::string& file,
