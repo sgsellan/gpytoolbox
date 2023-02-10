@@ -35,6 +35,7 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges.h
 	src/cpp/remesher/tangential_relaxation.h
 	src/cpp/microstl/microstl_wrappers.h
+	src/cpp/tinyply/tinyply_wrappers.h
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
@@ -48,8 +49,11 @@ add_library(cpytoolbox
 	src/cpp/remesher/split_edges.cpp
 	src/cpp/remesher/tangential_relaxation.cpp
 	src/cpp/microstl/microstl_wrappers.cpp
+	src/cpp/tinyply/tinyply_wrappers.cpp
 	# microstl
 	src/cpp/microstl/microstl.h
+	# tinyply
+	src/cpp/tinyply/tinyply.h
 	)
 
 	add_library(cpytoolbox_copyleft
@@ -91,6 +95,7 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_remesher_botsch.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_upper_envelope.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_read_ply.cpp"
 )
 
 pybind11_add_module(gpytoolbox_bindings_copyleft

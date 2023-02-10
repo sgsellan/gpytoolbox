@@ -67,6 +67,8 @@ def read_mesh(file,
         V,F,UV,Ft,N,Fn = _read_obj(file,return_UV,return_N,reader)
     elif fmt=='stl':
         V,F = _read_stl(file)
+    elif fmt=='ply':
+        V,F = _read_ply(file)
     else:
         assert False, "Mesh format not supported."
 
@@ -213,4 +215,14 @@ def _read_stl(file):
             raise Exception(f"The file {file} does not exist.")
         elif err == -5:
             raise Exception(f"Unknown error reading stl file.")
+    return V,F
+
+def _read_ply(file):
+    try:
+        from gpytoolbox_bindings import _read_ply_cpp_impl
+    except:
+        raise ImportError("Gpytoolbox cannot import its C++ read_ply binding, and pure python ply reading is not supported.")
+    err,V,F = _read_ply_cpp_impl(file)
+    if err != 0:
+        raise Exception(f"The file {file} could not be read.")
     return V,F

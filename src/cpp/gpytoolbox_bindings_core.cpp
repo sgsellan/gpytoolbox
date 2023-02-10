@@ -24,6 +24,7 @@ void binding_read_stl(py::module& m);
 void binding_write_stl(py::module& m);
 void binding_remesh_botsch(py::module& m);
 void binding_upper_envelope(py::module& m);
+void binding_read_ply(py::module& m);
 
 PYBIND11_MODULE(gpytoolbox_bindings, m) {
 
@@ -42,6 +43,7 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_write_stl(m);
     binding_remesh_botsch(m);
     binding_upper_envelope(m);
+    binding_read_ply(m);
 
     m.def("help", [&]() {printf("hi"); });
 }
