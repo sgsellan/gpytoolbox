@@ -86,41 +86,11 @@ struct uint4 { uint32_t x, y, z, w; };
 
 struct geometry
 {
-    std::vector<float3> vertices;
-    std::vector<float3> normals;
+    std::vector<double3> vertices;
+    std::vector<double3> normals;
     std::vector<float2> texcoords;
     std::vector<uint3> triangles;
     std::vector<uint4> colors;
 };
-
-inline geometry make_cube_geometry()
-{
-    geometry cube;
-
-    const struct CubeVertex { float3 position, normal; float2 texCoord; } verts[] = {
-    { { -1, -1, -1 },{ -1, 0, 0 },{ 0, 0 } },{ { -1, -1, +1 },{ -1, 0, 0 },{ 1, 0 } },{ { -1, +1, +1 },{ -1, 0, 0 },{ 1, 1 } },{ { -1, +1, -1 },{ -1, 0, 0 },{ 0, 1 } },
-    { { +1, -1, +1 },{ +1, 0, 0 },{ 0, 0 } },{ { +1, -1, -1 },{ +1, 0, 0 },{ 1, 0 } },{ { +1, +1, -1 },{ +1, 0, 0 },{ 1, 1 } },{ { +1, +1, +1 },{ +1, 0, 0 },{ 0, 1 } },
-    { { -1, -1, -1 },{ 0, -1, 0 },{ 0, 0 } },{ { +1, -1, -1 },{ 0, -1, 0 },{ 1, 0 } },{ { +1, -1, +1 },{ 0, -1, 0 },{ 1, 1 } },{ { -1, -1, +1 },{ 0, -1, 0 },{ 0, 1 } },
-    { { +1, +1, -1 },{ 0, +1, 0 },{ 0, 0 } },{ { -1, +1, -1 },{ 0, +1, 0 },{ 1, 0 } },{ { -1, +1, +1 },{ 0, +1, 0 },{ 1, 1 } },{ { +1, +1, +1 },{ 0, +1, 0 },{ 0, 1 } },
-    { { -1, -1, -1 },{ 0, 0, -1 },{ 0, 0 } },{ { -1, +1, -1 },{ 0, 0, -1 },{ 1, 0 } },{ { +1, +1, -1 },{ 0, 0, -1 },{ 1, 1 } },{ { +1, -1, -1 },{ 0, 0, -1 },{ 0, 1 } },
-    { { -1, +1, +1 },{ 0, 0, +1 },{ 0, 0 } },{ { -1, -1, +1 },{ 0, 0, +1 },{ 1, 0 } },{ { +1, -1, +1 },{ 0, 0, +1 },{ 1, 1 } },{ { +1, +1, +1 },{ 0, 0, +1 },{ 0, 1 } }};
-
-    std::vector<uint4> quads = { { 0, 1, 2, 3 },{ 4, 5, 6, 7 },{ 8, 9, 10, 11 },{ 12, 13, 14, 15 },{ 16, 17, 18, 19 },{ 20, 21, 22, 23 } };
-
-    for (auto & q : quads)
-    {
-        cube.triangles.push_back({ q.x,q.y,q.z });
-        cube.triangles.push_back({ q.x,q.z,q.w });
-    }
-
-    for (int i = 0; i < 24; ++i)
-    {
-        cube.vertices.push_back(verts[i].position);
-        cube.normals.push_back(verts[i].normal);
-        cube.texcoords.push_back(verts[i].texCoord);
-    }
-
-    return cube;
-}
 
 #endif

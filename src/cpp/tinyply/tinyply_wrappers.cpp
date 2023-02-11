@@ -97,13 +97,13 @@ int read_ply(
         try { tripstrip = file.request_properties_from_element("tristrips", { "vertex_indices" }, 0); are_tripstrip_defined = true;}
         catch (const std::exception & e) {}
 
-        manual_timer read_timer;
+        // manual_timer read_timer;
 
-        read_timer.start();
+        // read_timer.start();
         file.read(*file_stream);
-        read_timer.stop();
+        // read_timer.stop();
 
-        const float parsing_time = static_cast<float>(read_timer.get()) / 1000.f;
+        // const float parsing_time = static_cast<float>(read_timer.get()) / 1000.f;
         // std::cout << "\tparsing " << size_mb << "mb in " << parsing_time << " seconds [" << (size_mb / parsing_time) << " MBps]" << std::endl;
 
         // if (vertices)   std::cout << "\tRead " << vertices->count  << " total vertices "<< std::endl;
@@ -115,24 +115,28 @@ int read_ply(
 
 
         const size_t numVerticesBytes = vertices->buffer.size_bytes();
-        std::vector<float3> verts(vertices->count);
-        std::memcpy(verts.data(), vertices->buffer.get(), numVerticesBytes);
-
-        
-
-        
-
-        
-
-        
-
-        V.resize(verts.size(), 3);
-        
-        for (int i = 0; i < verts.size(); i++)
-        {
-            // std::cout << verts[i].x << " " << verts[i].y << " " << verts[i].z << std::endl;
-            V.row(i) << verts[i].x, verts[i].y, verts[i].z;
+        if (vertices->t == tinyply::Type::FLOAT32) { 
+            std::vector<float3> verts(vertices->count);
+            std::memcpy(verts.data(), vertices->buffer.get(), numVerticesBytes);
+            V.resize(verts.size(), 3);
+            
+            for (int i = 0; i < verts.size(); i++)
+            {
+                // std::cout << verts[i].x << " " << verts[i].y << " " << verts[i].z << std::endl;
+                V.row(i) << verts[i].x, verts[i].y, verts[i].z;
+            }
+        }else if(vertices->t == tinyply::Type::FLOAT64) {
+            std::vector<double3> verts(vertices->count);
+            std::memcpy(verts.data(), vertices->buffer.get(), numVerticesBytes);
+            V.resize(verts.size(), 3);
+            
+            for (int i = 0; i < verts.size(); i++)
+            {
+                // std::cout << verts[i].x << " " << verts[i].y << " " << verts[i].z << std::endl;
+                V.row(i) << verts[i].x, verts[i].y, verts[i].z;
+            }
         }
+        
 
         if (are_faces_defined){
             const size_t numFacesBytes = faces->buffer.size_bytes();
@@ -149,13 +153,24 @@ int read_ply(
 
 
         if(are_normals_defined){
-            const size_t numNormalsBytes = normals->buffer.size_bytes();
-            std::vector<float3> normals_(normals->count);
-            std::memcpy(normals_.data(), normals->buffer.get(), numNormalsBytes);
-            N.resize(normals_.size(), 3);
-            for (int i = 0; i < normals_.size(); i++)
-            {
-                N.row(i) << normals_[i].x, normals_[i].y, normals_[i].z;
+            if (normals->t == tinyply::Type::FLOAT32){
+                const size_t numNormalsBytes = normals->buffer.size_bytes();
+                std::vector<float3> normals_(normals->count);
+                std::memcpy(normals_.data(), normals->buffer.get(), numNormalsBytes);
+                N.resize(normals_.size(), 3);
+                for (int i = 0; i < normals_.size(); i++)
+                {
+                    N.row(i) << normals_[i].x, normals_[i].y, normals_[i].z;
+                }
+            }else if(vertices->t == tinyply::Type::FLOAT64) {
+                const size_t numNormalsBytes = normals->buffer.size_bytes();
+                std::vector<double3> normals_(normals->count);
+                std::memcpy(normals_.data(), normals->buffer.get(), numNormalsBytes);
+                N.resize(normals_.size(), 3);
+                for (int i = 0; i < normals_.size(); i++)
+                {
+                    N.row(i) << normals_[i].x, normals_[i].y, normals_[i].z;
+                }
             }
         }else{
             N.resize(0, 0);
@@ -193,7 +208,7 @@ int write_ply(
 
         for (int i = 0; i < V.rows(); i++)
         {
-            mesh.vertices.push_back( float3{ (float) V(i, 0),  (float) V(i, 1),  (float) V(i, 2)} );
+            mesh.vertices.push_back( double3{ (double) V(i, 0),  (double) V(i, 1),  (double) V(i, 2)} );
         }
 
         bool use_faces = false;
@@ -211,7 +226,7 @@ int write_ply(
             use_normals = true;
             for (int i = 0; i < N.rows(); i++)
             {
-                mesh.normals.push_back( float3{ (float) N(i, 0),  (float) N(i, 1),  (float) N(i, 2)} );
+                mesh.normals.push_back( double3{ (double) N(i, 0),  (double) N(i, 1),  (double) N(i, 2)} );
             }
         }
 
@@ -247,11 +262,11 @@ int write_ply(
         PlyFile cube_file;
 
         cube_file.add_properties_to_element("vertex", { "x", "y", "z" }, 
-            Type::FLOAT32, mesh.vertices.size(), reinterpret_cast<uint8_t*>(mesh.vertices.data()), Type::INVALID, 0);
+            Type::FLOAT64, mesh.vertices.size(), reinterpret_cast<uint8_t*>(mesh.vertices.data()), Type::INVALID, 0);
 
         if(use_normals){
             cube_file.add_properties_to_element("vertex", { "nx", "ny", "nz" },
-                Type::FLOAT32, mesh.normals.size(), reinterpret_cast<uint8_t*>(mesh.normals.data()), Type::INVALID, 0);
+                Type::FLOAT64, mesh.normals.size(), reinterpret_cast<uint8_t*>(mesh.normals.data()), Type::INVALID, 0);
         }
 
         if(use_colors){
