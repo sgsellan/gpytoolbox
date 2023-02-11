@@ -75,7 +75,7 @@ def read_mesh(file,
     elif fmt=='ply':
         V,F,N,C = _read_ply(file)
         if return_N:
-            Fn = per_face_normals(V,F)
+            Fn = None
     else:
         assert False, "Mesh format not supported."
 
@@ -84,12 +84,12 @@ def read_mesh(file,
         return V,F,UV,Ft,N,Fn
     if return_UV:
         return V,F,UV,Ft
+    if (return_N and return_C):
+        return V,F,N,Fn,C
     if return_N:
         return V,F,N,Fn
     if return_C:
         return V,F,C
-    if (return_N and return_C):
-        return V,F,N,Fn,C
     return V,F
 
 

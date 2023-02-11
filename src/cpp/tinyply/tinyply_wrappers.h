@@ -8,12 +8,14 @@ int read_ply(
     Eigen::MatrixXd& V,
     Eigen::MatrixXi& F,
     Eigen::MatrixXd& N,
-    Eigen::MatrixXd& C);
+    Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic>& C);
 
 int write_ply(
-    const std::string& file,
+    const std::string& filename,
     const Eigen::MatrixXd& V,
     const Eigen::MatrixXi& F,
+    const Eigen::MatrixXd& N,
+    const Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic>& C,
     const bool binary);
 
 #endif
