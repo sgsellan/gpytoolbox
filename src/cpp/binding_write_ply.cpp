@@ -14,8 +14,8 @@ using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row 
 void binding_write_ply(py::module& m) {
     m.def("_write_ply_cpp_impl",[](std::string filename, EigenDRef<MatrixXd> v,
                          EigenDRef<MatrixXi> f, EigenDRef<MatrixXd> n,
-                         EigenDRef<MatrixXd> c)
+                         EigenDRef<Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic>> c, const bool binary)
         {
-            return write_ply(filename, v, f, n, c);
+            return write_ply(filename, v, f, n, c, binary);
         });
 }

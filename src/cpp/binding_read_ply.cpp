@@ -12,11 +12,14 @@ template <typename MatrixType>
 using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row order matrices easily
 
 void binding_read_ply(py::module& m) {
-    m.def("_read_ply_cpp_impl",[](std::string filename)
+    m.def("_read_ply_cpp_impl",[](const std::string& filename)
         {
-            Eigen::MatrixXd V, N, C;
+            Eigen::MatrixXd V, N;
             Eigen::MatrixXi F;
+            Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic> C;
+            // read_ply_file("test/unit_tests_data/temp.ply");
             int s = read_ply(filename, V, F, N, C);
+            // int s =0;
             return std::make_tuple(s, V, F, N, C);
         });
 }
