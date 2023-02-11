@@ -8,14 +8,92 @@ using namespace tinyply;
 
 #include <typeinfo>
 
+
+// auxiliary functionality
+
+inline std::vector<uint8_t> read_file_binary(const std::string & pathToFile)
+{
+    std::ifstream file(pathToFile, std::ios::binary);
+    std::vector<uint8_t> fileBufferBytes;
+
+    if (file.is_open())
+    {
+        file.seekg(0, std::ios::end);
+        size_t sizeBytes = file.tellg();
+        file.seekg(0, std::ios::beg);
+        fileBufferBytes.resize(sizeBytes);
+        if (file.read((char*)fileBufferBytes.data(), sizeBytes)) return fileBufferBytes;
+    }
+    else throw std::runtime_error("could not open binary ifstream to path " + pathToFile);
+    return fileBufferBytes;
+}
+
+struct memory_buffer : public std::streambuf
+{
+    char * p_start {nullptr};
+    char * p_end {nullptr};
+    size_t size;
+
+    memory_buffer(char const * first_elem, size_t size)
+        : p_start(const_cast<char*>(first_elem)), p_end(p_start + size), size(size)
+    {
+        setg(p_start, p_start, p_end);
+    }
+
+    pos_type seekoff(off_type off, std::ios_base::seekdir dir, std::ios_base::openmode which) override
+    {
+        if (dir == std::ios_base::cur) gbump(static_cast<int>(off));
+        else setg(p_start, (dir == std::ios_base::beg ? p_start : p_end) + off, p_end);
+        return gptr() - p_start;
+    }
+
+    pos_type seekpos(pos_type pos, std::ios_base::openmode which) override
+    {
+        return seekoff(pos, std::ios_base::beg, which);
+    }
+};
+
+struct memory_stream : virtual memory_buffer, public std::istream
+{
+    memory_stream(char const * first_elem, size_t size)
+        : memory_buffer(first_elem, size), std::istream(static_cast<std::streambuf*>(this)) {}
+};
+
+class manual_timer
+{
+    std::chrono::high_resolution_clock::time_point t0;
+    double timestamp{ 0.0 };
+public:
+    void start() { t0 = std::chrono::high_resolution_clock::now(); }
+    void stop() { timestamp = std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - t0).count() * 1000.0; }
+    const double & get() { return timestamp; }
+};
+
+struct float2 { float x, y; };
+struct float3 { float x, y, z; };
+struct double3 { double x, y, z; };
+struct rgba4 { uint8_t r, g, b, a; };
+struct uint3 { uint32_t x, y, z; };
+struct uint4 { uint32_t x, y, z, w; };
+
+struct geometry
+{
+    std::vector<double3> vertices;
+    std::vector<double3> normals;
+    std::vector<float2> texcoords;
+    std::vector<uint3> triangles;
+    std::vector<uint4> colors;
+};
+
+
+// read_ply implementation
+
 int read_ply(
     const std::string& filepath,
     Eigen::MatrixXd& V,
     Eigen::MatrixXi& F,
     Eigen::MatrixXd& N,
     Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic>& C){
-        // std::cout << "........................................................................\n";
-        // std::cout << "Now Reading: " << filepath << std::endl;
 
         std::unique_ptr<std::istream> file_stream;
         std::vector<uint8_t> byte_buffer;
@@ -43,23 +121,6 @@ int read_ply(
         PlyFile file;
         file.parse_header(*file_stream);
 
-        // std::cout << "\t[ply_header] Type: " << (file.is_binary_file() ? "binary" : "ascii") << std::endl;
-        // for (const auto & c : file.get_comments()) std::cout << "\t[ply_header] Comment: " << c << std::endl;
-        // for (const auto & c : file.get_info()) std::cout << "\t[ply_header] Info: " << c << std::endl;
-
-        // for (const auto & e : file.get_elements())
-        // {
-        //     std::cout << "\t[ply_header] element: " << e.name << " (" << e.size << ")" << std::endl;
-        //     for (const auto & p : e.properties)
-        //     {
-        //         std::cout << "\t[ply_header] \tproperty: " << p.name << " (type=" << tinyply::PropertyTable[p.propertyType].str << ")";
-        //         if (p.isList) std::cout << " (list_type=" << tinyply::PropertyTable[p.listType].str << ")";
-        //         std::cout << std::endl;
-        //     }
-        // }
-
-        // Because most people have their own mesh types, tinyply treats parsed data as structured/typed byte buffers. 
-        // See examples below on how to marry your own application-specific data structures with this one. 
         std::shared_ptr<PlyData> vertices, normals, colors, texcoords, faces, tripstrip;
 
 
@@ -69,9 +130,7 @@ int read_ply(
         bool are_faces_defined = false;
         bool are_tripstrip_defined = false;
 
-        // The header information can be used to programmatically extract properties on elements
-        // known to exist in the header prior to reading the data. For brevity of this sample, properties 
-        // like vertex position are hard-coded: 
+
         try { vertices = file.request_properties_from_element("vertex", { "x", "y", "z" }); }
         catch (const std::exception & e) { }
 
@@ -84,34 +143,14 @@ int read_ply(
         try { colors = file.request_properties_from_element("vertex", { "r", "g", "b", "a" });  are_colors_defined = true;}
         catch (const std::exception & e) { }
 
-        try { texcoords = file.request_properties_from_element("vertex", { "u", "v" }); are_texcoords_defined = true;}
-        catch (const std::exception & e) { }
 
         // Providing a list size hint (the last argument) is a 2x performance improvement. If you have 
         // arbitrary ply files, it is best to leave this 0. 
         try { faces = file.request_properties_from_element("face", { "vertex_indices" }, 3); are_faces_defined = true;}
         catch (const std::exception & e) { }
 
-        // Tristrips must always be read with a 0 list size hint (unless you know exactly how many elements
-        // are specifically in the file, which is unlikely); 
-        try { tripstrip = file.request_properties_from_element("tristrips", { "vertex_indices" }, 0); are_tripstrip_defined = true;}
-        catch (const std::exception & e) {}
 
-        // manual_timer read_timer;
-
-        // read_timer.start();
         file.read(*file_stream);
-        // read_timer.stop();
-
-        // const float parsing_time = static_cast<float>(read_timer.get()) / 1000.f;
-        // std::cout << "\tparsing " << size_mb << "mb in " << parsing_time << " seconds [" << (size_mb / parsing_time) << " MBps]" << std::endl;
-
-        // if (vertices)   std::cout << "\tRead " << vertices->count  << " total vertices "<< std::endl;
-        // if (normals)    std::cout << "\tRead " << normals->count   << " total vertex normals " << std::endl;
-        // if (colors)     std::cout << "\tRead " << colors->count << " total vertex colors " << std::endl;
-        // if (texcoords)  std::cout << "\tRead " << texcoords->count << " total vertex texcoords " << std::endl;
-        // if (faces)      std::cout << "\tRead " << faces->count     << " total faces (triangles) " << std::endl;
-        // if (tripstrip)  std::cout << "\tRead " << (tripstrip->buffer.size_bytes() / tinyply::PropertyTable[tripstrip->t].stride) << " total indicies (tristrip) " << std::endl;
 
 
         const size_t numVerticesBytes = vertices->buffer.size_bytes();
@@ -202,8 +241,6 @@ int write_ply(
     const Eigen::Matrix<uint8_t, Eigen::Dynamic, Eigen::Dynamic>& C,
     const bool binary){
 
-        // geometry cube = make_cube_geometry();
-
         geometry mesh;
 
         for (int i = 0; i < V.rows(); i++)
@@ -259,102 +296,31 @@ int write_ply(
 
 
 
-        PlyFile cube_file;
+        PlyFile mesh_file;
 
-        cube_file.add_properties_to_element("vertex", { "x", "y", "z" }, 
+        mesh_file.add_properties_to_element("vertex", { "x", "y", "z" }, 
             Type::FLOAT64, mesh.vertices.size(), reinterpret_cast<uint8_t*>(mesh.vertices.data()), Type::INVALID, 0);
 
         if(use_normals){
-            cube_file.add_properties_to_element("vertex", { "nx", "ny", "nz" },
+            mesh_file.add_properties_to_element("vertex", { "nx", "ny", "nz" },
                 Type::FLOAT64, mesh.normals.size(), reinterpret_cast<uint8_t*>(mesh.normals.data()), Type::INVALID, 0);
         }
 
         if(use_colors){
-            cube_file.add_properties_to_element("vertex", { "red", "green", "blue", "alpha" },
+            mesh_file.add_properties_to_element("vertex", { "red", "green", "blue", "alpha" },
                 Type::UINT8, mesh.colors.size(), reinterpret_cast<uint8_t*>(mesh.colors.data()), Type::INVALID, 0);
         }
-        // cube_file.add_properties_to_element("vertex", { "u", "v" },
-        //     Type::FLOAT32, cube.texcoords.size() , reinterpret_cast<uint8_t*>(cube.texcoords.data()), Type::INVALID, 0);
+
 
         if(use_faces){
-            cube_file.add_properties_to_element("face", { "vertex_indices" },
+            mesh_file.add_properties_to_element("face", { "vertex_indices" },
                 Type::UINT32, mesh.triangles.size(), reinterpret_cast<uint8_t*>(mesh.triangles.data()), Type::UINT8, 3);
             }
 
-        cube_file.get_comments().push_back("generated by tinyply 2.3");
+        mesh_file.get_comments().push_back("generated by tinyply 2.3");
 
-        // Write an ASCII file
-        cube_file.write(outstream_, binary);
-
-
-
-
-
-
-
-
-
-        // std::vector<float3> verts;
-        
-        
-        
-        // // Populate the vectors...
-        // for (int i = 0; i < V.rows(); i++)
-        // {
-        //     verts.push_back(float3{ (float) V(i, 0), (float) V(i, 1), (float) V(i, 2)});
-        // }
-
-        // file.add_properties_to_element("vertex", { "x", "y", "z" }, 
-        // Type::FLOAT32, verts.size(), reinterpret_cast<uint8_t*>(verts.data()), Type::INVALID, 0);
-
-        
-
-        // // if (N.rows() > 0){
-        // //     std::cout << "Writing normals" << std::endl;
-        // //     std::vector<double3> normals;
-        // //     for (int i = 0; i < N.rows(); i++)
-        // //     {
-        // //         // print for debugging
-        // //         normals.push_back(double3{N(i, 0), N(i, 1), N(i, 2)});
-        // //         std::cout << normals[i].x << " " << normals[i].y << " " << normals[i].z << std::endl;
-        // //     }
-        // //     file.add_properties_to_element("vertex", { "nx", "ny", "nz" }, 
-        // //     Type::FLOAT64, normals.size(), reinterpret_cast<uint8_t*>(normals.data()), Type::INVALID, 0);
-        // // }
-
-        // if (F.rows() > 0){
-        //     std::cout << "Writing faces" << std::endl;
-        //     std::vector<uint3> faces;
-        //     for (int i = 0; i < F.rows(); i++)
-        //     {
-        //         uint3 face = { (uint32_t) F(i, 0), (uint32_t) F(i, 1), (uint32_t) F(i, 2)};
-        //         faces.push_back(face);
-        //         // std::cout << faces[i].x << " " << faces[i].y << " " << faces[i].z << std::endl;
-        //     }
-        //     // print all entries in faces
-        //     for (int i = 0; i < faces.size(); i++)
-        //     {
-        //         std::cout << faces[i].x << " " << faces[i].y << " " << faces[i].z << std::endl;
-        //     }
-        //     std::cout << typeid(faces).name() << '\n';
-        //     file.add_properties_to_element("face", { "vertex_indices" }, 
-        //     Type::UINT32, faces.size(), reinterpret_cast<uint8_t*>(faces.data()), Type::UINT8, 3);
-        // }
-
-        // // if (C.rows() > 0){
-        // //     std::vector<uint4> colors;
-        // //     for (int i = 0; i < C.rows(); i++)
-        // //     {
-        // //         colors.push_back(uint4{(uint32_t) C(i, 0), (uint32_t) C(i, 1), (uint32_t) C(i, 2), (uint32_t) C(i, 3)});
-        // //     }
-        // //     file.add_properties_to_element("vertex", { "red", "green", "blue", "alpha" }, 
-        // //     Type::UINT8, colors.size(), reinterpret_cast<uint8_t*>(colors.data()), Type::INVALID, 0);
-        // // }
-        
-        // file.get_comments().push_back("generated by tinyply 2.3");
-
-
-        // file.write(outstream_, false);
+        // Write an ASCII or binary file
+        mesh_file.write(outstream_, binary);
 
         return 0;
     };
