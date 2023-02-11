@@ -52,6 +52,11 @@ def write_mesh(file,
     -------
 
 
+    Notes
+    -----
+    In PLY, the vertex positions and normals are written as floats, and not doubles. 
+
+
     Examples
     --------
     ```python

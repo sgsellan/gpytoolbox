@@ -21,7 +21,7 @@ int read_ply(
         std::vector<uint8_t> byte_buffer;
 
 
-        bool preload_into_memory = true;
+        bool preload_into_memory = false;
         // For most files < 1gb, pre-loading the entire file upfront and wrapping it into a 
         // stream is a net win for parsing speed, about 40% faster. 
         if (preload_into_memory)
