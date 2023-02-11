@@ -15,7 +15,6 @@ from .fd_interpolate import fd_interpolate
 from .fd_grad import fd_grad
 from .fd_partial_derivative import fd_partial_derivative
 from .normalize_points import normalize_points
-from .write_ply import write_ply
 from .initialize_quadtree import initialize_quadtree
 from .initialize_aabbtree import initialize_aabbtree
 from .traverse_aabbtree import traverse_aabbtree
