@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 using namespace tinyply;
-#include "example-utils.hpp"
 
 #include <typeinfo>
 
