@@ -58,15 +58,6 @@ struct memory_stream : virtual memory_buffer, public std::istream
         : memory_buffer(first_elem, size), std::istream(static_cast<std::streambuf*>(this)) {}
 };
 
-class manual_timer
-{
-    std::chrono::high_resolution_clock::time_point t0;
-    double timestamp{ 0.0 };
-public:
-    void start() { t0 = std::chrono::high_resolution_clock::now(); }
-    void stop() { timestamp = std::chrono::duration<double>(std::chrono::high_resolution_clock::now() - t0).count() * 1000.0; }
-    const double & get() { return timestamp; }
-};
 
 struct float2 { float x, y; };
 struct float3 { float x, y, z; };
