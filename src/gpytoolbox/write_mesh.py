@@ -9,7 +9,8 @@ def write_mesh(file,
     Ft=None,
     N=None,
     Fn=None,
-    stl_binary=True,
+    C=None,
+    binary=True,
     fmt=None,
     writer=None):
     """Writes a mesh to a file.
@@ -35,8 +36,10 @@ def write_mesh(file,
         vertex list for normal coordinates. Only supported for obj format.
     Fn : (m,3) numpy int array, optional (default: None)
         face index list for normal coordinates (into N). Only supported for obj format.
+    C : (n,3) numpy array, optional (default: None)
+        list of integer [0, 255] per-vertex colors. Only supported for ply format.
     stl_binary : bool, optional (default: True)
-        whether to write the STL file in binary format (as opposed to ascii). Only supported for stl format.
+        whether to write the file in binary format (as opposed to ascii). Only supported for stl and ply format.
     fmt : string, optional (default: None)
         The file format of the mesh to write.
         If None, try to guess the format from the file extension.
@@ -47,7 +50,6 @@ def write_mesh(file,
 
     Returns
     -------
-
 
     Examples
     --------
@@ -67,7 +69,9 @@ def write_mesh(file,
     if fmt=='obj':
         _write_obj(file,V,F,UV,Ft,N,Fn,writer)
     elif fmt=='stl':
-        _write_stl(file,V,F,stl_binary)
+        _write_stl(file,V,F,binary)
+    elif fmt=='ply':
+        _write_ply(file,V,F,N,C,binary)
     else:
         assert False, "Mesh format not supported."
 
@@ -167,3 +171,23 @@ def _write_stl(file,V,F,binary=True):
             raise Exception(f"The file {file} is invalid.")
         else:
             raise Exception(f"Unknown error writing stl file.")
+
+def _write_ply(file,V,F,N,C,binary=True):
+    try:
+        from gpytoolbox_bindings import _write_ply_cpp_impl
+    except:
+        raise ImportError("Gpytoolbox cannot import its C++ write_ply binding, and pure python ply writing is not supported.")
+    if F is None:
+        F = np.ndarray(shape=(0,0), dtype=np.float64)
+    if C is None:
+        C = np.ndarray(shape=(0,0), dtype=np.int32)
+    if N is None:
+        N = np.ndarray(shape=(0,0), dtype=np.float64)
+    err = _write_ply_cpp_impl(file,
+        V.astype(np.float64),
+        F.astype(np.int32),
+        N.astype(np.float64),
+        C.astype(np.uint8),
+        binary)
+    if err != 0:
+        raise Exception(f"Unknown error writing ply file.")
