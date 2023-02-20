@@ -12,9 +12,9 @@ def icosphere(n=0):
     Returns
     -------
     V : (n,3) numpy array
-        vertex positions of icosphere
+        vertex positions of the icosphere
     F : (m,3) numpy array
-        face positions of icosphere
+        face positions of the icosphere
 
     Examples
     --------

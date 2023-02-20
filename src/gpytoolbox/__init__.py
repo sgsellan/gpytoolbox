@@ -93,3 +93,6 @@ from .triangle_triangle_distance import triangle_triangle_distance
 from .minimum_distance import minimum_distance
 from .approximate_hausdorff_distance import approximate_hausdorff_distance
 from .icosphere import icosphere
+from .cylinder import cylinder
+from .cone import cone
+from .torus import torus
