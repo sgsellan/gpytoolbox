@@ -10,4 +10,9 @@ build-linux/
 site/
 .eggs/
 ignore/
+*.idea/
+.idea/*
+dist/*
+src/gpytoolbox.egg-info/*
+*.pyd
 *.egg-info

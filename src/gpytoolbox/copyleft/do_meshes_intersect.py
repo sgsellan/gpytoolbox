@@ -46,10 +46,11 @@ def do_meshes_intersect(V1,F1,V2,F2):
         raise ImportError("Gpytoolbox cannot import its C++ binding.")
 
     inters = list(_do_meshes_intersect_cpp_impl(V1.astype(np.float64),F1.astype(np.int32),V2.astype(np.float64),F2.astype(np.int32)))
+    # print(inters)
     b = False
-    if len(inters[0])>0:
+    if len(inters)>0:
         b = True
-        inters = inters[0]  
+        # inters = inters[0]  
     else:
         inters = None
     return b, inters
