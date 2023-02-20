@@ -12,8 +12,9 @@ class TestRegularCubeMesh(unittest.TestCase):
         for nx in range(4,50,5):
             for ny in range(4,50,5):
                 for nz in range(4,50,5):
-                    V,T = gpytoolbox.regular_cube_mesh(nx,ny,nz)
-                    #print(T)
+                    V,T = gpytoolbox.regular_cube_mesh(nx,ny,nz)    
+                    # Check: correct number of vertices
+                    self.assertTrue(V.shape[0], nx*ny*nz)
                     vols = gpytoolbox.volume(V,T)
                     # self.assertTrue all volumes are positive
                     self.assertTrue(np.all(vols>0))
@@ -27,7 +28,8 @@ class TestRegularCubeMesh(unittest.TestCase):
             for ny in range(4,50,5):
                 for nz in range(4,50,5):
                     V,T = gpytoolbox.regular_cube_mesh(nx,ny,nz,type='five')   
-                    #print(T)
+                    # Check: correct number of vertices
+                    self.assertTrue(V.shape[0], nx*ny*nz)
                     vols = gpytoolbox.volume(V,T)
                     # self.assertTrue all volumes are positive
                     self.assertTrue(np.all(vols>0))
@@ -39,7 +41,8 @@ class TestRegularCubeMesh(unittest.TestCase):
             for ny in range(4,50,5):
                 for nz in range(4,50,5):
                     V,T = gpytoolbox.regular_cube_mesh(nx,ny,nz,type='reflectionally-symmetric')   
-                    #print(T)
+                    # Check: correct number of vertices
+                    self.assertTrue(V.shape[0], nx*ny*nz)
                     vols = gpytoolbox.volume(V,T)
                     # self.assertTrue all volumes are positive
                     self.assertTrue(np.all(vols>0))

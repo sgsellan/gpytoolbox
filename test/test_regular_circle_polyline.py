@@ -7,6 +7,8 @@ class TestRegularCirclePolyline(unittest.TestCase):
         # Generate meshes of very diverse sizes
         for n in range(5,50,5):
             V,E = gpytoolbox.regular_circle_polyline(n)
+            # Check: correct number of vertices
+            self.assertTrue(V.shape[0], n)
             # Check: vertices are between minus one and one
             self.assertTrue(np.max(V) <= 1.0)
             self.assertTrue(np.min(V) >= -1.0)

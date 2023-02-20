@@ -7,7 +7,9 @@ class TestRegularSquareMesh(unittest.TestCase):
         # Generate meshes of very diverse sizes
         for nx in range(5,50,5):
             for ny in range(5,50,5):
-                V,F = gpytoolbox.regular_square_mesh(nx,ny)   
+                V,F = gpytoolbox.regular_square_mesh(nx,ny)  
+                # Check: correct number of vertices
+                self.assertTrue(V.shape[0], nx*ny) 
                 # Check: vertices are between minus one and one
                 self.assertTrue(np.max(V)==1.0)
                 self.assertTrue(np.min(V)==-1.0)
