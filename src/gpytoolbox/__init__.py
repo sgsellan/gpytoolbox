@@ -7,6 +7,7 @@ from .linear_elasticity_stiffness import linear_elasticity_stiffness
 from .edge_indices import edge_indices
 from .regular_square_mesh import regular_square_mesh
 from .regular_cube_mesh import regular_cube_mesh
+from .regular_circle_polyline import regular_circle_polyline
 from .signed_distance_polygon import signed_distance_polygon
 from .metropolis_hastings import metropolis_hastings
 from .ray_polyline_intersect import ray_polyline_intersect

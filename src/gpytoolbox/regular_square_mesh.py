@@ -3,7 +3,7 @@ import numpy as np
 def regular_square_mesh(nx, ny=None):
     """Triangle mesh of a square
 
-    Generates a regular triangylar mesh of a one by one by one cube by dividing each grid square into two triangle
+    Generates a regular triangular mesh of a one by one square by dividing each grid square into two triangles.
 
     Parameters
     ----------

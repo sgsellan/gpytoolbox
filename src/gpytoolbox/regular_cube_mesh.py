@@ -6,7 +6,7 @@ def regular_cube_mesh(nx,
     type='rotationally-symmetric'):
     """Tetrahedral volume mesh of a cube
 
-    Generates a regular tetrahedral mesh of a one by one by one cube by dividing each grid cube into 6 or 5tetrahedra
+    Generates a regular tetrahedral mesh of a one by one by one cube by dividing each grid cube into 6 or 5 tetrahedra.
 
     Parameters
     ----------
