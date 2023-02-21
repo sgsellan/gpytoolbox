@@ -7,8 +7,6 @@ def faces(T,
     return_nonmanifold_indices=False):
     """Given a tet mesh with tet indices T, returns all unique unoriented
     faces as indices into the vertex array.
-    There is no particular ordering convention for faces.
-    Boundary faces are guaranteed to be oriented as in T.
 
     Parameters
     ----------
@@ -25,12 +23,16 @@ def faces(T,
     -------
     F : (nf,3) numpy int array
         indices of edges into the vertex array
-    boundary_indices : if requested, (b,) numpy int array
-        list of indices into F of boundary faces
-    interior_indices : if requested, (i,) numpy int array
-        list of indices into F of interior faces
-    nonmanifold_indices : if requested, (nm,) numpy int array
-        list of indices into F of nonmanifold faces
+    boundary_indices : (b,) numpy int array
+        list of indices into F of boundary faces, returned only if requested
+    interior_indices : (i,) numpy int array
+        list of indices into F of interior faces, returned only if requested
+    nonmanifold_indices : (nm,) numpy int array
+        list of indices into F of nonmanifold faces, returned only if requested
+
+    Notes
+    -----
+    Boundary faces come first in F, followed by all other faces. Boundary faces are guaranteed to be oriented like in T, while interior faces are oriented such that indices are sorted.
 
     Examples
     --------

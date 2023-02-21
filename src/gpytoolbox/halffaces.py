@@ -4,12 +4,6 @@ def halffaces(T):
     """Given a tet mesh with face tet T, returns all oriented halffaces
     as indices into the vertex array.
 
-    The ordering convention for halfedges is the following:
-    [halfface opposite vertex 0,
-     halfface opposite vertex 1,
-     halfface opposite vertex 2,
-     halfface opposite vertex 3]
-
     Parameters
     ----------
     T : (m,4) numpy int array
@@ -20,6 +14,14 @@ def halffaces(T):
     hf : (m,4,3) numpy int array
         halfface list as per above conventions
 
+    Notes
+    -----
+    The ordering convention for halfedges is the following:
+        [halfface opposite vertex 0,
+         halfface opposite vertex 1,
+         halfface opposite vertex 2,
+         halfface opposite vertex 3]
+
     Examples
     --------
     ```python
@@ -27,6 +29,8 @@ def halffaces(T):
     v,f = gpy.regular_cube_mesh(4)
     # Call to halffaces
     hf = gpy.halffaces(v,f)
+    # hf is a three-dimensional array. To turn into a traditional 2D array, one can flatten the second dimension:
+    flat_hf = np.concatenate([hf[:,0,:],hf[:,1,:],hf[:,2,:],hf[:,3,:]], axis=0)
     ```
     
     """
