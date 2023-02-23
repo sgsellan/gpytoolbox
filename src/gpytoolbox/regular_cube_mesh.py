@@ -1,14 +1,21 @@
 import numpy as np
 
-def regular_cube_mesh(gs,type='rotationally-symmetric'):
+def regular_cube_mesh(nx,
+    ny=None,
+    nz=None,
+    type='rotationally-symmetric'):
     """Tetrahedral volume mesh of a cube
 
-    Generates a regular tetrahedral mesh of a one by one by one cube by dividing each grid cube into 6 or 5tetrahedra
+    Generates a regular tetrahedral mesh of a one by one by one cube by dividing each grid cube into 6 or 5 tetrahedra.
 
     Parameters
     ----------
-    gs : int
-        Number of vertices on each side
+    nx : int
+        number of vertices on the x-axis
+    ny : int, optional (default None)
+        number of vertices on the y-axis, default nx
+    nz : int, optional (default None)
+        number of vertices on the y-axis, default ny
     type : str, optional (default 'rotationally-symmetric')
         the specific cube division scheme: 'five' for a division of each cube into 5 tets 'rotationally-symmetric' (default), 'reflectionally-symmetric' or 'hex'
 
@@ -32,6 +39,11 @@ def regular_cube_mesh(gs,type='rotationally-symmetric'):
     ```
     """
 
+    if ny is None:
+        ny = nx
+    if nz is None:
+        nz = ny
+
     dictionary ={
     'five' : 0,
     'reflectionally-symmetric' : 1,
@@ -40,18 +52,18 @@ def regular_cube_mesh(gs,type='rotationally-symmetric'):
     }
     mesh_type = dictionary.get(type,-1)
     # Ordering is different from matlab
-    z, x, y = np.meshgrid(np.linspace(0,1,gs),np.linspace(0,1,gs),np.linspace(0,1,gs),indexing='ij')
-    idx = np.reshape(np.linspace(0,gs*gs*gs-1,gs*gs*gs,dtype=int),(gs,gs,gs),order='F')
+    z, x, y = np.meshgrid(np.linspace(0,1,nz),np.linspace(0,1,nx),np.linspace(0,1,ny),indexing='ij')
+    idx = np.reshape(np.linspace(0,nx*ny*nz-1,nx*ny*nz,dtype=int),(nz,nx,ny),order='F')
     V = np.concatenate((np.reshape(x,(-1, 1),order='F'),np.reshape(y,(-1, 1),order='F'),np.reshape(z,(-1, 1),order='F')),axis=1)
-    # Indexing is different here, careful
-    v1 = np.reshape(idx[0:gs-1,0:gs-1,0:gs-1],(-1,1))
-    v2 = np.reshape(idx[0:gs-1,1:gs,0:gs-1],(-1,1))
-    v5 = np.reshape(idx[1:gs,0:gs-1,0:gs-1],(-1,1))
-    v6 = np.reshape(idx[1:gs,1:gs,0:gs-1],(-1,1))
-    v3 = np.reshape(idx[0:gs-1,0:gs-1,1:gs],(-1,1))
-    v4 = np.reshape(idx[0:gs-1,1:gs,1:gs],(-1,1))
-    v7 = np.reshape(idx[1:gs,0:gs-1,1:gs],(-1,1))
-    v8 = np.reshape(idx[1:gs,1:gs,1:gs],(-1,1))
+    # Indexing updated (careful)
+    v1 = np.reshape(idx[:-1,:-1,:-1],(-1,1))
+    v2 = np.reshape(idx[:-1,1:,:-1],(-1,1))
+    v5 = np.reshape(idx[1:,:-1,:-1],(-1,1))
+    v6 = np.reshape(idx[1:,1:,:-1],(-1,1))
+    v3 = np.reshape(idx[:-1,0:-1,1:],(-1,1))
+    v4 = np.reshape(idx[:-1,1:,1:],(-1,1))
+    v7 = np.reshape(idx[1:,0:-1,1:],(-1,1))
+    v8 = np.reshape(idx[1:,1:,1:],(-1,1))
 
     if mesh_type==0: # five
         t1 = np.hstack((v5,v3,v2,v1))

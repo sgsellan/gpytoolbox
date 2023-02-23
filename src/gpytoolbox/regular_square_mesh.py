@@ -1,14 +1,16 @@
 import numpy as np
 
-def regular_square_mesh(gs):
+def regular_square_mesh(nx, ny=None):
     """Triangle mesh of a square
 
-    Generates a regular triangylar mesh of a one by one by one cube by dividing each grid square into two triangle
+    Generates a regular triangular mesh of a one by one square by dividing each grid square into two triangles.
 
     Parameters
     ----------
-    gs : int
-        Number of vertices on each side
+    nx : int
+        number of vertices on the x-axis
+    ny : int, optional (default None)
+        number of vertices on the y-axis, default nx
 
     Returns
     -------
@@ -33,18 +35,23 @@ def regular_square_mesh(gs):
     V, F = gpytoolbox.regular_square_mesh(gs)
     ```
     """
-    x, y = np.meshgrid(np.linspace(-1,1,gs),np.linspace(-1,1,gs))
-    v = np.concatenate((np.reshape(x,(-1, 1)),np.reshape(y,(-1, 1))),axis=1)
 
-    f = np.zeros((2*(gs-1)*(gs-1),3),dtype=int)
+    if ny is None:
+        ny = nx
 
-    a = np.linspace(0,gs-2,gs-1,dtype=int)
-    for i in range(0,gs-1):
-        f[((gs-1)*i):((gs-1)*i + gs-1),0] = gs*i + a
-        f[((gs-1)*i):((gs-1)*i + gs-1),1] = gs*i + a + gs + 1
-        f[((gs-1)*i):((gs-1)*i + gs-1),2] = gs*i + a + gs
-    for i in range(0,gs-1):
-        f[((gs-1)*(i+gs-1)):((gs-1)*(i+gs-1) + gs-1),0] = gs*i + a
-        f[((gs-1)*(i+gs-1)):((gs-1)*(i+gs-1) + gs-1),1] = gs*i + a + 1
-        f[((gs-1)*(i+gs-1)):((gs-1)*(i+gs-1) + gs-1),2] = gs*i + a + gs + 1
+    x, y = np.meshgrid(np.linspace(-1,1,nx),np.linspace(-1,1,ny))
+    v = np.stack((x.ravel(), y.ravel()), axis=-1)
+
+    # Indexing algorithm inspired by gptoolbox's create_regular_grid
+    # https://github.com/alecjacobson/gptoolbox/blob/master/mesh/create_regular_grid.m
+    inds = np.reshape(np.arange(nx*ny), (ny,nx))
+    i0 = inds[:-1,:-1].ravel()
+    i1 = inds[:-1,1:].ravel()
+    i2 = inds[1:,:-1].ravel()
+    i3 = inds[1:,1:].ravel()
+    f = np.stack((np.concatenate((i0,i0)),
+        np.concatenate((i3,i1)),
+        np.concatenate((i2,i3))),
+        axis=-1)
+
     return v,f
