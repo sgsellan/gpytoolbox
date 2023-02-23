@@ -1,5 +1,5 @@
 import numpy as np
-from gpytoolbox.halfedges import halfedges
+from .halfedges import halfedges
 
 def edges(F,
     return_boundary_indices=False,

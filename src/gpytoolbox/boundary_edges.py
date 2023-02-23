@@ -1,4 +1,4 @@
-from gpytoolbox.edges import edges
+from .edges import edges
 
 def boundary_edges(F):
     """Given a triangle mesh with face indices F, returns all unique oriented
