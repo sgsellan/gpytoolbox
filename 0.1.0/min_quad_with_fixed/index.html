@@ -1,0 +1,3743 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
+    
+    
+      
+        <title>min_quad_with_fixed - Gpytoolbox</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.1d29e8d0.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#00bdd6">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+
+  <script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-YDMBBH2H8E"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){this.value&&gtag("event","search",{search_term:this.value})}),"undefined"!=typeof location$&&location$.subscribe(function(e){gtag("config","G-YDMBBH2H8E",{page_path:e.pathname})})})</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YDMBBH2H8E"></script>
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="cyan" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+        </aside>
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Gpytoolbox" class="md-header__button md-logo" aria-label="Gpytoolbox" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gpytoolbox
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              min_quad_with_fixed
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sgsellan/gpytoolbox" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sgsellan/gpytoolbox
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gpytoolbox" class="md-nav__button md-logo" aria-label="Gpytoolbox" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Gpytoolbox
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sgsellan/gpytoolbox" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sgsellan/gpytoolbox
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../angle_defect/" class="md-nav__link">
+        angle_defect
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../angle_defect_intrinsic/" class="md-nav__link">
+        angle_defect_intrinsic
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apply_colormap/" class="md-nav__link">
+        apply_colormap
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../approximate_hausdorff_distance/" class="md-nav__link">
+        approximate_hausdorff_distance
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../array_correspondence/" class="md-nav__link">
+        array_correspondence
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bad_quad_mesh_from_quadtree/" class="md-nav__link">
+        bad_quad_mesh_from_quadtree
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../barycentric_coordinates/" class="md-nav__link">
+        barycentric_coordinates
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../boundary_edges/" class="md-nav__link">
+        boundary_edges
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../boundary_faces/" class="md-nav__link">
+        boundary_faces
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../boundary_loops/" class="md-nav__link">
+        boundary_loops
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../boundary_vertices/" class="md-nav__link">
+        boundary_vertices
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catmull_rom_spline/" class="md-nav__link">
+        catmull_rom_spline
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../colormap/" class="md-nav__link">
+        colormap
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compactly_supported_normal/" class="md-nav__link">
+        compactly_supported_normal
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compactly_supported_normal_kernel/" class="md-nav__link">
+        compactly_supported_normal_kernel
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cone/" class="md-nav__link">
+        cone
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cotangent_laplacian/" class="md-nav__link">
+        cotangent_laplacian
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cotangent_laplacian_intrinsic/" class="md-nav__link">
+        cotangent_laplacian_intrinsic
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cotangent_weights/" class="md-nav__link">
+        cotangent_weights
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cotangent_weights_intrinsic/" class="md-nav__link">
+        cotangent_weights_intrinsic
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cylinder/" class="md-nav__link">
+        cylinder
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../decimate/" class="md-nav__link">
+        decimate
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../doublearea/" class="md-nav__link">
+        doublearea
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../doublearea_intrinsic/" class="md-nav__link">
+        doublearea_intrinsic
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../edge_edge_distance/" class="md-nav__link">
+        edge_edge_distance
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../edge_indices/" class="md-nav__link">
+        edge_indices
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../edges/" class="md-nav__link">
+        edges
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faces/" class="md-nav__link">
+        faces
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fast_winding_number/" class="md-nav__link">
+        fast_winding_number
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fd_grad/" class="md-nav__link">
+        fd_grad
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fd_interpolate/" class="md-nav__link">
+        fd_interpolate
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fd_partial_derivative/" class="md-nav__link">
+        fd_partial_derivative
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fixed_dof_solve/" class="md-nav__link">
+        fixed_dof_solve
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gaussian_process/" class="md-nav__link">
+        gaussian_process
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grad/" class="md-nav__link">
+        grad
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grid_laplacian_eigenfunctions/" class="md-nav__link">
+        grid_laplacian_eigenfunctions
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grid_neighbors/" class="md-nav__link">
+        grid_neighbors
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halfedge_edge_map/" class="md-nav__link">
+        halfedge_edge_map
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halfedge_lengths/" class="md-nav__link">
+        halfedge_lengths
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halfedge_lengths_squared/" class="md-nav__link">
+        halfedge_lengths_squared
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halfedges/" class="md-nav__link">
+        halfedges
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halffaces/" class="md-nav__link">
+        halffaces
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../icosphere/" class="md-nav__link">
+        icosphere
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../in_element_aabb/" class="md-nav__link">
+        in_element_aabb
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../in_quadtree/" class="md-nav__link">
+        in_quadtree
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../initialize_aabbtree/" class="md-nav__link">
+        initialize_aabbtree
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../initialize_quadtree/" class="md-nav__link">
+        initialize_quadtree
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear_elasticity/" class="md-nav__link">
+        linear_elasticity
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear_elasticity_stiffness/" class="md-nav__link">
+        linear_elasticity_stiffness
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../marching_cubes/" class="md-nav__link">
+        marching_cubes
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../massmatrix/" class="md-nav__link">
+        massmatrix
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../massmatrix_intrinsic/" class="md-nav__link">
+        massmatrix_intrinsic
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix_from_function/" class="md-nav__link">
+        matrix_from_function
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metropolis_hastings/" class="md-nav__link">
+        metropolis_hastings
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          min_quad_with_fixed
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        min_quad_with_fixed
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute" class="md-nav__link">
+    min_quad_with_fixed_precompute
+  </a>
+  
+    <nav class="md-nav" aria-label="min_quad_with_fixed_precompute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute.solve" class="md-nav__link">
+    solve()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed" class="md-nav__link">
+    min_quad_with_fixed()
+  </a>
+  
+    <nav class="md-nav" aria-label="min_quad_with_fixed()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed--see-also" class="md-nav__link">
+    See Also
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../minimum_distance/" class="md-nav__link">
+        minimum_distance
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../normalize_points/" class="md-nav__link">
+        normalize_points
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../offset_surface/" class="md-nav__link">
+        offset_surface
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../per_face_normals/" class="md-nav__link">
+        per_face_normals
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../per_vertex_normals/" class="md-nav__link">
+        per_vertex_normals
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../png2poly/" class="md-nav__link">
+        png2poly
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../poisson_surface_reconstruction/" class="md-nav__link">
+        poisson_surface_reconstruction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quadtree_boundary/" class="md-nav__link">
+        quadtree_boundary
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quadtree_children/" class="md-nav__link">
+        quadtree_children
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quadtree_gradient/" class="md-nav__link">
+        quadtree_gradient
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quadtree_laplacian/" class="md-nav__link">
+        quadtree_laplacian
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../random_points_on_mesh/" class="md-nav__link">
+        random_points_on_mesh
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ray_box_intersect/" class="md-nav__link">
+        ray_box_intersect
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ray_mesh_intersect/" class="md-nav__link">
+        ray_mesh_intersect
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ray_polyline_intersect/" class="md-nav__link">
+        ray_polyline_intersect
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ray_triangle_intersect/" class="md-nav__link">
+        ray_triangle_intersect
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../read_mesh/" class="md-nav__link">
+        read_mesh
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regular_circle_polyline/" class="md-nav__link">
+        regular_circle_polyline
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regular_cube_mesh/" class="md-nav__link">
+        regular_cube_mesh
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regular_square_mesh/" class="md-nav__link">
+        regular_square_mesh
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../remesh_botsch/" class="md-nav__link">
+        remesh_botsch
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../remove_duplicate_vertices/" class="md-nav__link">
+        remove_duplicate_vertices
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../remove_unreferenced/" class="md-nav__link">
+        remove_unreferenced
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../signed_distance/" class="md-nav__link">
+        signed_distance
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../signed_distance_polygon/" class="md-nav__link">
+        signed_distance_polygon
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../squared_distance/" class="md-nav__link">
+        squared_distance
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../squared_distance_to_element/" class="md-nav__link">
+        squared_distance_to_element
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../squared_exponential_kernel/" class="md-nav__link">
+        squared_exponential_kernel
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../subdivide/" class="md-nav__link">
+        subdivide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../subdivide_quad/" class="md-nav__link">
+        subdivide_quad
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tip_angles/" class="md-nav__link">
+        tip_angles
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tip_angles_intrinsic/" class="md-nav__link">
+        tip_angles_intrinsic
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../torus/" class="md-nav__link">
+        torus
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../traverse_aabbtree/" class="md-nav__link">
+        traverse_aabbtree
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../triangle_triangle_adjacency/" class="md-nav__link">
+        triangle_triangle_adjacency
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../triangle_triangle_distance/" class="md-nav__link">
+        triangle_triangle_distance
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../upper_envelope/" class="md-nav__link">
+        upper_envelope
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../volume/" class="md-nav__link">
+        volume
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../write_mesh/" class="md-nav__link">
+        write_mesh
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_96" type="checkbox" id="__nav_96" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_96">
+          Copyleft
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Copyleft" data-md-level="1">
+        <label class="md-nav__title" for="__nav_96">
+          <span class="md-nav__icon md-icon"></span>
+          Copyleft
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copyleft/do_meshes_intersect/" class="md-nav__link">
+        copyleft.do_meshes_intersect
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copyleft/lazy_cage/" class="md-nav__link">
+        copyleft.lazy_cage
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copyleft/mesh_boolean/" class="md-nav__link">
+        copyleft.mesh_boolean
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copyleft/swept_volume/" class="md-nav__link">
+        copyleft.swept_volume
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute" class="md-nav__link">
+    min_quad_with_fixed_precompute
+  </a>
+  
+    <nav class="md-nav" aria-label="min_quad_with_fixed_precompute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute.solve" class="md-nav__link">
+    solve()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed" class="md-nav__link">
+    min_quad_with_fixed()
+  </a>
+  
+    <nav class="md-nav" aria-label="min_quad_with_fixed()">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed--see-also" class="md-nav__link">
+    See Also
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+  <a href="https://github.com/sgsellan/gpytoolbox/edit/master/docs/min_quad_with_fixed.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+
+  <h1>min_quad_with_fixed</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute" class="doc doc-heading">
+        <code>min_quad_with_fixed_precompute</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+
+
+
+        <details class="quote">
+          <summary>Source code in <code>src/gpytoolbox/min_quad_with_fixed.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">min_quad_with_fixed_precompute</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+        <span class="n">Q</span><span class="p">,</span>
+        <span class="n">A</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepare a precomputation object to efficiently solve the following </span>
+<span class="sd">        constrained optimization problem:</span>
+<span class="sd">        ```</span>
+<span class="sd">        argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)</span>
+<span class="sd">            A*u == b</span>
+<span class="sd">            u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Q : (n,n) symmetric sparse scipy csr_matrix</span>
+<span class="sd">            This matrix will be symmetrized if not exactly symmetric.</span>
+<span class="sd">        A : None or (m,n) sparse scipy csr_matrix</span>
+<span class="sd">            m=0 assumed if None</span>
+<span class="sd">        k : None or (o,) numpy array</span>
+<span class="sd">            o=0 assumed if None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        precomputed : instance of class min_quad_with_fixed_precompute</span>
+<span class="sd">            precomputation object that can be used to solve the optimization problem</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Example with simple degree-of-freedom constraints:</span>
+<span class="sd">        ```python</span>
+<span class="sd">        &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">        &gt;&gt;&gt; k = np.array([2])</span>
+<span class="sd">        &gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, k=k)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">        &gt;&gt;&gt; y = np.array([5.])</span>
+<span class="sd">        &gt;&gt;&gt; u = precomp.solve(c=c, y=y)</span>
+<span class="sd">        &gt;&gt;&gt; u</span>
+<span class="sd">        array([10., -0.,  5.])</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # The constraints hold:</span>
+<span class="sd">        &gt;&gt;&gt; u[k]-y</span>
+<span class="sd">        array([0.])</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Example with linear equality conditions:</span>
+<span class="sd">        ```python</span>
+<span class="sd">        &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">        &gt;&gt;&gt; A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))</span>
+<span class="sd">        &gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, A=A)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">        &gt;&gt;&gt; b = np.array([3.])</span>
+<span class="sd">        &gt;&gt;&gt; u = precomp.solve(c=c, b=b)</span>
+<span class="sd">        &gt;&gt;&gt; u</span>
+<span class="sd">        array([ 2., -0., -1.])</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # The constraints hold:</span>
+<span class="sd">        &gt;&gt;&gt; A*u-b</span>
+<span class="sd">        array([0.])</span>
+<span class="sd">        ```</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">&gt;</span><span class="mi">0</span>
+        <span class="c1"># self.Q = Q.copy()</span>
+
+        <span class="k">if</span> <span class="n">A</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+            <span class="c1"># self.A = A.copy()</span>
+
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">o</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">o</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="n">k</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,)</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;No duplicate indices&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># If Q is not exactly symmetric, symmetrize it.</span>
+        <span class="c1"># Equality test from https://stackoverflow.com/a/30685839</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">Q</span> <span class="o">!=</span> <span class="n">Q</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span><span class="o">.</span><span class="n">nnz</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">Q</span> <span class="o">+</span> <span class="n">Q</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
+
+        <span class="c1"># If k is provided, remove these degrees of freedom.</span>
+        <span class="c1"># These two are maps to go between full DOF to reduced DOF</span>
+        <span class="c1"># Instead of 0.5 * u.transpose()*Q*u + c.transpose()*u, after this</span>
+        <span class="c1"># reduction we have 0.5 * u[ki].transpose()*Qred*u[ki]</span>
+        <span class="c1">#                     + (c+ Q_for_extra_c*u[k]).transpose() * u[ki]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ki</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+            <span class="n">Qred</span> <span class="o">=</span> <span class="n">Q</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q_for_extra_c</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ki</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">Qred</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">,</span> <span class="p">:][:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q_for_extra_c</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">,</span> <span class="p">:][:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># The system will be positive semidefinite if Q is, use Cholmod.</span>
+            <span class="c1"># CSC is more efficient per the documentation.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">QA</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">Qred</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">sksparse</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">sksparse</span><span class="o">.</span><span class="n">cholmod</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QA</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">splu</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">splu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QA</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">splu</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If A*u == b, but parts of u are fixed, we need to account for</span>
+            <span class="c1"># this: Amod*u[ku] == b - A_for_extra_b*u[k]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">Amod</span> <span class="o">=</span> <span class="n">A</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">A_for_extra_b</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Amod</span> <span class="o">=</span> <span class="n">A</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">A_for_extra_b</span> <span class="o">=</span> <span class="n">A</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+            <span class="c1"># If A is provided, the linear system we end up solving is</span>
+            <span class="c1"># [Q, A.transpose(); A, 0] == [c; b] (+ accommodating k)</span>
+            <span class="c1"># CSC is more efficient per the documentation.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">QA</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">bmat</span><span class="p">([[</span><span class="n">Qred</span><span class="p">,</span> <span class="n">Amod</span><span class="o">.</span><span class="n">transpose</span><span class="p">()],</span> <span class="p">[</span><span class="n">Amod</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span>
+                <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;csc&#39;</span><span class="p">)</span>
+            <span class="c1"># If A is provided, the system will be indefinite, use SuperLU.</span>
+            <span class="n">splu</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">splu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QA</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">splu</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+        <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Solve the following quadratic program with linear constraints:</span>
+<span class="sd">        ```</span>
+<span class="sd">        argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)</span>
+<span class="sd">            A*u == b</span>
+<span class="sd">            u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        c : None or scalar or (n,) numpy array or (n,p) numpy array</span>
+<span class="sd">            Assumed to be scalar 0 if None</span>
+<span class="sd">        b : None or scalar or (m,) numpy array or (m,p) numpy array</span>
+<span class="sd">            Assumed to be scalar 0 if None</span>
+<span class="sd">        y : None or scalar or (o,) numpy array or (o,p) numpy array</span>
+<span class="sd">            Assumed to be scalar 0 if None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        u : (n,) numpy array or (n,p) numpy array</span>
+<span class="sd">            Solution to the optimization problem</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">                Example with simple degree-of-freedom constraints:</span>
+<span class="sd">        ```python</span>
+<span class="sd">        &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">        &gt;&gt;&gt; k = np.array([2])</span>
+<span class="sd">        &gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, k=k)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">        &gt;&gt;&gt; y = np.array([5.])</span>
+<span class="sd">        &gt;&gt;&gt; u = precomp.solve(c=c, y=y)</span>
+<span class="sd">        &gt;&gt;&gt; u</span>
+<span class="sd">        array([10., -0.,  5.])</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # The constraints hold:</span>
+<span class="sd">        &gt;&gt;&gt; u[k]-y</span>
+<span class="sd">        array([0.])</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Example with linear equality conditions:</span>
+<span class="sd">        ```python</span>
+<span class="sd">        &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">        &gt;&gt;&gt; A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))</span>
+<span class="sd">        &gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, A=A)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">        &gt;&gt;&gt; b = np.array([3.])</span>
+<span class="sd">        &gt;&gt;&gt; u = precomp.solve(c=c, b=b)</span>
+<span class="sd">        &gt;&gt;&gt; u</span>
+<span class="sd">        array([ 2., -0., -1.])</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # The constraints hold:</span>
+<span class="sd">        &gt;&gt;&gt; A*u-b</span>
+<span class="sd">        array([0.])</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">cp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">cp</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">cp</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="n">cp</span><span class="p">(</span><span class="n">y</span><span class="p">)])</span>
+
+        <span class="k">assert</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">b</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">b</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">b</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span><span class="n">p</span><span class="p">))</span>
+
+        <span class="c1"># Get everything to full dimensions</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">),</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span><span class="n">p</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="c1"># Modified rhs based on known values</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">cmod</span> <span class="o">=</span> <span class="n">c</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c_reduced</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">c</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">,:]</span>
+            <span class="n">cmod</span> <span class="o">=</span> <span class="n">c_reduced</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_for_extra_c</span><span class="o">*</span><span class="n">y</span>
+
+        <span class="c1"># We need to solve [Q, A.transpose(); A, 0] = [cmod; b] with the</span>
+        <span class="c1"># reduced matrix Q.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">rhs</span> <span class="o">=</span> <span class="o">-</span><span class="n">cmod</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Modify b based on known values</span>
+            <span class="n">bmod</span> <span class="o">=</span> <span class="n">b</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">A_for_extra_b</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="o">-</span><span class="n">cmod</span><span class="p">,</span><span class="n">bmod</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ured</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span>
+
+        <span class="c1"># Discard the dummy degrees of freedom from A*u == b</span>
+        <span class="n">ured</span> <span class="o">=</span> <span class="n">ured</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">ured</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span><span class="p">,:]</span>
+
+        <span class="c1"># Undo the u[k]==y reduction</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">ured</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="n">u</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">]</span> <span class="o">=</span> <span class="n">ured</span>
+                <span class="n">u</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="n">u</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ured</span>
+                <span class="n">u</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">y</span>
+
+        <span class="k">return</span> <span class="n">u</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute.__init__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Prepare a precomputation object to efficiently solve the following 
+constrained optimization problem:</p>
+<pre><code>argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)
+    A*u == b
+    u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)
+</code></pre>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>Q</code></td>
+          <td>
+                <code>(n,n) symmetric sparse scipy csr_matrix</code>
+          </td>
+          <td><p>This matrix will be symmetrized if not exactly symmetric.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>A</code></td>
+          <td>
+                <code>None or (m,n) sparse scipy csr_matrix</code>
+          </td>
+          <td><p>m=0 assumed if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>k</code></td>
+          <td>
+                <code>None or (o,) numpy array</code>
+          </td>
+          <td><p>o=0 assumed if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>precomputed</code></td>          <td>
+                <code>instance of class min_quad_with_fixed_precompute</code>
+          </td>
+          <td><p>precomputation object that can be used to solve the optimization problem</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+<p><strong>Examples:</strong></p>
+    <p>Example with simple degree-of-freedom constraints:</p>
+<pre><code class="language-python">&gt;&gt;&gt; import gpytoolbox as gpy
+&gt;&gt;&gt; import numpy as np
+&gt;&gt;&gt; import scipy as sp
+&gt;&gt;&gt; 
+&gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+&gt;&gt;&gt; k = np.array([2])
+&gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, k=k)
+&gt;&gt;&gt; 
+&gt;&gt;&gt; c = np.array([0.,0.,1.])
+&gt;&gt;&gt; y = np.array([5.])
+&gt;&gt;&gt; u = precomp.solve(c=c, y=y)
+&gt;&gt;&gt; u
+array([10., -0.,  5.])
+&gt;&gt;&gt; 
+&gt;&gt;&gt; # The constraints hold:
+&gt;&gt;&gt; u[k]-y
+array([0.])
+</code></pre>
+<p>Example with linear equality conditions:</p>
+<pre><code class="language-python">&gt;&gt;&gt; import gpytoolbox as gpy
+&gt;&gt;&gt; import numpy as np
+&gt;&gt;&gt; import scipy as sp
+&gt;&gt;&gt; 
+&gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+&gt;&gt;&gt; A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))
+&gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, A=A)
+&gt;&gt;&gt; 
+&gt;&gt;&gt; c = np.array([0.,0.,1.])
+&gt;&gt;&gt; b = np.array([3.])
+&gt;&gt;&gt; u = precomp.solve(c=c, b=b)
+&gt;&gt;&gt; u
+array([ 2., -0., -1.])
+&gt;&gt;&gt; 
+&gt;&gt;&gt; # The constraints hold:
+&gt;&gt;&gt; A*u-b
+array([0.])
+</code></pre>
+
+      <details class="quote">
+        <summary>Source code in <code>src/gpytoolbox/min_quad_with_fixed.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="n">Q</span><span class="p">,</span>
+    <span class="n">A</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prepare a precomputation object to efficiently solve the following </span>
+<span class="sd">    constrained optimization problem:</span>
+<span class="sd">    ```</span>
+<span class="sd">    argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)</span>
+<span class="sd">        A*u == b</span>
+<span class="sd">        u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Q : (n,n) symmetric sparse scipy csr_matrix</span>
+<span class="sd">        This matrix will be symmetrized if not exactly symmetric.</span>
+<span class="sd">    A : None or (m,n) sparse scipy csr_matrix</span>
+<span class="sd">        m=0 assumed if None</span>
+<span class="sd">    k : None or (o,) numpy array</span>
+<span class="sd">        o=0 assumed if None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    precomputed : instance of class min_quad_with_fixed_precompute</span>
+<span class="sd">        precomputation object that can be used to solve the optimization problem</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Example with simple degree-of-freedom constraints:</span>
+<span class="sd">    ```python</span>
+<span class="sd">    &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">    &gt;&gt;&gt; k = np.array([2])</span>
+<span class="sd">    &gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, k=k)</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">    &gt;&gt;&gt; y = np.array([5.])</span>
+<span class="sd">    &gt;&gt;&gt; u = precomp.solve(c=c, y=y)</span>
+<span class="sd">    &gt;&gt;&gt; u</span>
+<span class="sd">    array([10., -0.,  5.])</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # The constraints hold:</span>
+<span class="sd">    &gt;&gt;&gt; u[k]-y</span>
+<span class="sd">    array([0.])</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Example with linear equality conditions:</span>
+<span class="sd">    ```python</span>
+<span class="sd">    &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">    &gt;&gt;&gt; A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))</span>
+<span class="sd">    &gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, A=A)</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">    &gt;&gt;&gt; b = np.array([3.])</span>
+<span class="sd">    &gt;&gt;&gt; u = precomp.solve(c=c, b=b)</span>
+<span class="sd">    &gt;&gt;&gt; u</span>
+<span class="sd">    array([ 2., -0., -1.])</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # The constraints hold:</span>
+<span class="sd">    &gt;&gt;&gt; A*u-b</span>
+<span class="sd">    array([0.])</span>
+<span class="sd">    ```</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">Q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">&gt;</span><span class="mi">0</span>
+    <span class="c1"># self.Q = Q.copy()</span>
+
+    <span class="k">if</span> <span class="n">A</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="c1"># self.A = A.copy()</span>
+
+    <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">o</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">o</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="n">k</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s2">&quot;No duplicate indices&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># If Q is not exactly symmetric, symmetrize it.</span>
+    <span class="c1"># Equality test from https://stackoverflow.com/a/30685839</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">Q</span> <span class="o">!=</span> <span class="n">Q</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span><span class="o">.</span><span class="n">nnz</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">Q</span> <span class="o">+</span> <span class="n">Q</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span>
+
+    <span class="c1"># If k is provided, remove these degrees of freedom.</span>
+    <span class="c1"># These two are maps to go between full DOF to reduced DOF</span>
+    <span class="c1"># Instead of 0.5 * u.transpose()*Q*u + c.transpose()*u, after this</span>
+    <span class="c1"># reduction we have 0.5 * u[ki].transpose()*Qred*u[ki]</span>
+    <span class="c1">#                     + (c+ Q_for_extra_c*u[k]).transpose() * u[ki]</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ki</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="n">Qred</span> <span class="o">=</span> <span class="n">Q</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Q_for_extra_c</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ki</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Qred</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">,</span> <span class="p">:][:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Q_for_extra_c</span> <span class="o">=</span> <span class="n">Q</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">,</span> <span class="p">:][:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># The system will be positive semidefinite if Q is, use Cholmod.</span>
+        <span class="c1"># CSC is more efficient per the documentation.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">QA</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">csc_matrix</span><span class="p">(</span><span class="n">Qred</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">sksparse</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="n">sksparse</span><span class="o">.</span><span class="n">cholmod</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QA</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">splu</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">splu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QA</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">splu</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># If A*u == b, but parts of u are fixed, we need to account for</span>
+        <span class="c1"># this: Amod*u[ku] == b - A_for_extra_b*u[k]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">Amod</span> <span class="o">=</span> <span class="n">A</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A_for_extra_b</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Amod</span> <span class="o">=</span> <span class="n">A</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A_for_extra_b</span> <span class="o">=</span> <span class="n">A</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span>
+        <span class="c1"># If A is provided, the linear system we end up solving is</span>
+        <span class="c1"># [Q, A.transpose(); A, 0] == [c; b] (+ accommodating k)</span>
+        <span class="c1"># CSC is more efficient per the documentation.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">QA</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">bmat</span><span class="p">([[</span><span class="n">Qred</span><span class="p">,</span> <span class="n">Amod</span><span class="o">.</span><span class="n">transpose</span><span class="p">()],</span> <span class="p">[</span><span class="n">Amod</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span>
+            <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;csc&#39;</span><span class="p">)</span>
+        <span class="c1"># If A is provided, the system will be indefinite, use SuperLU.</span>
+        <span class="n">splu</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">splu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">QA</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">splu</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed_precompute.solve" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">solve</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Solve the following quadratic program with linear constraints:</p>
+<pre><code>argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)
+    A*u == b
+    u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)
+</code></pre>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>c</code></td>
+          <td>
+                <code>None or scalar or (n,) numpy array or (n,p) numpy array</code>
+          </td>
+          <td><p>Assumed to be scalar 0 if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>b</code></td>
+          <td>
+                <code>None or scalar or (m,) numpy array or (m,p) numpy array</code>
+          </td>
+          <td><p>Assumed to be scalar 0 if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>
+                <code>None or scalar or (o,) numpy array or (o,p) numpy array</code>
+          </td>
+          <td><p>Assumed to be scalar 0 if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>u</code></td>          <td>
+                <code>(n,) numpy array or (n,p) numpy array</code>
+          </td>
+          <td><p>Solution to the optimization problem</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+<p><strong>Examples:</strong></p>
+    <pre><code>    Example with simple degree-of-freedom constraints:
+</code></pre>
+<pre><code class="language-python">&gt;&gt;&gt; import gpytoolbox as gpy
+&gt;&gt;&gt; import numpy as np
+&gt;&gt;&gt; import scipy as sp
+&gt;&gt;&gt; 
+&gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+&gt;&gt;&gt; k = np.array([2])
+&gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, k=k)
+&gt;&gt;&gt; 
+&gt;&gt;&gt; c = np.array([0.,0.,1.])
+&gt;&gt;&gt; y = np.array([5.])
+&gt;&gt;&gt; u = precomp.solve(c=c, y=y)
+&gt;&gt;&gt; u
+array([10., -0.,  5.])
+&gt;&gt;&gt; 
+&gt;&gt;&gt; # The constraints hold:
+&gt;&gt;&gt; u[k]-y
+array([0.])
+</code></pre>
+<p>Example with linear equality conditions:</p>
+<pre><code class="language-python">&gt;&gt;&gt; import gpytoolbox as gpy
+&gt;&gt;&gt; import numpy as np
+&gt;&gt;&gt; import scipy as sp
+&gt;&gt;&gt; 
+&gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+&gt;&gt;&gt; A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))
+&gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, A=A)
+&gt;&gt;&gt; 
+&gt;&gt;&gt; c = np.array([0.,0.,1.])
+&gt;&gt;&gt; b = np.array([3.])
+&gt;&gt;&gt; u = precomp.solve(c=c, b=b)
+&gt;&gt;&gt; u
+array([ 2., -0., -1.])
+&gt;&gt;&gt; 
+&gt;&gt;&gt; # The constraints hold:
+&gt;&gt;&gt; A*u-b
+array([0.])
+</code></pre>
+
+      <details class="quote">
+        <summary>Source code in <code>src/gpytoolbox/min_quad_with_fixed.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Solve the following quadratic program with linear constraints:</span>
+<span class="sd">    ```</span>
+<span class="sd">    argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)</span>
+<span class="sd">        A*u == b</span>
+<span class="sd">        u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    c : None or scalar or (n,) numpy array or (n,p) numpy array</span>
+<span class="sd">        Assumed to be scalar 0 if None</span>
+<span class="sd">    b : None or scalar or (m,) numpy array or (m,p) numpy array</span>
+<span class="sd">        Assumed to be scalar 0 if None</span>
+<span class="sd">    y : None or scalar or (o,) numpy array or (o,p) numpy array</span>
+<span class="sd">        Assumed to be scalar 0 if None</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    u : (n,) numpy array or (n,p) numpy array</span>
+<span class="sd">        Solution to the optimization problem</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">            Example with simple degree-of-freedom constraints:</span>
+<span class="sd">    ```python</span>
+<span class="sd">    &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">    &gt;&gt;&gt; k = np.array([2])</span>
+<span class="sd">    &gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, k=k)</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">    &gt;&gt;&gt; y = np.array([5.])</span>
+<span class="sd">    &gt;&gt;&gt; u = precomp.solve(c=c, y=y)</span>
+<span class="sd">    &gt;&gt;&gt; u</span>
+<span class="sd">    array([10., -0.,  5.])</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # The constraints hold:</span>
+<span class="sd">    &gt;&gt;&gt; u[k]-y</span>
+<span class="sd">    array([0.])</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Example with linear equality conditions:</span>
+<span class="sd">    ```python</span>
+<span class="sd">    &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">    &gt;&gt;&gt; A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))</span>
+<span class="sd">    &gt;&gt;&gt; precomp = gpy.min_quad_with_fixed_precompute(Q, A=A)</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">    &gt;&gt;&gt; b = np.array([3.])</span>
+<span class="sd">    &gt;&gt;&gt; u = precomp.solve(c=c, b=b)</span>
+<span class="sd">    &gt;&gt;&gt; u</span>
+<span class="sd">    array([ 2., -0., -1.])</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # The constraints hold:</span>
+<span class="sd">    &gt;&gt;&gt; A*u-b</span>
+<span class="sd">    array([0.])</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">cp</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">cp</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">cp</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="n">cp</span><span class="p">(</span><span class="n">y</span><span class="p">)])</span>
+
+    <span class="k">assert</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">b</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">b</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">b</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span><span class="n">p</span><span class="p">))</span>
+
+    <span class="c1"># Get everything to full dimensions</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">),</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="p">,</span><span class="n">p</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># Modified rhs based on known values</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">cmod</span> <span class="o">=</span> <span class="n">c</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">c_reduced</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">c</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">,:]</span>
+        <span class="n">cmod</span> <span class="o">=</span> <span class="n">c_reduced</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_for_extra_c</span><span class="o">*</span><span class="n">y</span>
+
+    <span class="c1"># We need to solve [Q, A.transpose(); A, 0] = [cmod; b] with the</span>
+    <span class="c1"># reduced matrix Q.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="o">-</span><span class="n">cmod</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Modify b based on known values</span>
+        <span class="n">bmod</span> <span class="o">=</span> <span class="n">b</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">A_for_extra_b</span><span class="o">*</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="o">-</span><span class="n">cmod</span><span class="p">,</span><span class="n">bmod</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ured</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span>
+
+    <span class="c1"># Discard the dummy degrees of freedom from A*u == b</span>
+    <span class="n">ured</span> <span class="o">=</span> <span class="n">ured</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> <span class="n">ured</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">n_reduced</span><span class="p">,:]</span>
+
+    <span class="c1"># Undo the u[k]==y reduction</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">ured</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">u</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">]</span> <span class="o">=</span> <span class="n">ured</span>
+            <span class="n">u</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">u</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ki</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">ured</span>
+            <span class="n">u</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">y</span>
+
+    <span class="k">return</span> <span class="n">u</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">min_quad_with_fixed</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Solve the following quadratic program with linear constraints:</p>
+<pre><code>argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)
+    A*u == b
+    u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)
+</code></pre>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>Q</code></td>
+          <td>
+                <code>(n,n) symmetric sparse scipy csr_matrix</code>
+          </td>
+          <td><p>This matrix will be symmetrized if not exactly symmetric.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>c</code></td>
+          <td>
+                <code>None or scalar or (n,) numpy array or (n,p) numpy array</code>
+          </td>
+          <td><p>Assumed to be scalar 0 if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>A</code></td>
+          <td>
+                <code>None or (m,n) sparse scipy csr_matrix</code>
+          </td>
+          <td><p>m=0 assumed if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>b</code></td>
+          <td>
+                <code>None or scalar or (m,) numpy array or (m,p) numpy array</code>
+          </td>
+          <td><p>Assumed to be scalar 0 if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>k</code></td>
+          <td>
+                <code>None or (o,) numpy array</code>
+          </td>
+          <td><p>o=0 assumed if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>
+                <code>None or scalar or (o,) numpy array or (o,p) numpy array</code>
+          </td>
+          <td><p>Assumed to be scalar 0 if None</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>u</code></td>          <td>
+                <code>(n,) numpy array or (n,p) numpy array</code>
+          </td>
+          <td><p>Solution to the optimization problem</p></td>
+        </tr>
+    </tbody>
+  </table>
+      <h4 id="src.gpytoolbox.min_quad_with_fixed.min_quad_with_fixed--see-also">See Also</h4>
+<p><code>fixed_dof_solve</code> for solving a (non-symmetric) linear system while
+restricting certain degrees of freedom.</p>
+
+<p><strong>Examples:</strong></p>
+    <p>Example with simple degree-of-freedom constraints:</p>
+<pre><code class="language-python">&gt;&gt;&gt; import gpytoolbox as gpy
+&gt;&gt;&gt; import numpy as np
+&gt;&gt;&gt; import scipy as sp
+&gt;&gt;&gt; 
+&gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+&gt;&gt;&gt; c = np.array([0.,0.,1.])
+&gt;&gt;&gt; k = np.array([2])
+&gt;&gt;&gt; y = np.array([5.])
+&gt;&gt;&gt; u = gpy.min_quad_with_fixed(Q, c=c, k=k, y=y)
+&gt;&gt;&gt; u
+array([10., -0.,  5.])
+&gt;&gt;&gt;
+&gt;&gt;&gt; # The constraints hold:
+&gt;&gt;&gt; u[k]-y
+array([0.])
+</code></pre>
+<p>Example with linear equality conditions:</p>
+<pre><code class="language-python">&gt;&gt;&gt; import gpytoolbox as gpy
+&gt;&gt;&gt; import numpy as np
+&gt;&gt;&gt; import scipy as sp
+&gt;&gt;&gt;
+&gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))
+&gt;&gt;&gt; c = np.array([0.,0.,1.])
+&gt;&gt;&gt; A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))
+&gt;&gt;&gt; b = np.array([3.])
+&gt;&gt;&gt; u = gpy.min_quad_with_fixed(Q, c=c, A=A, b=b)
+&gt;&gt;&gt; u
+array([ 2., -0., -1.])
+&gt;&gt;&gt;
+&gt;&gt;&gt; # The constraints hold:&gt;&gt;&gt; A*u-b
+array([0.])
+</code></pre>
+
+      <details class="quote">
+        <summary>Source code in <code>src/gpytoolbox/min_quad_with_fixed.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">min_quad_with_fixed</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span>
+    <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">A</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Solve the following quadratic program with linear constraints:</span>
+<span class="sd">    ```</span>
+<span class="sd">    argmin_u  0.5 * tr(u.transpose()*Q*u) + tr(c.transpose()*u)</span>
+<span class="sd">        A*u == b</span>
+<span class="sd">        u[k] == y (if y is a 1-tensor) or u[k,:] == y) (if y is a 2-tensor)</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Q : (n,n) symmetric sparse scipy csr_matrix</span>
+<span class="sd">        This matrix will be symmetrized if not exactly symmetric.</span>
+<span class="sd">    c : None or scalar or (n,) numpy array or (n,p) numpy array</span>
+<span class="sd">        Assumed to be scalar 0 if None</span>
+<span class="sd">    A : None or (m,n) sparse scipy csr_matrix</span>
+<span class="sd">        m=0 assumed if None</span>
+<span class="sd">    b : None or scalar or (m,) numpy array or (m,p) numpy array</span>
+<span class="sd">        Assumed to be scalar 0 if None</span>
+<span class="sd">    k : None or (o,) numpy array</span>
+<span class="sd">        o=0 assumed if None</span>
+<span class="sd">    y : None or scalar or (o,) numpy array or (o,p) numpy array</span>
+<span class="sd">        Assumed to be scalar 0 if None</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    u : (n,) numpy array or (n,p) numpy array</span>
+<span class="sd">        Solution to the optimization problem</span>
+
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    `fixed_dof_solve` for solving a (non-symmetric) linear system while</span>
+<span class="sd">    restricting certain degrees of freedom.</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Example with simple degree-of-freedom constraints:</span>
+<span class="sd">    ```python</span>
+<span class="sd">    &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">    &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">    &gt;&gt;&gt; k = np.array([2])</span>
+<span class="sd">    &gt;&gt;&gt; y = np.array([5.])</span>
+<span class="sd">    &gt;&gt;&gt; u = gpy.min_quad_with_fixed(Q, c=c, k=k, y=y)</span>
+<span class="sd">    &gt;&gt;&gt; u</span>
+<span class="sd">    array([10., -0.,  5.])</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # The constraints hold:</span>
+<span class="sd">    &gt;&gt;&gt; u[k]-y</span>
+<span class="sd">    array([0.])</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Example with linear equality conditions:</span>
+<span class="sd">    ```python</span>
+<span class="sd">    &gt;&gt;&gt; import gpytoolbox as gpy</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import scipy as sp</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; Q = sp.sparse.csc_matrix(np.array([[1.,0.,-2.],[0.,3.,0.],[-2.,0.,1.]]))</span>
+<span class="sd">    &gt;&gt;&gt; c = np.array([0.,0.,1.])</span>
+<span class="sd">    &gt;&gt;&gt; A = sp.sparse.csc_matrix(np.array([[1.,0.,-1]]))</span>
+<span class="sd">    &gt;&gt;&gt; b = np.array([3.])</span>
+<span class="sd">    &gt;&gt;&gt; u = gpy.min_quad_with_fixed(Q, c=c, A=A, b=b)</span>
+<span class="sd">    &gt;&gt;&gt; u</span>
+<span class="sd">    array([ 2., -0., -1.])</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # The constraints hold:&gt;&gt;&gt; A*u-b</span>
+<span class="sd">    array([0.])</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">min_quad_with_fixed_precompute</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="../metropolis_hastings/" class="md-footer__link md-footer__link--prev" aria-label="Previous: metropolis_hastings" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              metropolis_hastings
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../minimum_distance/" class="md-footer__link md-footer__link--next" aria-label="Next: minimum_distance" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              minimum_distance
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections"], "search": "../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.6c7ad80a.min.js"></script>
+      
+    
+  </body>
+</html>
