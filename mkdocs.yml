@@ -1,6 +1,6 @@
 # https://realpython.com/python-project-documentation-with-mkdocs/
 # to deploy:
-# commit a change with __version__ in setup.py
+# commit a change with __version__ in setup.py and src/__init__.py
 # wait for wheels to build and download them 
 # twine upload dist/*
 # label as new release
