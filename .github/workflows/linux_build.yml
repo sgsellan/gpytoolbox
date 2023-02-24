@@ -28,7 +28,11 @@ jobs:
           python -m pip install scipy
           python -m pip install scikit-image
           sudo apt-get update
-          sudo apt-get upgrade
+          sudo apt-get upgrade 
+          sudo apt-get purge grub\*
+          sudo apt-get install grub-efi
+          sudo apt-get autoremove
+          sudo update-grub
           sudo apt-get install \
               libmpfr-dev \
               libgmp-dev \
