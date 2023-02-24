@@ -249,11 +249,11 @@ this bullet list. If you want to contribute to gpytoolbox, a great way to start 
 - Make all grid sizes, resolutions, etc. into tuples not necessarily numpy
   arrays
 - Add notes on every docstring mentioning libigl implementations
-- ~~Basic procedural meshes (sphere, cube, torus)
 - Tetrahedral mesh implementation of `subdivide.py`
 - Dihedral angle computation
-- ~~`regular_square_mesh` and `regular_cube_mesh` should support different resolutions in `x` and `y`
+- `regular_square_mesh` and `regular_cube_mesh` should support different resolutions in `x` and `y`
   direction (sensible default when n_y is None, to n_y=n_x)
+- ~~Basic procedural meshes (sphere, cube, torus)~~
 - ~~Explicit cast to int32 and float64 before every C++ binding~~
 - ~~Switch to pybind11~~
 - ~~Gaussian Processes implementation (merge [#39](https://github.com/sgsellan/gpytoolbox/pull/39))~~
