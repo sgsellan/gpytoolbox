@@ -2,6 +2,7 @@ import os
 import numpy as np
 import csv
 from gpytoolbox.per_face_normals import per_face_normals 
+from gpytoolbox.remove_duplicate_vertices import remove_duplicate_vertices
 
 
 def read_mesh(file,
@@ -9,7 +10,8 @@ def read_mesh(file,
     return_UV=False,
     return_N=False,
     return_C=False,
-    reader=None):
+    reader=None,
+    merge_stl=True):
     """Reads a mesh from file.
     
     If you have the approproate C++ extensions installed, this will use a fast
@@ -37,6 +39,8 @@ def read_mesh(file,
     reader : string, optional (default: None)
         Which reader engine to use. None, 'C++' or 'Python'.
         If None, will use C++ if available, and else Python.
+    merge_stl : bool, optional (default: True)
+        If True, will merge the disconnected triangle STL file by removing duplicate vertices.
 
     Returns
     ----------
@@ -59,6 +63,17 @@ def read_mesh(file,
     # Read a mesh in OBJ format
     v,f = gpytoolbox.read_mesh('mesh.obj')
     ```
+
+    ```python
+    # Read a mesh in STL format
+    v,f = gpytoolbox.read_mesh('mesh.stl',merge_stl=False)
+    # This mesh will just be a set of disconnected triangles, so functions like boundary_vertices will just return every vertex
+    assert len(gpytoolbox.boundary_vertices(f))==v.shape[0]
+    # Read a mesh in STL format, and merge the disconnected triangles
+    v,f = gpytoolbox.read_mesh('mesh.stl',merge_stl=True)
+    # Now the mesh is a single connected mesh, so boundary_vertices will return the correct result
+    assert len(gpytoolbox.boundary_vertices(f))<v.shape[0]
+    ```
     
     """
 
@@ -71,7 +86,7 @@ def read_mesh(file,
     if fmt=='obj':
         V,F,UV,Ft,N,Fn = _read_obj(file,return_UV,return_N,reader)
     elif fmt=='stl':
-        V,F = _read_stl(file)
+        V,F = _read_stl(file,merge_stl)
     elif fmt=='ply':
         V,F,N,C = _read_ply(file)
         if return_N:
@@ -209,7 +224,7 @@ def _read_obj_python(file,return_UV,return_N):
     return V,F,UV,Ft,N,Fn
 
 
-def _read_stl(file):
+def _read_stl(file,merge_stl):
     try:
         from gpytoolbox_bindings import _read_stl_cpp_impl
     except:
@@ -226,6 +241,8 @@ def _read_stl(file):
             raise Exception(f"The file {file} does not exist.")
         elif err == -5:
             raise Exception(f"Unknown error reading stl file.")
+    if merge_stl:
+        V, _, _, F = remove_duplicate_vertices(V,faces=F)
     return V,F
 
 def _read_ply(file):

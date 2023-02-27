@@ -14,7 +14,7 @@ def boundary_vertices(F):
     Returns
     -------
     bV : (bv,) numpy int array
-        list of indices into F of boundary vertices
+        list of indices into V of boundary vertices
 
     Examples
     --------
