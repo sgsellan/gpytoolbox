@@ -62,10 +62,6 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
 
     feature = np.concatenate((feature, boundary_vertices(F)), dtype=np.int32)
 
-    # check that at least one vertex is not a boundary vertex
-    if feature.shape[0] == V.shape[0]:
-        warnings.warn("All vertices are detected as boundary vertices. The result will be the input mesh.")
-
     # reorder feature nodes to the beginning of the array (contributed by Michael Jäger)
     if feature.shape[0] > 0:
         # feature indices need to be unique (including the boundary_vertices)
@@ -89,6 +85,10 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
         F = tmp[F]
         # features are now 0 to n_features
         feature = old_order[:feature.shape[0]]
+
+    # check that at least one vertex is not a boundary vertex
+    if feature.shape[0] == V.shape[0]:
+        warnings.warn("All vertices are detected as boundary vertices. The result will be the input mesh.")
 
     v, f = _remesh_botsch_cpp_impl(V, F.astype(np.int32), i, h, feature, project)
 
