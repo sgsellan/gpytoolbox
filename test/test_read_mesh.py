@@ -36,7 +36,6 @@ class TestReadMesh(unittest.TestCase):
             self.assertTrue(len(gpy.boundary_vertices(F)) == V.shape[0]) # all vertices are boundary vertices since it is not merged
             V,F = gpy.read_mesh("test/unit_tests_data/" + mesh,merge_stl=True)
             # Now the mesh is a single connected mesh, so boundary_vertices will return the correct result
-            print(len(gpy.boundary_vertices(F)))
             self.assertTrue(len(gpy.boundary_vertices(F)) == 0)
 
     def test_ply_read_then_write(self):
