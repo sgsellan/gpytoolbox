@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import csc_matrix, eye, vstack, hstack
+from scipy.sparse import csc_matrix, eye, vstack, hstack, diags
 from scipy.sparse.linalg import splu, cg, cg
 from .matrix_from_function import matrix_from_function
 from .squared_exponential_kernel import squared_exponential_kernel
@@ -66,7 +66,7 @@ def gaussian_process(X_train,y_train,X_test,kernel=None,X_induced=None,grad_y_tr
 
 
 class gaussian_process_precompute:
-    def __init__(self,X_train,y_train,X_induced=None,grad_y_train=None,kernel=None,verbose=False,sigma_n=0.02):
+    def __init__(self,X_train,y_train,X_induced=None,grad_y_train=None,kernel=None,verbose=False,sigma_n=0.02,lump_K3=False):
         """
         Fits a gaussian process to existing training data, storing all necessary information to later evaluate it at any given test points.
 
@@ -86,6 +86,8 @@ class gaussian_process_precompute:
             If True, prints information about the training.
         sigma_n : float, optional (default 0.02)
             Noise standard deviation.
+        lump_K3 : bool, optional (default False)
+            If True, lump the sample covariance matrix K3. Useful if the number of training points is large.
 
         Returns
         -------
@@ -143,7 +145,9 @@ class gaussian_process_precompute:
         else:
             if self.verbose:
                 print("--------- Training Gaussian Process with", X_train.shape[0],"data points. ---------")
-            K3 = cov_matrix_from_function(self.kernel,X_train,X_train,sparse=True,use_gradients=self.use_gradients)           
+            K3 = cov_matrix_from_function(self.kernel,X_train,X_train,sparse=True,use_gradients=self.use_gradients)        
+            if lump_K3:
+                K3 = diags(np.squeeze(np.asarray(K3.sum(axis=1))))
             self.inducing_points = False
             self.LU = splu(csc_matrix(K3 + (self.sigma_n**2.0)*eye(K3.shape[0])))
             # plt.spy(K3)
