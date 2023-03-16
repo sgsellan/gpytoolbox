@@ -34,7 +34,7 @@ def signed_distance(Q,V,F=None,use_cpp=True):
 
     Examples
     --------
-     ```python
+    ```python
     v,f = gpytoolbox.read_mesh("bunny.obj") # Read a mesh
     v = gpytoolbox.normalize_points(v) # Normalize mesh
     # Generate query points
