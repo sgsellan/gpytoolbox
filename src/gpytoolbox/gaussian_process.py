@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.sparse import csc_matrix, eye, vstack, hstack, diags
 from scipy.sparse.linalg import splu, cg, cg
+from scipy.spatial import KDTree
 from .matrix_from_function import matrix_from_function
 from .squared_exponential_kernel import squared_exponential_kernel
 
@@ -66,7 +67,7 @@ def gaussian_process(X_train,y_train,X_test,kernel=None,X_induced=None,grad_y_tr
 
 
 class gaussian_process_precompute:
-    def __init__(self,X_train,y_train,X_induced=None,grad_y_train=None,kernel=None,verbose=False,sigma_n=0.02,lump_K3=False):
+    def __init__(self,X_train,y_train,X_induced=None,grad_y_train=None,kernel=None,verbose=False,sigma_n=0.02,lump_K3=False,compact_kernel=False):
         """
         Fits a gaussian process to existing training data, storing all necessary information to later evaluate it at any given test points.
 
@@ -99,6 +100,7 @@ class gaussian_process_precompute:
             import time
             t_train_0 = time.time()
         # Store parameteers
+    
        
         self.verbose = verbose
         self.sigma_n = sigma_n
@@ -119,6 +121,25 @@ class gaussian_process_precompute:
             self.kernel = squared_exponential_kernel
         else:
             self.kernel = kernel
+
+        self.compact_support = None
+        if compact_kernel:
+            # Use binary search to find the compact support
+            x1 = np.zeros((1,X_train.shape[1]))
+            x2 = np.ones((1,X_train.shape[1]))
+            ker_val = self.kernel(x1,x2)
+            print(ker_val)
+            for i in range(10):
+                mid = (x1+x2)/2.0
+                ker_val = self.kernel(x1,mid)
+                if ker_val>1e-6:
+                    x2 = mid
+                else:
+                    x1 = mid
+            self.compact_support = x2[0,0]
+            print("Compact support found: ", compact_support)
+
+
 
         # We prefactorize everything
         if (X_induced is not None):
@@ -145,7 +166,7 @@ class gaussian_process_precompute:
         else:
             if self.verbose:
                 print("--------- Training Gaussian Process with", X_train.shape[0],"data points. ---------")
-            K3 = cov_matrix_from_function(self.kernel,X_train,X_train,sparse=True,use_gradients=self.use_gradients)        
+            K3 = cov_matrix_from_function(self.kernel,X_train,X_train,sparse=True,use_gradients=self.use_gradients,compact_support=self.compact_support)        
             if lump_K3:
                 K3 = diags(np.squeeze(np.asarray(K3.sum(axis=1))))
             self.inducing_points = False
@@ -194,7 +215,7 @@ class gaussian_process_precompute:
             print("...built K1 matrix in",t1-t0,"seconds.")
                 
         if (self.inducing_points):
-            K2 = cov_matrix_from_function(self.kernel,self.X_induced,X_test,use_gradients=self.use_gradients)
+            K2 = cov_matrix_from_function(self.kernel,self.X_induced,X_test,use_gradients=self.use_gradients,compact_support=self.compact_support)
             mean = K2.T @ self.Kmm_inv_mu_m
             lu_solve_K2 = self.LU.solve(K2.toarray())
             # cov = K1 - K2.T @ lu_solve_K2 + lu_solve_K2.T @ self.A_m @ lu_solve_K2
@@ -204,7 +225,7 @@ class gaussian_process_precompute:
             if self.verbose:
                 print("Building K2 matrix...")
                 t0 = time.time()
-            K2 = cov_matrix_from_function(self.kernel,self.X_train,X_test,use_gradients=self.use_gradients)
+            K2 = cov_matrix_from_function(self.kernel,self.X_train,X_test,use_gradients=self.use_gradients,compact_support=self.compact_support)
             if self.verbose:
                 t1 = time.time()
                 print("...built K2 matrix in",t1-t0,"seconds.")
@@ -234,7 +255,20 @@ class gaussian_process_precompute:
 
 
 
-def cov_matrix_from_function(ker,X1,X2,use_gradients=False,sparse=True):
+def cov_matrix_from_function(ker,X1,X2,use_gradients=False,sparse=True,compact_support=None):
+
+    sparsity_pattern = None
+    if compact_support is not None:
+        point_tree = KDTree(X2)
+        print(compact_support)
+        ind_lists = point_tree.query_ball_point(X1,compact_support)
+        # inds is a list of lists. We need to concatenate it into one list
+        # I should contain the indices of the points in X2 that are within compact_support of the corresponding point in X1
+        I = np.repeat(np.arange(len(ind_lists)), [len(sublist) for sublist in ind_lists])
+        J = np.concatenate(ind_lists)
+        # Vectorize the code above
+        sparsity_pattern = [I,J]
+
     # This computes the covariance matrix between two sets of points. It's a bit more complicated if it needs to account for observed gradients.
     if use_gradients:
         dim = X1.shape[1]
@@ -250,7 +284,7 @@ def cov_matrix_from_function(ker,X1,X2,use_gradients=False,sparse=True):
             big_mats.append(hstack(mats))
         return vstack(big_mats)
     else:        
-        return matrix_from_function(ker,X1,X2,sparse=sparse)
+        return matrix_from_function(ker,X1,X2,sparse=sparse,sparsity_pattern=sparsity_pattern)
 
 
 
