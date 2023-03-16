@@ -125,16 +125,23 @@ class gaussian_process_precompute:
         self.compact_support = None
         if compact_kernel:
             # This is a hack
+            xzero = np.zeros((1,X_train.shape[1]))
             x1 = np.zeros((1,X_train.shape[1]))
             x2 = np.ones((1,X_train.shape[1]))
-            ker_val = self.kernel(x1,x2)
-            print(ker_val)
-            while (ker_val<1e-10):
-                self.compact_support = x2[0,0]
-                x2 = 0.5*(x1+x2)
-                ker_val = self.kernel(x1,x2)
-                print("x2: ", x2, "ker_val: ", ker_val)
-                print(ker_val)
+            k1 = self.kernel(xzero,x1)
+            k2 = self.kernel(xzero,x2)
+            for i in range(10):
+                mid = 0.5*(x1+x2)
+                kmid = self.kernel(xzero,mid)
+                # k2 will always be zero, k1 will always be positive
+                if kmid>1e-10:
+                    x1 = mid
+                    k1 = self.kernel(xzero,x1)
+                else:
+                    x2 = mid
+                    k2 = self.kernel(xzero,x2)
+
+            self.compact_support = x2[0,0]
             
             print("Compact support found: ", self.compact_support)
 
