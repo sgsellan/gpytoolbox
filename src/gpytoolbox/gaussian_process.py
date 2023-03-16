@@ -124,22 +124,21 @@ class gaussian_process_precompute:
 
         self.compact_support = None
         if compact_kernel:
-            # Use binary search to find the compact support
+            # This is a hack
             x1 = np.zeros((1,X_train.shape[1]))
             x2 = np.ones((1,X_train.shape[1]))
             ker_val = self.kernel(x1,x2)
             print(ker_val)
-            for i in range(10):
-                mid = (x1+x2)/2.0
-                ker_val = self.kernel(x1,mid)
-                if ker_val>1e-6:
-                    x2 = mid
-                else:
-                    x1 = mid
-            self.compact_support = x2[0,0]
-            print("Compact support found: ", compact_support)
+            while (ker_val<1e-10):
+                self.compact_support = x2[0,0]
+                x2 = 0.5*(x1+x2)
+                ker_val = self.kernel(x1,x2)
+                print("x2: ", x2, "ker_val: ", ker_val)
+                print(ker_val)
+            
+            print("Compact support found: ", self.compact_support)
 
-
+        # assert False
 
         # We prefactorize everything
         if (X_induced is not None):
@@ -260,7 +259,7 @@ def cov_matrix_from_function(ker,X1,X2,use_gradients=False,sparse=True,compact_s
     sparsity_pattern = None
     if compact_support is not None:
         point_tree = KDTree(X2)
-        print(compact_support)
+        # print(compact_support)
         ind_lists = point_tree.query_ball_point(X1,compact_support)
         # inds is a list of lists. We need to concatenate it into one list
         # I should contain the indices of the points in X2 that are within compact_support of the corresponding point in X1
