@@ -41,6 +41,7 @@ def marching_cubes(S,GV,nx,ny,nz,isovalue=0.0):
     S = fun(GV)
     # Compute isosurface
     V,F = gpytoolbox.marching_cubes(S,GV,100,100,100,0.5)
+    ```
     """
     # Try to import C++ binding
     try:
