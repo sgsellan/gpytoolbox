@@ -270,8 +270,8 @@ def cov_matrix_from_function(ker,X1,X2,use_gradients=False,sparse=True,compact_s
         ind_lists = point_tree.query_ball_point(X1,compact_support)
         # inds is a list of lists. We need to concatenate it into one list
         # I should contain the indices of the points in X2 that are within compact_support of the corresponding point in X1
-        I = np.repeat(np.arange(len(ind_lists)), [len(sublist) for sublist in ind_lists])
-        J = np.concatenate(ind_lists)
+        I = np.repeat(np.arange(len(ind_lists)), [len(sublist) for sublist in ind_lists]).astype(int)
+        J = np.concatenate(ind_lists).astype(int)
         # Vectorize the code above
         sparsity_pattern = [I,J]
 
