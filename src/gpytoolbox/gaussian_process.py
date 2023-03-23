@@ -143,7 +143,7 @@ class gaussian_process_precompute:
 
             self.compact_support = x2[0,0]
             
-            print("Compact support found: ", self.compact_support)
+            # print("Compact support found: ", self.compact_support)
 
         # assert False
 
