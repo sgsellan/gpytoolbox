@@ -192,7 +192,7 @@ class gaussian_process_precompute:
             t_train = t_train_1 - t_train_0
             print("Training time:",t_train,"seconds.")
 
-    def predict(self,X_test):
+    def predict(self,X_test,mean_only=False):
         """
         Evaluates a precomputed gaussian process at the points X_test.
         
@@ -200,7 +200,8 @@ class gaussian_process_precompute:
         ----------
         X_test : (num_test, dim) numpy array
             The points at which to evaluate the gaussian process.
-
+        mean_only : bool
+            If True, only the mean of the gaussian process is computed (this is significantly faster). The var output is None.
         Returns
         -------
         mean : (num_test,) numpy array
@@ -225,7 +226,10 @@ class gaussian_process_precompute:
             mean = K2.T @ self.Kmm_inv_mu_m
             lu_solve_K2 = self.LU.solve(K2.toarray())
             # cov = K1 - K2.T @ lu_solve_K2 + lu_solve_K2.T @ self.A_m @ lu_solve_K2
-            cov = K1 - K2.T @ lu_solve_K2 + lu_solve_K2.T @ self.Kmm @ self.sigma_LU.solve(self.Kmm @ lu_solve_K2)
+            if mean_only:
+                cov = None
+            else:
+                cov = K1 - K2.T @ lu_solve_K2 + lu_solve_K2.T @ self.Kmm @ self.sigma_LU.solve(self.Kmm @ lu_solve_K2)
 
         else:           
             if self.verbose:
@@ -245,7 +249,10 @@ class gaussian_process_precompute:
             if self.verbose:
                 print("Computing covariance...")
                 t0 = time.time()
-            cov = K1 - K2.T @ self.LU.solve(K2.toarray())
+            if mean_only:
+                cov = None
+            else:
+                cov = K1 - K2.T @ self.LU.solve(K2.toarray())
             if self.verbose:
                 t1 = time.time()
                 print("...computed covariance in",t1-t0,"seconds.")
