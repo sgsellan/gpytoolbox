@@ -216,7 +216,7 @@ class gaussian_process_precompute:
             t_test_0 = time.time()
             print("Building K1 matrix...")
             t0 = time.time()
-        K1 = cov_matrix_from_function(self.kernel,X_test,X_test,sparse=True,use_gradients=self.use_gradients)
+        
         if self.verbose:
             t1 = time.time()
             print("...built K1 matrix in",t1-t0,"seconds.")
@@ -229,6 +229,7 @@ class gaussian_process_precompute:
             if mean_only:
                 cov = None
             else:
+                K1 = cov_matrix_from_function(self.kernel,X_test,X_test,sparse=True,use_gradients=self.use_gradients)
                 cov = K1 - K2.T @ lu_solve_K2 + lu_solve_K2.T @ self.Kmm @ self.sigma_LU.solve(self.Kmm @ lu_solve_K2)
 
         else:           
@@ -252,6 +253,7 @@ class gaussian_process_precompute:
             if mean_only:
                 cov = None
             else:
+                K1 = cov_matrix_from_function(self.kernel,X_test,X_test,sparse=True,use_gradients=self.use_gradients)
                 cov = K1 - K2.T @ self.LU.solve(K2.toarray())
             if self.verbose:
                 t1 = time.time()
