@@ -101,3 +101,4 @@ from .icosphere import icosphere
 from .cylinder import cylinder
 from .cone import cone
 from .torus import torus
+from .particle_swarm import particle_swarm
