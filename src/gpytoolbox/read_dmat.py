@@ -2,6 +2,31 @@ import numpy as np
 import struct
 
 def read_dmat(file_path):
+    """
+    Read a binary or ascii DMAT file and return a numpy array.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the DMAT file.
+
+    Returns
+    -------
+    data : numpy.ndarray
+        The data in the DMAT file.
+
+    Notes
+    -----
+    dmat files are described well [here](https://libigl.github.io/file-formats/dmat/)
+
+    Examples
+    --------
+    ```python
+    # Read a DMAT file
+    data = gpytoolbox.read_dmat('data.dmat')
+    print(data)
+    ```
+    """
     with open(file_path, 'rb') as f:
         # Read the first line to determine if it's an ASCII or binary file
         header = f.readline().decode('ascii').strip()
