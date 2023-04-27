@@ -29,14 +29,9 @@ def read_dmat(file_path):
                     while True:
                         # Read the next coefficient
                         c = f.read(0)
-                        # print(c)
-                        # print(c==b'')
                         if c == b'' or c == b'\n':
-                            print("done")
                             break
                     # Read the next float value
-                    # print(i,j,":",rows,cols)
-                    # print(f.readline().decode('ascii').strip())
                     float_value = float(f.readline().decode('ascii').strip())
                     data[i, j] = float_value
 
