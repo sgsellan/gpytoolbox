@@ -1,7 +1,6 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-import matplotlib.pyplot as plt
 
 class TestPerFaceNormals(unittest.TestCase):
     def test_simple_pngs(self):

@@ -36,6 +36,8 @@ def particle_swarm(fun,lb,ub,n_particles=100,max_iter=100,momentum=0.9,phi=0.1,v
         f = fun(xi)
         best_xi[i,:] = xi.copy()
         best_fi[i] = f.copy()
+        # if verbose:
+            # print("Particle %d: f = %f" % (i,f))
         if f < current_best_f:
             current_best_x = xi
             current_best_f = f

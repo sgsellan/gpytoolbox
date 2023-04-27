@@ -41,7 +41,7 @@ def linear_blend_skinning(V,Ws,Rs,Ts):
     """
 
     U = np.zeros_like(V,dtype=float)
-    print(U)
+    # print(Ws.shape[1])
     for i in range(Ws.shape[1]):
         rotations = np.dot(V,Rs[i].T)
         rep_weights = np.repeat(Ws[:,i,None],V.shape[1],axis=1)

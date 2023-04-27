@@ -45,6 +45,7 @@ def per_face_normals(V,F,unit_norm=True):
         e = v1-v0
         # Rotate by 90 degrees
         N = np.hstack((e[:,1][:,None],-e[:,0][:,None]))
+        # print(N)
     elif dim == 3:     
         v0 = V[F[:,0],:]
         v1 = V[F[:,1],:]

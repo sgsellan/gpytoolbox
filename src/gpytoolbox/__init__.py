@@ -104,3 +104,6 @@ from .torus import torus
 from .particle_swarm import particle_swarm
 from .read_dmat import read_dmat
 from .linear_blend_skinning import linear_blend_skinning
+from .barycenters import barycenters
+from .winding_number import winding_number
+from .solid_angle import solid_angle
