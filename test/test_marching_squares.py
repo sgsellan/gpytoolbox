@@ -14,8 +14,19 @@ class TestMarchingSquares(unittest.TestCase):
         verts, edge_list = gpytoolbox.marching_squares(S, GV, n+1, n+1)
         # All verts should have zero sdf
         verts_S = (np.linalg.norm(verts, axis=1)-0.5)**2.0
-        # print(np.min(verts_S))
+        #Normals point out
+        R = 0.5*(verts[edge_list[:,1],:] + verts[edge_list[:,0],:])
+        N = (verts[edge_list[:,1],:] - verts[edge_list[:,0],:]) @ np.array([[0., -1.], [1., 0.]])
+        self.assertTrue(np.all(np.sum(R*N, axis=-1)>0.))
         self.assertTrue(np.allclose(verts_S, 0.0))
+        # for i in range(edge_list.shape[0]):
+        #     plt.plot([verts[edge_list[i,0],0],verts[edge_list[i,1],0]],
+        #              [verts[edge_list[i,0],1],verts[edge_list[i,1],1]],
+        #              'k-')
+        #     plt.quiver(0.5*(verts[edge_list[i,0],0]+verts[edge_list[i,1],0]),
+        #         0.5*(verts[edge_list[i,0],1]+verts[edge_list[i,1],1]),
+        #         N[i,0], N[i,1])
+        # plt.show()
     def test_png(self):
         # Build a polyline; for example, a square
         n = 100
@@ -51,17 +62,20 @@ class TestMarchingSquares(unittest.TestCase):
         # # All verts should have zero sdf
         verts_S = gpytoolbox.signed_distance(verts, poly, E)[0]**2.0
         
-        
-        plt.pcolormesh(gx.reshape(n+1,n+1),gy.reshape(n+1,n+1),S.reshape(n+1,n+1))
-        plt.plot(poly[:,0],poly[:,1])
         # for i in range(edge_list.shape[0]):
         #     plt.plot([verts[edge_list[i,0],0],verts[edge_list[i,1],0]],
         #              [verts[edge_list[i,0],1],verts[edge_list[i,1],1]],
         #              'k-')
-        plt.show()
-
+        #     plt.quiver(0.5*(verts[edge_list[i,0],0]+verts[edge_list[i,1],0]),
+        #         0.5*(verts[edge_list[i,0],1]+verts[edge_list[i,1],1]),
+        #         N[i,0], N[i,1])
+        # plt.show()
+        
+        #Normals point out
+        R = 0.5*(verts[edge_list[:,1],:] + verts[edge_list[:,0],:])
+        N = (verts[edge_list[:,1],:] - verts[edge_list[:,0],:]) @ np.array([[0., -1.], [1., 0.]])
+        self.assertTrue(np.all(np.sum(R*N, axis=-1)>0.))
         self.assertTrue(np.allclose(verts_S, 0.0,atol=1e-4))
-            
 
 
 

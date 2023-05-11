@@ -30,7 +30,9 @@ def marching_squares(S,GV,nx,ny):
             if d > 0:
                 k += 8
             # Use symmetry
+            flip = False
             if k > 7:
+                flip = True
                 k = 15 - k
             
             # Get the contour line segments
@@ -43,7 +45,10 @@ def marching_squares(S,GV,nx,ny):
                 y = j - a/(d-a)
                 # y = j
                 verts.append([x,y])
-                edge_list.append([len(verts)-2,len(verts)-1])
+                if flip:
+                    edge_list.append([len(verts)-2,len(verts)-1])
+                else:
+                    edge_list.append([len(verts)-1,len(verts)-2])
             elif k == 2:
                 x = i - a/(b-a)
                 # x = i
@@ -52,7 +57,10 @@ def marching_squares(S,GV,nx,ny):
                 x = i + 1
                 y = j - b/(c-b)
                 verts.append([x,y])
-                edge_list.append([len(verts)-2,len(verts)-1])
+                if flip:
+                    edge_list.append([len(verts)-1,len(verts)-2])
+                else:
+                    edge_list.append([len(verts)-2,len(verts)-1])
             elif k == 3:
                 x = i
                 y = j - a/(d-a)
@@ -60,7 +68,10 @@ def marching_squares(S,GV,nx,ny):
                 x = i + 1
                 y = j - b/(c-b)
                 verts.append([x,y])
-                edge_list.append([len(verts)-2,len(verts)-1])
+                if flip:
+                    edge_list.append([len(verts)-1,len(verts)-2])
+                else:
+                    edge_list.append([len(verts)-2,len(verts)-1])
             elif k == 4:
                 x = i + 1
                 y = j- b/(c-b)
@@ -68,7 +79,10 @@ def marching_squares(S,GV,nx,ny):
                 x = i - d/(c-d)
                 y = j + 1
                 verts.append([x,y])
-                edge_list.append([len(verts)-2,len(verts)-1])
+                if flip:
+                    edge_list.append([len(verts)-1,len(verts)-2])
+                else:
+                    edge_list.append([len(verts)-2,len(verts)-1])
             elif k == 5:
                 x = i - a/(b-a)
                 y = j
@@ -83,8 +97,14 @@ def marching_squares(S,GV,nx,ny):
                 x = i - d/(c-d)
                 y = j + 1
                 verts.append([x,y])
-                edge_list.append([len(verts)-4,len(verts)-3])
-                edge_list.append([len(verts)-2,len(verts)-1])
+                if flip:
+                    edge_list.append([len(verts)-4,len(verts)-3])
+                else:
+                    edge_list.append([len(verts)-3,len(verts)-4])
+                if flip:
+                    edge_list.append([len(verts)-1,len(verts)-2])
+                else:
+                    edge_list.append([len(verts)-2,len(verts)-1])
             elif k == 6:
                 x = i - a/(b-a)
                 y = j
@@ -92,7 +112,10 @@ def marching_squares(S,GV,nx,ny):
                 x = i - d/(c-d)
                 y = j + 1
                 verts.append([x,y])
-                edge_list.append([len(verts)-2,len(verts)-1])
+                if flip:
+                    edge_list.append([len(verts)-1,len(verts)-2])
+                else:
+                    edge_list.append([len(verts)-2,len(verts)-1])
             elif k == 7:
                 x = i - d/(c-d)
                 y = j + 1
@@ -100,12 +123,24 @@ def marching_squares(S,GV,nx,ny):
                 x = i
                 y = j - a/(d-a)
                 verts.append([x,y])
-                edge_list.append([len(verts)-2,len(verts)-1])
+                if flip:
+                    edge_list.append([len(verts)-2,len(verts)-1])
+                else:
+                    edge_list.append([len(verts)-1,len(verts)-2])
             else:
                 pass
+
     # Convert list to numpy array
     verts = np.array(verts)
-    verts, SVI, SVJ, edges = remove_duplicate_vertices(verts,faces=np.array(edge_list))
+    edges = np.array(edge_list)
+    verts, SVI, SVJ, edges = remove_duplicate_vertices(verts,faces=edges,
+        epsilon=np.sqrt(np.finfo(verts.dtype).eps))
+
+    # Remove trivial edges
+    edges = edges[np.not_equal(edges[:,0], edges[:,1]), :]
+
+    # # Remove duplicate edges
+    # edges = np.unique(edges, axis=0)
 
     # Rescale to original grid
     verts[:,0] = verts[:,0]/(nx-1)
