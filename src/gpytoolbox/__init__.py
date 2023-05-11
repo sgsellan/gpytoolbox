@@ -102,3 +102,4 @@ from .cylinder import cylinder
 from .cone import cone
 from .torus import torus
 from .marching_squares import marching_squares
+from .per_face_prin_curvature import per_face_prin_curvature

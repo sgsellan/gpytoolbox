@@ -26,6 +26,7 @@ add_library(cpytoolbox
 	# Headers
 	src/cpp/upper_envelope.h
 	src/cpp/ray_mesh_intersect_aabb.h
+	src/cpp/per_face_prin_curvature.h
 	src/cpp/in_element_aabb.h
 	src/cpp/read_obj.h
 	src/cpp/write_obj.h
@@ -40,6 +41,7 @@ add_library(cpytoolbox
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
+	src/cpp/per_face_prin_curvature.cpp
 	src/cpp/in_element_aabb.cpp
 	src/cpp/read_obj.cpp
 	src/cpp/write_obj.cpp
@@ -92,6 +94,7 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_offset_surface.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_point_mesh_squared_distance.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersect.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_per_face_prin_curvature.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_read_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_remesher_botsch.cpp"
