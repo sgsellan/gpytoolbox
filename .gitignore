@@ -3,6 +3,7 @@
 *.inc
 *.pyc
 *.code-workspace
+build-arm/
 build/
 build-linux/
 .vs-code/
