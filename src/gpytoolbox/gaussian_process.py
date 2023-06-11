@@ -5,7 +5,7 @@ from scipy.spatial import KDTree
 from .matrix_from_function import matrix_from_function
 from .squared_exponential_kernel import squared_exponential_kernel
 
-def gaussian_process(X_train,y_train,X_test,kernel=None,X_induced=None,grad_y_train=None,verbose=False,sigma_n=0.02):
+def gaussian_process(X_train,y_train,X_test,kernel=None,X_induced=None,grad_y_train=None,verbose=False,lump_K3=False,compact_kernel=False,sigma_n=0.02):
     """
     Uses a gaussian process to fit existing training data and evaluates it at new test points, returning a vector of means and a covariance matrix.
 
@@ -27,6 +27,10 @@ def gaussian_process(X_train,y_train,X_test,kernel=None,X_induced=None,grad_y_tr
         If True, prints information about the training.
     sigma_n : float, optional (default 0.02)
         Noise standard deviation.
+    lump_K3 : bool, optional (default False)
+        If True, lump the sample covariance matrix K3. Useful if the number of training points is large.
+    compact_kernel : bool, optional (default False)
+        If True, will try to find the kernel's compact support and only evaluate it for points in that neighborhood, to save time. Kernel must be radially symmetric, isotropic, and positive definite.
     
     Returns
     -------
@@ -89,6 +93,9 @@ class gaussian_process_precompute:
             Noise standard deviation.
         lump_K3 : bool, optional (default False)
             If True, lump the sample covariance matrix K3. Useful if the number of training points is large.
+        compact_kernel : bool, optional (default False)
+            If True, will try to find the kernel's compact support and only evaluate it for points in that neighborhood, to save time. Kernel must be radially symmetric, isotropic, and positive definite.
+
 
         Returns
         -------
@@ -119,6 +126,7 @@ class gaussian_process_precompute:
         # Default kernel
         if (kernel is None):
             self.kernel = squared_exponential_kernel
+            compact_kernel = False
         else:
             self.kernel = kernel
 
