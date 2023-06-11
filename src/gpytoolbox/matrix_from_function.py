@@ -39,6 +39,8 @@ def matrix_from_function(fun,X1,X2,sparse=True,sparsity_pattern=None):
     n2 = X2.shape[0]
     if sparsity_pattern is not None:
         assert(sparse)
+        # print(sparsity_pattern[0])
+        # print(sparsity_pattern[1])
         all_X1 = X1[sparsity_pattern[0],:]
         all_X2 = X2[sparsity_pattern[1],:]
     else:
