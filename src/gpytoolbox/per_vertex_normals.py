@@ -7,7 +7,7 @@ from .doublearea import doublearea
 def per_vertex_normals(V,F):
     """Normal vectors to all vertices on a mesh
     
-    Computes area-weighted per-vertex unit normal vectors for a triangle mesh
+    Computes area-weighted per-vertex unit normal vectors for a triangle mesh or polyline.
 
     Parameters
     ----------
