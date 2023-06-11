@@ -67,7 +67,7 @@ def gaussian_process(X_train,y_train,X_test,kernel=None,X_induced=None,grad_y_tr
     y_test_mean,y_test_cov = gpytoolbox.gaussian_process(np.reshape(x_train,(-1,1)),y_train,np.reshape(x_test,(-1,1)),grad_y_train=y_grad,verbose=True)
     ```
     """
-    return gaussian_process_precompute(X_train,y_train,X_induced=X_induced,grad_y_train=grad_y_train,kernel=kernel,verbose=verbose,sigma_n=sigma_n).predict(X_test)
+    return gaussian_process_precompute(X_train,y_train,X_induced=X_induced,grad_y_train=grad_y_train,kernel=kernel,verbose=verbose,sigma_n=sigma_n,lump_K3=lump_K3,compact_kernel=compact_kernel).predict(X_test)
 
 
 class gaussian_process_precompute:
