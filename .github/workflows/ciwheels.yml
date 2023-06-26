@@ -67,18 +67,18 @@ jobs:
       CIBW_BUILD_VERBOSITY: 3
       # This is very dubious... It *may* work because these are just cpp libraries that should not depend on the python version. Still, super-dubious.
       # CIBW_BEFORE_BUILD_WINDOWS: "python -m pip install delvewheel; $rootPath = Join-Path -Path (Get-Location) -ChildPath 'build'; $folders = Get-ChildItem -Path $rootPath -Recurse -Directory; foreach ($folder in $folders) { $env:Path += \";$($folder.FullName)\" }"
-        #       $folder = ".\build"
-        # Get-ChildItem -Path $folder -Directory -Recurse | ForEach-Object {
-        #   $env:Path += ";$($_.FullName)"
-        # }
 
-      CIBW_BEFORE_BUILD_WINDOWS: "python -m pip install delvewheel"
+      CIBW_BEFORE_BUILD_WINDOWS: |
+        $folder = ".\build"
+        Get-ChildItem -Path $folder -Directory -Recurse | ForEach-Object {
+          $env:Path += ";$($_.FullName)"
+        }
+        python -m pip install delvewheel
       CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: |
-        for dir in $(find build -type d)
-        do
-          echo "$dir"
-          echo "::add-path::$dir"
-        done
+        $folder = ".\build"
+        Get-ChildItem -Path $folder -Directory -Recurse | ForEach-Object {
+          $env:Path += ";$($_.FullName)"
+        }
         python -m delvewheel repair --no-mangle-all -w {dest_dir} {wheel}
       # CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: "python -m delvewheel repair --no-mangle-all --add-path build\\temp.win-amd64-3.6\\Release;build\\temp.win-amd64-3.6\\Release\\Release;build\\temp.win-amd64-3.6\\Release\\_deps\\gmp-src\\lib;build\\temp.win-amd64-3.6\\Release\\_deps\\mpfr-src\\lib -w {dest_dir} {wheel} "
       # CIBW_TEST_COMMAND_WINDOWS: "python -m pip install tetgen && cd /d {project} && python -m unittest -v"
@@ -126,14 +126,14 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install cibuildwheel==2.12.0
 
-      - name: Add build subdirectories to PATH
-        shell: pwsh
-        if: runner.os == 'Windows'
-        run: |
-          $folder = "build"
-          Get-ChildItem -Path $folder -Directory -Recurse | ForEach-Object {
-            $env:Path += ";$($_.FullName)"
-          }
+      # - name: Add build subdirectories to PATH
+      #   shell: pwsh
+      #   if: runner.os == 'Windows'
+      #   run: |
+      #     $folder = "build"
+      #     Get-ChildItem -Path $folder -Directory -Recurse | ForEach-Object {
+      #       $env:Path += ";$($_.FullName)"
+      #     }
         
           
       # - name: Test
