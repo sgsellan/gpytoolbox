@@ -70,7 +70,7 @@ jobs:
 
       CIBW_BEFORE_BUILD_WINDOWS: "python -m pip install delvewheel"
       CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: |
-        $folder = "build"
+        $folder = ".\build"
         Get-ChildItem -Path $folder -Directory -Recurse | ForEach-Object {
           $env:Path += ";$($_.FullName)"
         }
