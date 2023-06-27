@@ -110,6 +110,11 @@ target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core)
 target_link_libraries(gpytoolbox_bindings_copyleft PUBLIC cpytoolbox_copyleft igl::core igl_copyleft::cgal)
 
 target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	add_custom_command(TARGET gpytoolbox_bindings POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:gpytoolbox_bindings> $<TARGET_RUNTIME_DLLS:gpytoolbox_bindings> $<TARGET_FILE_DIR:gpytoolbox_bindings>
+		COMMAND_EXPAND_LISTS)
+endif()
 
 target_include_directories(gpytoolbox_bindings_copyleft PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
