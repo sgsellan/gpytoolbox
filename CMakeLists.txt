@@ -113,8 +113,8 @@ target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DI
 
 target_include_directories(gpytoolbox_bindings_copyleft PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	add_custom_command(TARGET ${target_name} POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target_name}> $<TARGET_RUNTIME_DLLS:${target_name}> $<TARGET_FILE_DIR:${target_name}>
+	add_custom_command(TARGET gpytoolbox_bindings_copyleft POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:gpytoolbox_bindings_copyleft> $<TARGET_RUNTIME_DLLS:gpytoolbox_bindings_copyleft> $<TARGET_FILE_DIR:gpytoolbox_bindings_copyleft>
 		COMMAND_EXPAND_LISTS)
 endif()
 
