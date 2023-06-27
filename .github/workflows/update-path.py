@@ -11,3 +11,6 @@ for sub_dir in build_dir.rglob('*'):
         if any(file.suffix == '.dll' for file in sub_dir.iterdir()):
             # Add the directory to the PATH
             os.environ['PATH'] = f"{sub_dir.absolute()};{os.environ['PATH']}"
+
+# print system path
+print(os.environ['PATH'])
