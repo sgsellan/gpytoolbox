@@ -112,4 +112,9 @@ target_link_libraries(gpytoolbox_bindings_copyleft PUBLIC cpytoolbox_copyleft ig
 target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/")
 
 target_include_directories(gpytoolbox_bindings_copyleft PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	add_custom_command(TARGET ${target_name} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${target_name}> $<TARGET_RUNTIME_DLLS:${target_name}> $<TARGET_FILE_DIR:${target_name}>
+		COMMAND_EXPAND_LISTS)
+endif()
 
