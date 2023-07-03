@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 class TestWindingNumber(unittest.TestCase):
     # This isn't too complex, probably could use being expanded
-    def test_synthetic(self):
+    def test_squares(self):
         # Build a polyline; for example, a square
         V = np.array([ [-1.0, -1.0], [-1.0, 1.0], [1.0, 1.0], [1.0, -1.0] ])
         EC = gpytoolbox.edge_indices(V.shape[0],closed=True)
@@ -33,6 +33,36 @@ class TestWindingNumber(unittest.TestCase):
         # when the two squares intersect, the winding number is 2
         W_gt[(gv[:,0]>0) & (gv[:,0]<1) & (gv[:,1]>0) & (gv[:,1]<1)] = 2
         # self.assertTrue(np.allclose(np))
+        self.assertTrue(np.allclose(W,W_gt))
+
+    def test_synthetic(self):
+        # let's read any polyline
+        filename = "test/unit_tests_data/illustrator.png"
+        poly = gpytoolbox.png2poly(filename)
+        # reorder poly
+        poly[0]= poly[0][::-1]
+        V = 1.5*gpytoolbox.normalize_points(poly[0])
+        EC = gpytoolbox.edge_indices(V.shape[0],closed=True)
+        gx, gy = np.meshgrid(np.linspace(-2.01,2.01,100),np.linspace(-2.01,2.01,100))
+        gv = np.vstack((gx.flatten(),gy.flatten())).T
+        # We are going to build a big polyline made by concatenating the same polyline 10 times, with random displacements
+        Vbig = np.zeros((V.shape[0]*3,2))
+        ECbig = np.zeros((EC.shape[0]*3,2),dtype=int)
+        W_gt = np.zeros(gv.shape[0])
+        for i in range(3):
+            newV = V + 0.1*np.random.randn(1,2)
+            newEC = EC.copy()
+            Vbig[i*V.shape[0]:(i+1)*V.shape[0],:] = newV
+            ECbig[i*EC.shape[0]:(i+1)*EC.shape[0],:] = newEC  + i*V.shape[0]
+            # update groundtruth
+            is_inside = gpytoolbox.signed_distance(gv,newV,newEC)[0] < 0
+            W_gt[is_inside] = W_gt[is_inside] + 1
+        
+        # 2d grid
+        
+        # winding number
+        W = gpytoolbox.winding_number(gv,Vbig,ECbig)
+        # assert np.allclose(W,W_gt)
         self.assertTrue(np.allclose(W,W_gt))
 
     def test_meshes(self):
