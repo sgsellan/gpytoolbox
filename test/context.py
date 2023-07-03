@@ -18,4 +18,5 @@ else:
 import gpytoolbox
 import gpytoolbox.copyleft
 import numpy
+import scipy
 import unittest
