@@ -17,7 +17,7 @@ class TestParticleSwarm(unittest.TestCase):
             # print(val)
             # print(x)
             self.assertTrue(np.isclose(x,val,atol=1e-3).all())
-    def test_1d_swarm(self):
+    def test_1d_swarm_ring(self):
         # Random value between -10 and 10
         for i in range(1):
             # seed
@@ -58,7 +58,7 @@ class TestParticleSwarm(unittest.TestCase):
             # print(x)
             self.assertTrue(np.isclose(x,random_center,atol=1e-3).all())
 
-    def test_2d_dropwave(self):
+    def test_2d_dropwave_ring(self):
         for i in range(1):
             # seed
             np.random.seed(i)
