@@ -1,7 +1,7 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-import polyscope as ps
+# import polyscope as ps
 
 class TestMarchingCubes(unittest.TestCase):
     def test_meshes(self):

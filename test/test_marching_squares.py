@@ -1,7 +1,7 @@
 import numpy as np
 from .context import gpytoolbox
 from .context import unittest
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 class TestMarchingSquares(unittest.TestCase):
     # This isn't too complex, probably could use being expanded
