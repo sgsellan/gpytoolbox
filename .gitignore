@@ -6,6 +6,7 @@
 build-arm/
 build/
 build-linux/
+build-arm/
 .vs-code/
 .vscode/
 site/

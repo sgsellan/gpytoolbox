@@ -11,7 +11,7 @@ def per_face_normals(V,F,unit_norm=True):
     ----------
     V : (n,d) numpy array
         vertex list of a triangle mesh
-    F : (m,3) numpy int array
+    F : (m,d) numpy int array
         face index list of a triangle mesh
     unit_norm : bool, optional (default True)
         Whether to normalize each face's normal before outputting
@@ -32,28 +32,29 @@ def per_face_normals(V,F,unit_norm=True):
     v,f = read_mesh("test/unit_tests_data/bunny_oded.obj")
     n = per_face_normals(v,f,unit_norm=True)
     ```
-    """
-    # Computes per face (optionally unit) normal vectors for a triangle mesh
-    #
-    # Input:
-    #       V #V by 3 numpy array of mesh vertex positions
-    #       F #F by 3 int numpy array of face/edge vertex indeces into V
-    #       Optional:
-    #               'unit_norm' boolean, whether to normalize each face's 
-    #                       normal before outputting {default: true}
-    #
-    # Output:
-    #       N #F by 3 numpy array of per-face normals
-    #           
+    """     
 
-    v0 = V[F[:,0],:]
-    v1 = V[F[:,1],:]
-    v2 = V[F[:,2],:]
+    dim = V.shape[1]
 
-    # It's basically just a cross product
-    N = np.cross(v1-v0,v2-v0,axis=1)
+
+    if dim == 2:
+        # Edge vectors
+        v0 = V[F[:,0],:]
+        v1 = V[F[:,1],:]
+        # Difference between edge vectors
+        e = v1-v0
+        # Rotate by 90 degrees
+        N = np.hstack((e[:,1][:,None],-e[:,0][:,None]))
+        # print(N)
+    elif dim == 3:     
+        v0 = V[F[:,0],:]
+        v1 = V[F[:,1],:]
+        v2 = V[F[:,2],:]
+
+        # It's basically just a cross product
+        N = np.cross(v1-v0,v2-v0,axis=1)
 
     if unit_norm:
-        N = N/np.tile(np.linalg.norm(N,axis=1)[:,None],(1,3))
+        N = N/np.tile(np.linalg.norm(N,axis=1)[:,None],(1,dim))
 
     return N

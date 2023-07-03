@@ -12,8 +12,6 @@ class TestGaussianProcess(unittest.TestCase):
         x_train = np.linspace(0,1,20)
         y_train = true_fun(x_train)
 
-        # gp_kernel = utility.gp_kernel(dim=1,type='exponential',scale=1.0)
-        # gp = utility.gaussian_process(gp_kernel,verbose=False)
 
         # gp.train(np.reshape(x_train,(-1,1)),y_train)
 
@@ -22,6 +20,15 @@ class TestGaussianProcess(unittest.TestCase):
         # print(np.asarray(y_test_cov).diagonal().shape)
         # print(np.max(np.abs(y_test_mean - true_fun(x_test))))
         self.assertTrue(np.isclose(y_test_mean - true_fun(x_test),0,atol=0.01).all())
+
+        # compact_kernel = gpytoolbox.compactly_supported_normal_kernel()
+        def kernel(X1,X2):
+            return gpytoolbox.compactly_supported_normal_kernel(X1,X2,length=0.5)
+        y_test_mean, y_test_cov = gpytoolbox.gaussian_process(np.reshape(x_train,(-1,1)),y_train,np.reshape(x_test,(-1,1)),kernel=kernel)
+        self.assertTrue(np.isclose(y_test_mean - true_fun(x_test),0,atol=0.01).all())
+        y_test_mean, y_test_cov = gpytoolbox.gaussian_process(np.reshape(x_train,(-1,1)),y_train,np.reshape(x_test,(-1,1)),kernel=kernel,compact_kernel=True)
+        self.assertTrue(np.isclose(y_test_mean - true_fun(x_test),0,atol=0.01).all())
+
         # print(y_test_cov.diagonal().flatten())
         # plt.scatter(x_test,y_test_mean,c=np.asarray(y_test_cov).diagonal())
         # plt.show()
