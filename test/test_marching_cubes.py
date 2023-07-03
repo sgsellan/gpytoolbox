@@ -1,7 +1,6 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-import matplotlib.pyplot as plt
 
 class TestMarchingCubes(unittest.TestCase):
     def test_meshes(self):
@@ -16,6 +15,7 @@ class TestMarchingCubes(unittest.TestCase):
             GV,_ = gpytoolbox.regular_cube_mesh(gs)
             # Get winding number at grid vertices
             s1 = gpytoolbox.signed_distance(GV,V,F)[0]
+            
             # Get isosurface
             U,G = gpytoolbox.marching_cubes(s1,GV,gs,gs,gs,0.0)
             # Get winding number now using the isosurface
@@ -24,6 +24,9 @@ class TestMarchingCubes(unittest.TestCase):
             # Now the claim is that U,G and V,F should be "similar"
             dists = gpytoolbox.squared_distance(U,V,F=F,use_cpp=True)[0]
             self.assertTrue(np.isclose(dists,0.0,atol=1e-2).all())
+            # ps.init()
+            # ps.register_point_cloud("inside",GV[s2<0,:])
+            # ps.show()
             # print(dists)
             
 
