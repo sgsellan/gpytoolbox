@@ -102,3 +102,4 @@ from .cylinder import cylinder
 from .cone import cone
 from .torus import torus
 from .marching_squares import marching_squares
+from .winding_number import winding_number

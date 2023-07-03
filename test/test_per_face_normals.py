@@ -16,7 +16,7 @@ class TestPerFaceNormals(unittest.TestCase):
         n_down = np.array([[0,0,-1]])
         self.assertTrue(np.isclose(n - n_down,0.0).all())
 
-    # TODO WRITE THIS WITHOUT IGL
+
     def test_bunny(self):
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
         # n_gt = igl.per_face_normals(v,f,np.array([0.,0.,0.]))

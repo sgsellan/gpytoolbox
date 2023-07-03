@@ -12,7 +12,7 @@ class TestSignedDistance(unittest.TestCase):
                                     [-1.5,0.5],
                                     [1.2,0.0]])
         groundtruth_vals = np.array([-1.0,-0.7,0.5,0.2])
-        EC = gpytoolbox.edge_indices(V.shape[0])
+        EC = gpytoolbox.edge_indices(V.shape[0],closed=True)
         S = gpytoolbox.signed_distance(sample_points,V,EC)[0]
         self.assertTrue(np.isclose(S-groundtruth_vals,0).all())
         S = gpytoolbox.signed_distance(sample_points,V)[0]
@@ -66,8 +66,8 @@ class TestSignedDistance(unittest.TestCase):
                 # print(wn_in)
                 # print(wn_out)
                 # print(np.isclose(wn_out,0,atol=1e-2))
-                self.assertTrue(np.isclose(s_out,-1,atol=1e-2).all())
-                self.assertTrue(np.isclose(s_in,1,atol=1e-2).all())
+                self.assertTrue(np.isclose(s_out,1,atol=1e-2).all())
+                self.assertTrue(np.isclose(s_in,-1,atol=1e-2).all())
 
 
 
