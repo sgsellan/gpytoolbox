@@ -4,8 +4,51 @@ from .remove_duplicate_vertices import remove_duplicate_vertices
 def marching_squares(S,GV,nx,ny):
     """
     Marching squares algorithm for extracting isocontours from a scalar field.
-    S: scalar field
-    nx,ny: number of grid points in x and y direction
+
+    Parameters
+    ----------
+    S : (nx*ny,) numpy double array
+        Scalar field
+    GV : (nx*ny,2) numpy double array
+        Grid vertex positions
+    nx : int
+        Number of grid vertices in x direction
+    ny : int
+        Number of grid vertices in y direction
+
+    Returns
+    -------
+    V : (nv,2) numpy double array
+        Vertex positions
+    E : (ne,2) numpy int array
+        Edge indices into V
+
+    See Also
+    --------
+    marching_cubes
+
+    Examples
+    --------
+    ```python
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import gpytoolbox as gpt
+    # Create a scalar field
+    nx = 100
+    ny = 100
+    x = np.linspace(-1,1,nx)
+    y = np.linspace(-1,1,ny)
+    X,Y = np.meshgrid(x,y)
+    S = np.exp(-X**2-Y**2)
+    # Extract isocontours
+    V,E = gpt.marching_squares(S,np.c_[X.flatten(),Y.flatten()],nx,ny)
+    # Plot
+    plt.figure()
+    plt.imshow(S.reshape((nx,ny),order='F'),extent=[-1,1,-1,1])
+    plt.plot(V[:,0],V[:,1],'k')
+    plt.axis('equal')
+    plt.show()
+    ```
     """
     S = np.reshape(S,(nx,ny),order='F')
     # Create empty list for
