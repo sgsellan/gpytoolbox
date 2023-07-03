@@ -92,7 +92,6 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_offset_surface.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_point_mesh_squared_distance.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersect.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_per_face_prin_curvature.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_read_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_remesher_botsch.cpp"
