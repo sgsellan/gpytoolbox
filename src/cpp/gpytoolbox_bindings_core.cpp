@@ -46,7 +46,6 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_upper_envelope(m);
     binding_read_ply(m);
     binding_write_ply(m);
-    binding_per_face_prin_curvature(m);
 
     m.def("help", [&]() {printf("hi"); });
 }
