@@ -44,7 +44,7 @@ def winding_number(O, V, F):
         O2VS = np.expand_dims(O[:, :2], axis=1) - np.expand_dims(VS[:, :2], axis=0)
         O2VD = np.expand_dims(O[:, :2], axis=1) - np.expand_dims(VD[:, :2], axis=0)
 
-        S = np.arctan2(O2VD[:, :, 0] * O2VS[:, :, 1] - O2VD[:, :, 1] * O2VS[:, :, 0], O2VD[:, :, 0] * O2VS[:, :, 0] + O2VD[:, :, 1] * O2VS[:, :, 1])
+        S = - np.arctan2(O2VD[:, :, 0] * O2VS[:, :, 1] - O2VD[:, :, 1] * O2VS[:, :, 0], O2VD[:, :, 0] * O2VS[:, :, 0] + O2VD[:, :, 1] * O2VS[:, :, 1])
         W = np.sum(S, axis=1) / (2 * np.pi)
     elif dim == 3:
         # Compute winding number. It would be nice to have the exact winding number using solid angle in 3D too, but for now this is good for most times I want it.

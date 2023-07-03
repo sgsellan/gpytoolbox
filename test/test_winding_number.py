@@ -7,7 +7,7 @@ class TestWindingNumber(unittest.TestCase):
     # This isn't too complex, probably could use being expanded
     def test_squares(self):
         # Build a polyline; for example, a square
-        V = np.array([ [-1.0, -1.0], [-1.0, 1.0], [1.0, 1.0], [1.0, -1.0] ])
+        V = np.array([ [-1.0, -1.0], [1.0, -1.0], [1.0, 1.0], [-1.0, 1.0] ])
         EC = gpytoolbox.edge_indices(V.shape[0],closed=True)
         # 2d grid
         gx, gy = np.meshgrid(np.linspace(-2.01,2.01,100),np.linspace(-2.01,2.01,100))
@@ -40,7 +40,7 @@ class TestWindingNumber(unittest.TestCase):
         filename = "test/unit_tests_data/illustrator.png"
         poly = gpytoolbox.png2poly(filename)
         # reorder poly
-        poly[0]= poly[0][::-1]
+        # poly[0]= poly[0][::-1]
         V = 1.5*gpytoolbox.normalize_points(poly[0])
         EC = gpytoolbox.edge_indices(V.shape[0],closed=True)
         gx, gy = np.meshgrid(np.linspace(-2.01,2.01,100),np.linspace(-2.01,2.01,100))
