@@ -101,3 +101,7 @@ from .icosphere import icosphere
 from .cylinder import cylinder
 from .cone import cone
 from .torus import torus
+from .particle_swarm import particle_swarm
+from .read_dmat import read_dmat
+from .linear_blend_skinning import linear_blend_skinning
+from .barycenters import barycenters
