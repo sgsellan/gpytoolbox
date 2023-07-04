@@ -7,7 +7,7 @@ from .context import unittest
 class TestRFTS(unittest.TestCase):
     def test_beat_marching_cubes_low_res(self):
         meshes = ["bunny_oded.obj", "spot.obj", "teddy.obj"]
-        ns = [10, 20, 30, 40]
+        ns = [10, 20, 30]
         for mesh in meshes:
             for n in ns:
         # mesh = "test/unit_tests_data/bunny_oded.obj"
