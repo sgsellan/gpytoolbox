@@ -1,21 +1,24 @@
 # Here I import only the functions I need for these functions
 import numpy as np
 import scipy as sp
-import os, sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../ext/gpytoolbox/src')))
-import gpytoolbox as gpy
-import matplotlib.pyplot as plt
-import polyscope
-from gpytoolbox.copyleft import mesh_boolean
 from scipy.sparse import coo_matrix, block_diag, diags
-from .laplacian import laplacian
-from .massmatrix import massmatrix
-from .normals import normals, processed_normals
-from .sample_sdf import sample_sdf
-from .one_ring import one_ring
-from .remesh import remesh
-from .face_adjacency import face_adjacency
 from scipy.spatial import cKDTree
+from .squared_distance import squared_distance
+from .fixed_dof_solve   import fixed_dof_solve, fixed_dof_solve_precompute
+from .boundary_vertices import boundary_vertices
+from .boundary_faces    import boundary_faces
+from .remove_unreferenced import remove_unreferenced
+from .remove_duplicate_vertices import remove_duplicate_vertices
+from .triangle_triangle_adjacency import triangle_triangle_adjacency
+from .grad import grad
+from .massmatrix_intrinsic import massmatrix_intrinsic
+from .cotangent_laplacian import cotangent_laplacian
+from .doublearea import doublearea
+from .per_face_normals import per_face_normals
+from .tip_angles import tip_angles
+from .halfedge_lengths_squared import halfedge_lengths_squared
+from .remesh_botsch import remesh_botsch
+from .random_points_on_mesh import random_points_on_mesh
 
 
 def sdf_flow(U, sdf, V, F, S=None,
@@ -147,7 +150,7 @@ def sdf_flow(U, sdf, V, F, S=None,
                 U_batch = np.concatenate((U_batch, U[S>0,:]), axis=0)
                 S_batch = np.concatenate((S_batch, S[S>0]), axis=0)
             its = its+1
-            d2, I, b = gpy.squared_distance(U_batch, V, F, use_cpp=True, use_aabb=True)
+            d2, I, b = squared_distance(U_batch, V, F, use_cpp=True, use_aabb=True)
             d = np.sqrt(d2)
             g = np.abs(S_batch)-d
             # if g is negative then we are missing the sphere. If S_batch is clamp or more, then we are going to make rho zero
@@ -159,7 +162,8 @@ def sdf_flow(U, sdf, V, F, S=None,
                 # N = processed_normals(I,b,V,F)
                 # s = -np.sign(np.sum(pemU*N, axis=-1))
                 s = -np.sign(np.sum(pemU*normals(V,F)[I,:], axis=-1))
-                s *= -1. if dim==3 else 1. #WHY IS THERE A MINUS HERE in 3D?
+                # s *= -1. if dim==3 else 1. #WHY IS THERE A MINUS HERE in 3D?
+                s *= 1.
                 hit_sides = np.any(b<1e-3, axis=-1) #too close to vertex
                 s[hit_sides] = np.sign(S_batch)[hit_sides]
             else:
@@ -224,8 +228,8 @@ def sdf_flow(U, sdf, V, F, S=None,
             # save mesh before solve
             # gpy.write_mesh(f"before_solve.obj", V, F)
             if fix_boundary:
-                bd = gpy.boundary_vertices(F)
-                precomp = gpy.fixed_dof_solve_precompute(Q, k=bd)
+                bd = boundary_vertices(F)
+                precomp = fixed_dof_solve_precompute(Q, k=bd)
                 # V_new = 0*V
                 # for dd in [0,2]:
                 #     V_new[:,dd] = precomp.solve(b=b[:,dd], y=V[bd,dd])
@@ -308,13 +312,13 @@ def sdf_flow(U, sdf, V, F, S=None,
                     F_invalid_neighbors = one_ring(F,F_invalid_neighbors)
                     # We find the set of invalid vertices
                     # F_active = F[F_invalid_neighbors,:]
-                    V_active, F_active, _, _ = gpy.remove_unreferenced(V, F[F_invalid_neighbors,:],return_maps=True)
+                    V_active, F_active, _, _ = remove_unreferenced(V, F[F_invalid_neighbors,:],return_maps=True)
 
                     if (F_active.shape[0] < F.shape[0] and F_active.shape[0] > 0):
                         # set of inactive faces
                         F_inactive = np.setdiff1d(np.arange(F.shape[0]), F_invalid_neighbors)
                         # set of inactive vertices
-                        V_inactive, F_inactive, _, _ = gpy.remove_unreferenced(V, F[F_inactive,:],return_maps=True)
+                        V_inactive, F_inactive, _, _ = remove_unreferenced(V, F[F_inactive,:],return_maps=True)
                         # Remesh only the active part
                         
                         V_active, F_active = remesh(V_active, F_active, i=remesh_iterations, h=h, project = True)
@@ -322,7 +326,7 @@ def sdf_flow(U, sdf, V, F, S=None,
                         V = np.vstack((V_active, V_inactive))
                         F = np.vstack((F_active, F_inactive + V_active.shape[0]))
                         # We remove the duplicate vertices
-                        V,_,_,F = gpy.remove_duplicate_vertices(V,faces=F,epsilon=np.sqrt(np.finfo(V.dtype).eps))
+                        V,_,_,F = remove_duplicate_vertices(V,faces=F,epsilon=np.sqrt(np.finfo(V.dtype).eps))
                     else:
                         V, F = remesh(V, F, i=remesh_iterations, h=h, project = True)
                         # V, F = remesh(V, F, i=remesh_iterations, h=h, project = True, feature=feature_vertices)
@@ -408,6 +412,7 @@ def sdf_flow(U, sdf, V, F, S=None,
                         full_ps = polyscope.register_surface_mesh("full", V, F)
 
     if visualize and dim==3:
+        import polyscope
         polyscope.init()
         # polyscope.register_surface_mesh("gt",V2,F2)
         def polyscope_callback():
@@ -415,6 +420,8 @@ def sdf_flow(U, sdf, V, F, S=None,
         polyscope.set_user_callback(polyscope_callback)
         polyscope.show()
     else:
+        if visualize:
+            import matplotlib.pyplot as plt
         while (its<max_iter and (not converged)):
             run_flow_iteration()
 
@@ -438,17 +445,17 @@ def face_adjacency(F):
         TT = np.stack((v_to_f[F[:,0],1], v_to_f[F[:,1],0]), axis=-1)
         return TT
     elif dim==3:
-        TT,_ = gpy.triangle_triangle_adjacency(F)
+        TT,_ = triangle_triangle_adjacency(F)
         return TT
 
 
 def laplacian(v,f):
     dim = v.shape[1]
     if dim==3:
-        L = gpy.cotangent_laplacian(v,f)
+        L = cotangent_laplacian(v,f)
     elif dim==2:
-        G = gpy.grad(v,f)
-        A = 0.5*gpy.doublearea(v,f)
+        G = grad(v,f)
+        A = 0.5*doublearea(v,f)
         MA = sp.sparse.spdiags(np.concatenate((A,A)), 0, G.shape[0], G.shape[0])
         L = G.transpose() * MA * G
     L.data[np.logical_not(np.isfinite(L.data))] = 0.
@@ -464,7 +471,7 @@ def normals(V,F,unit_norm=False):
             e /= np.linalg.norm(e, axis=-1)[:,None]
         return e @ np.array([[0., -1.], [1., 0.]])
     elif dim==3:
-        return gpy.per_face_normals(V,F,unit_norm=unit_norm)
+        return per_face_normals(V,F,unit_norm=unit_norm)
     
 def per_vertex_normals(V,F):
     N = normals(V,F,unit_norm=True)
@@ -477,7 +484,7 @@ def per_vertex_normals(V,F):
             np.bincount(Fr, weights=np.concatenate((N[:,1],N[:,1])))
             ), axis=-1)
     elif dim==3:
-        α = gpy.tip_angles(V,F)
+        α = tip_angles(V,F)
         αr = α.ravel(order='F')
         Nv = np.stack((
             np.bincount(Fr, weights=αr*np.concatenate((N[:,0],N[:,0],N[:,0]))),
@@ -504,9 +511,9 @@ def processed_normals(I,b,V,F,unit_norm=False):
 def massmatrix(V,F):
     dim = F.shape[1]
     if dim==3:
-        l_sq = gpy.halfedge_lengths_squared(V,F)
+        l_sq = halfedge_lengths_squared(V,F)
         l_sq = np.maximum(l_sq, 100.*np.finfo(V.dtype).eps)
-        M = gpy.massmatrix_intrinsic(l_sq,F,n=V.shape[0]) 
+        M = massmatrix_intrinsic(l_sq,F,n=V.shape[0]) 
     elif dim==2:
         edge_lengths = np.linalg.norm(V[F[:,1],:] - V[F[:,0],:],axis=1)
         edge_lengths = np.maximum(edge_lengths, np.sqrt(100.*np.finfo(V.dtype).eps))
@@ -547,7 +554,7 @@ def remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
             i=i, h=h,
             project=project, feature=feature)
     elif dim==3:
-        V,F = gpy.remesh_botsch(V, F,
+        V,F = remesh_botsch(V, F,
             i=i, h=h,
             project=project, feature=feature)
     assert np.isfinite(V).all()
@@ -625,7 +632,7 @@ def collapse_line(V, F, feature, high, low):
         F[F==remove] = keep
 
         F = np.delete(F, collapse, axis=0)
-        V,F,I,J = gpy.remove_unreferenced(V, F, return_maps=True)
+        V,F,I,J = remove_unreferenced(V, F, return_maps=True)
         feature = I[feature]
         is_feature = np.full(V.shape[0], False, dtype=bool)
         is_feature[feature] = True
@@ -658,7 +665,7 @@ def relaxation_line(V, F, feature, V0, F0):
         NN = np.identity(2)-N[i,:][:,None]*N[i,:][None,:]
         V[i,:] -= NN@(V[i,:]-q)
 
-    _,I,b = gpy.squared_distance(V,V0,F0,use_cpp=True,use_aabb=True)
+    _,I,b = squared_distance(V,V0,F0,use_cpp=True,use_aabb=True)
     V = np.sum(V0[F0[I,:],:]*b[...,None], axis=1)
 
     return V,F
@@ -704,7 +711,7 @@ def sample_sdf(sdf,
     S0 = sdf(U0)
 
     # Random points on all faces
-    P,I,_ = gpy.random_points_on_mesh(V, F, trial_n, rng=rng, return_indices=True)
+    P,I,_ = random_points_on_mesh(V, F, trial_n, rng=rng, return_indices=True)
     d = 0.05 * rng.normal(scale=np.max(np.max(V,axis=0)-np.min(V,axis=0)), size=P.shape[0])
     P += d[:,None] * normals(V, F, unit_norm=True)[I,:]
     # Remove all points in P that are not worst points on edge.
