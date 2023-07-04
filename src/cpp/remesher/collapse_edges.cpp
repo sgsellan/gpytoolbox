@@ -70,23 +70,30 @@ void collapse_edges(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & f
             double & cost,
             Eigen::RowVectorXd & p)
     {
+        // std::cout << high(E(e,0)) << std::endl;
+        // std::cout << high(E(e,1)) << std::endl;
         igl::shortest_edge_and_midpoint(e,V,F,E,EMAP,EF,EI,cost,p);
         if (is_feature_vertex[E(e,0)] || is_feature_vertex[E(e,1)] ) {
             cost = std::numeric_limits<double>::infinity();
             return;
+        // }
+        }else if (is_feature_vertex[E(e,0)]){
+            p = V.row(E(e,0));
+        }else if(is_feature_vertex[E(e,1)]){
+            p = V.row(E(e,1));
         }
         if ( (V.row(E(e,0))-V.row(E(e,1))).norm() > ((low(E(e,0))+low(E(e,1)))/2) ) {
             cost = std::numeric_limits<double>::infinity();
             return;
         }
         for(int i = 0; i < A[E(e,1)].size(); i++){
-            if((V.row(A[E(e,1)][i])-p).norm() > high(E(e,1))){
+            if(!is_feature_vertex[E(e,1)] && (V.row(A[E(e,1)][i])-p).norm() > high(E(e,1))){
                 cost = std::numeric_limits<double>::infinity();
                 return;
             }
         }
         for(int r = 0; r < A[E(e,0)].size(); r++){
-            if((V.row(A[E(e,0)][r])-p).norm() > high(E(e,0))){
+            if(!is_feature_vertex[E(e,0)] && (V.row(A[E(e,0)][r])-p).norm() > high(E(e,0))){
                 cost = std::numeric_limits<double>::infinity();
                 return;
             }

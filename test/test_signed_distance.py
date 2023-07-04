@@ -6,26 +6,26 @@ class TestSignedDistance(unittest.TestCase):
     # This isn't too complex, probably could use being expanded
     def test_synthetic(self):
         # Build a polyline; for example, a square
-        V = np.array([ [-1.0, -1.0], [-1.0, 1.0], [1.0, 1.0], [1.0, -1.0] ])
+        V = np.array([ [-1.0, -1.0], [1.0, -1.0], [1.0, 1.0], [-1.0, 1.0] ])
         sample_points = np.array([  [0.0,0.0],
                                     [0.3,0.0],
                                     [-1.5,0.5],
                                     [1.2,0.0]])
         groundtruth_vals = np.array([-1.0,-0.7,0.5,0.2])
-        EC = gpytoolbox.edge_indices(V.shape[0])
+        EC = gpytoolbox.edge_indices(V.shape[0],closed=True)
         S = gpytoolbox.signed_distance(sample_points,V,EC)[0]
         self.assertTrue(np.isclose(S-groundtruth_vals,0).all())
         S = gpytoolbox.signed_distance(sample_points,V)[0]
         self.assertTrue(np.isclose(S-groundtruth_vals,0).all())
     def test_duplicated(self):
         # Build a polyline; for example, a square
-        V = np.array([ [-1.0, -1.0], [-1.0, 1.0], [1.0, 1.0], [1.0, -1.0],[-1.0, -1.0] ])
+        V = np.array([ [-1.0, -1.0], [1.0, -1.0], [1.0, 1.0], [-1.0, 1.0] ])
         sample_points = np.array([  [0.0,0.0],
                                     [0.3,0.0],
                                     [-1.5,0.5],
                                     [1.2,0.0]])
         groundtruth_vals = np.array([-1.0,-0.7,0.5,0.2])
-        EC = gpytoolbox.edge_indices(V.shape[0])
+        EC = gpytoolbox.edge_indices(V.shape[0],closed=True)
         S = gpytoolbox.signed_distance(sample_points,V,EC)[0]
         self.assertTrue(np.isclose(S-groundtruth_vals,0).all())
         S = gpytoolbox.signed_distance(sample_points,V)[0]
@@ -66,8 +66,8 @@ class TestSignedDistance(unittest.TestCase):
                 # print(wn_in)
                 # print(wn_out)
                 # print(np.isclose(wn_out,0,atol=1e-2))
-                self.assertTrue(np.isclose(s_out,-1,atol=1e-2).all())
-                self.assertTrue(np.isclose(s_in,1,atol=1e-2).all())
+                self.assertTrue(np.isclose(s_out,1,atol=1e-2).all())
+                self.assertTrue(np.isclose(s_in,-1,atol=1e-2).all())
 
 
 
