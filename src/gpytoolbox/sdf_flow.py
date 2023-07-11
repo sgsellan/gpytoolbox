@@ -22,61 +22,247 @@ from .random_points_on_mesh import random_points_on_mesh
 
 
 def sdf_flow(U, sdf, V, F, S=None,
+    return_U=False,
+    verbose=False,
+    visualize=False, #TODO: remove
+    callback=None, #TODO: remove
     max_iter=None, tol=None, h=None, min_h=None,
-    linesearch=None, max_t=None,
+    linesearch=None, min_t=None, max_t=None,
     dt=None,
     inside_outside_test=None,
     resample=None,
     resample_samples=None,
-    return_U=None,
     feature_detection=None,
     output_sensitive=None,
     remesh_iterations=None,
-    verbose=None,
-    callback=None,
-    visualize=None,
     batch_size=None,
-    fix_boundary=False,
-    clamp=np.Inf, sv=False):
+    fix_boundary=None,
+    clamp=None, sv=None):
 
-    dim = U.shape[1]
-    assert dim==V.shape[1]
-    assert dim==F.shape[1]
+    state = SdfFlowState(V=V, F=F, sdf=sdf, U=U, S=S,
+        h=h, min_h=min_h)
+    converged = False
 
+    # TODO: Replace this function with a simple while loop that breaks if converged.
+    dim = V.shape[1]
+    def run_flow_iteration():
+        nonlocal state, converged
+        if not converged:
+            converged = sdf_flow_iteration(state,
+                max_iter=max_iter, tol=tol,
+                linesearch=linesearch, min_t=min_t, max_t=max_t,
+                dt=dt,
+                inside_outside_test=inside_outside_test,
+                resample=resample,
+                resample_samples=resample_samples,
+                feature_detection=feature_detection,
+                output_sensitive=output_sensitive,
+                remesh_iterations=remesh_iterations,
+                batch_size=batch_size,
+                verbose=verbose,
+                fix_boundary=fix_boundary,
+                clamp=clamp, sv=sv)
+
+            # TODO: remove callback code
+            if callback is not None:
+                # Little hack to pass max_iter, which is not keps as state.
+                # Set to the same default as in sdf_flow_iteration.
+                pass_max_iter = (10000 if dim==2 else 20000
+                    ) if max_iter is None else max_iter
+                callback({'V':state.V, 'F':state.F,
+                    'V_active':state.V_active,
+                    'F_active':state.F_active,
+                    'V_inactive':state.V_inactive,
+                    'F_inactive':state.F_inactive,
+                    'its':state.its,
+                    'max_iter':pass_max_iter,
+                    'U':state.U, 'S':state.S,
+                    'converged':converged,
+                    'resample_counter':state.resample_counter})
+
+            # TODO: remove visualization code
+            if visualize:
+                if dim==2:
+                    def plot_edges(vv,ee,plt_str):
+                        ax = plt.gca()
+                        for i in range(ee.shape[0]):
+                            ax.plot([vv[ee[i,0],0],vv[ee[i,1],0]],
+                                     [vv[ee[i,0],1],vv[ee[i,1],1]],
+                                     plt_str,alpha=1)
+                    def plot_spheres(vv,sdf):
+                        ax = plt.gca()
+                        f = sdf(vv)
+                        for i in range(vv.shape[0]):
+                            c = 'r' if f[i]>=0 else 'b'
+                            ax.add_patch(plt.Circle(vv[i,:], f[i], color=c, fill=False,alpha=0.1))
+                    plt.cla()
+                    plot_spheres(U,sdf)
+                    visualize_full = True
+                    if state.V_active is not None and state.F_active is not None:
+                        visualize_full = False
+                        plot_edges(state.V_active,state.F_active,'b-')
+                        plt.plot(state.V_active[:,0],state.V_active[:,1],'b.')
+                    if state.V_inactive is not None and state.F_inactive is not None:
+                        visualize_full = False
+                        plot_edges(state.V_inactive,state.F_inactive,'y-')
+                        plt.plot(state.V_inactive[:,0],state.V_inactive[:,1],'y.')
+                    if visualize_full and state.V is not None and state.F is not None:
+                        plot_edges(state.V,state.F,'b-')
+                        plt.plot(state.V[:,0],state.V[:,1],'b.')
+                    plt.draw()
+                    plt.pause(0.01)
+                elif dim==3:
+                    # if stopped:
+                    #     # This mess is so that we can render something from polyscope in the same script, otherwise this callback will keep executing and deleting everything you plot.
+                    #     if active_ps is not None:
+                    #         active_ps.remove()
+                    #         active_ps = None
+                    #     if inactive_ps is not None:
+                    #         inactive_ps.remove()
+                    #         inactive_ps = None
+                    #     if full_ps is not None:
+                    #         full_ps.remove()
+                    #         full_ps = None
+                    #     # polyscope.remove_all_structures()
+                    # else:
+                        # cloud_U = polyscope.register_point_cloud("SDF evaluation points", U)
+                        # cloud_U.add_scalar_quantity("How unhappy?", np.abs(g), enabled=True)
+                        visualize_full = True
+                        if state.V_active is not None and state.F_active is not None:
+                            visualize_full = False
+                            active_ps = polyscope.register_surface_mesh("active", state.V_active, state.F_active)
+                        if state.V_inactive is not None and state.F_inactive is not None:
+                            visualize_full = False
+                            inactive_ps = polyscope.register_surface_mesh("inactive", state.V_inactive, state.F_inactive)
+                        if visualize_full and V is not None and F is not None:
+                            full_ps = polyscope.register_surface_mesh("full", state.V, state.F)
+
+    # TODO: remove visualization code
+    if visualize and dim==3:
+        import polyscope
+        polyscope.init()
+        def polyscope_callback():
+            run_flow_iteration()
+        polyscope.set_user_callback(polyscope_callback)
+        polyscope.show()
+    else:
+        if visualize:
+            import matplotlib.pyplot as plt
+        while state.its is None or (state.its<max_iter and (not converged)):
+            run_flow_iteration()
+
+    if return_U:
+        return state.V, state.F, state.U
+    else:
+        return state.V, state.F
+
+
+class SdfFlowState:
+
+    def __init__(self,
+        V, F,
+        U=None,
+        S=None,
+        sdf=None,
+        V_active=None, F_active=None,
+        V_inactive=None, F_inactive=None,
+        rng=None,
+        h=None, min_h=None, its=None,
+        best_performance=None,
+        convergence_counter=None,
+        best_avg_error=None,
+        # use_features=None,
+        resample_counter=None,
+        full_ps=None, active_ps=None, inactive_ps=None,
+        V_last_converged=None, F_last_converged=None,
+        U_batch=None, S_batch=None
+        ):
+
+        self.V=V
+        self.F=F
+        self.U=U
+        self.S=S
+        self.sdf=sdf
+        self.V_active = V_active
+        self.F_active = F_active
+        self.V_inactive = V_inactive
+        self.F_inactive = F_inactive
+        self.rng = rng
+        self.h = h
+        self.min_h = min_h
+        self.its = its
+        self.best_performance = best_performance
+        self.convergence_counter = convergence_counter
+        self.best_avg_error = best_avg_error
+        # self.use_features = use_features
+        self.resample_counter = resample_counter
+        self.full_ps = full_ps
+        self.active_ps = active_ps
+        self.inactive_ps = inactive_ps
+        self.V_last_converged = V_last_converged
+        self.F_last_converged = F_last_converged
+        self.U_batch = U_batch
+        self.S_batch = S_batch
+
+
+#Returns true if algorithm has converged.
+def sdf_flow_iteration(state,
+    max_iter=None, tol=None,
+    linesearch=None, min_t=None, max_t=None,
+    dt=None,
+    inside_outside_test=None,
+    resample=None,
+    resample_samples=None,
+    feature_detection=None,
+    output_sensitive=None,
+    remesh_iterations=None,
+    batch_size=None,
+    fix_boundary=None,
+    clamp=None, sv=None,
+    verbose=False):
+
+
+    assert isinstance(state, SdfFlowState), "State must be a SdfFlowState"
+    dim = state.V.shape[1]
+    assert dim==state.F.shape[1]
+    if state.U is not None:
+        assert dim==state.U.shape[1]
+
+    #Set default parameters.
     #Assign different 2D and 3D default parameters
     default_params = {
         #For each dimension
-        2: {'max_iter':10000, 'tol':5e-3, 'h':0.1, 'min_h':None,
-        'linesearch':True, 'max_t':50.,
+        2: {'max_iter':10000, 'tol':5e-3, 'h':0.1,
+        'linesearch':True, 'min_t':1e-6, 'max_t':50.,
         'dt':10.,
         'inside_outside_test':True,
-        'resample':0, 'resample_samples':2*int(np.ceil(np.sqrt(U.shape[0]))),
+        'resample':0, 'resample_samples':2*int(np.ceil(np.sqrt(state.V.shape[0] if state.U is None else state.U.shape[0]))),
         'return_U':False,
         'feature_detection':'aggressive', 'output_sensitive':True,
-        'remesh_iterations':1, 'verbose':True, 'callback':None,
-        'visualize':False,
-        'batch_size':20000},
-        3: {'max_iter':20000, 'tol':1e-2, 'h':0.2, 'min_h':None,
-        'linesearch':True, 'max_t':50.,
+        'remesh_iterations':1,
+        'batch_size':20000,
+        'fix_boundary':False,
+        'clamp':np.Inf, 'sv':False},
+        3: {'max_iter':20000, 'tol':1e-2, 'h':0.2,
+        'linesearch':True, 'min_t':1e-6, 'max_t':50.,
         'dt':10.,
         'inside_outside_test':True,
-        'resample':0, 'resample_samples':2*int(np.ceil(np.cbrt(U.shape[0]))),
-        'return_U':False,
+        'resample':0, 'resample_samples':2*int(np.ceil(np.cbrt(state.V.shape[0] if state.U is None else state.U.shape[0]))),
         'feature_detection':'aggressive', 'output_sensitive':True,
-        'remesh_iterations':1, 'verbose':True, 'callback':None,
+        'remesh_iterations':1,
         'visualize':False,
-        'batch_size':20000}
+        'batch_size':20000,
+        'fix_boundary':False,
+        'clamp':np.Inf, 'sv':False}
     }
     if max_iter is None:
         max_iter = default_params[dim]['max_iter']
     if tol is None:
         tol = default_params[dim]['tol']
-    if h is None:
-        h = default_params[dim]['h']
-    if min_h is None:
-        min_h = default_params[dim]['min_h']
     if linesearch is None:
         linesearch = default_params[dim]['linesearch']
+    if min_t is None:
+        min_t = default_params[dim]['min_t']
     if max_t is None:
         max_t = default_params[dim]['max_t']
     if dt is None:
@@ -87,352 +273,257 @@ def sdf_flow(U, sdf, V, F, S=None,
         resample = default_params[dim]['resample']
     if resample_samples is None:
         resample_samples = default_params[dim]['resample_samples']
-    if return_U is None:
-        return_U = default_params[dim]['return_U']
     if feature_detection is None:
         feature_detection = default_params[dim]['feature_detection']
     if output_sensitive is None:
         output_sensitive = default_params[dim]['output_sensitive']
     if remesh_iterations is None:
         remesh_iterations = default_params[dim]['remesh_iterations']
-    if verbose is None:
-        verbose = default_params[dim]['verbose']
-    if callback is None:
-        callback = default_params[dim]['callback']
-    if visualize is None:
-        visualize = default_params[dim]['visualize']
     if batch_size is None:
         batch_size = default_params[dim]['batch_size']
+    if fix_boundary is None:
+        fix_boundary = default_params[dim]['fix_boundary']
+    if clamp is None:
+        clamp = default_params[dim]['clamp']
+    if sv is None:
+        sv = default_params[dim]['sv']
 
-    if U is None:
-        U = sample_sdf(sdf, V, F)
-
-    if S is None:
-        S = sdf(U)
-
-    if min_h is None:
+    if state.h is None:
+        state.h = default_params[dim]['h']
+    if state.U is None:
+        assert state.sdf is not None, "If you do not provide U, you must provide an sdf function to sample."
+        state.U = sample_sdf(state.sdf, state.V, state.F)
+    if state.S is None:
+        assert state.sdf is not None, "If you do not provide U, you must provide an sdf function to sample."
+        state.S = state.sdf(state.U)
+    if state.min_h is None:
         # use a kdtree and get the average distance between two samples
         # import cKDTree
         tree = cKDTree(U)
         dists, _ = tree.query(U, k=2)
-        min_h = 2.*np.mean(dists[:,1])
-        min_h = np.clip(min_h, 0.001, 0.1)
+        state.min_h = 2.*np.mean(dists[:,1])
+        state.min_h = np.clip(min_h, 0.001, 0.1)
 
-
-    nu_0 = U.shape[0]
+    nu_0 = state.U.shape[0]
     nu_max = 2*nu_0
-    converged = False
-    rng = np.random.default_rng(68)
-    its = 0
-    best_performance = np.Inf
-    convergence_counter = 0
-    best_avg_error = np.Inf
-    feature = np.array([],dtype=np.int32)
-    use_features = False
+
+    if state.rng is None:
+        state.rng = np.random.default_rng(68)
+    if state.its is None:
+        state.its = 0
+    if state.best_performance is None:
+        state.best_performance = np.Inf
+    if state.convergence_counter is None:
+        state.convergence_counter = 0
+    if state.best_avg_error is None:
+        state.best_avg_error = np.Inf
+    # if state.use_features is None:
+    #     state.use_features = False
+    if state.V_last_converged is None:
+        state.V_last_converged = state.V.copy()
+    if state.F_last_converged is None:
+        state.F_last_converged = state.F.copy()
+    if state.resample_counter is None:
+        state.resample_counter = 0
+    if state.U_batch is None:
+        state.U_batch = state.U.copy()
+    if state.S_batch is None:
+        state.S_batch = state.S.copy()
+
     remeshing = True
-    stopped = False
-    V_active, F_active = None, None
-    V_inactive, F_inactive = None, None
-    V_last_converged, F_last_converged = V.copy(), F.copy()
-    resample_counter = 0
-    full_ps, active_ps, inactive_ps = None, None, None # for visualization
-    U_batch,S_batch = U.copy(),S.copy()
+
+    #Do we prematurely abort? Increment iteration.
+    if state.its>=max_iter:
+        return True
+    state.its = state.its+1 #Only here for compatibility, move to end after.
+
+    #Algorithm
+    if batch_size>0 and batch_size<state.U.shape[0]:
+        inds = state.rng.choice(state.U.shape[0], batch_size, replace=False)
+        state.U_batch = U[inds,:]
+        state.S_batch = S[inds]
+        # include all inside points
+        state.U_batch = np.concatenate((state.U_batch, U[state.S>0,:]), axis=0)
+        state.S_batch = np.concatenate((state.S_batch, S[state.S>0]), axis=0)
+    d2, I, b = squared_distance(state.U_batch, state.V, state.F,
+        use_cpp=True, use_aabb=True)
+    d = np.sqrt(d2)
+    g = np.abs(state.S_batch)-d
+
+    #closest point on edge to u
+    pe = np.sum(state.V[state.F[I,:],:]*b[...,None], axis=1)
+    pemU = pe-state.U_batch
+    if inside_outside_test:
+        s = -np.sign(np.sum(pemU*normals(state.V,state.F)[I,:], axis=-1))
+        hit_sides = np.any(b<1e-3, axis=-1) #too close to vertex
+        s[hit_sides] = np.sign(state.S_batch)[hit_sides]
+    else:
+        s = np.sign(state.S_batch)
+    #closest signed point on sphere to pe
+    ps = state.U_batch+pemU*((s*state.S_batch/np.maximum(0.5*tol,d))[:,None])
+    valid_U = np.abs(g) < tol
+    invalid_U = np.logical_not(valid_U)
+    F_invalid = np.unique(I[invalid_U])
+    if feature_detection=='aggressive':
+        V_invalid = np.unique(state.F[F_invalid,:].ravel())
+        feature_vertices = np.setdiff1d(np.arange(state.V.shape[0]), V_invalid)
+    else:
+        F_valid = np.setdiff1d(np.arange(state.F.shape[0]), F_invalid)
+        feature_vertices = np.unique(state.F[F_valid,:])
+
+    #Build matrices
+    wu = np.ones(state.U_batch.shape[0])
+    clamped_g = np.where((np.abs(state.S_batch)==clamp)*(g<0.))
+    if sv:
+        clamped_g = np.where((state.S_batch>0)*(g<0.))
+    wu[clamped_g] = 0.0
+    A = sp.sparse.csc_matrix(((wu[:,None]*b).ravel(),
+        (np.tile(np.arange(state.U_batch.shape[0])[:,None],
+            (1,state.F.shape[1])).ravel(),
+            state.F[I,:].ravel())),
+        (state.U_batch.shape[0],state.V.shape[0]))
+    c = wu[:,None]*ps
+    M = massmatrix(state.V, state.F)
+    rho = 1.0*np.ones(state.U_batch.shape[0]) / A.shape[0]
+    R = sp.sparse.spdiags([rho], 0, rho.shape[0], rho.shape[0])
     
-    def run_flow_iteration():
-        nonlocal V, F, U, S, max_iter, V_active, F_active, V_inactive, F_inactive, tol, h, min_h, its, convergence_counter, best_performance, best_avg_error, feature, use_features, remeshing, feature_detection, converged, stopped, max_t, resample_counter, full_ps, active_ps, inactive_ps, V_last_converged, F_last_converged, U_batch, S_batch
+    #Compute timestep t
+    if linesearch:
+        # Backtracking linesearch
+        # Nocedal & Wright Algorithm 3.1
+        n_c = 0.01
+        n_p = -A.transpose()*R*(A*state.V-c)
+        t = -(np.sum((A*state.V-c)*(R*(A*n_p))) + n_c*np.sum(n_p**2)) \
+        / np.sum((A*n_p)*(R*(A*n_p)))
+        t = np.nan_to_num(t, nan=0., posinf=0., neginf=0.)
+        t = min(max_t, max(t,min_t))
+    else:
+        t = dt
 
-        if (its<max_iter and (not converged)):
-            if batch_size>0. and batch_size<U.shape[0]:
-                inds = rng.choice(U.shape[0], batch_size, replace=False)
-                U_batch = U[inds,:]
-                S_batch = S[inds]
-                # include all inside points
-                U_batch = np.concatenate((U_batch, U[S>0,:]), axis=0)
-                S_batch = np.concatenate((S_batch, S[S>0]), axis=0)
-            its = its+1
-            d2, I, b = squared_distance(U_batch, V, F, use_cpp=True, use_aabb=True)
-            d = np.sqrt(d2)
-            g = np.abs(S_batch)-d
-            # if g is negative then we are missing the sphere. If S_batch is clamp or more, then we are going to make rho zero
-            
+    #Minimize
+    Q = M + t*(A.transpose()*R*A)
+    b = M*state.V + t*A.transpose()*(R*c)
+    if fix_boundary:
+        bd = boundary_vertices(state.F)
+        precomp = fixed_dof_solve_precompute(Q, k=bd)
+        state.V = precomp.solve(b=b, y=V[bd,:])
+    else:
+        state.V = sp.sparse.linalg.spsolve(Q,b)
 
-            pe = np.sum(V[F[I,:],:]*b[...,None], axis=1) #closest point on edge to u
-            pemU = pe-U_batch
-            if inside_outside_test:
-                # N = processed_normals(I,b,V,F)
-                # s = -np.sign(np.sum(pemU*N, axis=-1))
-                s = -np.sign(np.sum(pemU*normals(V,F)[I,:], axis=-1))
-                # s *= -1. if dim==3 else 1. #WHY IS THERE A MINUS HERE in 3D?
-                s *= 1.
-                hit_sides = np.any(b<1e-3, axis=-1) #too close to vertex
-                s[hit_sides] = np.sign(S_batch)[hit_sides]
-            else:
-                s = np.sign(S_batch)
-            ps = U_batch+pemU*((s*S_batch/np.maximum(0.5*tol,d))[:,None]) #closest point on sphere to pe
-            valid_U = np.abs(g) < tol
-            invalid_U = np.logical_not(valid_U)
-            F_invalid = np.unique(I[invalid_U])
-            if feature_detection=='aggressive':
-                V_invalid = np.unique(F[F_invalid,:].ravel())
-                feature_vertices = np.setdiff1d(np.arange(V.shape[0]), V_invalid)
-            else:
-                F_valid = np.setdiff1d(np.arange(F.shape[0]), F_invalid)
-                feature_vertices = np.unique(F[F_valid,:])
+    print(f"VpN: {np.linalg.norm(state.V)}")
 
-            # Build ADMM matrices
-            # ADMM Lagrangian:
-            # L = 0.5*||V-V0||_W^2 + rho/2*||A*V-c+y||^2
-            wu = np.ones(U_batch.shape[0])
-            clamped_g = np.where((np.abs(S_batch)==clamp)*(g<0.))
-            if sv:
-                clamped_g = np.where((S_batch>0)*(g<0.))
-            wu[clamped_g] = 0.0
-            # polyscope.register_point_cloud("U_batch", U_batch[clamped_g] )
-            # wu[(S_batch<0)*(g<tol)] = 2.0
-            A = sp.sparse.csc_matrix(((wu[:,None]*b).ravel(),
-                (np.tile(np.arange(U_batch.shape[0])[:,None], (1,F.shape[1])).ravel(),
-                    F[I,:].ravel())),
-                (U_batch.shape[0],V.shape[0]))
-            c = wu[:,None]*ps
-            M = massmatrix(V,F)
-            rho = 1.0*np.ones(U_batch.shape[0]) / A.shape[0]
-            R = sp.sparse.spdiags([rho],0,rho.shape[0],rho.shape[0])
-            
-            if linesearch:
-                # Backtracking linesearch
-                # Nocedal & Wright Algorithm 3.1
-                n_c = 0.01
-                n_p = -A.transpose()*R*(A*V-c)
-                t = -(np.sum((A*V-c)*(R*(A*n_p))) + n_c*np.sum(n_p**2)) \
-                / np.sum((A*n_p)*(R*(A*n_p)))
-                # print(f"computed t: {t}")
-                t = np.nan_to_num(t, nan=0., posinf=0., neginf=0.)
-                t = min(max_t, max(t,1e-6))
-                # print(f"actual t: {t}")
-            else:
-                t = dt
-            
-            # Minimize 
-            # Q = 0.5*||V-V0||_W^2 + lambda*||A*V-c||_^2
-            # make M = I
-            # M = 0.001*sp.sparse.eye(V.shape[0])
-            # rho[(S_batch>0)*(g>0)] = 50.0*rho[(S_batch>0)*(g>0)]
-            # rho[(S_batch>0)*(g<0)] = 0.05*rho[(S_batch>0)*(g<0)]
-            # print(np.linalg.norm(A[(S_batch>0)*(g>0)]*V-c[(S_batch>0)*(g>0)]))
-            # polyscope.register_point_cloud("full", U_batch[(S_batch>0)*(g>0),:])
-            # polyscope.show()
-            Q = M + t*(A.transpose()*R*A)
-            b = M*V + t*A.transpose()*(R*c)
-            # if np.any((np.isnan(V))):
-            #     print("NAN BEFORE SOLVE")
-            # save mesh before solve
-            # gpy.write_mesh(f"before_solve.obj", V, F)
-            if fix_boundary:
-                bd = boundary_vertices(F)
-                precomp = fixed_dof_solve_precompute(Q, k=bd)
-                # V_new = 0*V
-                # for dd in [0,2]:
-                #     V_new[:,dd] = precomp.solve(b=b[:,dd], y=V[bd,dd])
-                # V_new[:,1] = precomp.solve(b=None,y=None)
-                # V = V_new.copy()
-                V = precomp.solve(b=b, y=V[bd,:])
-                # print("size of bd:", bd.shape[0], "size of V:", V.shape[0])
-            else:
-                V = sp.sparse.linalg.spsolve(Q,b)
-            # gpy.write_mesh(f"after_solve.obj", V, F)
-            
+    # catching flow singularities so we fail gracefully
+    if np.any((np.isnan(state.V))):
+        if verbose:
+            print("we found a flow singularity. Returning the last converged solution.")
+        state.V = state.V_last_converged.copy()
+        state.F = state.F_last_converged.copy()
+        return True
 
-            avg_error = np.linalg.norm(A*V-c) / A.shape[0]
+    #Convergence determination
+    state.avg_error = np.linalg.norm(A*state.V-c) / A.shape[0]
+    if verbose:
+        print("Iteration:", state.its, "Counter:",state.convergence_counter, "h:",state.h, "Average error:", state.avg_error, "Best avg error:",state.best_avg_error, "Max error:", np.max(np.linalg.norm(A*state.V-c,axis=1)))
+    if state.avg_error+1e-3*tol >= state.best_avg_error:
+        state.convergence_counter = state.convergence_counter + 1
+    else:
+        state.convergence_counter = 0
+        state.best_avg_error = state.avg_error
+    if state.convergence_counter > 10:
+        # if h==min_h:
+        #     remeshing = False
+        if state.h>state.min_h:
+            state.V_last_converged = state.V.copy()
+            state.F_last_converged = state.F.copy()
+            state.best_avg_error = np.Inf
+            state.convergence_counter = 0
+        state.h = np.maximum(state.h/2,state.min_h)
+        # state.use_features = True
+    if state.convergence_counter > 100 or F_invalid.shape[0] == 0:
+        if state.resample_counter<resample:
+            state.U = sample_sdf(state.sdf, state.V, state.F, state.U,
+                new_n=resample_samples,
+                trial_n=int(50*resample_samples), max_n=nu_max,
+                remove_samples=True, keep_these_samples=np.arange(nu_0),
+                rng=state.rng)
+            state.S = state.sdf(state.U)
+            state.U_batch = state.U.copy()
+            state.S_batch = state.S.copy()
+            state.resample_counter += 1
+            state.best_performance = np.Inf
+            state.convergence_counter = 0
+            state.best_avg_error = np.Inf
+            # state.min_h = max(0.001, 0.8*state.min_h)
             if verbose:
-                print("Iteration:", its, "Counter:",convergence_counter, "h:",h, "Average error:", avg_error, "Best avg error:",best_avg_error, "Max error:", np.max(np.linalg.norm(A*V-c,axis=1)))
+                print(f"Resampled, I now have {state.U.shape[0]} sample points.")
+        else:
+            return True
 
-            # catching flow singularities so we fail gracefully
-            if np.any((np.isnan(V))):
-                if verbose:
-                    print("we found a flow singularity. Returning the last converged solution.")
-                V = V_last_converged.copy()
-                F = F_last_converged.copy()
-                converged = True
-                remeshing = False
+    #Remeshing
+    if remeshing:
+        # if (not state.use_features):
+        #     feature_vertices = np.array([],dtype=np.int32)
 
-            if avg_error+1e-3*tol >= best_avg_error:
-                convergence_counter = convergence_counter + 1
-            else:
-                convergence_counter = 0
-                best_avg_error = avg_error
-            if convergence_counter > 10:
+        if (output_sensitive and F_invalid.shape[0] > 0):
+            # we find the invalid faces
+            F_invalid = np.unique(I[invalid_U])
+            # We compute the face adjacency matrix
+            TT = face_adjacency(state.F)
+            # We find the set of invalid faces and their neighbors
+            F_invalid_neighbors = np.unique(TT[F_invalid,:].ravel())
+            # also add the invalid faces
+            # F_invalid_neighbors = np.unique(np.hstack((F_invalid_neighbors,F_invalid)))
+            F_invalid_neighbors = one_ring(state.F,F_invalid)
+            # do another round of one ring
+            F_invalid_neighbors = one_ring(state.F,F_invalid_neighbors)
+            # We find the set of invalid vertices
+            # F_active = F[F_invalid_neighbors,:]
+            state.V_active, state.F_active, _, _ = remove_unreferenced(state.V,
+                state.F[F_invalid_neighbors,:], return_maps=True)
+
+            if (state.F_active.shape[0] < state.F.shape[0] and
+                state.F_active.shape[0] > 0):
+                # set of inactive faces
+                state.F_inactive = np.setdiff1d(
+                    np.arange(state.F.shape[0]), F_invalid_neighbors)
+                # set of inactive vertices
+                state.V_inactive, state.F_inactive, _, _ = remove_unreferenced(
+                    state.V, state.F[state.F_inactive,:],return_maps=True)
+                # Remesh only the active part
                 
-                # max_t = max_t/2.0
-                # if h==min_h:
-                #     remeshing = False
-                if h>min_h:
-                    V_last_converged = V.copy()
-                    F_last_converged = F.copy()
-                    best_avg_error = np.Inf
-                    convergence_counter = 0
-                h = np.maximum(h/2,min_h)
-                # convergence_counter = 0
-                # best_avg_error = np.Inf
-                use_features = True
-                # feature = feature_vertices.copy()
-            if convergence_counter > 100 or F_invalid.shape[0] == 0:
-                if resample_counter<resample:
-                    U = sample_sdf(sdf, V, F, U, new_n=resample_samples,
-                        trial_n=int(50*resample_samples), max_n=nu_max,
-                        remove_samples=True, keep_these_samples=np.arange(nu_0),
-                        rng=rng)
-                    S = sdf(U)
-                    U_batch,S_batch = U.copy(),S.copy()
-                    resample_counter += 1
-                    best_performance = np.Inf
-                    convergence_counter = 0
-                    best_avg_error = np.Inf
-                    # min_h = max(0.001, 0.8*min_h)
-                    if verbose:
-                        print(f"Resampled, I now have {U.shape[0]} sample points.")
-                else:
-                    converged = True
-            # gpy.write_mesh(f"pre_remesh.obj", V, F)
-            if remeshing:
-                if (not use_features):
-                    feature_vertices = np.array([],dtype=np.int32)
-
-                if (output_sensitive and F_invalid.shape[0] > 0):
-                    # we find the invalid faces
-                    F_invalid = np.unique(I[invalid_U])
-                    # We compute the face adjacency matrix
-                    TT = face_adjacency(F)
-                    # We find the set of invalid faces and their neighbors
-                    F_invalid_neighbors = np.unique(TT[F_invalid,:].ravel())
-                    # also add the invalid faces
-                    F_invalid_neighbors = np.unique(np.hstack((F_invalid_neighbors,F_invalid)))
-
-                    F_invalid_neighbors = one_ring(F,F_invalid)
-                    # do another round of one ring
-                    F_invalid_neighbors = one_ring(F,F_invalid_neighbors)
-                    # We find the set of invalid vertices
-                    # F_active = F[F_invalid_neighbors,:]
-                    V_active, F_active, _, _ = remove_unreferenced(V, F[F_invalid_neighbors,:],return_maps=True)
-
-                    if (F_active.shape[0] < F.shape[0] and F_active.shape[0] > 0):
-                        # set of inactive faces
-                        F_inactive = np.setdiff1d(np.arange(F.shape[0]), F_invalid_neighbors)
-                        # set of inactive vertices
-                        V_inactive, F_inactive, _, _ = remove_unreferenced(V, F[F_inactive,:],return_maps=True)
-                        # Remesh only the active part
-                        
-                        V_active, F_active = remesh(V_active, F_active, i=remesh_iterations, h=h, project = True)
-                        # We merge the active and inactive parts
-                        V = np.vstack((V_active, V_inactive))
-                        F = np.vstack((F_active, F_inactive + V_active.shape[0]))
-                        # We remove the duplicate vertices
-                        V,_,_,F = remove_duplicate_vertices(V,faces=F,epsilon=np.sqrt(np.finfo(V.dtype).eps))
-                    else:
-                        V, F = remesh(V, F, i=remesh_iterations, h=h, project = True)
-                        # V, F = remesh(V, F, i=remesh_iterations, h=h, project = True, feature=feature_vertices)
-                else:
-                    V, F = remesh(V, F, i=remesh_iterations, h=h, project = True, feature=feature_vertices)
-                    V_active, F_active = None, None
-                    V_inactive, F_inactive = None, None
-                    # V, F = remesh(V, F, i=2, h=h, project = True)
+                state.V_active, state.F_active = remesh(
+                    state.V_active, state.F_active, i=remesh_iterations,
+                    h=state.h, project=True)
+                # We merge the active and inactive parts
+                state.V = np.vstack((state.V_active, state.V_inactive))
+                state.F = np.vstack((state.F_active,
+                    state.F_inactive + state.V_active.shape[0]))
+                # We remove the duplicate vertices
+                state.V,_,_,state.F = remove_duplicate_vertices(
+                    state.V,faces=state.F,
+                    epsilon=np.sqrt(np.finfo(state.V.dtype).eps))
             else:
-                V_active, F_active = None, None
-                V_inactive, F_inactive = None, None
-            # gpy.write_mesh(f"after_remesh.obj", V, F)
-        elif (not stopped):
-            # print("Done!")
-            stopped = True
-
-        if callback is not None:
-            callback({'V':V, 'F':F,
-                'V_active':V_active,
-                'F_active':F_active,
-                'V_inactive':V_inactive,
-                'F_inactive':F_inactive,
-                'its':its,
-                'max_iter':max_iter,
-                'U':U, 'S':S,
-                'converged':converged,
-                'resample_counter':resample_counter})
-
-        if visualize:
-            if dim==2:
-                def plot_edges(vv,ee,plt_str):
-                    ax = plt.gca()
-                    for i in range(ee.shape[0]):
-                        ax.plot([vv[ee[i,0],0],vv[ee[i,1],0]],
-                                 [vv[ee[i,0],1],vv[ee[i,1],1]],
-                                 plt_str,alpha=1)
-                def plot_spheres(vv,sdf):
-                    ax = plt.gca()
-                    f = sdf(vv)
-                    for i in range(vv.shape[0]):
-                        c = 'r' if f[i]>=0 else 'b'
-                        ax.add_patch(plt.Circle(vv[i,:], f[i], color=c, fill=False,alpha=0.1))
-                plt.cla()
-                plot_spheres(U,sdf)
-                visualize_full = True
-                if V_active is not None and F_active is not None:
-                    visualize_full = False
-                    plot_edges(V_active,F_active,'b-')
-                    plt.plot(V_active[:,0],V_active[:,1],'b.')
-                if V_inactive is not None and F_inactive is not None:
-                    visualize_full = False
-                    plot_edges(V_inactive,F_inactive,'y-')
-                    plt.plot(V_inactive[:,0],V_inactive[:,1],'y.')
-                if visualize_full and V is not None and F is not None:
-                    plot_edges(V,F,'b-')
-                    plt.plot(V[:,0],V[:,1],'b.')
-                plt.draw()
-                plt.pause(0.01)
-            elif dim==3:
-                if stopped:
-                    # This mess is so that we can render something from polyscope in the same script, otherwise this callback will keep executing and deleting everything you plot.
-                    if active_ps is not None:
-                        active_ps.remove()
-                        active_ps = None
-                    if inactive_ps is not None:
-                        inactive_ps.remove()
-                        inactive_ps = None
-                    if full_ps is not None:
-                        full_ps.remove()
-                        full_ps = None
-                    # polyscope.remove_all_structures()
-                else:
-                    # cloud_U = polyscope.register_point_cloud("SDF evaluation points", U)
-                    # cloud_U.add_scalar_quantity("How unhappy?", np.abs(g), enabled=True)
-                    visualize_full = True
-                    if V_active is not None and F_active is not None:
-                        visualize_full = False
-                        active_ps = polyscope.register_surface_mesh("active", V_active, F_active)
-                    if V_inactive is not None and F_inactive is not None:
-                        visualize_full = False
-                        inactive_ps = polyscope.register_surface_mesh("inactive", V_inactive, F_inactive)
-                    if visualize_full and V is not None and F is not None:
-                        full_ps = polyscope.register_surface_mesh("full", V, F)
-
-    if visualize and dim==3:
-        import polyscope
-        polyscope.init()
-        # polyscope.register_surface_mesh("gt",V2,F2)
-        def polyscope_callback():
-            run_flow_iteration()
-        polyscope.set_user_callback(polyscope_callback)
-        polyscope.show()
+                state.V, state.F = remesh(state.V, state.F,
+                    i=remesh_iterations, h=state.h, project=True)
+        else:
+            state.V, state.F = remesh(state.V, state.F,
+                i=remesh_iterations, h=h, project = True,
+                feature=feature_vertices)
+            state.V_active = None
+            state.F_active = None
+            state.V_inactive = None
+            state.F_inactive = None
     else:
-        if visualize:
-            import matplotlib.pyplot as plt
-        while (its<max_iter and (not converged)):
-            run_flow_iteration()
+        state.V_active = None
+        state.F_active = None
+        state.V_inactive = None
+        state.F_inactive = None
 
-    if return_U:
-        return V, F, U
+    #Have we converged?
+    if state.its>=max_iter:
+        return True
     else:
-        return V, F
-
-
-
-
+        return False
 
 
 def face_adjacency(F):
@@ -462,7 +553,6 @@ def laplacian(v,f):
     return L
 
 
-
 def normals(V,F,unit_norm=False):
     dim = F.shape[1]
     if dim==2:
@@ -472,7 +562,8 @@ def normals(V,F,unit_norm=False):
         return e @ np.array([[0., -1.], [1., 0.]])
     elif dim==3:
         return per_face_normals(V,F,unit_norm=unit_norm)
-    
+
+  
 def per_vertex_normals(V,F):
     N = normals(V,F,unit_norm=True)
     N = np.nan_to_num(N, nan=0., posinf=0., neginf=0.)
@@ -495,6 +586,7 @@ def per_vertex_normals(V,F):
     Nv = np.nan_to_num(Nv, nan=0., posinf=0., neginf=0.)
     return Nv
 
+
 def barycentric_normals(I,b,V,F,unit_norm=False):
     Nv = per_vertex_normals(V,F)
     N = np.sum(Nv[F[I,:],:]*b[...,None], axis=1)
@@ -502,6 +594,7 @@ def barycentric_normals(I,b,V,F,unit_norm=False):
         N /= np.linalg.norm(N, axis=-1)[:,None]
     N = np.nan_to_num(N, nan=0., posinf=0., neginf=0.)
     return N
+
 
 def processed_normals(I,b,V,F,unit_norm=False):
     Nb = barycentric_normals(I,b,V,F,unit_norm=unit_norm)
@@ -546,7 +639,6 @@ def one_ring(F,active_faces):
     return one_ring_active
 
 
-
 def remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
     dim = F.shape[1]
     if dim==2:
@@ -560,11 +652,13 @@ def remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
     assert np.isfinite(V).all()
     return V,F
 
+
 def line_bdry(F):
     return np.unique(np.concatenate((
         np.setdiff1d(F[:,0],F[:,1]),
         np.setdiff1d(F[:,1],F[:,0])
         )))
+
 
 def remesh_line(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
     high = 1.4*h
@@ -578,6 +672,7 @@ def remesh_line(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int
             V0,F0 = V.copy(), F.copy()
         V,F = relaxation_line(V, F, feature, V0, F0)
     return V,F
+
 
 def split_line(V, F, feature, high, low):
     n = V.shape[0]
@@ -598,6 +693,7 @@ def split_line(V, F, feature, high, low):
     F[to_split,1] = new_verts
 
     return V,F,feature
+
 
 def collapse_line(V, F, feature, high, low):
     is_feature = np.full(V.shape[0], False, dtype=bool)
@@ -639,6 +735,7 @@ def collapse_line(V, F, feature, high, low):
 
     return V,F,feature
 
+
 def relaxation_line(V, F, feature, V0, F0):
     is_feature = np.full(V.shape[0], False, dtype=bool)
     is_feature[feature] = True
@@ -671,7 +768,6 @@ def relaxation_line(V, F, feature, V0, F0):
     return V,F
 
 
-
 #Bounds for a set of points
 def bounds(V, tol=0.):
     lb = np.min(V, axis=0)
@@ -680,12 +776,14 @@ def bounds(V, tol=0.):
     ub += (ub-lb)*0.5 + tol
     return lb,ub
 
+
 #void distance function for a given SDF S at points U, evaluated at x
 def vdf(x, U, S):
     vf = S[None,:]**2 - np.sum((x[:,None,:]-U[None,:,:])**2, axis=-1)
     v = np.max(vf, axis=1)
     v = np.minimum(v,0.)
     return v
+
 
 def sample_sdf(sdf,
     V, F,
@@ -736,8 +834,4 @@ def sample_sdf(sdf,
             return U[I[:max_n],:]
         else:
             return U[:max_n,:]
-
-
-
-
 

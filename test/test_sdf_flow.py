@@ -1,8 +1,7 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
-# import polyscope as ps
-# import igl
+import polyscope as ps
 
 class TestRFTS(unittest.TestCase):
     def test_beat_marching_cubes_low_res(self):
@@ -22,7 +21,7 @@ class TestRFTS(unittest.TestCase):
                 V_mc, F_mc = gpy.marching_cubes(sdf(GV), GV, n+1, n+1, n+1)
                 h_mc = gpy.approximate_hausdorff_distance(V_mc, F_mc.astype(np.int32), v, f.astype(np.int32), use_cpp = True)
                 V0, F0 = gpy.icosphere(2)
-                U,G = gpy.sdf_flow(GV, sdf, V0, F0, verbose=False, min_h = 2.0/n)
+                U,G = gpy.sdf_flow(GV, sdf, V0, F0, verbose=False, visualize=True, min_h = 2.0/n)
                 h_ours = gpy.approximate_hausdorff_distance(U, G.astype(np.int32), v, f.astype(np.int32), use_cpp = True)
                 # print("Hausdorff distance between mesh and marching cubes: ", h_mc)
                 # print("Hausdorff distance between mesh and our method: ", h_ours)
