@@ -43,8 +43,13 @@ def sdf_flow(U, sdf, V, F, S=None,
         h=h, min_h=min_h)
     converged = False
 
-    # TODO: Replace this function with a simple while loop that breaks if converged.
+    # Little hack to pass max_iter, which is not keps as state.
+    # Set to the same default as in sdf_flow_iteration.
     dim = V.shape[1]
+    pass_max_iter = (10000 if dim==2 else 20000
+        ) if max_iter is None else max_iter
+
+    # TODO: Replace this function with a simple while loop that breaks if converged.
     def run_flow_iteration():
         nonlocal state, converged
         if not converged:
@@ -65,10 +70,6 @@ def sdf_flow(U, sdf, V, F, S=None,
 
             # TODO: remove callback code
             if callback is not None:
-                # Little hack to pass max_iter, which is not keps as state.
-                # Set to the same default as in sdf_flow_iteration.
-                pass_max_iter = (10000 if dim==2 else 20000
-                    ) if max_iter is None else max_iter
                 callback({'V':state.V, 'F':state.F,
                     'V_active':state.V_active,
                     'F_active':state.F_active,
@@ -148,7 +149,7 @@ def sdf_flow(U, sdf, V, F, S=None,
     else:
         if visualize:
             import matplotlib.pyplot as plt
-        while state.its is None or (state.its<max_iter and (not converged)):
+        while state.its is None or (state.its<pass_max_iter and (not converged)):
             run_flow_iteration()
 
     if return_U:
@@ -340,11 +341,11 @@ def sdf_flow_iteration(state,
     #Algorithm
     if batch_size>0 and batch_size<state.U.shape[0]:
         inds = state.rng.choice(state.U.shape[0], batch_size, replace=False)
-        state.U_batch = U[inds,:]
-        state.S_batch = S[inds]
+        state.U_batch = state.U[inds,:]
+        state.S_batch = state.S[inds]
         # include all inside points
-        state.U_batch = np.concatenate((state.U_batch, U[state.S>0,:]), axis=0)
-        state.S_batch = np.concatenate((state.S_batch, S[state.S>0]), axis=0)
+        state.U_batch = np.concatenate((state.U_batch, state.U[state.S>0,:]), axis=0)
+        state.S_batch = np.concatenate((state.S_batch, state.S[state.S>0]), axis=0)
     d2, I, b = squared_distance(state.U_batch, state.V, state.F,
         use_cpp=True, use_aabb=True)
     d = np.sqrt(d2)
