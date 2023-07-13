@@ -410,8 +410,6 @@ def sdf_flow_iteration(state,
     else:
         state.V = sp.sparse.linalg.spsolve(Q,b)
 
-    print(f"VpN: {np.linalg.norm(state.V)}")
-
     # catching flow singularities so we fail gracefully
     if np.any((np.isnan(state.V))):
         if verbose:
