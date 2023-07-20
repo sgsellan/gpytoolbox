@@ -102,3 +102,6 @@ from .cylinder import cylinder
 from .cone import cone
 from .torus import torus
 from .adjacency_matrix import adjacency_matrix
+from .internal_angles_intrinsic import internal_angles_intrinsic
+from .internal_angles import internal_angles
+from .discrete_gaussian_curvature import discrete_gaussian_curvature
