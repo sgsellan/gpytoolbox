@@ -72,7 +72,8 @@ struct geometry
     std::vector<double3> normals;
     std::vector<float2> texcoords;
     std::vector<uint3> triangles;
-    std::vector<uint4> colors;
+    std::vector<uint4> vertex_colors;
+    std::vector<uint4> face_colors;
 };
 
 
@@ -111,11 +112,12 @@ int read_ply(
         PlyFile file;
         file.parse_header(*file_stream);
 
-        std::shared_ptr<PlyData> vertices, normals, colors, texcoords, faces, tripstrip;
+        std::shared_ptr<PlyData> vertices, normals, vertex_colors, face_colors, texcoords, faces, tripstrip;
 
 
         bool are_normals_defined = false;
-        bool are_colors_defined = false;
+        bool are_vertex_colors_defined = false;
+        bool are_face_colors_defined = false;
         bool are_texcoords_defined = false;
         bool are_faces_defined = false;
         bool are_tripstrip_defined = false;
@@ -127,11 +129,19 @@ int read_ply(
         try { normals = file.request_properties_from_element("vertex", { "nx", "ny", "nz" }); are_normals_defined = true;}
         catch (const std::exception & e) { }
 
-        try { colors = file.request_properties_from_element("vertex", { "red", "green", "blue", "alpha" });  are_colors_defined = true;}
+        try { vertex_colors = file.request_properties_from_element("vertex", { "red", "green", "blue", "alpha" });  are_vertex_colors_defined = true;}
         catch (const std::exception & e) {  }
 
-        try { colors = file.request_properties_from_element("vertex", { "r", "g", "b", "a" });  are_colors_defined = true;}
+        try { vertex_colors = file.request_properties_from_element("vertex", { "r", "g", "b", "a" });  are_vertex_colors_defined = true;}
         catch (const std::exception & e) { }
+
+        if(!are_vertex_colors_defined) {
+            try { face_colors = file.request_properties_from_element("face", { "red", "green", "blue", "alpha" });  are_face_colors_defined = true;}
+            catch (const std::exception & e) {  }
+
+            try { face_colors = file.request_properties_from_element("face", { "r", "g", "b", "a" });  are_face_colors_defined = true;}
+            catch (const std::exception & e) { }
+        }
 
 
         // Providing a list size hint (the last argument) is a 2x performance improvement. If you have 
@@ -154,7 +164,7 @@ int read_ply(
                 // std::cout << verts[i].x << " " << verts[i].y << " " << verts[i].z << std::endl;
                 V.row(i) << verts[i].x, verts[i].y, verts[i].z;
             }
-        }else if(vertices->t == tinyply::Type::FLOAT64) {
+        } else if(vertices->t == tinyply::Type::FLOAT64) {
             std::vector<double3> verts(vertices->count);
             std::memcpy(verts.data(), vertices->buffer.get(), numVerticesBytes);
             V.resize(verts.size(), 3);
@@ -205,7 +215,7 @@ int read_ply(
             N.resize(0, 0);
         }
         
-        if(are_colors_defined){
+        const auto fill_C = [&] (const auto& colors) {
             const size_t numColorsBytes = colors->buffer.size_bytes();
             std::vector<rgba4> colors_(colors->count);
             std::memcpy(colors_.data(), colors->buffer.get(), numColorsBytes);
@@ -214,7 +224,12 @@ int read_ply(
             {
                 C.row(i) << colors_[i].r, colors_[i].g, colors_[i].b, colors_[i].a;
             }
-        }else{
+        };
+        if(are_vertex_colors_defined) {
+            fill_C(vertex_colors);
+        } else if(are_face_colors_defined) {
+            fill_C(face_colors);
+        } else {
             C.resize(0, 0);
         }
 
@@ -258,12 +273,22 @@ int write_ply(
         }
 
 
-        bool use_colors = false;
+        bool use_vertex_colors = false;
+        bool use_face_colors = false;
         if(C.rows() > 0){
-            use_colors = true;
-            for (int i = 0; i < C.rows(); i++)
-            {
-                mesh.colors.push_back( uint4{ (uint8_t) C(i, 0),  (uint8_t) C(i, 1),  (uint8_t) C(i, 2), (uint8_t) C(i, 3)} );
+            if(C.rows() == V.rows()) {
+                use_vertex_colors = true;
+                for (int i = 0; i < C.rows(); i++)
+                {
+                    mesh.vertex_colors.push_back( uint4{ (uint8_t) C(i, 0),  (uint8_t) C(i, 1),  (uint8_t) C(i, 2), (uint8_t) C(i, 3)} );
+                }
+            }
+            if(C.rows() == F.rows()) {
+                use_face_colors = true;
+                for (int i = 0; i < C.rows(); i++)
+                {
+                    mesh.face_colors.push_back( uint4{ (uint8_t) C(i, 0),  (uint8_t) C(i, 1),  (uint8_t) C(i, 2), (uint8_t) C(i, 3)} );
+                }
             }
         }
         // cube = mesh;
@@ -296,11 +321,15 @@ int write_ply(
                 Type::FLOAT64, mesh.normals.size(), reinterpret_cast<uint8_t*>(mesh.normals.data()), Type::INVALID, 0);
         }
 
-        if(use_colors){
+        if(use_vertex_colors){
             mesh_file.add_properties_to_element("vertex", { "red", "green", "blue", "alpha" },
-                Type::UINT8, mesh.colors.size(), reinterpret_cast<uint8_t*>(mesh.colors.data()), Type::INVALID, 0);
+                Type::UINT8, mesh.vertex_colors.size(), reinterpret_cast<uint8_t*>(mesh.vertex_colors.data()), Type::INVALID, 0);
         }
 
+        if(use_face_colors){
+            mesh_file.add_properties_to_element("face", { "red", "green", "blue", "alpha" },
+                Type::UINT8, mesh.face_colors.size(), reinterpret_cast<uint8_t*>(mesh.face_colors.data()), Type::INVALID, 0);
+        }
 
         if(use_faces){
             mesh_file.add_properties_to_element("face", { "vertex_indices" },
