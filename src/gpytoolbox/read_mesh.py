@@ -34,7 +34,7 @@ def read_mesh(file,
         Try reading normal coordinates, if they are present and the file format
         supports it. Only supported for OBJ and PLY files.
     return_C : bool, optional (default: None)
-        Try reading color RGB values, if they are present and the file format
+        Try reading color RGBA values, if they are present and the file format
         supports it. Only supported for PLY files.
     reader : string, optional (default: None)
         Which reader engine to use. None, 'C++' or 'Python'.
@@ -56,6 +56,8 @@ def read_mesh(file,
         vertex list for normal coordinates
     Fn : (m,3) numpy int array, if requested
         face index list for normal coordinates (into N)
+    C : (n,4) or (m,4) numpy int array, if requested
+        per-vertex or per-face colors
 
     Examples
     --------
