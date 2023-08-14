@@ -22,8 +22,9 @@ def discrete_gaussian_curvature(V, F):
 
     # Compute the discrete Gaussian curvature
     N = V.shape[0]
-    internal_angles = internal_angles(V, F)
-    k = 2 * np.pi - np.bincount(F.ravel(), weights=internal_angles, minlength=N)
+    vec = lambda X: X.flatten()
+    IA = internal_angles(V, F)
+    k = 2 * np.pi - np.bincount(vec(F), weights=vec(IA), minlength=N)
     
     # Adjust curvature for boundary vertices
     b = boundary_vertices(F)

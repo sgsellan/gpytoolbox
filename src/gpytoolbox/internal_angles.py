@@ -17,5 +17,14 @@ def internal_angles(V,F):
         three angles of the corresponding triangle. The first angle is opposite the first edge, etc.
     """
 
-    l_sq = halfedge_lengths_squared(V,F)
-    return internal_angles_intrinsic(l_sq)
+    #l_sq = halfedge_lengths_squared(V,F)
+    i1 = F[:, 0]
+    i2 = F[:, 1]
+    i3 = F[:, 2]
+
+    s12 = np.linalg.norm(V[i2] - V[i1], axis=1)
+    s13 = np.linalg.norm(V[i3] - V[i1], axis=1)
+    s23 = np.linalg.norm(V[i3] - V[i2], axis=1)
+
+    l = np.column_stack((s23, s13, s12))
+    return internal_angles_intrinsic(l)
