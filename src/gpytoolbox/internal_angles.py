@@ -17,7 +17,6 @@ def internal_angles(V,F):
         three angles of the corresponding triangle. The first angle is opposite the first edge, etc.
     """
 
-    #l_sq = halfedge_lengths_squared(V,F)
     i1 = F[:, 0]
     i2 = F[:, 1]
     i3 = F[:, 2]
