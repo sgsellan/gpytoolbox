@@ -29,6 +29,7 @@ from .quadtree_gradient import quadtree_gradient
 from .quadtree_laplacian import quadtree_laplacian
 from .quadtree_boundary import quadtree_boundary
 from .quadtree_children import quadtree_children
+from .grad_intrinsic import grad_intrinsic
 from .grad import grad
 from .doublearea import doublearea
 from .doublearea_intrinsic import doublearea_intrinsic
@@ -107,3 +108,5 @@ from .particle_swarm import particle_swarm
 from .read_dmat import read_dmat
 from .linear_blend_skinning import linear_blend_skinning
 from .barycenters import barycenters
+from .biharmonic_energy import biharmonic_energy
+from .biharmonic_energy_intrinsic import biharmonic_energy_intrinsic
