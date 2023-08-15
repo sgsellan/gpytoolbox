@@ -73,7 +73,7 @@ def hessian_energy(V, F):
     Gi = G[:,i]
     Dlist = []
     for d in range(dim):
-        Dlist.append(Gi[d:(d+1)*m, :])
+        Dlist.append(Gi[d*m:(d+1)*m, :])
     Dblock = sp.sparse.bmat([Dlist], format='csr')
     D = sp.sparse.block_diag(dim*[Dblock], format='csr')
 
