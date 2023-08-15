@@ -8,6 +8,21 @@ def edge_lengths(V, F):
     return e1, e2, e3
 
 def discrete_mean_curvature(V, F):
+    """
+    Computes the discrete mean curvature of a mesh at each vertex.
+
+    Parameters
+    ----------
+    V : ndarray
+        N x 3 array of vertex positions.
+    F : ndarray
+        M x 3 array of face indices.
+
+    Returns
+    -------
+    H : ndarray
+        N x 1 array of integrated mean-curvature values for each vertex.
+    """
     # Calculate dihedral angles
     A, _ = adjacency_dihedral_angle_matrix(V, F)
     A = A.toarray()
@@ -19,7 +34,6 @@ def discrete_mean_curvature(V, F):
     H = np.zeros(V.shape[0])
     for i, face in enumerate(F):
         for j, v in enumerate(face):
-            # For each vertex, we need to find the corresponding edges and their lengths
             if j == 0:
                 L = L1[i]
                 neighbors = [face[1], face[2]]
@@ -30,7 +44,6 @@ def discrete_mean_curvature(V, F):
                 L = L3[i]
                 neighbors = [face[0], face[1]]
 
-            # Add contribution of each edge to the integrated mean curvature
             # Keenan's formula from DDG Slide 21 Lecture16 DiscreteCurvature II
             for neighbor in neighbors:
                 H[v] += 0.5 * L * A[i, neighbor]
