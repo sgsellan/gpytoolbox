@@ -65,7 +65,7 @@ def hessian_energy(V, F):
 
     a = doublearea(V, F) / 2.
     A = sp.sparse.spdiags([np.tile(a, dim)], 0,
-        m=dim*m, n=dim*n, format='csr')
+        m=dim*m, n=dim*m, format='csr')
 
     M_d = massmatrix(V, F, type='voronoi').diagonal()[i]
     M_d_inv = 1. / M_d
