@@ -25,10 +25,11 @@ class TestGradIntrinsic(unittest.TestCase):
         meshes = ['cube.obj', 'mountain.obj', 'armadillo.obj']
         for mesh in meshes:
             V,F = gpy.read_mesh("test/unit_tests_data/" + mesh)
+            m = F.shape[0]
             l_sq = gpy.halfedge_lengths_squared(V,F)
             G = gpy.grad_intrinsic(l_sq, F)
             a = gpy.doublearea_intrinsic(l_sq, F) / 2.
-            A = sp.sparse.spdiags([np.tile(a, 2)], 0, format='csr')
+            A = sp.sparse.spdiags([np.tile(a, 2)], 0, m=2*m, n=2*m, format='csr')
             L = G.transpose() * A * G
 
             L_gt = gpy.cotangent_laplacian(V,F)

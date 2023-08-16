@@ -61,13 +61,16 @@ def hessian_energy(V, F):
 
     b = boundary_vertices(F)
     i = np.setdiff1d(np.arange(n),b)
+    ni = len(i)
 
     a = doublearea(V, F) / 2.
-    A = sp.sparse.spdiags([np.tile(a, dim)], 0, format='csr')
+    A = sp.sparse.spdiags([np.tile(a, dim)], 0,
+        m=dim*m, n=dim*n, format='csr')
 
     M_d = massmatrix(V, F, type='voronoi').diagonal()[i]
     M_d_inv = 1. / M_d
-    M_tilde_inv = sp.sparse.spdiags([np.tile(M_d_inv, dim**2)], 0, format='csr')
+    M_tilde_inv = sp.sparse.spdiags([np.tile(M_d_inv, dim**2)], 0,
+        m=ni*dim**2, n=ni*dim**2, format='csr')
 
     G = grad(V,F)
     Gi = G[:,i]
