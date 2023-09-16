@@ -300,10 +300,10 @@ def sdf_flow_iteration(state,
     if state.min_h is None:
         # use a kdtree and get the average distance between two samples
         # import cKDTree
-        tree = cKDTree(state.U)
-        dists, _ = tree.query(state.U, k=2)
+        tree = cKDTree(U)
+        dists, _ = tree.query(U, k=2)
         state.min_h = 2.*np.mean(dists[:,1])
-        state.min_h = np.clip(state.min_h, 0.001, 0.1)
+        state.min_h = np.clip(min_h, 0.001, 0.1)
 
     nu_0 = state.U.shape[0]
     nu_max = 2*nu_0
@@ -438,6 +438,7 @@ def sdf_flow_iteration(state,
             state.convergence_counter = 0
         state.h = np.maximum(state.h/2,state.min_h)
         # state.use_features = True
+    converged = False
     if state.convergence_counter > 100 or F_invalid.shape[0] == 0:
         if state.resample_counter<resample:
             state.U = sample_sdf(state.sdf, state.V, state.F, state.U,
@@ -456,7 +457,9 @@ def sdf_flow_iteration(state,
             if verbose:
                 print(f"Resampled, I now have {state.U.shape[0]} sample points.")
         else:
-            return True
+            # TODO: we should exit here instead of potentially remeshing again if converged.
+            # return True
+            converged = True
 
     #Remeshing
     if remeshing:
@@ -506,7 +509,7 @@ def sdf_flow_iteration(state,
                     i=remesh_iterations, h=state.h, project=True)
         else:
             state.V, state.F = remesh(state.V, state.F,
-                i=remesh_iterations, h=h, project = True,
+                i=remesh_iterations, h=state.h, project = True,
                 feature=feature_vertices)
             state.V_active = None
             state.F_active = None
@@ -519,7 +522,7 @@ def sdf_flow_iteration(state,
         state.F_inactive = None
 
     #Have we converged?
-    if state.its>=max_iter:
+    if converged or state.its>=max_iter:
         return True
     else:
         return False
