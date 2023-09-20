@@ -344,8 +344,8 @@ def sdf_flow_iteration(state,
         state.U_batch = state.U[inds,:]
         state.S_batch = state.S[inds]
         # include all inside points
-        state.U_batch = np.concatenate((state.U_batch, state.U[state.S>0,:]), axis=0)
-        state.S_batch = np.concatenate((state.S_batch, state.S[state.S>0]), axis=0)
+        state.U_batch = np.concatenate((state.U_batch, state.U[state.S<=0,:]), axis=0)
+        state.S_batch = np.concatenate((state.S_batch, state.S[state.S<=0]), axis=0)
     d2, I, b = squared_distance(state.U_batch, state.V, state.F,
         use_cpp=True, use_aabb=True)
     d = np.sqrt(d2)
