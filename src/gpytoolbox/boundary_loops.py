@@ -5,7 +5,7 @@ from gpytoolbox.boundary_edges import boundary_edges
 def boundary_loops(f, allow_wrong_orientations=True):
     """Computes oriented boundary loop for each boundary component of a triangle
     mesh.
-    This function only works on manifold triangle meshes.
+    This function only works on connected manifold triangle meshes.
 
     TODO: assert manifoldness when running this function
 
