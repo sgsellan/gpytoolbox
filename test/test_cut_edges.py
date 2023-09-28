@@ -2,7 +2,7 @@ from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
 
-class TestEdges(unittest.TestCase):
+class TestCutEdges(unittest.TestCase):
 
     def test_two_triangles(self):
         F = np.array([[0,1,2], [1,2,3]],dtype=int)
