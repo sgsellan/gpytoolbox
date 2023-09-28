@@ -25,7 +25,7 @@ def connected_components(F,
     Examples
     --------
     ```python
-    V,F = gpy.read_obj("mesh.obj")
+    V,F = gpy.read_mesh("mesh.obj")
     C,CF = gpy.connected_components(F)
     ```
     """

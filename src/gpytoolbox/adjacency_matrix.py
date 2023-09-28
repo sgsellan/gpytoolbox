@@ -20,7 +20,7 @@ def adjacency_matrix(F):
     Examples
     --------
     ```python
-    V,F = gpy.read_obj("mesh.obj")
+    V,F = gpy.read_mesh("mesh.obj")
     A = gpy.adjacency_matrix(F)
     ```
     """
