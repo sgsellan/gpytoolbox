@@ -107,3 +107,5 @@ from .particle_swarm import particle_swarm
 from .read_dmat import read_dmat
 from .linear_blend_skinning import linear_blend_skinning
 from .barycenters import barycenters
+from .adjacency_matrix import adjacency_matrix
+from .connected_components import connected_components
