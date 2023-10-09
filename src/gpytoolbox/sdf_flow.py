@@ -300,10 +300,10 @@ def sdf_flow_iteration(state,
     if state.min_h is None:
         # use a kdtree and get the average distance between two samples
         # import cKDTree
-        tree = cKDTree(U)
-        dists, _ = tree.query(U, k=2)
+        tree = cKDTree(state.U)
+        dists, _ = tree.query(state.U, k=2)
         state.min_h = 2.*np.mean(dists[:,1])
-        state.min_h = np.clip(min_h, 0.001, 0.1)
+        state.min_h = np.clip(state.min_h, 0.001, 0.1)
 
     nu_0 = state.U.shape[0]
     nu_max = 2*nu_0
