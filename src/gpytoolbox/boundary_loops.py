@@ -1,13 +1,10 @@
 import numpy as np
 from gpytoolbox.boundary_edges import boundary_edges
+from gpytoolbox.non_manifold_edges import non_manifold_edges
 
 
 def boundary_loops(f, allow_wrong_orientations=True):
-    """Computes oriented boundary loop for each boundary component of a triangle
-    mesh.
-    This function only works on connected manifold triangle meshes.
-
-    TODO: assert manifoldness when running this function
+    """Computes a list containing the oriented boundary loop for each boundary component of a triangle mesh in the style of a sorted polyline. This function only works on connected (i.e., single component) manifold triangle meshes.
 
     Parameters
     ----------
@@ -32,6 +29,9 @@ def boundary_loops(f, allow_wrong_orientations=True):
 
     assert f.shape[0] > 0
     assert f.shape[1] == 3
+
+    # check mesh is manifold
+    assert len(non_manifold_edges(f)) == 0, "Mesh is not manifold"
 
     bE = boundary_edges(f)
 
