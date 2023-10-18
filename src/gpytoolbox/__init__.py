@@ -110,3 +110,5 @@ from .linear_blend_skinning import linear_blend_skinning
 from .barycenters import barycenters
 from .biharmonic_energy import biharmonic_energy
 from .biharmonic_energy_intrinsic import biharmonic_energy_intrinsic
+from .adjacency_matrix import adjacency_matrix
+from .connected_components import connected_components
