@@ -6,11 +6,9 @@ from .array_correspondence import array_correspondence
 from .remove_unreferenced import remove_unreferenced
 
 def cut_edges(F,E):
-    """Cuts edges in a triangle mesh.
-    Given a triangle mesh, specify a list of edges to cut to create a new
-    triangle mesh. This mesh must be manifold.
-    You can not cut a single interior edge, you must cut at least two.
-    This function mirrors gptoolbox's cut_edges (https://github.com/alecjacobson/gptoolbox/blob/master/mesh/cut_edges.m)
+    """Cut a triangle mesh along a specified set of edges.
+
+    Given a triangle mesh and a set of edges, this returns a new mesh that has been "cut" along those edges; meaning, such that the two faces incident on that edge are no longer combinatorially connected. This is done by duplicating vertices along the cut edges (see note), and creating a new geometrically identical edge between the duplicated vertices.
 
     Parameters
     ----------
@@ -28,6 +26,10 @@ def cut_edges(F,E):
         list of indices into V of vertices in new mesh such that V[I,:] are the
         vertices in the new mesh.
         This takes care of correctly duplicating vertices.
+
+    Notes
+    -----
+    Since only vertices that no longer share an edge in common are duplicated, you cannot cut a single interior edge. This function mirrors gptoolbox's cut_edges (https://github.com/alecjacobson/gptoolbox/blob/master/mesh/cut_edges.m)
 
     Examples
     --------
