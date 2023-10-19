@@ -30,6 +30,7 @@ def grad(V,F=None):
 
     Notes
     -----
+    Adapted from https://github.com/alecjacobson/gptoolbox/blob/master/mesh/grad.m
 
     Examples
     --------
