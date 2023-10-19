@@ -1,6 +1,7 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
+
 import polyscope as ps
 
 class TestRFTS(unittest.TestCase):
@@ -9,7 +10,6 @@ class TestRFTS(unittest.TestCase):
         ns = [10, 20, 30]
         for mesh in meshes:
             for n in ns:
-        # mesh = "test/unit_tests_data/bunny_oded.obj"
                 v, f = gpy.read_mesh("test/unit_tests_data/" + mesh)
                 v = gpy.normalize_points(v)
 
@@ -23,9 +23,22 @@ class TestRFTS(unittest.TestCase):
                 V0, F0 = gpy.icosphere(2)
                 U,G = gpy.sdf_flow(GV, sdf, V0, F0, verbose=False, visualize=False, min_h = np.clip(1.5/n, 0.001, 0.1))
                 h_ours = gpy.approximate_hausdorff_distance(U, G.astype(np.int32), v, f.astype(np.int32), use_cpp = True)
-                # print("Hausdorff distance between mesh and marching cubes: ", h_mc)
-                # print("Hausdorff distance between mesh and our method: ", h_ours)
                 self.assertTrue(h_ours < h_mc)
+
+    def test_noop(self):
+        meshes = ["bunny_oded.obj", "spot.obj", "teddy.obj"]
+        for mesh in meshes:
+            v, f = gpy.read_mesh("test/unit_tests_data/" + mesh)
+            v = gpy.normalize_points(v)
+
+            sdf = lambda x: gpy.signed_distance(x, v, f)[0]
+            n = 20
+            gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, n+1), np.linspace(-1.0, 1.0, n+1), np.linspace(-1.0, 1.0, n+1))
+            GV = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+            U,G = gpy.sdf_flow(GV, sdf, v, f, verbose=False, visualize=False)
+
+            h = gpy.approximate_hausdorff_distance(U, G.astype(np.int32), v, f.astype(np.int32), use_cpp=True)
+            self.assertTrue(h < 2e-3)
 
 if __name__ == '__main__':
     unittest.main()
