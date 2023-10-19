@@ -10,7 +10,7 @@ from .grad import grad
 
 def biharmonic_energy(V,F,
     bc='mixedfem_zero_neumann'):
-    """Builds the biharmonic energy for a triangle mesh.
+    """Constructs the biharmonic energy matrix Q such that for a per-vertex function u, the discrete biharmonic energy is u'Qu.
 
     Parameters
     ----------
