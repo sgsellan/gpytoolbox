@@ -3,7 +3,7 @@ from .remove_duplicate_vertices import remove_duplicate_vertices
 
 def marching_squares(S,GV,nx,ny):
     """
-    Marching squares algorithm for extracting isocontours from a scalar field.
+    Marching squares algorithm for extracting isocontours from a scalar field. Output is given as a list of (unordered) vertices and edge indices into the vertex list.
 
     Parameters
     ----------
@@ -45,7 +45,11 @@ def marching_squares(S,GV,nx,ny):
     # Plot
     plt.figure()
     plt.imshow(S.reshape((nx,ny),order='F'),extent=[-1,1,-1,1])
-    plt.plot(V[:,0],V[:,1],'k')
+    for i in range(E.shape[0]):
+            plt.plot([V[E[i,0],0],V[E[i,1],0]],
+                     [V[E[i,0],1],V[E[i,1],1]],
+                     'k-')
+    plt.show()
     plt.axis('equal')
     plt.show()
     ```

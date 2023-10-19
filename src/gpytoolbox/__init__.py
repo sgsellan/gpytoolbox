@@ -109,7 +109,9 @@ from .read_dmat import read_dmat
 from .linear_blend_skinning import linear_blend_skinning
 from .barycenters import barycenters
 from .sdf_flow import sdf_flow
+from .cut_edges import cut_edges
 from .biharmonic_energy import biharmonic_energy
 from .biharmonic_energy_intrinsic import biharmonic_energy_intrinsic
 from .adjacency_matrix import adjacency_matrix
+from .non_manifold_edges import non_manifold_edges
 from .connected_components import connected_components
