@@ -98,6 +98,7 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_upper_envelope.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_read_ply.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_ply.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_curved_hessian_intrinsic.cpp"
 )
 
 pybind11_add_module(gpytoolbox_bindings_copyleft
