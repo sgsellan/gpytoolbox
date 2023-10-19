@@ -6,7 +6,7 @@ from .massmatrix_intrinsic import massmatrix_intrinsic
 def biharmonic_energy_intrinsic(l_sq,F,
     n=None,
     bc='mixedfem_zero_neumann'):
-    """Builds the (pos. def.) cotangent Laplacian for a triangle mesh.
+    """Constructs the biharmonic energy matrix Q such that for a per-vertex function u, the discrete biharmonic energy is u'Qu, using only intrinsic information from the mesh.
 
     Parameters
     ----------
