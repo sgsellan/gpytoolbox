@@ -88,7 +88,7 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
 
     # check that at least one vertex is not a boundary vertex
     if feature.shape[0] == V.shape[0]:
-        warnings.warn("All vertices are detected as boundary vertices. The result will be the input mesh.")
+        warnings.warn("All vertices in the input mesh are either manually specified feature vertices or boundary vertices, meaning that this call to remesh_botsch will be a no-op.")
 
     v, f = _remesh_botsch_cpp_impl(V, F.astype(np.int32), i, h, feature, project)
 
