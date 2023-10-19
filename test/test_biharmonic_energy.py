@@ -6,8 +6,6 @@ import scipy as sp
 class TestBiharmonicEnergy(unittest.TestCase):
 
     def test_single_triangle_2d(self):
-        return None
-
         v = np.array([[0.0,0.0],[1.0,0.0],[0.0,1.0]])
         f = np.array([[0,1,2]],dtype=int)
 
