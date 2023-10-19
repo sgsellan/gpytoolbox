@@ -438,7 +438,6 @@ def sdf_flow_iteration(state,
             state.convergence_counter = 0
         state.h = np.maximum(state.h/2,state.min_h)
         # state.use_features = True
-    converged = False
     if state.convergence_counter > 100 or F_invalid.shape[0] == 0:
         if state.resample_counter<resample:
             state.U = sample_sdf(state.sdf, state.V, state.F, state.U,
@@ -457,9 +456,8 @@ def sdf_flow_iteration(state,
             if verbose:
                 print(f"Resampled, I now have {state.U.shape[0]} sample points.")
         else:
-            # TODO: we should exit here instead of potentially remeshing again if converged.
-            # return True
-            converged = True
+            # We have converged.
+            return True
 
     #Remeshing
     if remeshing:
@@ -522,7 +520,7 @@ def sdf_flow_iteration(state,
         state.F_inactive = None
 
     #Have we converged?
-    if converged or state.its>=max_iter:
+    if state.its>=max_iter:
         return True
     else:
         return False
