@@ -6,3 +6,7 @@ The mountain is by lastloginname via Thingiverse, released under CC BY 4.0 (http
 
 The airplane is by YahooJAPAN via Thingivese, released under CC BY 3.0 (https://www.thingiverse.com/thing:182252).
 Modifications are by Oded Stein.
+
+Spot is by Keenan Crane, public domain (https://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/)
+
+The teddy is by techkey via Thingiverse, released under CC BY-SA 3.0 Deed (https://www.thingiverse.com/thing:416267)
