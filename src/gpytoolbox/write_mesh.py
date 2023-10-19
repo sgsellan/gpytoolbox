@@ -36,8 +36,8 @@ def write_mesh(file,
         vertex list for normal coordinates. Only supported for obj format.
     Fn : (m,3) numpy int array, optional (default: None)
         face index list for normal coordinates (into N). Only supported for obj format.
-    C : (n,3) numpy array, optional (default: None)
-        list of integer [0, 255] per-vertex colors. Only supported for ply format.
+    C : (n,4) or (m,4) numpy int array with values in [0,255], optional (default: None)
+        list of per-vertex or per-face colors. Only supported for ply format.
     stl_binary : bool, optional (default: True)
         whether to write the file in binary format (as opposed to ascii). Only supported for stl and ply format.
     fmt : string, optional (default: None)
@@ -183,6 +183,8 @@ def _write_ply(file,V,F,N,C,binary=True):
         C = np.ndarray(shape=(0,0), dtype=np.int32)
     if N is None:
         N = np.ndarray(shape=(0,0), dtype=np.float64)
+    assert C.shape[0]==0 or C.shape[0]==V.shape[0] or C.shape[0]==F.shape[0], "C must be per-vertex or per-face colors."
+    assert C.shape[0]==0 or C.shape[1]==4, "C must be RGBA colors."
     err = _write_ply_cpp_impl(file,
         V.astype(np.float64),
         F.astype(np.int32),
@@ -191,3 +193,4 @@ def _write_ply(file,V,F,N,C,binary=True):
         binary)
     if err != 0:
         raise Exception(f"Unknown error writing ply file.")
+

@@ -108,3 +108,5 @@ from .read_dmat import read_dmat
 from .linear_blend_skinning import linear_blend_skinning
 from .barycenters import barycenters
 from .sdf_flow import sdf_flow
+from .adjacency_matrix import adjacency_matrix
+from .connected_components import connected_components
