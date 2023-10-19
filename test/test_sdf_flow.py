@@ -23,7 +23,7 @@ class TestSDFFlow(unittest.TestCase):
                 U,G = gpy.sdf_flow(GV, sdf, V0, F0, verbose=False, visualize=False, min_h = np.clip(1.5/n, 0.001, 0.1))
                 h_ours = gpy.approximate_hausdorff_distance(U, G.astype(np.int32), v, f.astype(np.int32), use_cpp = True)
                 
-                print(f"sdf_flow h: {h_ours}, MC h: {h_mc} for {mesh} with n={n}")
+                # print(f"sdf_flow h: {h_ours}, MC h: {h_mc} for {mesh} with n={n}")
                 self.assertTrue(h_ours < h_mc)
 
     def test_noop(self):

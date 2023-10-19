@@ -49,6 +49,6 @@ jobs:
         shell: bash -l {0}
         run: |
           python -m pip install tetgen
-          python -m unittest -v test/test_sdf_flow.py
+          python -m unittest -v
 
 # see https://github.com/libigl/libigl/blob/main/.github/workflows/continuous.yml
