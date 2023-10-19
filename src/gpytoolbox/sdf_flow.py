@@ -648,9 +648,13 @@ def remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
             i=i, h=h,
             project=project, feature=feature)
     elif dim==3:
-        V,F = remesh_botsch(V, F,
-            i=i, h=h,
-            project=project, feature=feature)
+        if V.shape[0]==len(feature):
+            # then the call to remesh_botsch is a no-op, because our flow has converged (active region is empty)
+            V,F = V.copy(), F.copy()
+        else:
+            V,F = remesh_botsch(V, F,
+                i=i, h=h,
+                project=project, feature=feature)
     assert np.isfinite(V).all()
     return V,F
 
