@@ -2,7 +2,6 @@ from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
 
-import polyscope as ps
 
 class TestRFTS(unittest.TestCase):
     def test_beat_marching_cubes_low_res(self):
