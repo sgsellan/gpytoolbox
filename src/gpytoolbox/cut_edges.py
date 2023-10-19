@@ -97,7 +97,7 @@ def cut_edges(F,E):
     VV[labels] = labels
     I[labels] = I
     FF = labels[FF]
-    W,IM = remove_unreferenced(VV[:,None],FF)
+    W,_,IM,_ = remove_unreferenced(VV[:,None], FF, return_maps=True)
     I = I[IM.ravel()<W.shape[0]]
     G = IM.ravel(order='F')[FF]
 
