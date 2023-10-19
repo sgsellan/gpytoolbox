@@ -2,8 +2,6 @@ from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
 
-import polyscope as ps
-
 class TestCutEdges(unittest.TestCase):
 
     def test_two_triangles(self):
