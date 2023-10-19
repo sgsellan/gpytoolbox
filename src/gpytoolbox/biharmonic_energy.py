@@ -45,13 +45,13 @@ def biharmonic_energy(V,F,
     """
 
     if bc=='hessian':
-        return hessian_energy(V, F)
+        return _hessian_energy(V, F)
     else:
         l_sq = halfedge_lengths_squared(V,F)
         return biharmonic_energy_intrinsic(l_sq,F,n=V.shape[0],bc=bc)
 
 
-def hessian_energy(V, F):
+def _hessian_energy(V, F):
     assert F.shape[1]==3, "Only works on triangle meshes."
 
     # Q = G' * A * D * Mtilde * D' * A * G

@@ -51,16 +51,16 @@ def biharmonic_energy_intrinsic(l_sq,F,
         n = np.max(F)+1
 
     if bc=='mixedfem_zero_neumann':
-        Q = mixedfem_neumann_laplacian_energy(l_sq, F, n)
+        Q = _mixedfem_neumann_laplacian_energy(l_sq, F, n)
     elif bc=='curved_hessian':
-        Q = curved_hessian_energy(l_sq, F, n)
+        Q = _curved_hessian_energy(l_sq, F, n)
     else:
         assert False, "Invalid bc"
 
     return Q
 
 
-def mixedfem_neumann_laplacian_energy(l_sq, F, n):
+def _mixedfem_neumann_laplacian_energy(l_sq, F, n):
     # Q = L' * M^{-1} * L
     L = cotangent_laplacian_intrinsic(l_sq, F, n=n)
     M = massmatrix_intrinsic(l_sq, F, n=n, type='voronoi')
@@ -77,7 +77,7 @@ try:
 except Exception as e:
     _CPP_CURVED_HESSIAN_INTRINSIC_AVAILABLE = False
 
-def curved_hessian_energy(l_sq, F, n):
+def _curved_hessian_energy(l_sq, F, n):
     assert _CPP_CURVED_HESSIAN_INTRINSIC_AVAILABLE, \
     "C++ bindings for curved Hessian not available."
 
