@@ -21,7 +21,7 @@ from .remesh_botsch import remesh_botsch
 from .random_points_on_mesh import random_points_on_mesh
 
 
-def sdf_flow(U, sdf, V, F, S=None,
+def reach_for_the_spheres(U, sdf, V, F, S=None,
     return_U=False,
     verbose=False,
     max_iter=None, tol=None, h=None, min_h=None,
@@ -37,12 +37,12 @@ def sdf_flow(U, sdf, V, F, S=None,
     fix_boundary=None,
     clamp=None, sv=None):
 
-    state = SdfFlowState(V=V, F=F, sdf=sdf, U=U, S=S,
+    state = ReachForTheSpheresState(V=V, F=F, sdf=sdf, U=U, S=S,
         h=h, min_h=min_h)
     converged = False
 
     while not converged:
-        converged = sdf_flow_iteration(state,
+        converged = reach_for_the_spheres_iteration(state,
             max_iter=max_iter, tol=tol,
             linesearch=linesearch, min_t=min_t, max_t=max_t,
             dt=dt,
@@ -63,7 +63,7 @@ def sdf_flow(U, sdf, V, F, S=None,
         return state.V, state.F
 
 
-class SdfFlowState:
+class ReachForTheSpheresState:
 
     def __init__(self,
         V, F,
@@ -112,7 +112,7 @@ class SdfFlowState:
 
 
 #Returns true if algorithm has converged.
-def sdf_flow_iteration(state,
+def reach_for_the_spheres_iteration(state,
     max_iter=None, tol=None,
     linesearch=None, min_t=None, max_t=None,
     dt=None,
@@ -128,7 +128,7 @@ def sdf_flow_iteration(state,
     verbose=False):
 
 
-    assert isinstance(state, SdfFlowState), "State must be a SdfFlowState"
+    assert isinstance(state, ReachForTheSpheresState), "State must be a ReachForTheSpheresState"
     dim = state.V.shape[1]
     assert dim==state.F.shape[1]
     if state.U is not None:
