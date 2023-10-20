@@ -21,7 +21,6 @@ if(APPLE)
 endif()
 
 
-
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
