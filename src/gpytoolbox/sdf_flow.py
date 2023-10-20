@@ -457,8 +457,9 @@ def sdf_flow_iteration(state,
             if verbose:
                 print(f"Resampled, I now have {state.U.shape[0]} sample points.")
         else:
-            # We have converged.
-            return True
+            # TODO: we should exit here instead of potentially remeshing again if converged.
+            # return True
+            converged = True
 
     #Remeshing
     if remeshing:
@@ -521,7 +522,7 @@ def sdf_flow_iteration(state,
         state.F_inactive = None
 
     #Have we converged?
-    if state.its>=max_iter:
+    if converged or state.its>=max_iter:
         return True
     else:
         return False
