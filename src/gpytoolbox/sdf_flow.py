@@ -24,8 +24,6 @@ from .random_points_on_mesh import random_points_on_mesh
 def sdf_flow(U, sdf, V, F, S=None,
     return_U=False,
     verbose=False,
-    visualize=False, #TODO: remove
-    callback=None, #TODO: remove
     max_iter=None, tol=None, h=None, min_h=None,
     linesearch=None, min_t=None, max_t=None,
     dt=None,
@@ -43,114 +41,21 @@ def sdf_flow(U, sdf, V, F, S=None,
         h=h, min_h=min_h)
     converged = False
 
-    # Little hack to pass max_iter, which is not keps as state.
-    # Set to the same default as in sdf_flow_iteration.
-    dim = V.shape[1]
-    pass_max_iter = (10000 if dim==2 else 20000
-        ) if max_iter is None else max_iter
-
-    # TODO: Replace this function with a simple while loop that breaks if converged.
-    def run_flow_iteration():
-        nonlocal state, converged
-        if not converged:
-            converged = sdf_flow_iteration(state,
-                max_iter=max_iter, tol=tol,
-                linesearch=linesearch, min_t=min_t, max_t=max_t,
-                dt=dt,
-                inside_outside_test=inside_outside_test,
-                resample=resample,
-                resample_samples=resample_samples,
-                feature_detection=feature_detection,
-                output_sensitive=output_sensitive,
-                remesh_iterations=remesh_iterations,
-                batch_size=batch_size,
-                verbose=verbose,
-                fix_boundary=fix_boundary,
-                clamp=clamp, sv=sv)
-
-            # TODO: remove callback code
-            if callback is not None:
-                callback({'V':state.V, 'F':state.F,
-                    'V_active':state.V_active,
-                    'F_active':state.F_active,
-                    'V_inactive':state.V_inactive,
-                    'F_inactive':state.F_inactive,
-                    'its':state.its,
-                    'max_iter':pass_max_iter,
-                    'U':state.U, 'S':state.S,
-                    'converged':converged,
-                    'resample_counter':state.resample_counter})
-
-            # TODO: remove visualization code
-            if visualize:
-                if dim==2:
-                    def plot_edges(vv,ee,plt_str):
-                        ax = plt.gca()
-                        for i in range(ee.shape[0]):
-                            ax.plot([vv[ee[i,0],0],vv[ee[i,1],0]],
-                                     [vv[ee[i,0],1],vv[ee[i,1],1]],
-                                     plt_str,alpha=1)
-                    def plot_spheres(vv,sdf):
-                        ax = plt.gca()
-                        f = sdf(vv)
-                        for i in range(vv.shape[0]):
-                            c = 'r' if f[i]>=0 else 'b'
-                            ax.add_patch(plt.Circle(vv[i,:], f[i], color=c, fill=False,alpha=0.1))
-                    plt.cla()
-                    plot_spheres(U,sdf)
-                    visualize_full = True
-                    if state.V_active is not None and state.F_active is not None:
-                        visualize_full = False
-                        plot_edges(state.V_active,state.F_active,'b-')
-                        plt.plot(state.V_active[:,0],state.V_active[:,1],'b.')
-                    if state.V_inactive is not None and state.F_inactive is not None:
-                        visualize_full = False
-                        plot_edges(state.V_inactive,state.F_inactive,'y-')
-                        plt.plot(state.V_inactive[:,0],state.V_inactive[:,1],'y.')
-                    if visualize_full and state.V is not None and state.F is not None:
-                        plot_edges(state.V,state.F,'b-')
-                        plt.plot(state.V[:,0],state.V[:,1],'b.')
-                    plt.draw()
-                    plt.pause(0.01)
-                elif dim==3:
-                    # if stopped:
-                    #     # This mess is so that we can render something from polyscope in the same script, otherwise this callback will keep executing and deleting everything you plot.
-                    #     if active_ps is not None:
-                    #         active_ps.remove()
-                    #         active_ps = None
-                    #     if inactive_ps is not None:
-                    #         inactive_ps.remove()
-                    #         inactive_ps = None
-                    #     if full_ps is not None:
-                    #         full_ps.remove()
-                    #         full_ps = None
-                    #     # polyscope.remove_all_structures()
-                    # else:
-                        # cloud_U = polyscope.register_point_cloud("SDF evaluation points", U)
-                        # cloud_U.add_scalar_quantity("How unhappy?", np.abs(g), enabled=True)
-                        visualize_full = True
-                        if state.V_active is not None and state.F_active is not None:
-                            visualize_full = False
-                            active_ps = polyscope.register_surface_mesh("active", state.V_active, state.F_active)
-                        if state.V_inactive is not None and state.F_inactive is not None:
-                            visualize_full = False
-                            inactive_ps = polyscope.register_surface_mesh("inactive", state.V_inactive, state.F_inactive)
-                        if visualize_full and V is not None and F is not None:
-                            full_ps = polyscope.register_surface_mesh("full", state.V, state.F)
-
-    # TODO: remove visualization code
-    if visualize and dim==3:
-        import polyscope
-        polyscope.init()
-        def polyscope_callback():
-            run_flow_iteration()
-        polyscope.set_user_callback(polyscope_callback)
-        polyscope.show()
-    else:
-        if visualize:
-            import matplotlib.pyplot as plt
-        while state.its is None or (state.its<pass_max_iter and (not converged)):
-            run_flow_iteration()
+    while not converged:
+        converged = sdf_flow_iteration(state,
+            max_iter=max_iter, tol=tol,
+            linesearch=linesearch, min_t=min_t, max_t=max_t,
+            dt=dt,
+            inside_outside_test=inside_outside_test,
+            resample=resample,
+            resample_samples=resample_samples,
+            feature_detection=feature_detection,
+            output_sensitive=output_sensitive,
+            remesh_iterations=remesh_iterations,
+            batch_size=batch_size,
+            verbose=verbose,
+            fix_boundary=fix_boundary,
+            clamp=clamp, sv=sv)
 
     if return_U:
         return state.V, state.F, state.U
@@ -336,7 +241,6 @@ def sdf_flow_iteration(state,
     #Do we prematurely abort? Increment iteration.
     if state.its>=max_iter:
         return True
-    state.its = state.its+1 #Only here for compatibility, move to end after.
 
     #Algorithm
     if batch_size>0 and batch_size<state.U.shape[0]:
@@ -437,7 +341,6 @@ def sdf_flow_iteration(state,
             state.best_avg_error = np.Inf
             state.convergence_counter = 0
         state.h = np.maximum(state.h/2,state.min_h)
-        # state.use_features = True
     if state.convergence_counter > 100 or F_invalid.shape[0] == 0:
         if state.resample_counter<resample:
             state.U = sample_sdf(state.sdf, state.V, state.F, state.U,
@@ -452,7 +355,6 @@ def sdf_flow_iteration(state,
             state.best_performance = np.Inf
             state.convergence_counter = 0
             state.best_avg_error = np.Inf
-            # state.min_h = max(0.001, 0.8*state.min_h)
             if verbose:
                 print(f"Resampled, I now have {state.U.shape[0]} sample points.")
         else:
@@ -461,9 +363,6 @@ def sdf_flow_iteration(state,
 
     #Remeshing
     if remeshing:
-        # if (not state.use_features):
-        #     feature_vertices = np.array([],dtype=np.int32)
-
         if (output_sensitive and F_invalid.shape[0] > 0):
             # we find the invalid faces
             F_invalid = np.unique(I[invalid_U])
@@ -520,6 +419,7 @@ def sdf_flow_iteration(state,
         state.F_inactive = None
 
     #Have we converged?
+    state.its = state.its+1
     if state.its>=max_iter:
         return True
     else:

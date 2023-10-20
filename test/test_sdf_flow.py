@@ -20,7 +20,7 @@ class TestSDFFlow(unittest.TestCase):
                 V_mc, F_mc = gpy.marching_cubes(sdf(GV), GV, n+1, n+1, n+1)
                 h_mc = gpy.approximate_hausdorff_distance(V_mc, F_mc.astype(np.int32), v, f.astype(np.int32), use_cpp = True)
                 V0, F0 = gpy.icosphere(2)
-                U,G = gpy.sdf_flow(GV, sdf, V0, F0, verbose=False, visualize=False, min_h = np.clip(1.5/n, 0.001, 0.1))
+                U,G = gpy.sdf_flow(GV, sdf, V0, F0, verbose=False, min_h = np.clip(1.5/n, 0.001, 0.1))
                 h_ours = gpy.approximate_hausdorff_distance(U, G.astype(np.int32), v, f.astype(np.int32), use_cpp = True)
                 
                 # print(f"sdf_flow h: {h_ours}, MC h: {h_mc} for {mesh} with n={n}")
@@ -36,7 +36,7 @@ class TestSDFFlow(unittest.TestCase):
             n = 20
             gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, n+1), np.linspace(-1.0, 1.0, n+1), np.linspace(-1.0, 1.0, n+1))
             GV = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
-            U,G = gpy.sdf_flow(GV, sdf, v, f, verbose=False, visualize=False)
+            U,G = gpy.sdf_flow(GV, sdf, v, f, verbose=False)
 
             h = gpy.approximate_hausdorff_distance(U, G.astype(np.int32), v, f.astype(np.int32), use_cpp=True)
             self.assertTrue(h < 2e-3)
@@ -53,7 +53,7 @@ class TestSDFFlow(unittest.TestCase):
             gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, n+1), np.linspace(-1.0, 1.0, n+1), np.linspace(-1.0, 1.0, n+1))
             GV = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
             V0, F0 = gpy.icosphere(2)
-            U,G = gpy.sdf_flow(GV, sdf, V0, F0, verbose=False, visualize=False, min_h = 0.5/n)
+            U,G = gpy.sdf_flow(GV, sdf, V0, F0, verbose=False, min_h = 0.5/n)
 
             sdf_rec = lambda x: gpy.signed_distance(x, U, G)[0]
             self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.02)
