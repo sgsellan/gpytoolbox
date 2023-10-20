@@ -198,7 +198,7 @@ def sdf_flow_iteration(state,
         state.h = default_params[dim]['h']
     if state.U is None:
         assert state.sdf is not None, "If you do not provide U, you must provide an sdf function to sample."
-        state.U = sample_sdf(state.sdf, state.V, state.F)
+        state.U = _sample_sdf(state.sdf, state.V, state.F)
     if state.S is None:
         assert state.sdf is not None, "If you do not provide U, you must provide an sdf function to sample."
         state.S = state.sdf(state.U)
@@ -259,7 +259,7 @@ def sdf_flow_iteration(state,
     pe = np.sum(state.V[state.F[I,:],:]*b[...,None], axis=1)
     pemU = pe-state.U_batch
     if inside_outside_test:
-        s = -np.sign(np.sum(pemU*normals(state.V,state.F)[I,:], axis=-1))
+        s = -np.sign(np.sum(pemU*_normals(state.V,state.F)[I,:], axis=-1))
         hit_sides = np.any(b<1e-3, axis=-1) #too close to vertex
         s[hit_sides] = np.sign(state.S_batch)[hit_sides]
     else:
@@ -288,7 +288,7 @@ def sdf_flow_iteration(state,
             state.F[I,:].ravel())),
         (state.U_batch.shape[0],state.V.shape[0]))
     c = wu[:,None]*ps
-    M = massmatrix(state.V, state.F)
+    M = _massmatrix(state.V, state.F)
     rho = 1.0*np.ones(state.U_batch.shape[0]) / A.shape[0]
     R = sp.sparse.spdiags([rho], 0, rho.shape[0], rho.shape[0])
     
@@ -343,7 +343,7 @@ def sdf_flow_iteration(state,
         state.h = np.maximum(state.h/2,state.min_h)
     if state.convergence_counter > 100 or F_invalid.shape[0] == 0:
         if state.resample_counter<resample:
-            state.U = sample_sdf(state.sdf, state.V, state.F, state.U,
+            state.U = _sample_sdf(state.sdf, state.V, state.F, state.U,
                 new_n=resample_samples,
                 trial_n=int(50*resample_samples), max_n=nu_max,
                 remove_samples=True, keep_these_samples=np.arange(nu_0),
@@ -367,14 +367,14 @@ def sdf_flow_iteration(state,
             # we find the invalid faces
             F_invalid = np.unique(I[invalid_U])
             # We compute the face adjacency matrix
-            TT = face_adjacency(state.F)
+            TT = _face_adjacency(state.F)
             # We find the set of invalid faces and their neighbors
             F_invalid_neighbors = np.unique(TT[F_invalid,:].ravel())
             # also add the invalid faces
             # F_invalid_neighbors = np.unique(np.hstack((F_invalid_neighbors,F_invalid)))
-            F_invalid_neighbors = one_ring(state.F,F_invalid)
+            F_invalid_neighbors = _one_ring(state.F,F_invalid)
             # do another round of one ring
-            F_invalid_neighbors = one_ring(state.F,F_invalid_neighbors)
+            F_invalid_neighbors = _one_ring(state.F,F_invalid_neighbors)
             # We find the set of invalid vertices
             # F_active = F[F_invalid_neighbors,:]
             state.V_active, state.F_active, _, _ = remove_unreferenced(state.V,
@@ -390,7 +390,7 @@ def sdf_flow_iteration(state,
                     state.V, state.F[state.F_inactive,:],return_maps=True)
                 # Remesh only the active part
                 
-                state.V_active, state.F_active = remesh(
+                state.V_active, state.F_active = _remesh(
                     state.V_active, state.F_active, i=remesh_iterations,
                     h=state.h, project=True)
                 # We merge the active and inactive parts
@@ -402,10 +402,10 @@ def sdf_flow_iteration(state,
                     state.V,faces=state.F,
                     epsilon=np.sqrt(np.finfo(state.V.dtype).eps))
             else:
-                state.V, state.F = remesh(state.V, state.F,
+                state.V, state.F = _remesh(state.V, state.F,
                     i=remesh_iterations, h=state.h, project=True)
         else:
-            state.V, state.F = remesh(state.V, state.F,
+            state.V, state.F = _remesh(state.V, state.F,
                 i=remesh_iterations, h=state.h, project = True,
                 feature=feature_vertices)
             state.V_active = None
@@ -426,7 +426,7 @@ def sdf_flow_iteration(state,
         return False
 
 
-def face_adjacency(F):
+def _face_adjacency(F):
     dim = F.shape[1]
     if dim==2:
         n = np.max(F)+1
@@ -440,20 +440,7 @@ def face_adjacency(F):
         return TT
 
 
-def laplacian(v,f):
-    dim = v.shape[1]
-    if dim==3:
-        L = cotangent_laplacian(v,f)
-    elif dim==2:
-        G = grad(v,f)
-        A = 0.5*doublearea(v,f)
-        MA = sp.sparse.spdiags(np.concatenate((A,A)), 0, G.shape[0], G.shape[0])
-        L = G.transpose() * MA * G
-    L.data[np.logical_not(np.isfinite(L.data))] = 0.
-    return L
-
-
-def normals(V,F,unit_norm=False):
+def _normals(V,F,unit_norm=False):
     dim = F.shape[1]
     if dim==2:
         e = V[F[:,1],:] - V[F[:,0],:]
@@ -463,45 +450,8 @@ def normals(V,F,unit_norm=False):
     elif dim==3:
         return per_face_normals(V,F,unit_norm=unit_norm)
 
-  
-def per_vertex_normals(V,F):
-    N = normals(V,F,unit_norm=True)
-    N = np.nan_to_num(N, nan=0., posinf=0., neginf=0.)
-    Fr = F.ravel(order='F')
-    dim = F.shape[1]
-    if dim==2:
-        Nv = np.stack((
-            np.bincount(Fr, weights=np.concatenate((N[:,0],N[:,0]))),
-            np.bincount(Fr, weights=np.concatenate((N[:,1],N[:,1])))
-            ), axis=-1)
-    elif dim==3:
-        α = tip_angles(V,F)
-        αr = α.ravel(order='F')
-        Nv = np.stack((
-            np.bincount(Fr, weights=αr*np.concatenate((N[:,0],N[:,0],N[:,0]))),
-            np.bincount(Fr, weights=αr*np.concatenate((N[:,1],N[:,1],N[:,1]))),
-            np.bincount(Fr, weights=αr*np.concatenate((N[:,2],N[:,2],N[:,2])))
-            ), axis=-1)
-    Nv /= np.linalg.norm(Nv, axis=-1)[:,None]
-    Nv = np.nan_to_num(Nv, nan=0., posinf=0., neginf=0.)
-    return Nv
-
-
-def barycentric_normals(I,b,V,F,unit_norm=False):
-    Nv = per_vertex_normals(V,F)
-    N = np.sum(Nv[F[I,:],:]*b[...,None], axis=1)
-    if unit_norm:
-        N /= np.linalg.norm(N, axis=-1)[:,None]
-    N = np.nan_to_num(N, nan=0., posinf=0., neginf=0.)
-    return N
-
-
-def processed_normals(I,b,V,F,unit_norm=False):
-    Nb = barycentric_normals(I,b,V,F,unit_norm=unit_norm)
-    return Nb
-
     
-def massmatrix(V,F):
+def _massmatrix(V,F):
     dim = F.shape[1]
     if dim==3:
         l_sq = halfedge_lengths_squared(V,F)
@@ -516,7 +466,7 @@ def massmatrix(V,F):
     return M
 
 
-def one_ring(F,active_faces):
+def _one_ring(F,active_faces):
     # Vectorized
     active_verts = F[active_faces,:].ravel()
     one_ring_active = np.nonzero(np.isin(F,active_verts).any(axis=-1))[0]
@@ -539,10 +489,10 @@ def one_ring(F,active_faces):
     return one_ring_active
 
 
-def remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
+def _remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
     dim = F.shape[1]
     if dim==2:
-        V,F = remesh_line(V, F,
+        V,F = _remesh_line(V, F,
             i=i, h=h,
             project=project, feature=feature)
     elif dim==3:
@@ -557,28 +507,28 @@ def remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
     return V,F
 
 
-def line_bdry(F):
+def _line_bdry(F):
     return np.unique(np.concatenate((
         np.setdiff1d(F[:,0],F[:,1]),
         np.setdiff1d(F[:,1],F[:,0])
         )))
 
 
-def remesh_line(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
+def _remesh_line(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
     high = 1.4*h
     low = 0.7*h
     V0,F0 = V.copy(), F.copy()
-    feature = np.unique(np.concatenate((feature, line_bdry(F))))
+    feature = np.unique(np.concatenate((feature, _line_bdry(F))))
     for its in range(i):
-        V,F,feature = split_line(V, F, feature, high, low)
-        V,F,feature = collapse_line(V, F, feature, high, low)
+        V,F,feature = _split_line(V, F, feature, high, low)
+        V,F,feature = _collapse_line(V, F, feature, high, low)
         if not project:
             V0,F0 = V.copy(), F.copy()
-        V,F = relaxation_line(V, F, feature, V0, F0)
+        V,F = _relaxation_line(V, F, feature, V0, F0)
     return V,F
 
 
-def split_line(V, F, feature, high, low):
+def _split_line(V, F, feature, high, low):
     n = V.shape[0]
     # is_feature = np.full(V.shape[0], False, dtype=bool)
     # is_feature[feature] = True
@@ -599,7 +549,7 @@ def split_line(V, F, feature, high, low):
     return V,F,feature
 
 
-def collapse_line(V, F, feature, high, low):
+def _collapse_line(V, F, feature, high, low):
     is_feature = np.full(V.shape[0], False, dtype=bool)
     is_feature[feature] = True
 
@@ -640,12 +590,12 @@ def collapse_line(V, F, feature, high, low):
     return V,F,feature
 
 
-def relaxation_line(V, F, feature, V0, F0):
+def _relaxation_line(V, F, feature, V0, F0):
     is_feature = np.full(V.shape[0], False, dtype=bool)
     is_feature[feature] = True
 
     l = np.linalg.norm(V[F[:,1],:] - V[F[:,0],:], axis=-1)
-    face_N = normals(V,F,unit_norm=True)
+    face_N = _normals(V,F,unit_norm=True)
     N = np.zeros((V.shape[0],2))
     N[F[:,0],:] += face_N*l[:,None]
     N[F[:,1],:] += face_N*l[:,None]
@@ -673,7 +623,7 @@ def relaxation_line(V, F, feature, V0, F0):
 
 
 #Bounds for a set of points
-def bounds(V, tol=0.):
+def _bounds(V, tol=0.):
     lb = np.min(V, axis=0)
     ub = np.max(V, axis=0)
     lb -= (ub-lb)*0.5 - tol
@@ -682,14 +632,14 @@ def bounds(V, tol=0.):
 
 
 #void distance function for a given SDF S at points U, evaluated at x
-def vdf(x, U, S):
+def _vdf(x, U, S):
     vf = S[None,:]**2 - np.sum((x[:,None,:]-U[None,:,:])**2, axis=-1)
     v = np.max(vf, axis=1)
     v = np.minimum(v,0.)
     return v
 
 
-def sample_sdf(sdf,
+def _sample_sdf(sdf,
     V, F,
     U0 = None, #Initial evaluation points
     new_n = 20, #How many new samples to add each step
@@ -706,7 +656,7 @@ def sample_sdf(sdf,
 
     if U0 is None:
         #Randomly sample twice as many points as initial mesh vertices.
-        lb,ub = bounds(V, tol)
+        lb,ub = _bounds(V, tol)
         n = min(max_n, V.shape[0])
         dim = V.shape[1]
         U0 = rng.uniform(lb, ub, size=(n,dim))
@@ -715,16 +665,16 @@ def sample_sdf(sdf,
     # Random points on all faces
     P,I,_ = random_points_on_mesh(V, F, trial_n, rng=rng, return_indices=True)
     d = 0.05 * rng.normal(scale=np.max(np.max(V,axis=0)-np.min(V,axis=0)), size=P.shape[0])
-    P += d[:,None] * normals(V, F, unit_norm=True)[I,:]
+    P += d[:,None] * _normals(V, F, unit_norm=True)[I,:]
     # Remove all points in P that are not worst points on edge.
     worst = {}
     for i in range(P.shape[0]):
-        if (I[i] not in worst) or (vdf(P[i,:][None,:],U0,S0)
-            <vdf(P[worst[I[i]],:][None,:],U0,S0)):
+        if (I[i] not in worst) or (_vdf(P[i,:][None,:],U0,S0)
+            <_vdf(P[worst[I[i]],:][None,:],U0,S0)):
             worst[I[i]] = i
     P = np.array([P[i,:] for _,i in worst.items()])
     # Get new_n worst points
-    I = np.argsort(vdf(P, U0, S0))
+    I = np.argsort(_vdf(P, U0, S0))
     U = np.concatenate((U0, P[I[:new_n]]), axis=0)
 
     if U.shape[0] <= max_n:
