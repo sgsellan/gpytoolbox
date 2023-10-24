@@ -35,7 +35,152 @@ def reach_for_the_spheres(U, sdf, V, F, S=None,
     remesh_iterations=None,
     batch_size=None,
     fix_boundary=None,
-    clamp=None, sv=None):
+    clamp=None, pseudosdf_interior=None):
+    """Creates a mesh from a signed distance function (SDF) using the
+    "Reach for the Spheres" method of S. Sellán,  C. Batty, and O. Stein [2023].
+
+    This method takes in an sdf, sample points (do not need to be on a grid),
+    and an initial mesh.
+    It then flows this initial mesh into a reconstructed mesh that fulfills
+    the signed distance function.
+
+    This method works in dimension 2 (dim==2), where it reconstructs a polyline,
+    and in dimension 3 (dim==3), where it reconstructs a triangle mesh.
+    
+    Parameters
+    ----------
+    U : (k,dim) numpy double array
+        Matrix of SDF sample positions.
+        The sdf will be sampled at these points
+    sdf: lambda function that takes in a (ks,dim) numpy double array
+        The signed distance function to be reconstructed.
+        This function must take in a (ks,dim) matrix of sample points and
+        return a (ks,) array of SDF values at these points.
+    V : (n,dim) numpy double array
+        Matrix of mesh vertices of the initial mesh
+    F : (m,dim) numpy int array
+        Matrix of triangle indices into V of the initlal mesh
+    S : (k,dim) nummpy double array, optional (default: None)
+        Matrix of SDF samples at the sample positions in U.
+        If this is not provided, it will be computed using sdf.
+    return_U : bool, optional (default: False)
+        Whether to return the matrix of SDF sample positions along with the
+        reconstructed mesh.
+    verbose : bool (default false)
+        Whether to print method statistics during operation.
+    max_iter : int (default None)
+        The maximum number of iterations to perform for the method.
+        If not supplied, a sensible default is used.
+    tol : float (default None)
+        The method's tolerance for the sphere tangency test.
+        If not supplied, a sensible default is used.
+    h : float (default None)
+        The method's initial target mesh length for the reconstructed mesh.
+        This will change during iteration, set min_h if you want to control the
+        minimum edge length overall.
+        If not supplied, a sensible default is used.
+    min_h : float (default None)
+        The method's minimal target edge length for the reconstructed mesh.
+        If not supplied, a sensible default is used.
+    linesearch : bool (default None)
+        Whether to use a linesearch-like heuristic for the method's timestep.
+        If not supplied, linesearch is used.
+    min_t : float (default None)
+        The method's minimum timestep.
+        If not supplied, a sensible default is used.
+    max_t : float (default None)
+        The method's minimum timestep.
+        If not supplied, a sensible default is used.
+    dt : float (default None)
+        The method's default timestep.
+        If not supplied, a sensible default is used.
+    inside_outside_test : bool (default None)
+        Whether to use inside-outside testing when projecting points to be
+        tangent to the sphere.
+        Turn this off if your distance function is *unsigned*.
+        If not supplied, inside-outside test is used
+    resample : int (default None)
+        How often to resample the SDF after convergence to extract more
+        information.
+        If not supplied, resampling is not performed.
+    resample_samples : int (default None)
+        How many samples to use when resampling.
+        If not supplied, a sensible default is used.
+    feature_detection : string (default None)
+        Which feature detection mode to use.
+        If not supplied, aggressive feature detection is used.
+    output_sensitive : bool (default None)
+        Whether to use output-sensitive remeshing.
+        If not supplied, remeshing is output-sensitive.
+    remesh_iterations : int (default None)
+        How many iterations of the remesher to run each step.
+        If not supplied, a sensible default is used.
+    batch_size : int (default None)
+        For large amounts of sample points, the method is sped up using sample
+        point batching.
+        This parameter specifies how many samples to take for each batch.
+        Set it to 0 to disable batching.
+        If not supplied, a sensible default is used.
+    fix_boundary : bool (default None)
+        Whether to fix the boundary of the mesh during iteration.
+        If not supplied, the boundary is not fixed.
+    clamp : float (default None)
+        If sdf is a clamped SDF, the clamp value to use.
+        np.inf for no clamping.
+        If not supplied, there is no clamping.
+    pseudosdf_interior : bool (default None)
+        If enabled, treats every negative SDF value as a bound on the signed
+        distance, as opposed to an exact signed distance, for use in SDFs
+        resulting from CSG unions as described by Marschner et al.
+        "Constructive Solid Geometry on Neural Signed Distance Fields" [2023].
+        If not supplied, this feature is disabled.
+        
+    Returns
+    -------
+    Vr : (nr,dim) numpy double array
+        Matrix of mesh vertices of the reconstructed triangle mesh
+    Fr : (mr,dim) numpy int array
+        Matrix of triangle indices into Vr of the reconstructed mesh
+    Ur : (kr,dim) numpy double array, if requested
+        Matrix of SDF sample positions.
+        This can be different from the supplied Ur if the method is set to
+        resample.
+    
+    See Also
+    --------
+    marching_squares, marching_cubes
+
+    Notes
+    --------
+    This method has a number of limitations that are described in the paper.
+    E.g., the method will only work for SDFs that describe surfaces with the
+    same topology as the initial surface.
+
+    Examples
+    --------
+    ```python
+    import gpytoolbox as gpy
+    import numpy as npy
+
+    # Get a signed distance function
+    V,F = gpy.read_mesh("my_mesh.obj")
+
+    # Create an SDF for the mesh
+    j = 20
+    sdf = lambda x: gpy.signed_distance(x, V, F)[0]
+    gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1))
+    U = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+
+    # Choose an initial surface for reach_for_the_spheres
+    V0, F0 = gpy.icosphere(2)
+
+    # Reconstruct triangle mesh
+    Vr,Fr = gpy.reach_for_the_spheres(U, sdf, V0, F0)
+
+    #The reconstructed triangle mesh is now Vr,Fr.
+    ```
+    """
+
 
     state = ReachForTheSpheresState(V=V, F=F, sdf=sdf, U=U, S=S,
         h=h, min_h=min_h)
@@ -55,7 +200,7 @@ def reach_for_the_spheres(U, sdf, V, F, S=None,
             batch_size=batch_size,
             verbose=verbose,
             fix_boundary=fix_boundary,
-            clamp=clamp, sv=sv)
+            clamp=clamp, pseudosdf_interior=pseudosdf_interior)
 
     if return_U:
         return state.V, state.F, state.U
@@ -64,6 +209,96 @@ def reach_for_the_spheres(U, sdf, V, F, S=None,
 
 
 class ReachForTheSpheresState:
+    """An object to keep state during the iterations of the Reach for the
+    Spheres method.
+    Meant to be used in conjunction with `reach_for_the_spheres_iteration`.
+    
+    Parameters
+    ----------
+    V : (n,dim) numpy double array
+        Matrix of mesh vertices of the initial mesh
+    F : (m,dim) numpy int array
+        Matrix of triangle indices into V of the initlal mesh
+    U : (k,dim) numpy double array, optional (default: None)
+        Matrix of SDF sample positions.
+        The sdf will be sampled at these points
+    S : (k,dim) nummpy double array, optional (default: None)
+        Matrix of SDF samples at the sample positions in U.
+        If this is not provided, it will be computed using sdf.
+    sdf: lambda function that takes in a (ks,dim) numpy double array, optional (default: None)
+        The signed distance function to be reconstructed.
+        This function must take in a (ks,dim) matrix of sample points and
+        return a (ks,) array of SDF values at these points.
+    V_active : (na,dim) numpy double array, optional (default: None)
+        Matrix of mesh vertices active during iteration
+    F_active : (ma,dim) numpy int array, optional (default: None)
+        Matrix of triangle indices into V_active of the mesh active during iteration
+    V_inactive : (na,dim) numpy double array, optional (default: None)
+        Matrix of mesh vertices inactive during iteration
+    F_inactive : (ma,dim) numpy int array, optional (default: None)
+        Matrix of triangle indices into V_inactive of the mesh inactive during iteration
+    rng : numpy random generator, optional (default: None)
+        numpy rng object used to create randomness during iterations
+    h : float (default None)
+        The method's initial target mesh length for the reconstructed mesh.
+        This will change during iteration, set min_h if you want to control the
+        minimum edge length overall.
+    min_h : float (default None)
+        The method's minimal target edge length for the reconstructed mesh.
+    best_performance : float (default None)
+        Remembers the method's best performance
+    convergence_counter : int (default None)
+        The method's convergence counter, used to track for how long progress
+        has not been made.
+    best_avg_error : float (default None)
+        Remembers the method's average error.
+    resample_counter : int (default None)
+        Tracks how often the SDF has been resampled.
+    V_last_converged : (nl,dim) numpy double array, optional (default: None)
+        Matrix of mesh vertices for the last known converged mesh.
+    F_last_converged : (ml,dim) numpy int array, optional (default: None)
+        Matrix of triangle indices into V_last_converged for the last known
+        converged mesh.
+    U_batch : (kb,dim) numpy double array, optional (default: None)
+        Matrix of SDF sample positions as used during the last batching
+        operation.
+    S_batch : (kb,dim) nummpy double array, optional (default: None)
+        Matrix of SDF samples at the sample positions in U as used during the
+        last batching operation.
+
+    Notes
+    --------
+    If you create this object yourself, you should supply V, F, U, S, sdf.
+    Supply all other parameters only as explicitly needed.
+
+    Examples
+    --------
+    ```python
+    import gpytoolbox as gpy
+    import numpy as npy
+
+    # Get a signed distance function
+    V,F = gpy.read_mesh("my_mesh.obj")
+
+    # Create an SDF for the mesh
+    j = 20
+    sdf = lambda x: gpy.signed_distance(x, V, F)[0]
+    gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1))
+    U = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+
+    # Create ReachForTheSpheresState to use in iterative method later
+    V0, F0 = gpy.icosphere(2)
+    state = ReachForTheSpheresState(V=V0, F=F0, sdf=sdf, U=U)
+
+    # Run one iteration of Reach for the Spheres
+    converged = gpy.reach_for_the_spheres_iteration(state)
+
+    # Reconstruct triangle mesh
+    Vr,Fr = state.V,state.F
+
+    #The reconstructed mesh after one iteration is now Vr,Fr
+    ```
+    """
 
     def __init__(self,
         V, F,
@@ -77,9 +312,7 @@ class ReachForTheSpheresState:
         best_performance=None,
         convergence_counter=None,
         best_avg_error=None,
-        # use_features=None,
         resample_counter=None,
-        full_ps=None, active_ps=None, inactive_ps=None,
         V_last_converged=None, F_last_converged=None,
         U_batch=None, S_batch=None
         ):
@@ -100,11 +333,7 @@ class ReachForTheSpheresState:
         self.best_performance = best_performance
         self.convergence_counter = convergence_counter
         self.best_avg_error = best_avg_error
-        # self.use_features = use_features
         self.resample_counter = resample_counter
-        self.full_ps = full_ps
-        self.active_ps = active_ps
-        self.inactive_ps = inactive_ps
         self.V_last_converged = V_last_converged
         self.F_last_converged = F_last_converged
         self.U_batch = U_batch
@@ -124,8 +353,127 @@ def reach_for_the_spheres_iteration(state,
     remesh_iterations=None,
     batch_size=None,
     fix_boundary=None,
-    clamp=None, sv=None,
+    clamp=None, pseudosdf_interior=None,
     verbose=False):
+    """Performs one iteration of the "Reach for the Spheres" method of
+    S. Sellán,  C. Batty, and O. Stein [2023].
+    This method is used to create a mesh from a signed distance function (SDF).
+
+    This method takes in the current state of the method in the form of a 
+    ReachForTheSpheresState object, and stores its results as well as any
+    temporary information needed in that state object.
+
+    This method works in dimension 2 (dim==2), where it reconstructs a polyline,
+    and in dimension 3 (dim==3), where it reconstructs a triangle mesh.
+    
+    Parameters
+    ----------
+    state: ReachForTheSpheresState object
+        Stores all needed information about the current state of the method.
+    max_iter : int (default None)
+        The maximum number of iterations to perform for the method.
+        If not supplied, a sensible default is used.
+    tol : float (default None)
+        The method's tolerance for the sphere tangency test.
+        If not supplied, a sensible default is used.
+    linesearch : bool (default None)
+        Whether to use a linesearch-like heuristic for the method's timestep.
+        If not supplied, linesearch is used.
+    min_t : float (default None)
+        The method's minimum timestep.
+        If not supplied, a sensible default is used.
+    max_t : float (default None)
+        The method's minimum timestep.
+        If not supplied, a sensible default is used.
+    dt : float (default None)
+        The method's default timestep.
+        If not supplied, a sensible default is used.
+    inside_outside_test : bool (default None)
+        Whether to use inside-outside testing when projecting points to be
+        tangent to the sphere.
+        Turn this off if your distance function is *unsigned*.
+        If not supplied, inside-outside test is used
+    resample : int (default None)
+        How often to resample the SDF after convergence to extract more
+        information.
+        If not supplied, resampling is not performed.
+    resample_samples : int (default None)
+        How many samples to use when resampling.
+        If not supplied, a sensible default is used.
+    feature_detection : string (default None)
+        Which feature detection mode to use.
+        If not supplied, aggressive feature detection is used.
+    output_sensitive : bool (default None)
+        Whether to use output-sensitive remeshing.
+        If not supplied, remeshing is output-sensitive.
+    remesh_iterations : int (default None)
+        How many iterations of the remesher to run each step.
+        If not supplied, a sensible default is used.
+    batch_size : int (default None)
+        For large amounts of sample points, the method is sped up using sample
+        point batching.
+        This parameter specifies how many samples to take for each batch.
+        Set it to 0 to disable batching.
+        If not supplied, a sensible default is used.
+    fix_boundary : bool (default None)
+        Whether to fix the boundary of the mesh during iteration.
+        If not supplied, the boundary is not fixed.
+    clamp : float (default None)
+        If sdf is a clamped SDF, the clamp value to use.
+        np.inf for no clamping.
+        If not supplied, there is no clamping.
+    pseudosdf_interior : bool (default None)
+        If enabled, treats every negative SDF value as a bound on the signed
+        distance, as opposed to an exact signed distance, for use in SDFs
+        resulting from CSG unions as described by Marschner et al.
+        "Constructive Solid Geometry on Neural Signed Distance Fields" [2023].
+        If not supplied, this feature is disabled.
+    verbose : bool (default false)
+        Whether to print method statistics during operation.
+        
+    Returns
+    -------
+    converged : bool
+        Whether the method has converged after this iteration or not.
+    
+    See Also
+    --------
+    reach_for_the_spheres, marching_squares, marching_cubes
+
+    Notes
+    --------
+    This method has a number of limitations that are described in the paper.
+    E.g., the method will only work for SDFs that describe surfaces with the
+    same topology as the initial surface.
+
+    Examples
+    --------
+    ```python
+    import gpytoolbox as gpy
+    import numpy as npy
+
+    # Get a signed distance function
+    V,F = gpy.read_mesh("my_mesh.obj")
+
+    # Create an SDF for the mesh
+    j = 20
+    sdf = lambda x: gpy.signed_distance(x, V, F)[0]
+    gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1))
+    U = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+
+    # Create ReachForTheSpheresState to use in iterative method later
+    V0, F0 = gpy.icosphere(2)
+    state = ReachForTheSpheresState(V=V0, F=F0, sdf=sdf, U=U)
+
+    # Run one iteration of Reach for the Spheres
+    converged = gpy.reach_for_the_spheres_iteration(state)
+
+    # Reconstruct triangle mesh
+    Vr,Fr = state.V,state.F
+
+    #The reconstructed mesh after one iteration is now Vr,Fr
+    ```
+    """
 
 
     assert isinstance(state, ReachForTheSpheresState), "State must be a ReachForTheSpheresState"
@@ -148,7 +496,7 @@ def reach_for_the_spheres_iteration(state,
         'remesh_iterations':1,
         'batch_size':20000,
         'fix_boundary':False,
-        'clamp':np.Inf, 'sv':False},
+        'clamp':np.Inf, 'pseudosdf_interior':False},
         3: {'max_iter':20000, 'tol':1e-2, 'h':0.2,
         'linesearch':True, 'min_t':1e-6, 'max_t':50.,
         'dt':10.,
@@ -159,7 +507,7 @@ def reach_for_the_spheres_iteration(state,
         'visualize':False,
         'batch_size':20000,
         'fix_boundary':False,
-        'clamp':np.Inf, 'sv':False}
+        'clamp':np.Inf, 'pseudosdf_interior':False}
     }
     if max_iter is None:
         max_iter = default_params[dim]['max_iter']
@@ -191,8 +539,8 @@ def reach_for_the_spheres_iteration(state,
         fix_boundary = default_params[dim]['fix_boundary']
     if clamp is None:
         clamp = default_params[dim]['clamp']
-    if sv is None:
-        sv = default_params[dim]['sv']
+    if pseudosdf_interior is None:
+        pseudosdf_interior = default_params[dim]['pseudosdf_interior']
 
     if state.h is None:
         state.h = default_params[dim]['h']
@@ -200,7 +548,7 @@ def reach_for_the_spheres_iteration(state,
         assert state.sdf is not None, "If you do not provide U, you must provide an sdf function to sample."
         state.U = _sample_sdf(state.sdf, state.V, state.F)
     if state.S is None:
-        assert state.sdf is not None, "If you do not provide U, you must provide an sdf function to sample."
+        assert state.sdf is not None, "If you do not provide S, you must provide an sdf function to sample."
         state.S = state.sdf(state.U)
     if state.min_h is None:
         # use a kdtree and get the average distance between two samples
@@ -279,7 +627,7 @@ def reach_for_the_spheres_iteration(state,
     #Build matrices
     wu = np.ones(state.U_batch.shape[0])
     clamped_g = np.where((np.abs(state.S_batch)==clamp)*(g<0.))
-    if sv:
+    if pseudosdf_interior:
         clamped_g = np.where((state.S_batch>0)*(g<0.))
     wu[clamped_g] = 0.0
     A = sp.sparse.csc_matrix(((wu[:,None]*b).ravel(),
