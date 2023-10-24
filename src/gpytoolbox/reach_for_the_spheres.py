@@ -21,11 +21,9 @@ from .remesh_botsch import remesh_botsch
 from .random_points_on_mesh import random_points_on_mesh
 
 
-def sdf_flow(U, sdf, V, F, S=None,
+def reach_for_the_spheres(U, sdf, V, F, S=None,
     return_U=False,
     verbose=False,
-    visualize=False, #TODO: remove
-    callback=None, #TODO: remove
     max_iter=None, tol=None, h=None, min_h=None,
     linesearch=None, min_t=None, max_t=None,
     dt=None,
@@ -37,120 +35,172 @@ def sdf_flow(U, sdf, V, F, S=None,
     remesh_iterations=None,
     batch_size=None,
     fix_boundary=None,
-    clamp=None, sv=None):
+    clamp=None, pseudosdf_interior=None):
+    """Creates a mesh from a signed distance function (SDF) using the
+    "Reach for the Spheres" method of S. Sellán,  C. Batty, and O. Stein [2023].
 
-    state = SdfFlowState(V=V, F=F, sdf=sdf, U=U, S=S,
+    This method takes in an sdf, sample points (do not need to be on a grid),
+    and an initial mesh.
+    It then flows this initial mesh into a reconstructed mesh that fulfills
+    the signed distance function.
+
+    This method works in dimension 2 (dim==2), where it reconstructs a polyline,
+    and in dimension 3 (dim==3), where it reconstructs a triangle mesh.
+    
+    Parameters
+    ----------
+    U : (k,dim) numpy double array
+        Matrix of SDF sample positions.
+        The sdf will be sampled at these points
+    sdf: lambda function that takes in a (ks,dim) numpy double array
+        The signed distance function to be reconstructed.
+        This function must take in a (ks,dim) matrix of sample points and
+        return a (ks,) array of SDF values at these points.
+    V : (n,dim) numpy double array
+        Matrix of mesh vertices of the initial mesh
+    F : (m,dim) numpy int array
+        Matrix of triangle indices into V of the initlal mesh
+    S : (k,dim) nummpy double array, optional (default: None)
+        Matrix of SDF samples at the sample positions in U.
+        If this is not provided, it will be computed using sdf.
+    return_U : bool, optional (default: False)
+        Whether to return the matrix of SDF sample positions along with the
+        reconstructed mesh.
+    verbose : bool (default false)
+        Whether to print method statistics during operation.
+    max_iter : int (default None)
+        The maximum number of iterations to perform for the method.
+        If not supplied, a sensible default is used.
+    tol : float (default None)
+        The method's tolerance for the sphere tangency test.
+        If not supplied, a sensible default is used.
+    h : float (default None)
+        The method's initial target mesh length for the reconstructed mesh.
+        This will change during iteration, set min_h if you want to control the
+        minimum edge length overall.
+        If not supplied, a sensible default is used.
+    min_h : float (default None)
+        The method's minimal target edge length for the reconstructed mesh.
+        If not supplied, a sensible default is used.
+    linesearch : bool (default None)
+        Whether to use a linesearch-like heuristic for the method's timestep.
+        If not supplied, linesearch is used.
+    min_t : float (default None)
+        The method's minimum timestep.
+        If not supplied, a sensible default is used.
+    max_t : float (default None)
+        The method's minimum timestep.
+        If not supplied, a sensible default is used.
+    dt : float (default None)
+        The method's default timestep.
+        If not supplied, a sensible default is used.
+    inside_outside_test : bool (default None)
+        Whether to use inside-outside testing when projecting points to be
+        tangent to the sphere.
+        Turn this off if your distance function is *unsigned*.
+        If not supplied, inside-outside test is used
+    resample : int (default None)
+        How often to resample the SDF after convergence to extract more
+        information.
+        If not supplied, resampling is not performed.
+    resample_samples : int (default None)
+        How many samples to use when resampling.
+        If not supplied, a sensible default is used.
+    feature_detection : string (default None)
+        Which feature detection mode to use.
+        If not supplied, aggressive feature detection is used.
+    output_sensitive : bool (default None)
+        Whether to use output-sensitive remeshing.
+        If not supplied, remeshing is output-sensitive.
+    remesh_iterations : int (default None)
+        How many iterations of the remesher to run each step.
+        If not supplied, a sensible default is used.
+    batch_size : int (default None)
+        For large amounts of sample points, the method is sped up using sample
+        point batching.
+        This parameter specifies how many samples to take for each batch.
+        Set it to 0 to disable batching.
+        If not supplied, a sensible default is used.
+    fix_boundary : bool (default None)
+        Whether to fix the boundary of the mesh during iteration.
+        If not supplied, the boundary is not fixed.
+    clamp : float (default None)
+        If sdf is a clamped SDF, the clamp value to use.
+        np.inf for no clamping.
+        If not supplied, there is no clamping.
+    pseudosdf_interior : bool (default None)
+        If enabled, treats every negative SDF value as a bound on the signed
+        distance, as opposed to an exact signed distance, for use in SDFs
+        resulting from CSG unions as described by Marschner et al.
+        "Constructive Solid Geometry on Neural Signed Distance Fields" [2023].
+        If not supplied, this feature is disabled.
+        
+    Returns
+    -------
+    Vr : (nr,dim) numpy double array
+        Matrix of mesh vertices of the reconstructed triangle mesh
+    Fr : (mr,dim) numpy int array
+        Matrix of triangle indices into Vr of the reconstructed mesh
+    Ur : (kr,dim) numpy double array, if requested
+        Matrix of SDF sample positions.
+        This can be different from the supplied Ur if the method is set to
+        resample.
+    
+    See Also
+    --------
+    marching_squares, marching_cubes
+
+    Notes
+    --------
+    This method has a number of limitations that are described in the paper.
+    E.g., the method will only work for SDFs that describe surfaces with the
+    same topology as the initial surface.
+
+    Examples
+    --------
+    ```python
+    import gpytoolbox as gpy
+    import numpy as npy
+
+    # Get a signed distance function
+    V,F = gpy.read_mesh("my_mesh.obj")
+
+    # Create an SDF for the mesh
+    j = 20
+    sdf = lambda x: gpy.signed_distance(x, V, F)[0]
+    gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1))
+    U = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+
+    # Choose an initial surface for reach_for_the_spheres
+    V0, F0 = gpy.icosphere(2)
+
+    # Reconstruct triangle mesh
+    Vr,Fr = gpy.reach_for_the_spheres(U, sdf, V0, F0)
+
+    #The reconstructed triangle mesh is now Vr,Fr.
+    ```
+    """
+
+
+    state = ReachForTheSpheresState(V=V, F=F, sdf=sdf, U=U, S=S,
         h=h, min_h=min_h)
     converged = False
 
-    # Little hack to pass max_iter, which is not keps as state.
-    # Set to the same default as in sdf_flow_iteration.
-    dim = V.shape[1]
-    pass_max_iter = (10000 if dim==2 else 20000
-        ) if max_iter is None else max_iter
-
-    # TODO: Replace this function with a simple while loop that breaks if converged.
-    def run_flow_iteration():
-        nonlocal state, converged
-        if not converged:
-            converged = sdf_flow_iteration(state,
-                max_iter=max_iter, tol=tol,
-                linesearch=linesearch, min_t=min_t, max_t=max_t,
-                dt=dt,
-                inside_outside_test=inside_outside_test,
-                resample=resample,
-                resample_samples=resample_samples,
-                feature_detection=feature_detection,
-                output_sensitive=output_sensitive,
-                remesh_iterations=remesh_iterations,
-                batch_size=batch_size,
-                verbose=verbose,
-                fix_boundary=fix_boundary,
-                clamp=clamp, sv=sv)
-
-            # TODO: remove callback code
-            if callback is not None:
-                callback({'V':state.V, 'F':state.F,
-                    'V_active':state.V_active,
-                    'F_active':state.F_active,
-                    'V_inactive':state.V_inactive,
-                    'F_inactive':state.F_inactive,
-                    'its':state.its,
-                    'max_iter':pass_max_iter,
-                    'U':state.U, 'S':state.S,
-                    'converged':converged,
-                    'resample_counter':state.resample_counter})
-
-            # TODO: remove visualization code
-            if visualize:
-                if dim==2:
-                    def plot_edges(vv,ee,plt_str):
-                        ax = plt.gca()
-                        for i in range(ee.shape[0]):
-                            ax.plot([vv[ee[i,0],0],vv[ee[i,1],0]],
-                                     [vv[ee[i,0],1],vv[ee[i,1],1]],
-                                     plt_str,alpha=1)
-                    def plot_spheres(vv,sdf):
-                        ax = plt.gca()
-                        f = sdf(vv)
-                        for i in range(vv.shape[0]):
-                            c = 'r' if f[i]>=0 else 'b'
-                            ax.add_patch(plt.Circle(vv[i,:], f[i], color=c, fill=False,alpha=0.1))
-                    plt.cla()
-                    plot_spheres(U,sdf)
-                    visualize_full = True
-                    if state.V_active is not None and state.F_active is not None:
-                        visualize_full = False
-                        plot_edges(state.V_active,state.F_active,'b-')
-                        plt.plot(state.V_active[:,0],state.V_active[:,1],'b.')
-                    if state.V_inactive is not None and state.F_inactive is not None:
-                        visualize_full = False
-                        plot_edges(state.V_inactive,state.F_inactive,'y-')
-                        plt.plot(state.V_inactive[:,0],state.V_inactive[:,1],'y.')
-                    if visualize_full and state.V is not None and state.F is not None:
-                        plot_edges(state.V,state.F,'b-')
-                        plt.plot(state.V[:,0],state.V[:,1],'b.')
-                    plt.draw()
-                    plt.pause(0.01)
-                elif dim==3:
-                    # if stopped:
-                    #     # This mess is so that we can render something from polyscope in the same script, otherwise this callback will keep executing and deleting everything you plot.
-                    #     if active_ps is not None:
-                    #         active_ps.remove()
-                    #         active_ps = None
-                    #     if inactive_ps is not None:
-                    #         inactive_ps.remove()
-                    #         inactive_ps = None
-                    #     if full_ps is not None:
-                    #         full_ps.remove()
-                    #         full_ps = None
-                    #     # polyscope.remove_all_structures()
-                    # else:
-                        # cloud_U = polyscope.register_point_cloud("SDF evaluation points", U)
-                        # cloud_U.add_scalar_quantity("How unhappy?", np.abs(g), enabled=True)
-                        visualize_full = True
-                        if state.V_active is not None and state.F_active is not None:
-                            visualize_full = False
-                            active_ps = polyscope.register_surface_mesh("active", state.V_active, state.F_active)
-                        if state.V_inactive is not None and state.F_inactive is not None:
-                            visualize_full = False
-                            inactive_ps = polyscope.register_surface_mesh("inactive", state.V_inactive, state.F_inactive)
-                        if visualize_full and V is not None and F is not None:
-                            full_ps = polyscope.register_surface_mesh("full", state.V, state.F)
-
-    # TODO: remove visualization code
-    if visualize and dim==3:
-        import polyscope
-        polyscope.init()
-        def polyscope_callback():
-            run_flow_iteration()
-        polyscope.set_user_callback(polyscope_callback)
-        polyscope.show()
-    else:
-        if visualize:
-            import matplotlib.pyplot as plt
-        while state.its is None or (state.its<pass_max_iter and (not converged)):
-            run_flow_iteration()
+    while not converged:
+        converged = reach_for_the_spheres_iteration(state,
+            max_iter=max_iter, tol=tol,
+            linesearch=linesearch, min_t=min_t, max_t=max_t,
+            dt=dt,
+            inside_outside_test=inside_outside_test,
+            resample=resample,
+            resample_samples=resample_samples,
+            feature_detection=feature_detection,
+            output_sensitive=output_sensitive,
+            remesh_iterations=remesh_iterations,
+            batch_size=batch_size,
+            verbose=verbose,
+            fix_boundary=fix_boundary,
+            clamp=clamp, pseudosdf_interior=pseudosdf_interior)
 
     if return_U:
         return state.V, state.F, state.U
@@ -158,7 +208,97 @@ def sdf_flow(U, sdf, V, F, S=None,
         return state.V, state.F
 
 
-class SdfFlowState:
+class ReachForTheSpheresState:
+    """An object to keep state during the iterations of the Reach for the
+    Spheres method.
+    Meant to be used in conjunction with `reach_for_the_spheres_iteration`.
+    
+    Parameters
+    ----------
+    V : (n,dim) numpy double array
+        Matrix of mesh vertices of the initial mesh
+    F : (m,dim) numpy int array
+        Matrix of triangle indices into V of the initlal mesh
+    U : (k,dim) numpy double array, optional (default: None)
+        Matrix of SDF sample positions.
+        The sdf will be sampled at these points
+    S : (k,dim) nummpy double array, optional (default: None)
+        Matrix of SDF samples at the sample positions in U.
+        If this is not provided, it will be computed using sdf.
+    sdf: lambda function that takes in a (ks,dim) numpy double array, optional (default: None)
+        The signed distance function to be reconstructed.
+        This function must take in a (ks,dim) matrix of sample points and
+        return a (ks,) array of SDF values at these points.
+    V_active : (na,dim) numpy double array, optional (default: None)
+        Matrix of mesh vertices active during iteration
+    F_active : (ma,dim) numpy int array, optional (default: None)
+        Matrix of triangle indices into V_active of the mesh active during iteration
+    V_inactive : (na,dim) numpy double array, optional (default: None)
+        Matrix of mesh vertices inactive during iteration
+    F_inactive : (ma,dim) numpy int array, optional (default: None)
+        Matrix of triangle indices into V_inactive of the mesh inactive during iteration
+    rng : numpy random generator, optional (default: None)
+        numpy rng object used to create randomness during iterations
+    h : float (default None)
+        The method's initial target mesh length for the reconstructed mesh.
+        This will change during iteration, set min_h if you want to control the
+        minimum edge length overall.
+    min_h : float (default None)
+        The method's minimal target edge length for the reconstructed mesh.
+    best_performance : float (default None)
+        Remembers the method's best performance
+    convergence_counter : int (default None)
+        The method's convergence counter, used to track for how long progress
+        has not been made.
+    best_avg_error : float (default None)
+        Remembers the method's average error.
+    resample_counter : int (default None)
+        Tracks how often the SDF has been resampled.
+    V_last_converged : (nl,dim) numpy double array, optional (default: None)
+        Matrix of mesh vertices for the last known converged mesh.
+    F_last_converged : (ml,dim) numpy int array, optional (default: None)
+        Matrix of triangle indices into V_last_converged for the last known
+        converged mesh.
+    U_batch : (kb,dim) numpy double array, optional (default: None)
+        Matrix of SDF sample positions as used during the last batching
+        operation.
+    S_batch : (kb,dim) nummpy double array, optional (default: None)
+        Matrix of SDF samples at the sample positions in U as used during the
+        last batching operation.
+
+    Notes
+    --------
+    If you create this object yourself, you should supply V, F, U, S, sdf.
+    Supply all other parameters only as explicitly needed.
+
+    Examples
+    --------
+    ```python
+    import gpytoolbox as gpy
+    import numpy as npy
+
+    # Get a signed distance function
+    V,F = gpy.read_mesh("my_mesh.obj")
+
+    # Create an SDF for the mesh
+    j = 20
+    sdf = lambda x: gpy.signed_distance(x, V, F)[0]
+    gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1))
+    U = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+
+    # Create ReachForTheSpheresState to use in iterative method later
+    V0, F0 = gpy.icosphere(2)
+    state = ReachForTheSpheresState(V=V0, F=F0, sdf=sdf, U=U)
+
+    # Run one iteration of Reach for the Spheres
+    converged = gpy.reach_for_the_spheres_iteration(state)
+
+    # Reconstruct triangle mesh
+    Vr,Fr = state.V,state.F
+
+    #The reconstructed mesh after one iteration is now Vr,Fr
+    ```
+    """
 
     def __init__(self,
         V, F,
@@ -172,9 +312,7 @@ class SdfFlowState:
         best_performance=None,
         convergence_counter=None,
         best_avg_error=None,
-        # use_features=None,
         resample_counter=None,
-        full_ps=None, active_ps=None, inactive_ps=None,
         V_last_converged=None, F_last_converged=None,
         U_batch=None, S_batch=None
         ):
@@ -195,11 +333,7 @@ class SdfFlowState:
         self.best_performance = best_performance
         self.convergence_counter = convergence_counter
         self.best_avg_error = best_avg_error
-        # self.use_features = use_features
         self.resample_counter = resample_counter
-        self.full_ps = full_ps
-        self.active_ps = active_ps
-        self.inactive_ps = inactive_ps
         self.V_last_converged = V_last_converged
         self.F_last_converged = F_last_converged
         self.U_batch = U_batch
@@ -207,7 +341,7 @@ class SdfFlowState:
 
 
 #Returns true if algorithm has converged.
-def sdf_flow_iteration(state,
+def reach_for_the_spheres_iteration(state,
     max_iter=None, tol=None,
     linesearch=None, min_t=None, max_t=None,
     dt=None,
@@ -219,11 +353,130 @@ def sdf_flow_iteration(state,
     remesh_iterations=None,
     batch_size=None,
     fix_boundary=None,
-    clamp=None, sv=None,
+    clamp=None, pseudosdf_interior=None,
     verbose=False):
+    """Performs one iteration of the "Reach for the Spheres" method of
+    S. Sellán,  C. Batty, and O. Stein [2023].
+    This method is used to create a mesh from a signed distance function (SDF).
+
+    This method takes in the current state of the method in the form of a 
+    ReachForTheSpheresState object, and stores its results as well as any
+    temporary information needed in that state object.
+
+    This method works in dimension 2 (dim==2), where it reconstructs a polyline,
+    and in dimension 3 (dim==3), where it reconstructs a triangle mesh.
+    
+    Parameters
+    ----------
+    state: ReachForTheSpheresState object
+        Stores all needed information about the current state of the method.
+    max_iter : int (default None)
+        The maximum number of iterations to perform for the method.
+        If not supplied, a sensible default is used.
+    tol : float (default None)
+        The method's tolerance for the sphere tangency test.
+        If not supplied, a sensible default is used.
+    linesearch : bool (default None)
+        Whether to use a linesearch-like heuristic for the method's timestep.
+        If not supplied, linesearch is used.
+    min_t : float (default None)
+        The method's minimum timestep.
+        If not supplied, a sensible default is used.
+    max_t : float (default None)
+        The method's minimum timestep.
+        If not supplied, a sensible default is used.
+    dt : float (default None)
+        The method's default timestep.
+        If not supplied, a sensible default is used.
+    inside_outside_test : bool (default None)
+        Whether to use inside-outside testing when projecting points to be
+        tangent to the sphere.
+        Turn this off if your distance function is *unsigned*.
+        If not supplied, inside-outside test is used
+    resample : int (default None)
+        How often to resample the SDF after convergence to extract more
+        information.
+        If not supplied, resampling is not performed.
+    resample_samples : int (default None)
+        How many samples to use when resampling.
+        If not supplied, a sensible default is used.
+    feature_detection : string (default None)
+        Which feature detection mode to use.
+        If not supplied, aggressive feature detection is used.
+    output_sensitive : bool (default None)
+        Whether to use output-sensitive remeshing.
+        If not supplied, remeshing is output-sensitive.
+    remesh_iterations : int (default None)
+        How many iterations of the remesher to run each step.
+        If not supplied, a sensible default is used.
+    batch_size : int (default None)
+        For large amounts of sample points, the method is sped up using sample
+        point batching.
+        This parameter specifies how many samples to take for each batch.
+        Set it to 0 to disable batching.
+        If not supplied, a sensible default is used.
+    fix_boundary : bool (default None)
+        Whether to fix the boundary of the mesh during iteration.
+        If not supplied, the boundary is not fixed.
+    clamp : float (default None)
+        If sdf is a clamped SDF, the clamp value to use.
+        np.inf for no clamping.
+        If not supplied, there is no clamping.
+    pseudosdf_interior : bool (default None)
+        If enabled, treats every negative SDF value as a bound on the signed
+        distance, as opposed to an exact signed distance, for use in SDFs
+        resulting from CSG unions as described by Marschner et al.
+        "Constructive Solid Geometry on Neural Signed Distance Fields" [2023].
+        If not supplied, this feature is disabled.
+    verbose : bool (default false)
+        Whether to print method statistics during operation.
+        
+    Returns
+    -------
+    converged : bool
+        Whether the method has converged after this iteration or not.
+    
+    See Also
+    --------
+    reach_for_the_spheres, marching_squares, marching_cubes
+
+    Notes
+    --------
+    This method has a number of limitations that are described in the paper.
+    E.g., the method will only work for SDFs that describe surfaces with the
+    same topology as the initial surface.
+
+    Examples
+    --------
+    ```python
+    import gpytoolbox as gpy
+    import numpy as npy
+
+    # Get a signed distance function
+    V,F = gpy.read_mesh("my_mesh.obj")
+
+    # Create an SDF for the mesh
+    j = 20
+    sdf = lambda x: gpy.signed_distance(x, V, F)[0]
+    gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1))
+    U = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+
+    # Create ReachForTheSpheresState to use in iterative method later
+    V0, F0 = gpy.icosphere(2)
+    state = ReachForTheSpheresState(V=V0, F=F0, sdf=sdf, U=U)
+
+    # Run one iteration of Reach for the Spheres
+    converged = gpy.reach_for_the_spheres_iteration(state)
+
+    # Reconstruct triangle mesh
+    Vr,Fr = state.V,state.F
+
+    #The reconstructed mesh after one iteration is now Vr,Fr
+    ```
+    """
 
 
-    assert isinstance(state, SdfFlowState), "State must be a SdfFlowState"
+    assert isinstance(state, ReachForTheSpheresState), "State must be a ReachForTheSpheresState"
     dim = state.V.shape[1]
     assert dim==state.F.shape[1]
     if state.U is not None:
@@ -243,7 +496,7 @@ def sdf_flow_iteration(state,
         'remesh_iterations':1,
         'batch_size':20000,
         'fix_boundary':False,
-        'clamp':np.Inf, 'sv':False},
+        'clamp':np.Inf, 'pseudosdf_interior':False},
         3: {'max_iter':20000, 'tol':1e-2, 'h':0.2,
         'linesearch':True, 'min_t':1e-6, 'max_t':50.,
         'dt':10.,
@@ -254,7 +507,7 @@ def sdf_flow_iteration(state,
         'visualize':False,
         'batch_size':20000,
         'fix_boundary':False,
-        'clamp':np.Inf, 'sv':False}
+        'clamp':np.Inf, 'pseudosdf_interior':False}
     }
     if max_iter is None:
         max_iter = default_params[dim]['max_iter']
@@ -286,16 +539,16 @@ def sdf_flow_iteration(state,
         fix_boundary = default_params[dim]['fix_boundary']
     if clamp is None:
         clamp = default_params[dim]['clamp']
-    if sv is None:
-        sv = default_params[dim]['sv']
+    if pseudosdf_interior is None:
+        pseudosdf_interior = default_params[dim]['pseudosdf_interior']
 
     if state.h is None:
         state.h = default_params[dim]['h']
     if state.U is None:
         assert state.sdf is not None, "If you do not provide U, you must provide an sdf function to sample."
-        state.U = sample_sdf(state.sdf, state.V, state.F)
+        state.U = _sample_sdf(state.sdf, state.V, state.F)
     if state.S is None:
-        assert state.sdf is not None, "If you do not provide U, you must provide an sdf function to sample."
+        assert state.sdf is not None, "If you do not provide S, you must provide an sdf function to sample."
         state.S = state.sdf(state.U)
     if state.min_h is None:
         # use a kdtree and get the average distance between two samples
@@ -336,7 +589,6 @@ def sdf_flow_iteration(state,
     #Do we prematurely abort? Increment iteration.
     if state.its>=max_iter:
         return True
-    state.its = state.its+1 #Only here for compatibility, move to end after.
 
     #Algorithm
     if batch_size>0 and batch_size<state.U.shape[0]:
@@ -355,7 +607,7 @@ def sdf_flow_iteration(state,
     pe = np.sum(state.V[state.F[I,:],:]*b[...,None], axis=1)
     pemU = pe-state.U_batch
     if inside_outside_test:
-        s = -np.sign(np.sum(pemU*normals(state.V,state.F)[I,:], axis=-1))
+        s = -np.sign(np.sum(pemU*_normals(state.V,state.F)[I,:], axis=-1))
         hit_sides = np.any(b<1e-3, axis=-1) #too close to vertex
         s[hit_sides] = np.sign(state.S_batch)[hit_sides]
     else:
@@ -375,7 +627,7 @@ def sdf_flow_iteration(state,
     #Build matrices
     wu = np.ones(state.U_batch.shape[0])
     clamped_g = np.where((np.abs(state.S_batch)==clamp)*(g<0.))
-    if sv:
+    if pseudosdf_interior:
         clamped_g = np.where((state.S_batch>0)*(g<0.))
     wu[clamped_g] = 0.0
     A = sp.sparse.csc_matrix(((wu[:,None]*b).ravel(),
@@ -384,7 +636,7 @@ def sdf_flow_iteration(state,
             state.F[I,:].ravel())),
         (state.U_batch.shape[0],state.V.shape[0]))
     c = wu[:,None]*ps
-    M = massmatrix(state.V, state.F)
+    M = _massmatrix(state.V, state.F)
     rho = 1.0*np.ones(state.U_batch.shape[0]) / A.shape[0]
     R = sp.sparse.spdiags([rho], 0, rho.shape[0], rho.shape[0])
     
@@ -437,11 +689,9 @@ def sdf_flow_iteration(state,
             state.best_avg_error = np.Inf
             state.convergence_counter = 0
         state.h = np.maximum(state.h/2,state.min_h)
-        # state.use_features = True
-    converged = False
     if state.convergence_counter > 100 or F_invalid.shape[0] == 0:
         if state.resample_counter<resample:
-            state.U = sample_sdf(state.sdf, state.V, state.F, state.U,
+            state.U = _sample_sdf(state.sdf, state.V, state.F, state.U,
                 new_n=resample_samples,
                 trial_n=int(50*resample_samples), max_n=nu_max,
                 remove_samples=True, keep_these_samples=np.arange(nu_0),
@@ -453,31 +703,26 @@ def sdf_flow_iteration(state,
             state.best_performance = np.Inf
             state.convergence_counter = 0
             state.best_avg_error = np.Inf
-            # state.min_h = max(0.001, 0.8*state.min_h)
             if verbose:
                 print(f"Resampled, I now have {state.U.shape[0]} sample points.")
         else:
-            # TODO: we should exit here instead of potentially remeshing again if converged.
-            # return True
-            converged = True
+            # We have converged.
+            return True
 
     #Remeshing
     if remeshing:
-        # if (not state.use_features):
-        #     feature_vertices = np.array([],dtype=np.int32)
-
         if (output_sensitive and F_invalid.shape[0] > 0):
             # we find the invalid faces
             F_invalid = np.unique(I[invalid_U])
             # We compute the face adjacency matrix
-            TT = face_adjacency(state.F)
+            TT = _face_adjacency(state.F)
             # We find the set of invalid faces and their neighbors
             F_invalid_neighbors = np.unique(TT[F_invalid,:].ravel())
             # also add the invalid faces
             # F_invalid_neighbors = np.unique(np.hstack((F_invalid_neighbors,F_invalid)))
-            F_invalid_neighbors = one_ring(state.F,F_invalid)
+            F_invalid_neighbors = _one_ring(state.F,F_invalid)
             # do another round of one ring
-            F_invalid_neighbors = one_ring(state.F,F_invalid_neighbors)
+            F_invalid_neighbors = _one_ring(state.F,F_invalid_neighbors)
             # We find the set of invalid vertices
             # F_active = F[F_invalid_neighbors,:]
             state.V_active, state.F_active, _, _ = remove_unreferenced(state.V,
@@ -493,7 +738,7 @@ def sdf_flow_iteration(state,
                     state.V, state.F[state.F_inactive,:],return_maps=True)
                 # Remesh only the active part
                 
-                state.V_active, state.F_active = remesh(
+                state.V_active, state.F_active = _remesh(
                     state.V_active, state.F_active, i=remesh_iterations,
                     h=state.h, project=True)
                 # We merge the active and inactive parts
@@ -505,10 +750,10 @@ def sdf_flow_iteration(state,
                     state.V,faces=state.F,
                     epsilon=np.sqrt(np.finfo(state.V.dtype).eps))
             else:
-                state.V, state.F = remesh(state.V, state.F,
+                state.V, state.F = _remesh(state.V, state.F,
                     i=remesh_iterations, h=state.h, project=True)
         else:
-            state.V, state.F = remesh(state.V, state.F,
+            state.V, state.F = _remesh(state.V, state.F,
                 i=remesh_iterations, h=state.h, project = True,
                 feature=feature_vertices)
             state.V_active = None
@@ -522,13 +767,14 @@ def sdf_flow_iteration(state,
         state.F_inactive = None
 
     #Have we converged?
-    if converged or state.its>=max_iter:
+    state.its = state.its+1
+    if state.its>=max_iter:
         return True
     else:
         return False
 
 
-def face_adjacency(F):
+def _face_adjacency(F):
     dim = F.shape[1]
     if dim==2:
         n = np.max(F)+1
@@ -542,20 +788,7 @@ def face_adjacency(F):
         return TT
 
 
-def laplacian(v,f):
-    dim = v.shape[1]
-    if dim==3:
-        L = cotangent_laplacian(v,f)
-    elif dim==2:
-        G = grad(v,f)
-        A = 0.5*doublearea(v,f)
-        MA = sp.sparse.spdiags(np.concatenate((A,A)), 0, G.shape[0], G.shape[0])
-        L = G.transpose() * MA * G
-    L.data[np.logical_not(np.isfinite(L.data))] = 0.
-    return L
-
-
-def normals(V,F,unit_norm=False):
+def _normals(V,F,unit_norm=False):
     dim = F.shape[1]
     if dim==2:
         e = V[F[:,1],:] - V[F[:,0],:]
@@ -565,45 +798,8 @@ def normals(V,F,unit_norm=False):
     elif dim==3:
         return per_face_normals(V,F,unit_norm=unit_norm)
 
-  
-def per_vertex_normals(V,F):
-    N = normals(V,F,unit_norm=True)
-    N = np.nan_to_num(N, nan=0., posinf=0., neginf=0.)
-    Fr = F.ravel(order='F')
-    dim = F.shape[1]
-    if dim==2:
-        Nv = np.stack((
-            np.bincount(Fr, weights=np.concatenate((N[:,0],N[:,0]))),
-            np.bincount(Fr, weights=np.concatenate((N[:,1],N[:,1])))
-            ), axis=-1)
-    elif dim==3:
-        α = tip_angles(V,F)
-        αr = α.ravel(order='F')
-        Nv = np.stack((
-            np.bincount(Fr, weights=αr*np.concatenate((N[:,0],N[:,0],N[:,0]))),
-            np.bincount(Fr, weights=αr*np.concatenate((N[:,1],N[:,1],N[:,1]))),
-            np.bincount(Fr, weights=αr*np.concatenate((N[:,2],N[:,2],N[:,2])))
-            ), axis=-1)
-    Nv /= np.linalg.norm(Nv, axis=-1)[:,None]
-    Nv = np.nan_to_num(Nv, nan=0., posinf=0., neginf=0.)
-    return Nv
-
-
-def barycentric_normals(I,b,V,F,unit_norm=False):
-    Nv = per_vertex_normals(V,F)
-    N = np.sum(Nv[F[I,:],:]*b[...,None], axis=1)
-    if unit_norm:
-        N /= np.linalg.norm(N, axis=-1)[:,None]
-    N = np.nan_to_num(N, nan=0., posinf=0., neginf=0.)
-    return N
-
-
-def processed_normals(I,b,V,F,unit_norm=False):
-    Nb = barycentric_normals(I,b,V,F,unit_norm=unit_norm)
-    return Nb
-
     
-def massmatrix(V,F):
+def _massmatrix(V,F):
     dim = F.shape[1]
     if dim==3:
         l_sq = halfedge_lengths_squared(V,F)
@@ -618,7 +814,7 @@ def massmatrix(V,F):
     return M
 
 
-def one_ring(F,active_faces):
+def _one_ring(F,active_faces):
     # Vectorized
     active_verts = F[active_faces,:].ravel()
     one_ring_active = np.nonzero(np.isin(F,active_verts).any(axis=-1))[0]
@@ -641,10 +837,10 @@ def one_ring(F,active_faces):
     return one_ring_active
 
 
-def remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
+def _remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
     dim = F.shape[1]
     if dim==2:
-        V,F = remesh_line(V, F,
+        V,F = _remesh_line(V, F,
             i=i, h=h,
             project=project, feature=feature)
     elif dim==3:
@@ -659,28 +855,28 @@ def remesh(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
     return V,F
 
 
-def line_bdry(F):
+def _line_bdry(F):
     return np.unique(np.concatenate((
         np.setdiff1d(F[:,0],F[:,1]),
         np.setdiff1d(F[:,1],F[:,0])
         )))
 
 
-def remesh_line(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
+def _remesh_line(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
     high = 1.4*h
     low = 0.7*h
     V0,F0 = V.copy(), F.copy()
-    feature = np.unique(np.concatenate((feature, line_bdry(F))))
+    feature = np.unique(np.concatenate((feature, _line_bdry(F))))
     for its in range(i):
-        V,F,feature = split_line(V, F, feature, high, low)
-        V,F,feature = collapse_line(V, F, feature, high, low)
+        V,F,feature = _split_line(V, F, feature, high, low)
+        V,F,feature = _collapse_line(V, F, feature, high, low)
         if not project:
             V0,F0 = V.copy(), F.copy()
-        V,F = relaxation_line(V, F, feature, V0, F0)
+        V,F = _relaxation_line(V, F, feature, V0, F0)
     return V,F
 
 
-def split_line(V, F, feature, high, low):
+def _split_line(V, F, feature, high, low):
     n = V.shape[0]
     # is_feature = np.full(V.shape[0], False, dtype=bool)
     # is_feature[feature] = True
@@ -701,7 +897,7 @@ def split_line(V, F, feature, high, low):
     return V,F,feature
 
 
-def collapse_line(V, F, feature, high, low):
+def _collapse_line(V, F, feature, high, low):
     is_feature = np.full(V.shape[0], False, dtype=bool)
     is_feature[feature] = True
 
@@ -742,12 +938,12 @@ def collapse_line(V, F, feature, high, low):
     return V,F,feature
 
 
-def relaxation_line(V, F, feature, V0, F0):
+def _relaxation_line(V, F, feature, V0, F0):
     is_feature = np.full(V.shape[0], False, dtype=bool)
     is_feature[feature] = True
 
     l = np.linalg.norm(V[F[:,1],:] - V[F[:,0],:], axis=-1)
-    face_N = normals(V,F,unit_norm=True)
+    face_N = _normals(V,F,unit_norm=True)
     N = np.zeros((V.shape[0],2))
     N[F[:,0],:] += face_N*l[:,None]
     N[F[:,1],:] += face_N*l[:,None]
@@ -775,7 +971,7 @@ def relaxation_line(V, F, feature, V0, F0):
 
 
 #Bounds for a set of points
-def bounds(V, tol=0.):
+def _bounds(V, tol=0.):
     lb = np.min(V, axis=0)
     ub = np.max(V, axis=0)
     lb -= (ub-lb)*0.5 - tol
@@ -784,14 +980,14 @@ def bounds(V, tol=0.):
 
 
 #void distance function for a given SDF S at points U, evaluated at x
-def vdf(x, U, S):
+def _vdf(x, U, S):
     vf = S[None,:]**2 - np.sum((x[:,None,:]-U[None,:,:])**2, axis=-1)
     v = np.max(vf, axis=1)
     v = np.minimum(v,0.)
     return v
 
 
-def sample_sdf(sdf,
+def _sample_sdf(sdf,
     V, F,
     U0 = None, #Initial evaluation points
     new_n = 20, #How many new samples to add each step
@@ -808,7 +1004,7 @@ def sample_sdf(sdf,
 
     if U0 is None:
         #Randomly sample twice as many points as initial mesh vertices.
-        lb,ub = bounds(V, tol)
+        lb,ub = _bounds(V, tol)
         n = min(max_n, V.shape[0])
         dim = V.shape[1]
         U0 = rng.uniform(lb, ub, size=(n,dim))
@@ -817,16 +1013,16 @@ def sample_sdf(sdf,
     # Random points on all faces
     P,I,_ = random_points_on_mesh(V, F, trial_n, rng=rng, return_indices=True)
     d = 0.05 * rng.normal(scale=np.max(np.max(V,axis=0)-np.min(V,axis=0)), size=P.shape[0])
-    P += d[:,None] * normals(V, F, unit_norm=True)[I,:]
+    P += d[:,None] * _normals(V, F, unit_norm=True)[I,:]
     # Remove all points in P that are not worst points on edge.
     worst = {}
     for i in range(P.shape[0]):
-        if (I[i] not in worst) or (vdf(P[i,:][None,:],U0,S0)
-            <vdf(P[worst[I[i]],:][None,:],U0,S0)):
+        if (I[i] not in worst) or (_vdf(P[i,:][None,:],U0,S0)
+            <_vdf(P[worst[I[i]],:][None,:],U0,S0)):
             worst[I[i]] = i
     P = np.array([P[i,:] for _,i in worst.items()])
     # Get new_n worst points
-    I = np.argsort(vdf(P, U0, S0))
+    I = np.argsort(_vdf(P, U0, S0))
     U = np.concatenate((U0, P[I[:new_n]]), axis=0)
 
     if U.shape[0] <= max_n:
