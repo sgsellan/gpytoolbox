@@ -1,4 +1,4 @@
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 # This function depends on skimage 
 from .png2poly import png2poly
@@ -110,6 +110,7 @@ from .linear_blend_skinning import linear_blend_skinning
 from .barycenters import barycenters
 from .reach_for_the_spheres import reach_for_the_spheres
 from .reach_for_the_spheres import reach_for_the_spheres_iteration
+from .reach_for_the_spheres import ReachForTheSpheresState
 from .cut_edges import cut_edges
 from .biharmonic_energy import biharmonic_energy
 from .biharmonic_energy_intrinsic import biharmonic_energy_intrinsic
