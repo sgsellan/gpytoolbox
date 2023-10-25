@@ -716,9 +716,12 @@ std::shared_ptr<PlyData> PlyFile::PlyFileImpl::request_properties_from_element(c
 
     std::vector<std::string> keys_not_found;
 
+    // std::cout << "Requesting properties from element " << elementKey << "\n";
+
     // Sanity check if the user requested element is in the pre-parsed header
     if (elementIndex >= 0)
     {
+        // std::cout << "Element " << elementKey << " found in pre-parsed header.\n";
         // We found the element
         const PlyElement & element = elements[elementIndex];
 
@@ -737,10 +740,15 @@ std::shared_ptr<PlyData> PlyFile::PlyFileImpl::request_properties_from_element(c
         helper.cursor = std::make_shared<PlyDataCursor>();
         helper.list_size_hint = list_size_hint;
 
+        // std::cout << "Element " << elementKey << " has " << element.properties.size() << " properties and " << element.size << " items.\n";
+
         // Find each of the keys
         for (const auto & key : propertyKeys)
         {
+            // std::cout << "Searching for property " << key << "\n";
+            // std::cout << "Property " << key << " has type " << property_type_to_string(helper.data->t) << "\n";
             const int64_t propertyIndex = find_property(key, element.properties);
+            // std:: cout << "Property " << key << " has index " << propertyIndex << "\n";
             if (propertyIndex < 0) keys_not_found.push_back(key);
         }
 

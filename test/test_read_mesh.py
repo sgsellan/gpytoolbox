@@ -113,6 +113,12 @@ class TestReadMesh(unittest.TestCase):
             self.assertTrue(np.isclose(N_2,N).all)
             self.assertTrue(np.isclose(C_2,C).all)
             self.assertTrue((F_2==F).all())
+    
+    def test_ply_index_vs_indices_faces(self):
+        # this used to fail:
+        V, F = gpy.read_mesh("test/unit_tests_data/mesh-indices.ply")
+        # this used to return an empty F, but not anymore:
+        self.assertTrue(F.shape[0] == 934)
 
 
 if __name__ == '__main__':
