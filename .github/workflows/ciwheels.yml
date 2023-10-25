@@ -47,7 +47,7 @@ jobs:
         # debugging
         # cpversion: [ "cp39"]
         # os: [ { runs-on: ubuntu-latest, cibw-arch: manylinux_x86_64}]
-        cpversion: ["cp36", "cp37", "cp38", "cp39", "cp310", "cp311"]
+        cpversion: ["cp36", "cp37", "cp38", "cp39", "cp310", "cp311", "cp312"]
         os: [ { runs-on: ubuntu-latest, cibw-arch: manylinux_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_arm64}, { runs-on: windows-latest, cibw-arch: win_amd64} ]
         # cpversion: ["cp36"]
         # os: [ { runs-on: windows-latest, cibw-arch: win_amd64}]
@@ -87,6 +87,7 @@ jobs:
       CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
       CIBW_ENVIRONMENT_MACOS: "CMAKE_OSX_ARCHITECTURES=\"${{ matrix.os.cibw-arch == 'macosx_x86_64' && 'x86_64' || matrix.os.cibw-arch == 'macosx_arm64' && 'arm64' || matrix.os.cibw-arch == 'macosx_universal2' && 'arm64;x86_64' || '' }}\""
       MACOSX_DEPLOYMENT_TARGET: 10.15
+      CIBW_PRERELEASE_PYTHONS: True
 
 
     # env:
@@ -118,7 +119,7 @@ jobs:
       - name: Install cibuildwheel
         run: |
           python -m pip install --upgrade pip
-          python -m pip install cibuildwheel==2.12.0
+          python -m pip install cibuildwheel==2.13.1
 
       # - name: Add build subdirectories to PATH
       #   shell: pwsh
