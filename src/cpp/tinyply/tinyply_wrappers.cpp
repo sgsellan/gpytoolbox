@@ -148,6 +148,11 @@ int read_ply(
         // arbitrary ply files, it is best to leave this 0. 
         try { faces = file.request_properties_from_element("face", { "vertex_indices" }, 3); are_faces_defined = true;}
         catch (const std::exception & e) { }
+        try { faces = file.request_properties_from_element("face", { "vertex_index" }, 3); are_faces_defined = true;}
+        // faces = file.request_properties_from_element("face", { "vertex_indices" }, 3);
+        // are_faces_defined = true;
+        catch (const std::exception & e) { }
+        // std::cout << "are_faces_defined: " << are_faces_defined << std::endl;
 
 
         file.read(*file_stream);
