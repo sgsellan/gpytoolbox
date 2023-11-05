@@ -748,7 +748,7 @@ def reach_for_the_spheres_iteration(state,
                 bd_active = boundary_vertices(state.F_active)
                 interior_active = np.setdiff1d(np.arange(state.V_active.shape[0]), bd_active)
                 # perturb the interior vertices of the active mesh randomly
-                V_active_for_zipping[interior_active,:] += 0.01*state.rng.normal(size=(interior_active.shape[0],3), rng = state.rng)
+                V_active_for_zipping[interior_active,:] += 0.01*state.rng.normal(size=(interior_active.shape[0],3))
 
                 state.V = np.vstack((state.V_active, state.V_inactive))
                 V_for_zipping = np.vstack((V_active_for_zipping, state.V_inactive))
