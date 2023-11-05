@@ -54,9 +54,17 @@ class TestReachForTheSpheres(unittest.TestCase):
             GV = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
             V0, F0 = gpy.icosphere(2)
             U,G = gpy.reach_for_the_spheres(GV, sdf, V0, F0, verbose=False, min_h = 0.5/n)
-
             sdf_rec = lambda x: gpy.signed_distance(x, U, G)[0]
             self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.02)
+
+    def test_segfault(self):
+        V,F = gpy.read_mesh("test/unit_tests_data/53159.stl")
+        j = 32
+        sdf = lambda x: gpy.signed_distance(x, V, F)[0]
+        gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1))
+        U = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+        V0, F0 = gpy.icosphere(2)
+        Vr,Fr = gpy.reach_for_the_spheres(U, sdf, V0, F0, min_h = .01, verbose = False)
 
 if __name__ == '__main__':
     unittest.main()

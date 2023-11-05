@@ -19,6 +19,7 @@ from .tip_angles import tip_angles
 from .halfedge_lengths_squared import halfedge_lengths_squared
 from .remesh_botsch import remesh_botsch
 from .random_points_on_mesh import random_points_on_mesh
+from .write_mesh import write_mesh
 
 
 def reach_for_the_spheres(U, sdf, V, F, S=None,
@@ -737,18 +738,32 @@ def reach_for_the_spheres_iteration(state,
                 state.V_inactive, state.F_inactive, _, _ = remove_unreferenced(
                     state.V, state.F[state.F_inactive,:],return_maps=True)
                 # Remesh only the active part
-                
                 state.V_active, state.F_active = _remesh(
                     state.V_active, state.F_active, i=remesh_iterations,
                     h=state.h, project=True)
                 # We merge the active and inactive parts
+                
+                V_active_for_zipping = state.V_active.copy()
+                # get the boundary indices
+                bd_active = boundary_vertices(state.F_active)
+                interior_active = np.setdiff1d(np.arange(state.V_active.shape[0]), bd_active)
+                # perturb the interior vertices of the active mesh randomly
+                V_active_for_zipping[interior_active,:] += 0.01*state.rng.normal(size=(interior_active.shape[0],3), rng = state.rng)
+
                 state.V = np.vstack((state.V_active, state.V_inactive))
+                V_for_zipping = np.vstack((V_active_for_zipping, state.V_inactive))
                 state.F = np.vstack((state.F_active,
                     state.F_inactive + state.V_active.shape[0]))
                 # We remove the duplicate vertices
-                state.V,_,_,state.F = remove_duplicate_vertices(
-                    state.V,faces=state.F,
+                _, I,_,state.F = remove_duplicate_vertices(
+                    V_for_zipping,faces=state.F,
                     epsilon=np.sqrt(np.finfo(state.V.dtype).eps))
+                state.V = state.V[I,:]
+
+                # state.V,_,_,state.F = remove_duplicate_vertices(
+                #     state.V,faces=state.F,
+                #     epsilon=np.sqrt(np.finfo(state.V.dtype).eps))
+                
             else:
                 state.V, state.F = _remesh(state.V, state.F,
                     i=remesh_iterations, h=state.h, project=True)
