@@ -18,9 +18,10 @@ class TestPoissonSurfaceReconstruction(unittest.TestCase):
         # unique_ind = np.unique(V, axis=0, return_index=True)[1]
         # V = V[unique_ind,:]
         n = 40
-        np.random.seed(2)
+        # np.random.seed(2)
         EC = gpytoolbox.edge_indices(V.shape[0],closed=False)
-        P,I,_ = gpytoolbox.random_points_on_mesh(V, EC, n, return_indices=True)
+        rng = np.random.default_rng()
+        P,I,_ = gpytoolbox.random_points_on_mesh(V, EC, n, return_indices=True, rng=rng)
         vecs = V[EC[:,0],:] - V[EC[:,1],:]
         vecs /= np.linalg.norm(vecs, axis=1)[:,None]
         J = np.array([[0., -1.], [1., 0.]])
