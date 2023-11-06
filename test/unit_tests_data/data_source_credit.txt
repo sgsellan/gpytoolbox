@@ -10,3 +10,6 @@ Modifications are by Oded Stein.
 Spot is by Keenan Crane, public domain (https://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/)
 
 The teddy is by techkey via Thingiverse, released under CC BY-SA 3.0 Deed (https://www.thingiverse.com/thing:416267)
+
+53159.stl is the asset "Mushrooms by Artec" by LukeChilson via Thingiverse (https://www.thingiverse.com/thing:16146), released under CC BY-SA 3.0 Deed.
+
