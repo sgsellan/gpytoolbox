@@ -90,6 +90,16 @@ class TestRemeshBotsch(unittest.TestCase):
         feature_unique = tmp[np.argsort(ind)]
         self.assertTrue(np.allclose(v[feature_unique], u[:feature_unique.shape[0]]))
 
+    def test_nonmanifold_segfault(self):
+        f = np.array([[0,1,2],[0,2,3],[2,0,4]],dtype=int)
+        # choose a random v
+        v = np.random.rand(5,3)
+        # call remesh_botsch, this used to segfault
+        # assert that it raises a ValueError
+        with self.assertRaises(ValueError):
+            u,g = gpytoolbox.remesh_botsch(v,f.astype(np.int32),20,0.01,True)
+        # should not segfault
+
     # def test_github_issue_30(self):
     #     np.random.seed(0)
     #     v,f = gpytoolbox.read_mesh("test/unit_tests_data/github_issue_30_input.obj")

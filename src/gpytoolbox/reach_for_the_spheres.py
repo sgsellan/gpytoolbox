@@ -20,7 +20,6 @@ from .halfedge_lengths_squared import halfedge_lengths_squared
 from .remesh_botsch import remesh_botsch
 from .random_points_on_mesh import random_points_on_mesh
 
-
 def reach_for_the_spheres(U, sdf, V, F, S=None,
     return_U=False,
     verbose=False,
@@ -737,18 +736,12 @@ def reach_for_the_spheres_iteration(state,
                 state.V_inactive, state.F_inactive, _, _ = remove_unreferenced(
                     state.V, state.F[state.F_inactive,:],return_maps=True)
                 # Remesh only the active part
-                
                 state.V_active, state.F_active = _remesh(
                     state.V_active, state.F_active, i=remesh_iterations,
                     h=state.h, project=True)
                 # We merge the active and inactive parts
-                state.V = np.vstack((state.V_active, state.V_inactive))
-                state.F = np.vstack((state.F_active,
-                    state.F_inactive + state.V_active.shape[0]))
-                # We remove the duplicate vertices
-                state.V,_,_,state.F = remove_duplicate_vertices(
-                    state.V,faces=state.F,
-                    epsilon=np.sqrt(np.finfo(state.V.dtype).eps))
+                state.V, state.F = _merge_meshes(state.V_active, state.F_active, state.V_inactive, state.F_inactive)
+                
             else:
                 state.V, state.F = _remesh(state.V, state.F,
                     i=remesh_iterations, h=state.h, project=True)
@@ -1037,3 +1030,22 @@ def _sample_sdf(sdf,
         else:
             return U[:max_n,:]
 
+def _merge_meshes(V_active, F_active, V_inactive, F_inactive):
+    """ Combines the active and inactive mesh while making sure to not merge any *interior* active vertex with a boundary active vertex, avoiding the creation of a non-manifold mesh as shown in gh issue 100 """
+    bd_active = boundary_vertices(F_active) # boundary
+    interior_active = np.setdiff1d(np.arange(V_active.shape[0]), bd_active)
+    V_for_zipping = np.vstack((V_inactive, V_active[bd_active,:]))
+    
+    # now we will merge the boundary vertices of the active mesh with the inactive mesh
+    _, zipped_indices, zipped_indices_inverse = np.unique(np.round(V_for_zipping/np.sqrt(np.finfo(V_active.dtype).eps)),return_index=True,return_inverse=True,axis=0)
+    # add the interior vertices of the active mesh manually into the index list, making sure they are not merged with anything else:
+    unique_num = zipped_indices.shape[0] # number of unique vertices
+    zipped_indices = np.concatenate((zipped_indices, interior_active + V_inactive.shape[0]))
+    # inverse map update
+    zipped_indices_inverse = np.concatenate((zipped_indices_inverse, np.arange(interior_active.shape[0]) + unique_num))
+    # now use the index maps to get the final mesh
+    V = np.vstack((V_inactive, V_active))
+    F_for_zipping = np.vstack((F_inactive, F_active + V_inactive.shape[0]))
+    F = zipped_indices_inverse[F_for_zipping]
+    V = V[zipped_indices,:]
+    return V,F

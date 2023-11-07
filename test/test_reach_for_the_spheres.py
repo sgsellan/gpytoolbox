@@ -54,9 +54,23 @@ class TestReachForTheSpheres(unittest.TestCase):
             GV = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
             V0, F0 = gpy.icosphere(2)
             U,G = gpy.reach_for_the_spheres(GV, sdf, V0, F0, verbose=False, min_h = 0.5/n)
-
             sdf_rec = lambda x: gpy.signed_distance(x, U, G)[0]
             self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.02)
+
+    def test_segfault(self):
+        V,F = gpy.read_mesh("test/unit_tests_data/53159.stl")
+        # is mesh normalized? print corners
+        # print(np.min(V, axis=0))
+        # print(np.max(V, axis=0))
+        V = gpy.normalize_points(V)
+        j = 32
+        sdf = lambda x: gpy.signed_distance(x, V, F)[0]
+        gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1), np.linspace(-1.0, 1.0, j+1))
+        U = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+        V0, F0 = gpy.icosphere(2)
+        Vr,Fr = gpy.reach_for_the_spheres(U, sdf, V0, F0, min_h = .01, verbose = False)
+        # this should not segfault
+        gpy.write_mesh("test_last_converged.obj", Vr, Fr)
 
 if __name__ == '__main__':
     unittest.main()
