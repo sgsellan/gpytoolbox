@@ -16,12 +16,14 @@ int write_obj(
     const Eigen::MatrixXd& N,
     const Eigen::MatrixXi& Fn)
 {
-    const bool write_t = Ft.rows() > 0;
-    const bool write_n = Fn.rows() > 0;
-    if(write_t && (Ft.rows()!=F.rows() || Ft.cols()!=F.cols())) {
+    bool use_default_ft = Ft.rows() == 0 && UV.rows() == V.rows();
+    bool use_default_fn = Fn.rows() == 0 && N.rows() == V.rows();
+    const bool write_t = Ft.rows() > 0 || use_default_ft;
+    const bool write_n = Fn.rows() > 0 || use_default_fn;
+    if(write_t && !use_default_ft && (Ft.rows()!=F.rows() || Ft.cols()!=F.cols())) {
         return -11; //Dimensions of Ft wrong
     }
-    if(write_n && (Fn.rows()!=F.rows() || Fn.cols()!=F.cols())) {
+    if(write_n && !use_default_fn && (Fn.rows()!=F.rows() || Fn.cols()!=F.cols())) {
         return -12; //Dimensions of Fn wrong
     }
 
@@ -59,17 +61,25 @@ int write_obj(
     }
 
     //Write F
-    const auto write_F_element = [write_t, write_n, &stream, &F, &Ft, &Fn]
+    const auto write_F_element = [write_t, use_default_ft, write_n, use_default_fn, &stream, &F, &Ft, &Fn]
     (const int i, const int j) {
         stream << F(i,j) + 1;
         if(write_t || write_n) {
             stream << "/";
         }
         if(write_t) {
-            stream << Ft(i,j) + 1;
+            if(use_default_ft) {
+                stream << F(i,j) + 1;
+            } else {
+                stream << Ft(i,j) + 1;
+            }
         }
         if(write_n) {
-            stream << "/" << Fn(i,j) + 1;
+            if(use_default_fn) {
+                stream << "/" << F(i,j) + 1;
+            } else {
+                stream << "/" << Fn(i,j) + 1;
+            }
         }
     };
     for(int i=0; i<F.rows(); ++i) {
