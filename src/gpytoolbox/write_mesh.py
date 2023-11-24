@@ -137,12 +137,12 @@ def _write_obj_python(file,V,F,UV,Ft,N,Fn):
             for r in range(V.shape[0]):
                 write_row('v', V[r].astype(str))
         if UV is not None:
-            if Ft is None:
+            if Ft is None and V.shape[0] == UV.shape[0]:
                 Ft = F
             for r in range(UV.shape[0]):
                 write_row('vt', UV[r].astype(str))
         if N is not None:
-            if Fn is None:
+            if Fn is None and V.shape[0] == N.shape[0]:
                 Fn = F
             for r in range(N.shape[0]):
                 write_row('vn', N[r].astype(str))
