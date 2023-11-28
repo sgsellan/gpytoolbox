@@ -1,29 +1,53 @@
 from .context import gpytoolbox as gpy
 from .context import numpy as np
 from .context import unittest
+import filecmp
 
 class TestWriteMesh(unittest.TestCase):
-    def test_read_then_write(self):
+    def test_obj_read_then_write(self):
         meshes = ["bunny_oded.obj", "armadillo.obj", "armadillo_with_tex_and_normal.obj", "bunny.obj", "mountain.obj"]
+        writers = ["C++", "Python"]
         for mesh in meshes:
-            V_cpp,F_cpp,UV_cpp,Ft_cpp,N_cpp,Fn_cpp = \
-            gpy.read_mesh("test/unit_tests_data/" + mesh,
-                return_UV=True, return_N=True, reader='C++')
-            gpy.write_mesh("test/unit_tests_data/temp.obj",V_cpp,F_cpp,UV_cpp,Ft_cpp,N_cpp,Fn_cpp,fmt=None,writer='C++')
-            V_cpp_2,F_cpp_2,UV_cpp_2,Ft_cpp_2,N_cpp_2,Fn_cpp_2 = \
-            gpy.read_mesh("test/unit_tests_data/temp.obj",
-                return_UV=True, return_N=True, reader='C++')
+            for writer in writers:
+                # Try writing, then reading back.
+                V,F,UV,Ft,N,Fn = \
+                gpy.read_mesh("test/unit_tests_data/" + mesh,
+                    return_UV=True, return_N=True, reader='C++')
+                gpy.write_mesh("test/unit_tests_data/temp.obj",V,F,UV,Ft,N,Fn,fmt=None,writer=writer)
+                V_2,F_2,UV_2,Ft_2,N_2,Fn_2 = \
+                gpy.read_mesh("test/unit_tests_data/temp.obj",
+                    return_UV=True, return_N=True, reader='C++')
 
-            self.assertTrue(np.isclose(V_cpp_2,V_cpp).all)
-            self.assertTrue((F_cpp_2==F_cpp).all())
-            if UV_cpp_2 is not None:
-                self.assertTrue(np.isclose(UV_cpp_2,UV_cpp).all)
-            if Ft_cpp_2 is not None:
-                self.assertTrue((Ft_cpp_2==Ft_cpp).all())
-            if N_cpp_2 is not None:
-                self.assertTrue(np.isclose(N_cpp_2,N_cpp).all)
-            if Fn_cpp_2 is not None:
-                self.assertTrue((Fn_cpp_2==Fn_cpp).all())
+                self.assertTrue(np.isclose(V_2,V).all)
+                self.assertTrue((F_2==F).all())
+                if UV_2 is not None:
+                    self.assertTrue(np.isclose(UV_2,UV).all)
+                if Ft_2 is not None:
+                    self.assertTrue((Ft_2==Ft).all())
+                if N_2 is not None:
+                    self.assertTrue(np.isclose(N_2,N).all)
+                if Fn_2 is not None:
+                    self.assertTrue((Fn_2==Fn).all())
+
+    def test_obj_default_Ft_Fn(self):
+        meshes = ["cone.obj", "mountain.obj", "hemisphere.obj"]
+        writers = ["C++", "Python"]
+        for mesh in meshes:
+            for writer in writers:
+                V,F = gpy.read_mesh("test/unit_tests_data/" + mesh)
+                dummy_UV = V[:,:2]
+                dummy_N = gpy.per_vertex_normals(V,F)
+
+                gpy.write_mesh("test/unit_tests_data/temp.UV.N.0.obj",V,F,dummy_UV,F,dummy_N,F,writer=writer)
+                gpy.write_mesh("test/unit_tests_data/temp.UV.N.1.obj",V,F,UV=dummy_UV,N=dummy_N,writer=writer)
+                gpy.write_mesh("test/unit_tests_data/temp.UV.0.obj",V,F,UV=dummy_UV,Ft=F,writer=writer)
+                gpy.write_mesh("test/unit_tests_data/temp.UV.1.obj",V,F,UV=dummy_UV,writer=writer)
+                gpy.write_mesh("test/unit_tests_data/temp.N.0.obj",V,F,N=dummy_N,Fn=F,writer=writer)
+                gpy.write_mesh("test/unit_tests_data/temp.N.1.obj",V,F,N=dummy_N,writer=writer)
+
+                self.assertTrue(filecmp.cmp("test/unit_tests_data/temp.UV.N.0.obj", "test/unit_tests_data/temp.UV.N.1.obj", shallow=False))
+                self.assertTrue(filecmp.cmp("test/unit_tests_data/temp.UV.0.obj", "test/unit_tests_data/temp.UV.1.obj", shallow=False))
+                self.assertTrue(filecmp.cmp("test/unit_tests_data/temp.N.0.obj", "test/unit_tests_data/temp.N.1.obj", shallow=False))
 
     def test_stl_read_then_write(self):
         stl_meshes = ["sphere_binary.stl", "fox_ascii.stl"]
