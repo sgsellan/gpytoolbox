@@ -28,23 +28,29 @@ def write_mesh(file,
         vertex list of a triangle mesh
     F : (m,3) numpy int array
         face index list of a triangle mesh (into V)
-    UV : (n_uv,2) numpy array, optional (default: None)
+    UV : (n_uv,2) numpy array, optional (default None)
         vertex list for texture coordinates. Only supported for obj format.
-    Ft : (m,3) numpy int array, optional (default: None)
-        face index list for texture coordinates (into UV). Only supported for obj format.
-    N : (n_n,3) numpy array, optional (default: None)
-        vertex list for normal coordinates. Only supported for obj format.
-    Fn : (m,3) numpy int array, optional (default: None)
-        face index list for normal coordinates (into N). Only supported for obj format.
-    C : (n,4) or (m,4) numpy int array with values in [0,255], optional (default: None)
-        list of per-vertex or per-face colors. Only supported for ply format.
-    stl_binary : bool, optional (default: True)
+    Ft : (m,3) numpy int array, optional (default None)
+        face index list for texture coordinates (into UV).
+        If this is not provided, but UV is provided such that n_uv==n, the function will assume that Ft is F.
+        Only supported for obj format.
+    N : (n_n,3) numpy array, optional (default None)
+        vertex list for normal coordinates.
+        Only supported for obj format.
+    Fn : (m,3) numpy int array, optional (default None)
+        face index list for normal coordinates (into N).
+        If this is not provided, but N is provided such that n_n==n, the function will assume that Fn is F.
+        Only supported for obj format.
+    C : (n,4) or (m,4) numpy int array with values in [0,255], optional (default None)
+        list of per-vertex or per-face colors.
+        Only supported for ply format.
+    stl_binary : bool, optional (default True)
         whether to write the file in binary format (as opposed to ascii). Only supported for stl and ply format.
-    fmt : string, optional (default: None)
+    fmt : string, optional (default None)
         The file format of the mesh to write.
         If None, try to guess the format from the file extension.
         Supported formats: obj, stl
-    writer : string, optional (default: None)
+    writer : string, optional (default None)
         Which writer engine to use. None, 'C++' or 'Python'.
         If None, will use C++ if available, and else Python.
 
@@ -137,9 +143,13 @@ def _write_obj_python(file,V,F,UV,Ft,N,Fn):
             for r in range(V.shape[0]):
                 write_row('v', V[r].astype(str))
         if UV is not None:
+            if Ft is None and V.shape[0] == UV.shape[0]:
+                Ft = F
             for r in range(UV.shape[0]):
                 write_row('vt', UV[r].astype(str))
         if N is not None:
+            if Fn is None and V.shape[0] == N.shape[0]:
+                Fn = F
             for r in range(N.shape[0]):
                 write_row('vn', N[r].astype(str))
         assert F is not None
