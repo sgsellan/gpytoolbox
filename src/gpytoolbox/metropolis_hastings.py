@@ -3,8 +3,8 @@ import numpy as np
 def metropolis_hastings(unnorm_distr,
     next_sample,
     x0,
-    rng=np.random.default_rng(),
-    num_samples=100):
+    num_samples=100,
+    rng=np.random.default_rng()):
     """Randomly sample according to an unnormalized distribution.
 
     Given a function which is proportional to a probabilistic density and a strategy for generating candidate points, returns a set of samples which will asymptotically tend to being a sample a random sample of the unknown distribution.
@@ -17,10 +17,10 @@ def metropolis_hastings(unnorm_distr,
         Function returning a candidate next sample from the current
     x0 : numpy array
         Initial sample
-    rng : numpy rng, optional (default: new `np.random.default_rng()`)
-        which numpy random number generator to use
     num_samples : int
         Number of samples in output (this will be *more* than the total number of considered samples or evaluations of unnorm_distr)
+    rng : numpy rng, optional (default: new `np.random.default_rng()`)
+        which numpy random number generator to use
 
     Returns
     -------
