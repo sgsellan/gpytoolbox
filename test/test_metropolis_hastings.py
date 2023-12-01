@@ -7,7 +7,7 @@ from scipy.stats import multivariate_normal
 
 class TestMetropolisHastings(unittest.TestCase):
     def test_analytic_1d(self):
-        np.random.seed(0)
+        rng = np.random.default_rng(4352)
         # 1D test
         # Sample next point from a normal distribution
         def next_sample(x0):
@@ -18,7 +18,7 @@ class TestMetropolisHastings(unittest.TestCase):
         def unnorm_distr(x):
             return np.max((1-np.abs(x[0]),1e-8))
 
-        S, F = gpytoolbox.metropolis_hastings(unnorm_distr,next_sample,np.array([0.1]),1000000)
+        S, F = gpytoolbox.metropolis_hastings(unnorm_distr,next_sample,np.array([0.1]),1000000,rng)
         # This should look like an absolute value pyramid function
         hist, bin_edges = np.histogram(S,bins=np.linspace(-1,1,101), density=True)
         bin_centers = (bin_edges[0:100] + bin_edges[1:101])/2.
@@ -30,7 +30,7 @@ class TestMetropolisHastings(unittest.TestCase):
         # plt.show(block=False)
 
     def test_analytic_2d(self):
-        np.random.seed(0)
+        rng = np.random.default_rng(8312)
         # plt.pause(10)
         # plt.close(plot1)
         # 2D test
@@ -42,7 +42,7 @@ class TestMetropolisHastings(unittest.TestCase):
         def unnorm_distr(x):
             return 100*multivariate_normal.pdf(x,mean=np.array([0.0,0.0]),cov=np.array([[0.01,0.0],[0.0,0.01]]))
 
-        S, F = gpytoolbox.metropolis_hastings(unnorm_distr,next_sample,np.array([0.01,0.01]),500000)
+        S, F = gpytoolbox.metropolis_hastings(unnorm_distr,next_sample,np.array([0.01,0.01]),500000,rng)
 
         nbins = 40
         H, xedges, yedges = np.histogram2d(S[:,0], S[:,1], density=True, bins=nbins)
