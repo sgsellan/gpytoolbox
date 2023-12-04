@@ -33,9 +33,6 @@ class TestRotationMatrixFromVectors(unittest.TestCase):
             R = gpy.rotation_matrix_from_vectors(u, v)
             # check that they are aligned in 2D
             are_aligned = np.cross(v, R.dot(u))
-            print(R.dot(u))
-            print(v)
-            print(are_aligned)
             self.assertTrue(np.allclose(are_aligned, np.zeros(1), atol=1e-12))
             # normalize
             v = v/np.linalg.norm(v)
