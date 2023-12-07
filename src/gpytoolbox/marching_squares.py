@@ -180,6 +180,12 @@ def marching_squares(S,GV,nx,ny):
     # Convert list to numpy array
     verts = np.array(verts)
     edges = np.array(edge_list)
+
+    # if it's empty, no need to do anything else.
+    if verts.shape[0] == 0:
+        assert edges.shape[0] == 0
+        return verts, edges
+
     verts, SVI, SVJ, edges = remove_duplicate_vertices(verts,faces=edges,
         epsilon=np.sqrt(np.finfo(verts.dtype).eps))
 

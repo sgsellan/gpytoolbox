@@ -82,6 +82,15 @@ class TestMarchingSquares(unittest.TestCase):
         S2 = gpytoolbox.signed_distance(GV, verts, edge_list)[0]
         self.assertTrue(np.allclose(S1,S2,atol=1e-2))
 
+    def test_empty(self):
+        n = 250
+        gx, gy = np.meshgrid(np.linspace(-1.0, 1.0, n+1), np.linspace(-1.0, 1.0, n+1))
+        GV = np.vstack((gx.flatten(), gy.flatten())).T
+        S = np.ones((GV.shape[0],1))
+        # this used to cause a crash
+        verts, edge_list = gpytoolbox.marching_squares(S, GV, n+1, n+1)
+        self.assertTrue(verts.shape[0]==0)
+
 
 
 if __name__ == '__main__':
