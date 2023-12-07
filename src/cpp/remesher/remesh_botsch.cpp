@@ -11,9 +11,10 @@
 #include <igl/avg_edge_length.h>
 #include <iostream>
 
-void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature, bool project){
+void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature, bool project, Eigen::MatrixXd & VA){
     Eigen::MatrixXd V0;
     Eigen::MatrixXi F0;
+    Eigen::MatrixXd VA0;
 
     Eigen::VectorXd high,low,lambda;
     high = 1.4*target;
@@ -21,23 +22,31 @@ void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & ta
 
 	F0 = F;
 	V0 = V;
+	VA0 = VA;
     // Iterate the four steps
     for (int i = 0; i<iters; i++) {
-    	split_edges_until_bound(V,F,feature,high,low); // Split
-    	collapse_edges(V,F,feature,high,low); // Collapse
+    	split_edges_until_bound(V,F,feature,high,low,VA); // Split
+    	collapse_edges(V,F,feature,high,low,VA); // Collapse
     	equalize_valences(V,F,feature); // Flip
     	int n = V.rows();
     	lambda = Eigen::VectorXd::Constant(n,1.0);
 	if(!project){
 		V0 = V;
 		F0 = F;
+		VA0 = VA;
 	}
-	tangential_relaxation(V,F,feature,V0,F0,lambda); // Relax
+	tangential_relaxation(V,F,feature,V0,F0,lambda,VA,VA0); // Relax
     }
 }
 
+void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature, bool project){
+    Eigen::MatrixXd VA;
+	VA.resize(V.rows(), 1);
+	remesh_botsch(V,F,target,iters,feature,false,VA);
+}
+
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature){
-remesh_botsch(V,F,target,iters,feature,false);
+	remesh_botsch(V,F,target,iters,feature,false);
 }
 
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters){
@@ -76,10 +85,17 @@ void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double
 }
 
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double,int iters, Eigen::VectorXi feature, bool project){
+    Eigen::VectorXd target;
+    int n = V.rows();
+    target = Eigen::VectorXd::Constant(n,target_double);
+    remesh_botsch(V,F,target,iters,feature,project);
+}
+
+void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double,int iters, Eigen::VectorXi feature, bool project, Eigen::MatrixXd & VA){
 	Eigen::VectorXd target;
 	int n = V.rows();
 	target = Eigen::VectorXd::Constant(n,target_double);
-	remesh_botsch(V,F,target,iters,feature,project);
+	remesh_botsch(V,F,target,iters,feature,project,VA);
 }
 
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double){
