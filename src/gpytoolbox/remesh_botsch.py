@@ -68,7 +68,7 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
 
     if vertex_attrs is None:
         return_va = False
-        vertex_attrs = np.zeros((V.size(0), 1), dtype=np.float64)
+        vertex_attrs = np.zeros((V.shape[0], 1), dtype=np.float64)
     else:
         return_va = True
 

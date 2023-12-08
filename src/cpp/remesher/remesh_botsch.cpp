@@ -42,7 +42,7 @@ void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & ta
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature, bool project){
     Eigen::MatrixXd VA;
 	VA.resize(V.rows(), 1);
-	remesh_botsch(V,F,target,iters,feature,false,VA);
+	remesh_botsch(V,F,target,iters,feature,project,VA);
 }
 
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature){
