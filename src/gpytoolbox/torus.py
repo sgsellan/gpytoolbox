@@ -77,8 +77,8 @@ def torus(nR,
     assert R>0.
     assert r>0.
 
-    φ,θ = np.meshgrid(np.linspace(0., 2.*np.pi, nr, endpoint=False),
-        np.linspace(0., 2.*np.pi, nR, endpoint=False))
+    φ,θ = np.meshgrid(np.linspace(0., 2.*np.pi, nR, endpoint=False),
+        np.linspace(0., 2.*np.pi, nr, endpoint=False))
     x = (R + r*np.cos(θ)) * np.cos(φ)
     y = (R + r*np.cos(θ)) * np.sin(φ)
     z = r * np.sin(θ)
@@ -86,7 +86,7 @@ def torus(nR,
 
     # Indexing algorithm inspired by gptoolbox's create_regular_grid
     # https://github.com/alecjacobson/gptoolbox/blob/master/mesh/create_regular_grid.m
-    inds = np.reshape(np.arange(nr*nR), (nR,nr))
+    inds = np.reshape(np.arange(nr*nR), (nr,nR))
     inds = np.concatenate((inds, inds[:,0][:,None]), axis=-1)
     inds = np.concatenate((inds, inds[0,:][None,:]), axis=0)
     i0 = inds[:-1,:-1].ravel()
