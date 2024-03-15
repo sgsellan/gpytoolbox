@@ -31,7 +31,7 @@ def dec_h2_intrinsic(l_sq,F):
     assert F.shape[1] == 3
 
     A = 0.5 * doublearea_intrinsic(l_sq,F)
-    h2 = sp.sparse.diags(A, shape=(F.shape[0],F.shape[0]), format='csc')
+    h2 = sp.sparse.diags(A, shape=(F.shape[0],F.shape[0]), format='csr')
 
     return h2
 
@@ -65,6 +65,6 @@ def dec_h2inv_intrinsic(l_sq,F):
     assert F.shape[1] == 3
 
     A = 0.5 * doublearea_intrinsic(l_sq,F)
-    h2inv = sp.sparse.diags(1./A, shape=(F.shape[0],F.shape[0]), format='csc')
+    h2inv = sp.sparse.diags(1./A, shape=(F.shape[0],F.shape[0]), format='csr')
 
     return h2inv

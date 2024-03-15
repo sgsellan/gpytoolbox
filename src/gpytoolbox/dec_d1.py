@@ -48,6 +48,6 @@ def dec_d1(F,E_to_he=None):
         np.arange(E_to_he.shape[0])[se]), axis=0)
     k = np.concatenate((np.ones(E_to_he.shape[0], dtype=float),
         -np.ones(np.sum(se), dtype=float)), axis=0)
-    d1 = sp.sparse.csc_matrix((k, (i,j)), shape=(F.shape[0],E_to_he.shape[0]))
+    d1 = sp.sparse.csr_matrix((k, (i,j)), shape=(F.shape[0],E_to_he.shape[0]))
 
     return d1

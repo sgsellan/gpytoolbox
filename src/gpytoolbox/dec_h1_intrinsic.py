@@ -50,7 +50,7 @@ def dec_h1_intrinsic(l_sq,F,E_to_he=None):
     C = cotangent_weights_intrinsic(l_sq,F)
     diag = C[E_to_he[:,0,0],E_to_he[:,0,1]]
     diag[se] += C[E_to_he[se,1,0],E_to_he[se,1,1]]
-    h1 = sp.sparse.diags(diag, format='csc',
+    h1 = sp.sparse.diags(diag, format='csr',
         shape=(E_to_he.shape[0],E_to_he.shape[0]))
 
     return h1
@@ -103,7 +103,7 @@ def dec_h1inv_intrinsic(l_sq,F,E_to_he=None):
     C = cotangent_weights_intrinsic(l_sq,F)
     diag = C[E_to_he[:,0,0],E_to_he[:,0,1]]
     diag[se] += C[E_to_he[se,1,0],E_to_he[se,1,1]]
-    h1inv = sp.sparse.diags(1. / diag, format='csc',
+    h1inv = sp.sparse.diags(1. / diag, format='csr',
         shape=(E_to_he.shape[0],E_to_he.shape[0]))
 
     return h1inv

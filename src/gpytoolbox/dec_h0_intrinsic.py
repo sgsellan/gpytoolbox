@@ -40,7 +40,7 @@ def dec_h0_intrinsic(l_sq,F,n=None):
     i = np.concatenate((F[:,0],F[:,1],F[:,2]), axis=0)
     j = np.concatenate((F[:,0],F[:,1],F[:,2]), axis=0)
     k = np.concatenate((A3,A3,A3), axis=0)
-    h0 = sp.sparse.csc_matrix((k, (i,j)), shape=(n,n))
+    h0 = sp.sparse.csr_matrix((k, (i,j)), shape=(n,n))
 
     return h0
 
@@ -83,6 +83,6 @@ def dec_h0inv_intrinsic(l_sq,F,n=None):
     i = np.concatenate((F[:,0],F[:,1],F[:,2]), axis=0)
     j = np.concatenate((F[:,0],F[:,1],F[:,2]), axis=0)
     k = 1. / np.concatenate((A3,A3,A3), axis=0)
-    h0inv = sp.sparse.csc_matrix((k, (i,j)), shape=(n,n))
+    h0inv = sp.sparse.csr_matrix((k, (i,j)), shape=(n,n))
 
     return h0inv
