@@ -24,7 +24,7 @@ def dec_d0(F,E=None,n=None):
 
     Returns
     -------
-    d1 : (e,n) scipy csr_matrix
+    d0 : (e,n) scipy csr_matrix
         DEC operator d0
 
     Examples
