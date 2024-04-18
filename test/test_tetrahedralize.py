@@ -4,9 +4,13 @@ from .context import unittest
 from scipy.stats import norm
 import os
 
-class TestTriangulate(unittest.TestCase):
+class TestTetrahedralize(unittest.TestCase):
     def test_sphere(self):
         V,F = gpy.icosphere(3)
+
+        W0,T,TF = gpy.copyleft.tetrahedralize(V)
+        self.assertTrue((np.linalg.norm(W0, axis=-1)<1.+1e-6).all())
+        self.assertTrue(W0.shape[0]>=V.shape[0])
 
         W1,T,TF = gpy.copyleft.tetrahedralize(V,F)
         self.assertTrue((np.linalg.norm(W1, axis=-1)<1.+1e-6).all())
@@ -33,6 +37,10 @@ class TestTriangulate(unittest.TestCase):
         for mesh in meshes:
             V,F = gpy.read_mesh("test/unit_tests_data/" + mesh)
             V = gpy.normalize_points(V)
+
+            W0,T,TF = gpy.copyleft.tetrahedralize(V)
+            self.assertTrue((np.abs(W0)<0.5+1e-6).all())
+            self.assertTrue(W0.shape[0]>=V.shape[0])
 
             W1,T,TF = gpy.copyleft.tetrahedralize(V,F)
             self.assertTrue((np.abs(W1)<0.5+1e-6).all())

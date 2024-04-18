@@ -23,16 +23,17 @@ void binding_triangulate(py::module& m) {
             for(int i=0; i<V.rows(); ++i) {
                 vertices.push_back(CDT::V2d<double>::make(V(i,0), V(i,1)));
             }
-            CDT::Triangulation<double> cdt;
-            cdt.insertVertices(vertices);
             std::vector<CDT::Edge> edges;
             if(E.size()>0) {
                 for(int i=0; i<E.rows(); ++i) {
                     edges.emplace_back(E(i,0), E(i,1));
                 }
-                cdt.conformToEdges(edges);
             }
+            CDT::RemoveDuplicatesAndRemapEdges(vertices,edges);
+            CDT::Triangulation<double> cdt;
+            cdt.insertVertices(vertices);
             if(E.size()>0) {
+                cdt.conformToEdges(edges);
                 cdt.eraseOuterTrianglesAndHoles();
             } else {
                 cdt.eraseSuperTriangle();
