@@ -50,6 +50,11 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
     
     Notes
     -----
+    If you are looking for an efficient implementation of screened Poisson
+    surface reconstruction, please use the function `point_cloud_to_mesh` - this
+    function is a highly customizable implementation of PSR that is slower and
+    operates on a uniform grid.
+
     See [this jupyter notebook](https://colab.research.google.com/drive/1DOXbDmqzIygxoQ6LeX0Ewq7HP4201mtr?usp=sharing) for a full tutorial on how to use this function.
 
     See also

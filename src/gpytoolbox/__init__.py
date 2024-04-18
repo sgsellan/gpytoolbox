@@ -118,3 +118,4 @@ from .adjacency_matrix import adjacency_matrix
 from .non_manifold_edges import non_manifold_edges
 from .connected_components import connected_components
 from .rotation_matrix_from_vectors import rotation_matrix_from_vectors
+from .point_cloud_to_mesh import point_cloud_to_mesh

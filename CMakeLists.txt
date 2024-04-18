@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Bindings
 	DESCRIPTION
-		"Python libigl bindings"
+		"Python bindings"
 )
 
 set(CMAKE_CXX_STANDARD 17)
@@ -23,9 +23,19 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
 endif()
 
 
+# Include libigl
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
+
+# Include PoissonRecon
+include(PoissonRecon)
+add_library(PoissonRecon INTERFACE)
+target_include_directories(PoissonRecon INTERFACE "${CMAKE_BINARY_DIR}/_deps/poissonrecon-src/Src/")
+
+# List of all libraries to link
+set(LIBRARIES_TO_LINK igl::core igl::embree PoissonRecon)
+set(COPYLEFT_LIBRARIES_TO_LINK igl::core igl_copyleft::cgal)
 
 add_library(cpytoolbox
 	STATIC
@@ -36,6 +46,7 @@ add_library(cpytoolbox
 	src/cpp/in_element_aabb.h
 	src/cpp/read_obj.h
 	src/cpp/write_obj.h
+	src/cpp/point_cloud_to_mesh.h
 	src/cpp/remesher/collapse_edges.h
 	src/cpp/remesher/equalize_valences.h
 	src/cpp/remesher/remesh_botsch.h
@@ -50,6 +61,7 @@ add_library(cpytoolbox
 	src/cpp/in_element_aabb.cpp
 	src/cpp/read_obj.cpp
 	src/cpp/write_obj.cpp
+	src/cpp/point_cloud_to_mesh.cpp
 	src/cpp/remesher/collapse_edges.cpp
 	src/cpp/remesher/equalize_valences.cpp
 	src/cpp/remesher/remesh_botsch.cpp
@@ -81,9 +93,10 @@ add_library(cpytoolbox
 	src/cpp/swept_volume/swept_volume.h
 	)
 
-# target_link_libraries(cpytoolbox igl::core igl_copyleft::cgal igl::embree)
-target_link_libraries(cpytoolbox igl::core igl::embree )
-target_link_libraries(cpytoolbox_copyleft igl::core igl_copyleft::cgal)
+target_link_libraries(cpytoolbox ${LIBRARIES_TO_LINK})
+set(LIBRARIES_TO_LINK cpytoolbox ${LIBRARIES_TO_LINK})
+target_link_libraries(cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
+set(COPYLEFT_LIBRARIES_TO_LINK cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
 
 # Otman's python bindings using pybind11
 add_subdirectory(./ext/pybind11/)
@@ -106,6 +119,7 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_read_ply.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_ply.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_curved_hessian_intrinsic.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_point_cloud_to_mesh.cpp"
 )
 
 pybind11_add_module(gpytoolbox_bindings_copyleft
@@ -114,8 +128,8 @@ pybind11_add_module(gpytoolbox_bindings_copyleft
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_booleans.cpp"
 )
 
-target_link_libraries(gpytoolbox_bindings PUBLIC cpytoolbox igl::core)
-target_link_libraries(gpytoolbox_bindings_copyleft PUBLIC cpytoolbox_copyleft igl::core igl_copyleft::cgal)
+target_link_libraries(gpytoolbox_bindings PUBLIC ${LIBRARIES_TO_LINK})
+target_link_libraries(gpytoolbox_bindings_copyleft PUBLIC ${COPYLEFT_LIBRARIES_TO_LINK})
 
 target_include_directories(gpytoolbox_bindings PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/")
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
