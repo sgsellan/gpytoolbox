@@ -105,8 +105,8 @@ not you individually).
 ## License
 
 Gpytoolbox's is released under an MIT license ([see details](/LICENSE.MIT)),
-except for files in the `gpytoolbox.copyleft` module, which are under a GPL one
-([see details](/LICENSE.GPL)). Functions in the copyleft module must be imported
+except for files in the `gpytoolbox.copyleft` module, which are under a GPL/AGPL one
+(see [here](/LICENSE.GPL) and [here](/LICENSE.AGPL)). Functions in the copyleft module must be imported
 explicitly; this way, if you import only the main Gpytoolbox module
 ```python
 import gpytoolbox
@@ -120,7 +120,7 @@ import any functionality from `gpytoolbox.copyleft`; e.g.,
 ```python
 from gpytoolbox.copyleft import mesh_boolean
 ```
-you will be bound by the more restrictive GPL license.
+you will be bound by the more restrictive GPL/AGPL license.
 
 ## Attribution
 

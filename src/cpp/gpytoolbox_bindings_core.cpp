@@ -27,6 +27,7 @@ void binding_upper_envelope(py::module& m);
 void binding_read_ply(py::module& m);
 void binding_write_ply(py::module& m);
 void binding_curved_hessian_intrinsic(py::module& m);
+void binding_triangulate(py::module& m);
 
 PYBIND11_MODULE(gpytoolbox_bindings, m) {
 
@@ -48,6 +49,7 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_read_ply(m);
     binding_write_ply(m);
     binding_curved_hessian_intrinsic(m);
+    binding_triangulate(m);
 
     m.def("help", [&]() {printf("hi"); });
 }

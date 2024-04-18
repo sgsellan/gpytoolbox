@@ -39,6 +39,7 @@ def doublearea_intrinsic(l_sq,F):
     # Using Kahan's formula
     # https://people.eecs.berkeley.edu/~wkahan/Triangle.pdf
     a,b,c = l[:,0], l[:,1], l[:,2]
-    dblA = 0.5 * np.sqrt((a+(b+c)) * (c-(a-b)) * (c+(a-b)) * (a+(b-c)))
+    arg = (a+(b+c)) * (c-(a-b)) * (c+(a-b)) * (a+(b-c))
+    dblA = 0.5 * np.sqrt(np.maximum(arg, 0.))
 
     return dblA

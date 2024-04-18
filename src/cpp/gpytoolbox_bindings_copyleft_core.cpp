@@ -12,6 +12,7 @@ namespace py = pybind11;
 //forward declare all bindings
 void binding_swept_volume(py::module& m);
 void binding_booleans(py::module& m);
+void binding_tetrahedralize(py::module& m);
 
 
 PYBIND11_MODULE(gpytoolbox_bindings_copyleft, m) {
@@ -19,6 +20,7 @@ PYBIND11_MODULE(gpytoolbox_bindings_copyleft, m) {
     /// call all bindings declared above  
     binding_swept_volume(m);
     binding_booleans(m);
+    binding_tetrahedralize(m);
 
     m.def("help", [&]() {printf("hi"); });
 }

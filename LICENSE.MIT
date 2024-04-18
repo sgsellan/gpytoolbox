@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2022 Silvia Sellán and Oded Stein
+Copyright (c) 2024 Silvia Sellán and Oded Stein
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,3 +28,12 @@ This software contains the ColorBrewer color maps by Cynthia Brewer
 (Pennsylvania State University), released under the Apache 2.0 license
 (http://www.personal.psu.edu/cab38/ColorBrewer/ColorBrewer_updates.html),
 and modifications by AxisMaps (https://colorbrewer2.org)
+
+========================
+
+This software includes code from libigl, released under MPL2 (https://github.com/libigl/libigl/blob/main/LICENSE.MPL2)
+
+========================
+
+This software includes code from CDT, released under MPL2 (https://github.com/artem-ogre/CDT/blob/master/LICENSE), and an active pull request by Islam0mar (https://github.com/Islam0mar/CDT/tree/ruppert-delaunay-refinement)
+
