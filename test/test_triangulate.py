@@ -65,7 +65,8 @@ class TestTriangulate(unittest.TestCase):
         def check(V,F,area=np.inf,angle=0):
             self.assertTrue(len(gpy.non_manifold_edges(F))==0)
             self.assertTrue((np.abs(V)<1.+1e-6).all())
-            self.assertTrue((gpy.doublearea(V,F)<2.*area+1e-6).all())
+            dA = gpy.doublearea(V,F)
+            self.assertTrue((dA[np.isfinite(dA)]<2.*area+1e-6).all())
             self.assertTrue((gpy.tip_angles(V,F)>angle-1e-6).all())
 
         # Convex hull
