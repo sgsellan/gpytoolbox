@@ -30,7 +30,7 @@ class TestPointCloudToMesh(unittest.TestCase):
             for mesh in meshes:
                 V0,F0 = gpy.read_mesh("test/unit_tests_data/" + mesh)
                 V0 = gpy.normalize_points(V0)
-                P,I,u = gpy.random_points_on_mesh(V0, F0, 6*V0.shape[0], rng=rng,
+                P,I,u = gpy.random_points_on_mesh(V0, F0, 20*V0.shape[0], rng=rng,
                     return_indices=True)
                 N = gpy.per_face_normals(V0,F0)[I,:]
 
@@ -39,6 +39,7 @@ class TestPointCloudToMesh(unittest.TestCase):
                     psr_outer_boundary_type=bdry_type)
 
                 h = gpy.approximate_hausdorff_distance(V0,F0,V,F)
+                print(h)
                 self.assertTrue(h<0.01)
 
 if __name__ == '__main__':
