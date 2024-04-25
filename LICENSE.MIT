@@ -31,5 +31,5 @@ and modifications by AxisMaps (https://colorbrewer2.org)
 
 ========================
 
-This software contains code written by mkazhdan for PoissonRecon, also released
-undedr the MIT license (see https://github.com/mkazhdan/PoissonRecon/blob/master/LICENSE)
+This software contains code written by Michael Kazhdan (Johns Hopkins University) for PoissonRecon, also released
+under the MIT license (see https://github.com/mkazhdan/PoissonRecon/blob/master/LICENSE)
