@@ -20,7 +20,7 @@ jobs:
         id: installpython
         name: Install Python
         with:
-          python-version: '3.7'
+          python-version: '3.9'
 
       - name: Install dependencies
         shell: bash -l {0}
