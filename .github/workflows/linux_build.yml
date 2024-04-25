@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-python@v2
         name: Install Python
         with:
-          python-version: '3.7'
+          python-version: '3.9'
           # sudo apt-get update
           # sudo apt-get upgrade 
           # sudo apt-get purge grub\*
