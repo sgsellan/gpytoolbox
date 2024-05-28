@@ -3,9 +3,10 @@ import scipy as sp
 from .halfedge_edge_map import halfedge_edge_map
 from .cotangent_weights_intrinsic import cotangent_weights_intrinsic
 
-def dec_h1_intrinsic(l_sq,F,E_to_he=None):
-    """Builds the DEC 1-Hodge-star operator as described, for example, in Crane
-    et al. 2013. "Digital Geometry Processing with Discrete Exterior Calculus".
+def dec_h1inv_intrinsic(l_sq,F,E_to_he=None):
+    """Builds the inverse DEC 1-Hodge-star operator as described, for example,
+    in Crane et al. 2013. "Digital Geometry Processing with Discrete Exterior
+    Calculus".
 
     The edge labeling in E_to_he follows the convention from Gpytoolbox's
     `halfedge_edge_map`.
@@ -26,15 +27,15 @@ def dec_h1_intrinsic(l_sq,F,E_to_he=None):
 
     Returns
     -------
-    h1 : (e,e) scipy csr_matrix
-        DEC operator h1
+    h1inv : (e,e) scipy csr_matrix
+        inverse of DEC operator h1
 
     Examples
     --------
     ```python
     # Mesh in V,F
     l_sq = gpy.halfedge_lengths_squared(V,F)
-    h1 = gpy.dec_h1_intrinsic(l_sq,F)
+    h1inv = gpy.dec_h1inv_intrinsic(l_sq,F)
     ```
     
     """
@@ -50,8 +51,7 @@ def dec_h1_intrinsic(l_sq,F,E_to_he=None):
     C = cotangent_weights_intrinsic(l_sq,F)
     diag = C[E_to_he[:,0,0],E_to_he[:,0,1]]
     diag[se] += C[E_to_he[se,1,0],E_to_he[se,1,1]]
-    h1 = sp.sparse.diags(diag, format='csr',
+    h1inv = sp.sparse.diags(np.nan_to_num(1. / diag), format='csr',
         shape=(E_to_he.shape[0],E_to_he.shape[0]))
 
-    return h1
-
+    return h1inv
