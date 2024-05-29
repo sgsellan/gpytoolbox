@@ -28,6 +28,10 @@ void binding_read_ply(py::module& m);
 void binding_write_ply(py::module& m);
 void binding_curved_hessian_intrinsic(py::module& m);
 void binding_point_cloud_to_mesh(py::module& m);
+void binding_outside_points_from_rasterization(py::module& m);
+void binding_outside_points_from_rejection_sampling(py::module& m);
+void binding_locally_make_feasible(py::module& m);
+void binding_fine_tune_point_cloud_iter(py::module& m);
 
 PYBIND11_MODULE(gpytoolbox_bindings, m) {
 
@@ -50,6 +54,9 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_write_ply(m);
     binding_curved_hessian_intrinsic(m);
     binding_point_cloud_to_mesh(m);
+    binding_outside_points_from_rasterization(m);
+    binding_locally_make_feasible(m);
+    binding_fine_tune_point_cloud_iter(m);
 
     m.def("help", [&]() {printf("hi"); });
 }

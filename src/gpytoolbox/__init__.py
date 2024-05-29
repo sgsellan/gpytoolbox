@@ -119,3 +119,5 @@ from .non_manifold_edges import non_manifold_edges
 from .connected_components import connected_components
 from .rotation_matrix_from_vectors import rotation_matrix_from_vectors
 from .point_cloud_to_mesh import point_cloud_to_mesh
+from .reach_for_the_arcs import reach_for_the_arcs
+

@@ -33,3 +33,17 @@ and modifications by AxisMaps (https://colorbrewer2.org)
 
 This software contains code written by Michael Kazhdan (Johns Hopkins University) for PoissonRecon, also released
 under the MIT license (see https://github.com/mkazhdan/PoissonRecon/blob/master/LICENSE)
+
+========================
+
+This software includes, during its compilation step, MIT-Licensed code from PoissonRecon (github.com/mkazhdan/PoissonRecon).
+
+========================
+
+This software includes, during its compilation step, BSD2-Licensed code from nanoflann (github.com/jlblancoc/nanoflann).
+
+========================
+
+This software includes, during its compilation step, MIT-Licensed code from https://github.com/eliemichel/WebGPU-Cpp and https://github.com/eliemichel/LearnWebGPU-Code by Elie Michel
+This repository contains a code snippet from https://stackoverflow.com/a/76726123
+
