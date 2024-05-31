@@ -1,5 +1,6 @@
 #include "outside_points_from_rasterization.h"
 
+#include <numeric>
 #include <random>
 #include <iostream>
 #include <algorithm>
