@@ -1,5 +1,7 @@
 #include "outside_points_from_rasterization.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <numeric>
 #include <random>
 #include <iostream>

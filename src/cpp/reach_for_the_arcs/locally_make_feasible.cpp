@@ -1,5 +1,7 @@
 #include "locally_make_feasible.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <numeric>
 #include <random>
 #include <iostream>

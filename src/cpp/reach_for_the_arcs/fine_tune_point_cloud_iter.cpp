@@ -1,5 +1,7 @@
 #include "fine_tune_point_cloud_iter.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <numeric>
 #include <random>
 #include <iostream>
