@@ -4,6 +4,7 @@
 #include <iostream>
 #include <queue>
 #include <random>
+#include <numeric>
 
 // Helper functions
 template<int dim>
