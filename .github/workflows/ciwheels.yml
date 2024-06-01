@@ -47,7 +47,8 @@ jobs:
 
     env:
       CIBW_BUILD_VERBOSITY: 3
-      CIBW_BEFORE_BUILD_LINUX: "yum install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel"
+      # CIBW_BEFORE_BUILD_LINUX: "yum install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel"
+      CIBW_BEFORE_BUILD_LINUX: "dnf install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel"
       # CIBW_BEFORE_BUILD_LINUX: "apt-get update && apt-get install -y libxrandr2 libxrandr-dev libxinerama1 libxinerama-dev libxcursor1 libxcursor-dev libxi6 libxi-dev"
       CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux_2_24_x86_64:latest
       # CIBW_MANYLINUX_X86_64_IMAGE: "quay.io/pypa/manylinux_2_24_x86_64:latest"
