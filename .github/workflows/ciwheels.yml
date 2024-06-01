@@ -80,7 +80,7 @@ jobs:
       # CIBW_TEST_COMMAND_LINUX: "python -m pip install tetgen && cd {project} && python -m unittest -v"
       # CIBW_TEST_COMMAND: "python -m pip install tetgen && python -m unittest -v"
       # CIBW_BEFORE_BUILD_LINUX : "yum remove -y cmake && python -m pip install\ cmake && yum -y install gmp-devel\ mpfr-devel && python -m pip install numpy"
-      CIBW_BEFORE_BUILD_LINUX : "yum install -y libXrandr libXrandr-devel libXinerama libXinerama-devel"
+      CIBW_BEFORE_BUILD_LINUX : "yum install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel"
       CIBW_BUILD: "${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}"
       # CIBW_TEST_SKIP: "*-macosx_arm64"
       CIBW_ENVIRONMENT: "MAX_JOBS=2"
