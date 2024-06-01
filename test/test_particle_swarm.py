@@ -68,8 +68,8 @@ class TestParticleSwarm(unittest.TestCase):
                 return -(1 + np.cos(12*np.sqrt(np.sum(x**2))))/(0.5*np.sum(x**2) + 2)
             lb = np.array([-5,-5])
             ub = np.array([5,5])
-            x,f = gpy.particle_swarm(dropwave_function,lb,ub,verbose=True,max_iter=100,topology='full')
-            xring,fring = gpy.particle_swarm(dropwave_function,lb,ub,verbose=True,max_iter=100,topology='ring')
+            x,f = gpy.particle_swarm(dropwave_function,lb,ub,verbose=False,max_iter=100,topology='full')
+            xring,fring = gpy.particle_swarm(dropwave_function,lb,ub,verbose=False,max_iter=100,topology='ring')
             # print(x)
             self.assertTrue(np.isclose(x,random_center,atol=1e-3).all())
 

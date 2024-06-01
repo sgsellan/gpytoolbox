@@ -176,8 +176,8 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
             # print(tri_ind)
             _ = traverse_aabbtree(C,W,CH,tri_ind,split_dir,traverse_fun,add_to_queue=add_to_queue_fun)
             # print(t.num_traversal)
-            indices[j] = t.current_best_element
-            squared_distances[j] = t.current_best_guess
+            indices[j] = np.squeeze(t.current_best_element)
+            squared_distances[j] = np.squeeze(t.current_best_guess)
             lmbs[j,:] = t.current_best_lmb
     else:
         # Loop over every element

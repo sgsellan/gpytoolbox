@@ -39,7 +39,7 @@ def particle_swarm(fun,lb,ub,n_particles=100,max_iter=100,momentum=0.9,phi=0.1,v
         f = fun(xi)
         # print(xi)
         best_xi[i,:] = xi.copy()
-        best_fi[i] = f.copy()
+        best_fi[i] = np.squeeze(f.copy())
         # if verbose:
             # print("Particle %d: f = %f" % (i,f))
         if f < current_best_f:
@@ -77,7 +77,7 @@ def particle_swarm(fun,lb,ub,n_particles=100,max_iter=100,momentum=0.9,phi=0.1,v
             # Update best position
             if f < best_fi[i]:
                 best_xi[i,:] = x[i,:].copy()
-                best_fi[i] = f.copy()
+                best_fi[i] = np.squeeze(f.copy())
                 if f < current_best_f:
                     current_best_x = x[i,:].copy()
                     current_best_f = f.copy()
