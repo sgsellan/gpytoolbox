@@ -58,8 +58,8 @@ jobs:
       CIBW_BEFORE_BUILD_LINUX : "yum install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel"
       # Build using the latest manylinux2014 release, instead of the cibuildwheel
       # pinned version
-      CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64:latest
-      CIBW_MANYLINUX_I686_IMAGE: quay.io/pypa/manylinux2014_i686:latest
+      CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2010_x86_64:latest
+      CIBW_MANYLINUX_I686_IMAGE: quay.io/pypa/manylinux2010_i686:latest
       CIBW_BUILD: "${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}"
       # CIBW_TEST_SKIP: "*-macosx_arm64"
       CIBW_ENVIRONMENT: "MAX_JOBS=2"
