@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cpversion: ["cp36", "cp37", "cp38", "cp39", "cp310", "cp311", "cp312"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
         os: 
           - runs-on: ubuntu-latest
             cibw-arch: manylinux_x86_64
@@ -47,17 +47,17 @@ jobs:
             cibw-platform: win_amd64
         exclude:
           - os: { runs-on: macos-latest, cibw-arch: macosx_arm64 }
-            cpversion: "cp36"
+            python-version: "3.6"
           - os: { runs-on: macos-latest, cibw-arch: macosx_arm64 }
-            cpversion: "cp37"
+            python-version: "3.7"
 
-    name: Build wheels ${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}
+    name: Build wheels ${{ matrix.python-version }}-${{ matrix.os.cibw-arch }}
     runs-on: ${{ matrix.os.runs-on }}
 
     env:
       CIBW_BUILD_VERBOSITY: 3
       CIBW_BEFORE_BUILD_LINUX: "yum install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel"
-      CIBW_BUILD: "${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}"
+      CIBW_BUILD: "cp${{ matrix.python-version }}-${{ matrix.os.cibw-arch }}"
       CIBW_ENVIRONMENT: "MAX_JOBS=2"
       CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
       CIBW_ENVIRONMENT_MACOS: "CMAKE_OSX_ARCHITECTURES='${{ matrix.os.cibw-arch == 'macosx_x86_64' && 'x86_64' || matrix.os.cibw-arch == 'macosx_arm64' && 'arm64' || matrix.os.cibw-arch == 'macosx_universal2' && 'arm64;x86_64' || '' }}'"
@@ -70,9 +70,9 @@ jobs:
           submodules: 'recursive'
       
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.cpversion }}
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
