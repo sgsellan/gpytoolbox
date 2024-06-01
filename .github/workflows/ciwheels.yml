@@ -79,9 +79,18 @@ jobs:
         with:
           submodules: 'recursive'
       
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.17.0
+      # - name: Build wheels
+      #   uses: pypa/cibuildwheel@v2.17.0
 
+      - name: Build wheels on Linux
+        if: runner.os == 'Linux'
+        run: |
+          docker run --rm -v `pwd`:/project quay.io/pypa/manylinux2014_x86_64 /bin/bash -c \
+          "cd /project && cibuildwheel --output-dir wheelhouse"
+
+      - name: Build wheels on non-Linux
+        if: runner.os != 'Linux'
+        run: cibuildwheel --output-dir wheelhouse
 
       # Upload binaries to github
       - uses: actions/upload-artifact@v3
