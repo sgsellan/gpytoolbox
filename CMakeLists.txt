@@ -52,15 +52,6 @@ endif()
 set(LIBRARIES_TO_LINK igl::core igl::embree nanoflann PoissonRecon ${GL_LIBS})
 set(COPYLEFT_LIBRARIES_TO_LINK igl::core igl_copyleft::cgal)
 
-# Include PoissonRecon
-include(PoissonRecon)
-add_library(PoissonRecon INTERFACE)
-target_include_directories(PoissonRecon INTERFACE "${CMAKE_BINARY_DIR}/_deps/poissonrecon-src/Src/")
-
-# List of all libraries to link
-set(LIBRARIES_TO_LINK igl::core igl::embree PoissonRecon)
-set(COPYLEFT_LIBRARIES_TO_LINK igl::core igl_copyleft::cgal)
-
 add_library(cpytoolbox
 	STATIC
 	# SHARED
