@@ -23,6 +23,18 @@ class TestDoubleareaIntrinsic(unittest.TestCase):
         A = gpy.doublearea_intrinsic(l_sq,f)
         self.assertTrue(np.isclose(A, 2.*np.full(f.shape[0],np.sqrt(3.)/4. * c)).all())
 
+    def test_very_tiny_triangle(self):
+        c = np.random.default_rng().random() + 0.1
+
+        l_sq = c * np.array([[0.0000001,0.0000001,1.]])
+        f = np.array([[0,1,2]])
+
+
+        # this returns NaN as of v0.2.0
+        A = gpy.doublearea_intrinsic(l_sq,f)
+        # it shouldn't anymore
+        self.assertTrue(np.isnan(A[0]) == False)
+
         
 
 

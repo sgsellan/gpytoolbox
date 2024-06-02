@@ -663,7 +663,12 @@ def reach_for_the_spheres_iteration(state,
         state.V = sp.sparse.linalg.spsolve(Q,b)
 
     # catching flow singularities so we fail gracefully
-    if np.any((np.isnan(state.V))):
+    if np.any((np.isnan(state.V))) or np.any(doublearea(state.V, state.F)==0): 
+        print(A)
+        print(R)
+        print(b)
+        print(state.V)
+        
         if verbose:
             print("we found a flow singularity. Returning the last converged solution.")
         state.V = state.V_last_converged.copy()
