@@ -114,7 +114,7 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
             add_to_queue_fun = trav.add_to_queue
             _ = traverse_aabbtree(C,W,CH,tri_ind,None,traverse_fun,add_to_queue=add_to_queue_fun)
             ts[i] = trav.t
-            ids[i] = trav.id
+            ids[i] = np.squeeze(trav.id)
             lambdas[i,:] = trav.lmbd
         # print("computed distances")
     return ts, ids, lambdas
