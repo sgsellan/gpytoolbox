@@ -7,7 +7,7 @@ import os
 # from mpl_toolkits.axes_grid1 import make_axes_locatable
 # import polyscope as ps
 
-class TestPoissonSurfaceReconstruction(unittest.TestCase):
+class TestStochasticPoissonSurfaceReconstruction(unittest.TestCase):
     def test_paper_figure(self):
         poly = gpytoolbox.png2poly("test/unit_tests_data/illustrator.png")[0]
         poly = poly - np.min(poly)
@@ -30,7 +30,7 @@ class TestPoissonSurfaceReconstruction(unittest.TestCase):
         gs = np.array([50,50])
         # corner = np.array([-1,-1])
         # h = np.array([0.04,0.04])
-        scalar_mean, scalar_var, grid_vertices = gpytoolbox.poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=0,verbose=False,stochastic=True)
+        scalar_mean, scalar_var, grid_vertices = gpytoolbox.stochastic_poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=0,verbose=False,output_variance=True)
         # corner = P.min(axis=0)
         # h = (P.max(axis=0) - P.min(axis=0))/gs
 
@@ -85,7 +85,7 @@ class TestPoissonSurfaceReconstruction(unittest.TestCase):
         # Normals are the same as positions on a circle
         N = np.concatenate((np.cos(th),np.sin(th)),axis=1)
         gs = np.array([100,100])
-        scalar_mean, scalar_var, grid_vertices = gpytoolbox.poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=1000,verbose=False,stochastic=True)
+        scalar_mean, scalar_var, grid_vertices = gpytoolbox.stochastic_poisson_surface_reconstruction(P,N,gs=gs,solve_subspace_dim=1000,verbose=False,output_variance=True)
         prob_out = 1 - norm.cdf(scalar_mean,0,np.sqrt(scalar_var))
 
         # The first test we can run is generate many points inside the shape
@@ -142,7 +142,7 @@ class TestPoissonSurfaceReconstruction(unittest.TestCase):
             # Windows machine in github action can't handle this test
             pass
         else:
-            scalar_mean, scalar_var, grid_vertices = gpytoolbox.poisson_surface_reconstruction(P,N,corner=np.array([-1.1,-1.1,-1.1]),h=np.array([0.05,0.05,0.05]),gs=gs,solve_subspace_dim=3000,stochastic=True,verbose=False)
+            scalar_mean, scalar_var, grid_vertices = gpytoolbox.stochastic_poisson_surface_reconstruction(P,N,corner=np.array([-1.1,-1.1,-1.1]),h=np.array([0.05,0.05,0.05]),gs=gs,solve_subspace_dim=3000,output_variance=True,verbose=False)
             grid_vertices = np.array(grid_vertices).reshape(3, -1,order='F').T
             # Where is the highest variance?
             variance_argsort = np.argsort(scalar_var)

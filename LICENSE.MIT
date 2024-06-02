@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2022 Silvia Sellán and Oded Stein
+Copyright (c) 2024 Silvia Sellán and Oded Stein
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,3 +28,8 @@ This software contains the ColorBrewer color maps by Cynthia Brewer
 (Pennsylvania State University), released under the Apache 2.0 license
 (http://www.personal.psu.edu/cab38/ColorBrewer/ColorBrewer_updates.html),
 and modifications by AxisMaps (https://colorbrewer2.org)
+
+========================
+
+This software contains code written by Michael Kazhdan (Johns Hopkins University) for PoissonRecon, also released
+under the MIT license (see https://github.com/mkazhdan/PoissonRecon/blob/master/LICENSE)

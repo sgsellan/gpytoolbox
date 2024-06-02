@@ -9,9 +9,9 @@ from .compactly_supported_normal import compactly_supported_normal
 from .grid_neighbors import grid_neighbors
 from .grid_laplacian_eigenfunctions import grid_laplacian_eigenfunctions
 
-def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=False,sigma_n=0.0,sigma=0.05,solve_subspace_dim=0,verbose=False,prior_fun=None):
+def stochastic_poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,output_variance=False,sigma_n=0.0,sigma=0.05,solve_subspace_dim=0,verbose=False,prior_fun=None):
     """
-    Runs Poisson Surface Reconstruction from a set of points and normals to output a scalar field that takes negative values inside the surface and positive values outside the surface.
+    Runs Stochastic Poisson Surface Reconstruction from a set of points and normals to output a scalar field that takes negative values inside the surface and positive values outside the surface.
     
     Parameters
     ----------
@@ -25,8 +25,8 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
         Grid spacing in each dimension
     corner : (dim,) numpy array
         Coordinates of the lower left corner of the grid
-    stochastic : bool, optional (default False)
-        Whether to use "Stochastic Poisson Surface Reconstruction" to output a mean and variance scalar field instead of just one scalar field
+    output_variance : bool, optional (default False)
+        Whether to use to output a mean *and* variance scalar field instead of just the mean scalar field
     sigma_n : float, optional (default 0.0)
         Noise level in the normals
     sigma : float, optional (default 0.05)
@@ -43,13 +43,15 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
     scalar_mean : (gs[0],gs[1],...,gs[dim-1]) numpy array
         Mean of the reconstructed scalar field
     scalar_variance : (gs[0],gs[1],...,gs[dim-1]) numpy array
-        Variance of the reconstructed scalar field. This will only be part of the output if stochastic=True.
+        Variance of the reconstructed scalar field. This will only be part of the output if output_variance=True.
     grid_vertices : list of (gs[0],gs[1],...,gs[dim-1],dim) numpy arrays
         Grid vertices (each element in the list is one dimension), as in the output of np.meshgrid
 
     
     Notes
     -----
+    This algorithm implements "Stochastic Poisson Surface Reconstruction" as introduced by Sellán and Jacobson in 2022. If you are only looking to reconstruct a mesh from a point cloud, use the traditional "(Screened) Poisson Surface Reconstruction" by Kazhdan et al. implemented in `point_cloud_to_mesh`.
+
     See [this jupyter notebook](https://colab.research.google.com/drive/1DOXbDmqzIygxoQ6LeX0Ewq7HP4201mtr?usp=sharing) for a full tutorial on how to use this function.
 
     See also
@@ -267,13 +269,13 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
             # print(prior_fun(staggered_grid_vertices)[:,dd][:,None].shape)
             # print(N[:,dd][:,None].shape)
             means.append(prior_fun(staggered_grid_vertices)[:,dd][:,None] + k2.T @ K3_inv @ (N[:,dd][:,None] - prior_fun(P)[:,dd][:,None]))
-        if stochastic:
+        if output_variance:
             covs.append(k1 - k2.T @ K3_inv @ k2)
 
     
     # Concatenate the mean and covariance matrices
     vector_mean = np.concatenate(means)
-    if stochastic:
+    if output_variance:
         vector_cov = sigma*sigma*block_diag(covs)
 
     if verbose:
@@ -305,7 +307,7 @@ def poisson_surface_reconstruction(P,N,gs=None,h=None,corner=None,stochastic=Fal
         t10 = time.time()
 
 
-    if stochastic:
+    if output_variance:
         # In this case, we want to compute the variances of the scalar field        
         cov_divergence = G.T @ vector_cov @ G
 

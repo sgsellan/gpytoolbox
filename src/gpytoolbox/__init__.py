@@ -13,7 +13,7 @@ from .regular_circle_polyline import regular_circle_polyline
 from .signed_distance_polygon import signed_distance_polygon
 from .metropolis_hastings import metropolis_hastings
 from .ray_polyline_intersect import ray_polyline_intersect
-from .poisson_surface_reconstruction import poisson_surface_reconstruction
+from .stochastic_poisson_surface_reconstruction import stochastic_poisson_surface_reconstruction
 from .fd_interpolate import fd_interpolate
 from .fd_grad import fd_grad
 from .fd_partial_derivative import fd_partial_derivative
@@ -132,3 +132,4 @@ from .dec_h1_intrinsic import dec_h1_intrinsic
 from .dec_h1inv_intrinsic import dec_h1inv_intrinsic
 from .dec_h2_intrinsic import dec_h2_intrinsic
 from .dec_h2inv_intrinsic import dec_h2inv_intrinsic
+from .point_cloud_to_mesh import point_cloud_to_mesh
