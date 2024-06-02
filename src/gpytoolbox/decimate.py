@@ -1,6 +1,9 @@
 import numpy as np
 
-def decimate(V,F,face_ratio=0.1,num_faces=None):
+def decimate(V,F,
+    face_ratio=0.1,
+    num_faces=None,
+    method='shortest_edge'):
     """Reduce the number of faces of a triangle mesh.
 
     From a manifold triangle mesh, builds a new triangle mesh with fewer faces than the original one using libigl's decimation algorithm.
@@ -15,6 +18,9 @@ def decimate(V,F,face_ratio=0.1,num_faces=None):
         Desired ratio of output faces to input faces 
     num_faces : int, optional (default None)
         Desired number of faces in output mesh (superseeds face_ratio if set)
+    method : string, optional (default shortest_edge)
+        Which mesh decimation algorithm to use.
+        Options are 'shortest_edge' and 'qslim'
 
     Returns
     -------
@@ -53,6 +59,15 @@ def decimate(V,F,face_ratio=0.1,num_faces=None):
     if (num_faces is None):
         num_faces = np.floor(face_ratio*F.shape[0]).astype(np.int32)
 
-    v, f, i, j = _decimate_cpp_impl(V.astype(np.float64),F.astype(np.int32),num_faces)
+    method_int = 0
+    if method == 'shortest_edge':
+        method_int = 0
+    elif method == 'qslim':
+        method_int = 1
+    else:
+        raise Exception("Not a valid decimation method.")
+    v, f, i, j = _decimate_cpp_impl(V.astype(np.float64),F.astype(np.int32),
+        num_faces,
+        method_int)
 
     return v,f,i,j
