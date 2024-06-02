@@ -27,14 +27,29 @@ endif()
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
 include(libigl)
+igl_include(glfw)
+igl_include(embree)
 
 # Include PoissonRecon
 include(PoissonRecon)
 add_library(PoissonRecon INTERFACE)
 target_include_directories(PoissonRecon INTERFACE "${CMAKE_BINARY_DIR}/_deps/poissonrecon-src/Src/")
 
+# Include nanoflann
+include(nanoflann)
+
+# Include webgpu
+include(webgpu)
+include(glfw3webgpu)
+if(TARGET webgpu AND TARGET glfw3webgpu)
+	add_compile_definitions(GL_AVAILABLE)
+	set(GL_LIBS webgpu glfw3webgpu)
+else()
+	set(GL_LIBS "")
+endif()
+
 # List of all libraries to link
-set(LIBRARIES_TO_LINK igl::core igl::embree PoissonRecon)
+set(LIBRARIES_TO_LINK igl::core igl::embree nanoflann PoissonRecon ${GL_LIBS})
 set(COPYLEFT_LIBRARIES_TO_LINK igl::core igl_copyleft::cgal)
 
 add_library(cpytoolbox
@@ -47,6 +62,11 @@ add_library(cpytoolbox
 	src/cpp/read_obj.h
 	src/cpp/write_obj.h
 	src/cpp/point_cloud_to_mesh.h
+	src/cpp/reach_for_the_arcs/outside_points_from_rasterization.h
+	src/cpp/reach_for_the_arcs/locally_make_feasible.h
+	src/cpp/reach_for_the_arcs/fine_tune_point_cloud_iter.h
+	src/cpp/reach_for_the_arcs/sAABB.h
+	src/cpp/reach_for_the_arcs/resolve_collisions_on_sphere.h
 	src/cpp/remesher/collapse_edges.h
 	src/cpp/remesher/equalize_valences.h
 	src/cpp/remesher/remesh_botsch.h
@@ -62,6 +82,11 @@ add_library(cpytoolbox
 	src/cpp/read_obj.cpp
 	src/cpp/write_obj.cpp
 	src/cpp/point_cloud_to_mesh.cpp
+	src/cpp/reach_for_the_arcs/outside_points_from_rasterization.cpp
+	src/cpp/reach_for_the_arcs/locally_make_feasible.cpp
+	src/cpp/reach_for_the_arcs/fine_tune_point_cloud_iter.cpp
+	src/cpp/reach_for_the_arcs/sAABB.cpp
+	src/cpp/reach_for_the_arcs/resolve_collisions_on_sphere.cpp
 	src/cpp/remesher/collapse_edges.cpp
 	src/cpp/remesher/equalize_valences.cpp
 	src/cpp/remesher/remesh_botsch.cpp
@@ -120,6 +145,9 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_ply.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_curved_hessian_intrinsic.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_point_cloud_to_mesh.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs/binding_outside_points_from_rasterization.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs//binding_locally_make_feasible.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs//binding_fine_tune_point_cloud_iter.cpp"
 )
 
 pybind11_add_module(gpytoolbox_bindings_copyleft
@@ -143,5 +171,20 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	add_custom_command(TARGET gpytoolbox_bindings_copyleft POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:gpytoolbox_bindings_copyleft> $<TARGET_RUNTIME_DLLS:gpytoolbox_bindings_copyleft> $<TARGET_FILE_DIR:gpytoolbox_bindings_copyleft>
 		COMMAND_EXPAND_LISTS)
+endif()
+
+# Manually copy wgpu to the right place
+target_copy_webgpu_binaries(gpytoolbox_bindings)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+	# Extra difficult on mac.
+	add_custom_command(
+		TARGET gpytoolbox_bindings POST_BUILD
+		COMMAND
+			${CMAKE_INSTALL_NAME_TOOL} "-change"
+			"@executable_path/libwgpu_native.dylib"
+			"$<TARGET_FILE_DIR:gpytoolbox_bindings>/libwgpu_native.dylib"
+			"$<TARGET_FILE:gpytoolbox_bindings>"
+		VERBATIM
+	)
 endif()
 

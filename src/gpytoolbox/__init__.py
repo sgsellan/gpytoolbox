@@ -118,6 +118,8 @@ from .adjacency_matrix import adjacency_matrix
 from .non_manifold_edges import non_manifold_edges
 from .connected_components import connected_components
 from .rotation_matrix_from_vectors import rotation_matrix_from_vectors
+from .point_cloud_to_mesh import point_cloud_to_mesh
+from .reach_for_the_arcs import reach_for_the_arcs
 from .dec_d0 import dec_d0
 from .dec_d1 import dec_d1
 from .dec_h0 import dec_h0
@@ -132,4 +134,3 @@ from .dec_h1_intrinsic import dec_h1_intrinsic
 from .dec_h1inv_intrinsic import dec_h1inv_intrinsic
 from .dec_h2_intrinsic import dec_h2_intrinsic
 from .dec_h2inv_intrinsic import dec_h2inv_intrinsic
-from .point_cloud_to_mesh import point_cloud_to_mesh

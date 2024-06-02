@@ -19,6 +19,7 @@ from .tip_angles import tip_angles
 from .halfedge_lengths_squared import halfedge_lengths_squared
 from .remesh_botsch import remesh_botsch
 from .random_points_on_mesh import random_points_on_mesh
+from .non_manifold_edges import non_manifold_edges
 
 def reach_for_the_spheres(U, sdf, V, F, S=None,
     return_U=False,
@@ -658,16 +659,12 @@ def reach_for_the_spheres_iteration(state,
     if fix_boundary:
         bd = boundary_vertices(state.F)
         precomp = fixed_dof_solve_precompute(Q, k=bd)
-        state.V = precomp.solve(b=b, y=V[bd,:])
+        state.V = precomp.solve(b=b, y=state.V[bd,:])
     else:
         state.V = sp.sparse.linalg.spsolve(Q,b)
 
     # catching flow singularities so we fail gracefully
-    if np.any((np.isnan(state.V))) or np.any(doublearea(state.V, state.F)==0): 
-        print(A)
-        print(R)
-        print(b)
-        print(state.V)
+    if np.any((np.isnan(state.V))) or np.any(doublearea(state.V, state.F)==0) or len(non_manifold_edges(state.F))>0 : 
         
         if verbose:
             print("we found a flow singularity. Returning the last converged solution.")
