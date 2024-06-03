@@ -1,80 +1,80 @@
-name: Pip build
+# name: Pip build
 
-# Run on the main branch and on tags (note conditional below)
-on:
-  push:
-    branches:    
-      - main
-    # tags:        
-    #   - v*
-  pull_request:
-    branches:
-      - main
+# # Run on the main branch and on tags (note conditional below)
+# on:
+#   push:
+#     branches:    
+#       - main
+#     # tags:        
+#     #   - v*
+#   pull_request:
+#     branches:
+#       - main
 
-jobs:
-  build_sdist:
-    name: Build SDist
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: true
+# jobs:
+#   build_sdist:
+#     name: Build SDist
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v3
+#       with:
+#         submodules: true
 
-    - name: Build SDist
-      run: pipx run build --sdist
+#     - name: Build SDist
+#       run: pipx run build --sdist
 
-    - name: Check metadata
-      run: pipx run twine check dist/*
+#     - name: Check metadata
+#       run: pipx run twine check dist/*
 
-    - uses: actions/upload-artifact@v3
-      with:
-        path: dist/*.tar.gz
+#     - uses: actions/upload-artifact@v3
+#       with:
+#         path: dist/*.tar.gz
 
-  build_wheels:
-    strategy:
-      fail-fast: false
-      matrix:
-        cpversion: ["cp36", "cp37", "cp38", "cp39", "cp310", "cp311", "cp312"]
-        os: [ { runs-on: ubuntu-latest, cibw-arch: manylinux_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_arm64}, { runs-on: windows-latest, cibw-arch: win_amd64} ]
-        exclude:
-          - os: { runs-on: macos-latest, cibw-arch: macosx_arm64}
-            cpversion: "cp36"
-          - os: { runs-on: macos-latest, cibw-arch: macosx_arm64}
-            cpversion: "cp37"
+#   build_wheels:
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         cpversion: ["cp36", "cp37", "cp38", "cp39", "cp310", "cp311", "cp312"]
+#         os: [ { runs-on: ubuntu-latest, cibw-arch: manylinux_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_arm64}, { runs-on: windows-latest, cibw-arch: win_amd64} ]
+#         exclude:
+#           - os: { runs-on: macos-latest, cibw-arch: macosx_arm64}
+#             cpversion: "cp36"
+#           - os: { runs-on: macos-latest, cibw-arch: macosx_arm64}
+#             cpversion: "cp37"
 
-    name: Build wheels ${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}
-    runs-on: ${{ matrix.os.runs-on }}
+#     name: Build wheels ${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}
+#     runs-on: ${{ matrix.os.runs-on }}
 
-    env:
-      CIBW_BUILD_VERBOSITY: 3
-      CIBW_BEFORE_BUILD_LINUX: "yum install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel && python -m pip install auditwheel-symbols"
-      # CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel-symbols --manylinux 2_28 {wheel} && auditwheel repair --plat manylinux_2_28_x86_64 -w {dest_dir} {wheel}"
-      CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel repair --plat manylinux_2_28_x86_64 -w {dest_dir} {wheel}"
-      CIBW_MANYLINUX_X86_64_IMAGE: 'manylinux_2_28'
-      # # CIBW_BEFORE_BUILD_LINUX: "dnf install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel"
-      # # CIBW_BEFORE_BUILD_LINUX: "apt-get update && apt-get install -y libxrandr2 libxrandr-dev libxinerama1 libxinerama-dev libxcursor1 libxcursor-dev libxi6 libxi-dev"
-      # CIBW_BEFORE_BUILD_LINUX: "sed -i 's|http://deb.debian.org/debian|https://archive.debian.org/debian|g' /etc/apt/sources.list && sed -i 's|http://security.debian.org/debian-security|https://archive.debian.org/debian-security|g' /etc/apt/sources.list && apt-get update && apt-get install -y libxrandr2 libxrandr-dev libxinerama1 libxinerama-dev libxcursor1 libxcursor-dev libxi6 libxi-dev"
+#     env:
+#       CIBW_BUILD_VERBOSITY: 3
+#       CIBW_BEFORE_BUILD_LINUX: "yum install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel && python -m pip install auditwheel-symbols"
+#       # CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel-symbols --manylinux 2_28 {wheel} && auditwheel repair --plat manylinux_2_28_x86_64 -w {dest_dir} {wheel}"
+#       CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel repair --plat manylinux_2_28_x86_64 -w {dest_dir} {wheel}"
+#       CIBW_MANYLINUX_X86_64_IMAGE: 'manylinux_2_28'
+#       # # CIBW_BEFORE_BUILD_LINUX: "dnf install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel"
+#       # # CIBW_BEFORE_BUILD_LINUX: "apt-get update && apt-get install -y libxrandr2 libxrandr-dev libxinerama1 libxinerama-dev libxcursor1 libxcursor-dev libxi6 libxi-dev"
+#       # CIBW_BEFORE_BUILD_LINUX: "sed -i 's|http://deb.debian.org/debian|https://archive.debian.org/debian|g' /etc/apt/sources.list && sed -i 's|http://security.debian.org/debian-security|https://archive.debian.org/debian-security|g' /etc/apt/sources.list && apt-get update && apt-get install -y libxrandr2 libxrandr-dev libxinerama1 libxinerama-dev libxcursor1 libxcursor-dev libxi6 libxi-dev"
 
-      # CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux_2_28_x86_64:latest
-      # CIBW_MANYLINUX_X86_64_IMAGE: "quay.io/pypa/manylinux_2_28_x86_64:latest"
-      # CIBW_MANYLINUX_I686_IMAGE: quay.io/pypa/manylinux_2_28_i686:latest
-      CIBW_BUILD: "${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}"
-      CIBW_ENVIRONMENT: "MAX_JOBS=2"
-      CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
-      CIBW_ENVIRONMENT_MACOS: "CMAKE_OSX_ARCHITECTURES=\"${{ matrix.os.cibw-arch == 'macosx_x86_64' && 'x86_64' || matrix.os.cibw-arch == 'macosx_arm64' && 'arm64' || matrix.os.cibw-arch == 'macosx_universal2' && 'arm64;x86_64' || '' }}\""
-      MACOSX_DEPLOYMENT_TARGET: 10.16
+#       # CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux_2_28_x86_64:latest
+#       # CIBW_MANYLINUX_X86_64_IMAGE: "quay.io/pypa/manylinux_2_28_x86_64:latest"
+#       # CIBW_MANYLINUX_I686_IMAGE: quay.io/pypa/manylinux_2_28_i686:latest
+#       CIBW_BUILD: "${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}"
+#       CIBW_ENVIRONMENT: "MAX_JOBS=2"
+#       CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
+#       CIBW_ENVIRONMENT_MACOS: "CMAKE_OSX_ARCHITECTURES=\"${{ matrix.os.cibw-arch == 'macosx_x86_64' && 'x86_64' || matrix.os.cibw-arch == 'macosx_arm64' && 'arm64' || matrix.os.cibw-arch == 'macosx_universal2' && 'arm64;x86_64' || '' }}\""
+#       MACOSX_DEPLOYMENT_TARGET: 10.16
 
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: 'recursive'
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           submodules: 'recursive'
       
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.17.0
+#       - name: Build wheels
+#         uses: pypa/cibuildwheel@v2.17.0
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
-          path: |
-            ./wheelhouse/*.whl 
-            ./wheelhouse/*.tar.gz
+#       - uses: actions/upload-artifact@v3
+#         with:
+#           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+#           path: |
+#             ./wheelhouse/*.whl 
+#             ./wheelhouse/*.tar.gz
