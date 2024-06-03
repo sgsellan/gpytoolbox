@@ -665,6 +665,8 @@ def reach_for_the_spheres_iteration(state,
 
     # catching flow singularities so we fail gracefully
     if np.any((np.isnan(state.V))) or np.any(doublearea(state.V, state.F)==0) or len(non_manifold_edges(state.F))>0 : 
+        # debugging
+        print("Flow singularity detected at iteration ", state.its)
         
         if verbose:
             print("we found a flow singularity. Returning the last converged solution.")
