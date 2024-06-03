@@ -28,6 +28,7 @@ jobs:
           ${{ steps.installpython.outputs.python-path }} -m pip install numpy
           ${{ steps.installpython.outputs.python-path }} -m pip install scipy
           ${{ steps.installpython.outputs.python-path }} -m pip install scikit-image
+          ${{ steps.installpython.outputs.python-path }} -m pip install pytest pytest-timeout pytest-sugar
 
       - name: Install c++ bindings
         shell: bash -l {0}
@@ -41,6 +42,6 @@ jobs:
         shell: bash -l {0}
         run: |
           ${{ steps.installpython.outputs.python-path }} -m pip install tetgen
-          ${{ steps.installpython.outputs.python-path }} -m unittest test/test_reach_for_the_spheres.py -v
+          ${{ steps.installpython.outputs.python-path }} -m pytest --durations=0
 
 # see https://github.com/libigl/libigl/blob/main/.github/workflows/continuous.yml
