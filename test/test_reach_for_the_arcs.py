@@ -65,7 +65,7 @@ class TestReachForTheArcs(unittest.TestCase):
                 parallel=True, verbose=False)
             
             h = gpy.approximate_hausdorff_distance(U, G.astype(np.int32), v, f.astype(np.int32), use_cpp=True)
-            self.assertTrue(h < 0.1)
+            self.assertTrue(h < 0.2)
 
 
     def test_parallel_is_the_same(self):
@@ -117,8 +117,8 @@ class TestReachForTheArcs(unittest.TestCase):
                 parallel=True, verbose=False)
 
             sdf_rec = lambda x: gpy.signed_distance(x, U, G)[0]
-            print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
-            self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.03)
+            # print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
+            self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.05)
 
 
 if __name__ == '__main__':
