@@ -11,7 +11,7 @@ from .point_cloud_to_mesh import point_cloud_to_mesh
 def reach_for_the_arcs(U, S,
     rng_seed=3452,
     return_point_cloud=False,
-    fine_tune_iters=10,
+    fine_tune_iters=3,
     batch_size=10000,
     num_rasterization_spheres=0,
     screening_weight=10.,
@@ -22,6 +22,7 @@ def reach_for_the_arcs(U, S,
     local_search_t=0.01,
     tol=1e-4,
     clamp_value=np.Inf,
+    force_cpu=False,
     parallel=False,
     verbose=False):
     """Creates a mesh from a signed distance function (SDF) using the
@@ -69,6 +70,8 @@ def reach_for_the_arcs(U, S,
         tolerance for determining whether a point is inside a sphere
     clamp_value : float, optional (default np.Inf)
         value to which the SDF is clamped for clamped SDF reconstruction
+    force_cpu : bool, optional (default False)
+        whether to force rasterization onto the CPU
     parallel : bool, optional (default False)
         whether to parallelize the algorithm or not
     verbose : bool, optional (default False)
@@ -137,6 +140,7 @@ def reach_for_the_arcs(U, S,
                 local_search_iters=local_search_iters,
                 batch_size=batch_size,
                 num_rasterization_spheres=num_rasterization_spheres,
+                force_cpu=force_cpu,
                 tol=tol, clamp_value=clamp_value,
                 parallel=parallel, verbose=verbose)
         else:
@@ -151,6 +155,7 @@ def reach_for_the_arcs(U, S,
                 local_search_iters=local_search_iters,
                 batch_size=batch_size,
                 num_rasterization_spheres=num_rasterization_spheres,
+                force_cpu=force_cpu,
                 tol=tol, clamp_value=clamp_value,
                 parallel=parallel, verbose=verbose)
         else:
@@ -171,6 +176,7 @@ def reach_for_the_arcs(U, S,
             n_local_searches=n_local_searches,
             local_search_iters=local_search_iters,
             batch_size=batch_size,
+            force_cpu=force_cpu,
             tol=tol, clamp_value=clamp_value,
             parallel=parallel, verbose=verbose)
 
@@ -254,6 +260,7 @@ def _sdf_to_point_cloud(U, S,
     num_rasterization_spheres=0,
     tol=1e-4,
     clamp_value=np.Inf,
+    force_cpu=False,
     parallel=False,
     verbose=False):
     """Converts an SDF to a point cloud where all points are valid with respect
@@ -327,7 +334,7 @@ def _sdf_to_point_cloud(U, S,
     P = _outside_points_from_rasterization(U, S,
         rng_seed=seed(),
         res=rasterization_resolution, num_spheres=num_rasterization_spheres,
-        tol=tol, parallel=parallel, verbose=verbose)
+        tol=tol, force_cpu=force_cpu, parallel=parallel, verbose=verbose)
 
     if verbose:
         print(f"  Rasterization took {time.time()-t0_rasterization}s")
@@ -664,10 +671,7 @@ def _fine_tune_point_cloud(U, S, P, N, f,
             tol, clamp_value, parallel, verbose)
 
         if verbose:
-            if debug_Vgt is not None and debug_Fgt is not None:
-                print(f"  After fine tuning iter {it}, we have {f.size} points. (Current chamfer error = {chamfer(V, F, debug_Vgt, debug_Fgt)})")
-            else:
-                print(f"  After fine tuning iter {it}, we have {f.size} points.")
+            print(f"  After fine tuning iter {it}, we have {f.size} points.")
     return P, N, f
 
 
