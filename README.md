@@ -16,7 +16,7 @@ tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/windows_build.ym
 and [Oded Stein](https://odedstein.com), University of Southern California
 
 This is a very young library of general geometry processing Python research
-utility functions that evolves from our personal student codebases. 
+utility functions that evolves from our personal student codebases.
 
 ## Installation
 
