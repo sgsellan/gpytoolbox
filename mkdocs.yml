@@ -5,6 +5,8 @@
 # twine upload dist/*
 # label as new release
 # bash docs/create_docs.sh
+# pip install mkdocs mkdocstrings mkdocs-material mkdocstrings-python
+# add src to python path e.g. export PYTHONPATH="/Users/silviasellan/Dropbox/work/research/projects/gpytoolbox/src:$PYTHONPATH"
 # mike deploy --update-aliases --rebase --push [VERSION NUMBER] latest
 # https://mkdocstrings.github.io/python/usage/
 site_name: Gpytoolbox
