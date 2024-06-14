@@ -13,13 +13,14 @@ using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row 
 
 void binding_remesh_botsch(py::module& m) {
     m.def("_remesh_botsch_cpp_impl",[](EigenDRef<MatrixXd> v,
-                         EigenDRef<MatrixXi> f, int i, double h, EigenDRef<VectorXi> feature, bool project)
+                         EigenDRef<MatrixXi> f, int i, double h, EigenDRef<VectorXi> feature, bool project, EigenDRef<MatrixXd> va)
         {
             Eigen::MatrixXd V(v);
             Eigen::MatrixXi F(f);
             Eigen::VectorXi FEATURE(feature);
-            remesh_botsch(V, F, h, i, FEATURE, project);
-            return std::make_tuple(V, F);
+            Eigen::MatrixXd VA(va);
+            remesh_botsch(V, F, h, i, FEATURE, project, VA);
+            return std::make_tuple(V, F, VA);
         });
     
 }
