@@ -27,7 +27,7 @@ jobs:
         run: |
           ${{ steps.installpython.outputs.python-path }} -m pip install numpy
           ${{ steps.installpython.outputs.python-path }} -m pip install scipy
-          ${{ steps.installpython.outputs.python-path }} -m pip install scikit-image
+          ${{ steps.installpython.outputs.python-path }} -m pip install scikit-image==0.24.0
 
       - name: Install c++ bindings
         shell: bash -l {0}
