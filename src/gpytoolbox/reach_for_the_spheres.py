@@ -496,7 +496,7 @@ def reach_for_the_spheres_iteration(state,
         'remesh_iterations':1,
         'batch_size':20000,
         'fix_boundary':False,
-        'clamp':np.Inf, 'pseudosdf_interior':False},
+        'clamp':np.inf, 'pseudosdf_interior':False},
         3: {'max_iter':20000, 'tol':1e-2, 'h':0.2,
         'linesearch':True, 'min_t':1e-6, 'max_t':50.,
         'dt':10.,
@@ -507,7 +507,7 @@ def reach_for_the_spheres_iteration(state,
         'visualize':False,
         'batch_size':20000,
         'fix_boundary':False,
-        'clamp':np.Inf, 'pseudosdf_interior':False}
+        'clamp':np.inf, 'pseudosdf_interior':False}
     }
     if max_iter is None:
         max_iter = default_params[dim]['max_iter']
@@ -566,11 +566,11 @@ def reach_for_the_spheres_iteration(state,
     if state.its is None:
         state.its = 0
     if state.best_performance is None:
-        state.best_performance = np.Inf
+        state.best_performance = np.inf
     if state.convergence_counter is None:
         state.convergence_counter = 0
     if state.best_avg_error is None:
-        state.best_avg_error = np.Inf
+        state.best_avg_error = np.inf
     # if state.use_features is None:
     #     state.use_features = False
     if state.V_last_converged is None:
@@ -687,7 +687,7 @@ def reach_for_the_spheres_iteration(state,
         if state.h>state.min_h:
             state.V_last_converged = state.V.copy()
             state.F_last_converged = state.F.copy()
-            state.best_avg_error = np.Inf
+            state.best_avg_error = np.inf
             state.convergence_counter = 0
         state.h = np.maximum(state.h/2,state.min_h)
     if state.convergence_counter > 100 or F_invalid.shape[0] == 0:
@@ -701,9 +701,9 @@ def reach_for_the_spheres_iteration(state,
             state.U_batch = state.U.copy()
             state.S_batch = state.S.copy()
             state.resample_counter += 1
-            state.best_performance = np.Inf
+            state.best_performance = np.inf
             state.convergence_counter = 0
-            state.best_avg_error = np.Inf
+            state.best_avg_error = np.inf
             if verbose:
                 print(f"Resampled, I now have {state.U.shape[0]} sample points.")
         else:

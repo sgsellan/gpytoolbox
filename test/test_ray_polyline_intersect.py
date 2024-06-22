@@ -29,7 +29,7 @@ class TestRayPolylineIntersect(unittest.TestCase):
         # There should be no intersection
         x, n, ind = gpytoolbox.ray_polyline_intersect(cam_pos,cam_dir,V)
         # if no intersection, x is infinity and n is zero
-        self.assertTrue((np.isclose(x,np.array([np.Inf,np.Inf]))).all())
+        self.assertTrue((np.isclose(x,np.array([np.inf,np.inf]))).all())
         self.assertTrue((np.isclose(n,np.array([0.0, 0.0]))).all())
         # Index is -1
         self.assertTrue(ind==-1)

@@ -11,7 +11,7 @@ class closest_point_traversal:
         self.F = F
         self.dim = V.shape[1]
         self.ptest = ptest
-        self.current_best_guess = np.Inf
+        self.current_best_guess = np.inf
         self.current_best_element = -1
         self.others = []
         self.num_traversal = 0
@@ -19,7 +19,7 @@ class closest_point_traversal:
     # Auxiliary function which finds the distance of point to rectangle
     def sdBox(self,p,center,width):
         q = np.abs(p - center) - 0.5*width
-        maxval = -np.Inf
+        maxval = -np.inf
         for i in range(self.dim):
             maxval = np.maximum(maxval,q[i])
         return np.linalg.norm((np.maximum(q,0.0))) + np.minimum(maxval,0.0)
@@ -183,7 +183,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
         # Loop over every element
         t = None
         for j in range(P.shape[0]):
-            min_sqrd_dist = np.Inf
+            min_sqrd_dist = np.inf
             ind = -1
             best_lmb = []
             for i in range(F.shape[0]):

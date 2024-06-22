@@ -23,7 +23,7 @@ def ray_polyline_intersect(position, direction, polyline_vertices, max_distance 
     Returns
     -------
     x : numpy double array
-        Vector of intersection point coordinates (np.Inf if no intersection)
+        Vector of intersection point coordinates (np.inf if no intersection)
     n : numpy double array
         Vector of polyline normal at intersection (zeros if no intersection)
     ind : int 
@@ -53,7 +53,7 @@ def ray_polyline_intersect(position, direction, polyline_vertices, max_distance 
     if (EC is None):
         EC = edge_indices(polyline_vertices.shape[0],closed=True)
     ind = -1
-    x = np.array([np.Inf, np.Inf])
+    x = np.array([np.inf, np.inf])
     n = np.array([0.0, 0.0])
     distance_to_hit = max_distance 
     for i in range(0,EC.shape[0]):

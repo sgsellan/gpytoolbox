@@ -31,7 +31,7 @@ jobs:
         run: |
           python -m pip install numpy
           python -m pip install scipy
-          python -m pip install scikit-image
+          python -m pip install scikit-image==0.24.0
           sudo apt-get install \
               libmpfr-dev \
               libgmp-dev \
