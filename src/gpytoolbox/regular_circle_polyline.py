@@ -1,7 +1,7 @@
 import numpy as np
 
 def regular_circle_polyline(n):
-    """Triangle mesh of a square
+    """Create a circle polyline
 
     Generates a regular polyline of a circle with radius 1 centered at the origin.
 
