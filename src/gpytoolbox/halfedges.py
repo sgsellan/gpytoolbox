@@ -27,7 +27,8 @@ def halfedges(F):
     f = np.array([[0,1,2]],dtype=int)
     # Call to halfedges
     from gpytoolbox import halfedges
-    he = halfedges(v,f)
+    # (Thank you to Lukas Hermann for finding and fixing a typo in this next line)
+    he = halfedges(f)
     ```
     
     """
