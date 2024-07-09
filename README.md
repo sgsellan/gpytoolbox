@@ -157,6 +157,7 @@ library. We are thankful to them:
 - [Towaki Takikawa](https://github.com/tovacinni) ([PR #49](https://github.com/sgsellan/gpytoolbox/pull/49))
 - [Otman Benchekroun](https://github.com/otmanon) ([PR #59](https://github.com/sgsellan/gpytoolbox/pull/59))
 - [Abhishek Madan](https://github.com/abhimadan) ([PR #103](https://github.com/sgsellan/gpytoolbox/pull/103))
+- [Lukas Hermann](https://github.com/lsh) ([PR #135](https://github.com/sgsellan/gpytoolbox/pull/135))
 
 
 <!-- Most of the functionality in this library is python-only, and it requires no
