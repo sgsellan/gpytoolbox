@@ -664,7 +664,19 @@ def reach_for_the_spheres_iteration(state,
         state.V = sp.sparse.linalg.spsolve(Q,b)
 
     # catching flow singularities so we fail gracefully
-    if np.any((np.isnan(state.V))) or np.any(doublearea(state.V, state.F)==0) or len(non_manifold_edges(state.F))>0 : 
+
+    there_are_non_manifold_edges = False
+    if dim==3:
+        there_are_non_manifold_edges = len(non_manifold_edges(state.F))>0
+    elif dim==2:
+        he_nm = np.sort(state.F, axis=1)
+        # print(he)
+        he_u_nm = np.unique(he_nm, axis=0, return_counts=True)
+        # print(he)
+        ne_nm = he_u_nm[0][he_u_nm[1]>2]
+        there_are_non_manifold_edges = len(ne_nm)>0
+    
+    if np.any((np.isnan(state.V))) or np.any(doublearea(state.V, state.F)==0) or there_are_non_manifold_edges : 
         
         if verbose:
             print("we found a flow singularity. Returning the last converged solution.")
