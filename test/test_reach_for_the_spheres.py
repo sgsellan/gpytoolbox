@@ -38,10 +38,10 @@ class TestReachForTheSpheres(unittest.TestCase):
                 gx, gy = np.meshgrid(np.linspace(-1.0, 1.0, n+1), np.linspace(-1.0, 1.0, n+1))
                 GV = np.vstack((gx.flatten(), gy.flatten())).T
                 S = gpy.signed_distance(GV, vv, ec)[0]
-                plt.scatter(GV[:,0], GV[:,1], c=S)
-                plt.plot(vv[:,0], vv[:,1], 'r-')
-                plt.colorbar()
-                plt.show()
+                # plt.scatter(GV[:,0], GV[:,1], c=S)
+                # plt.plot(vv[:,0], vv[:,1], 'r-')
+                # plt.colorbar()
+                # plt.show()
                 vv_mc, ee_mc = gpy.marching_squares(S, GV, n+1, n+1)
                 
                 # plot vv, ee edge by edge
@@ -51,13 +51,17 @@ class TestReachForTheSpheres(unittest.TestCase):
                 # now run rfts
                 vv_rfts, ee_rfts = gpy.regular_circle_polyline(10)
                 sdf = lambda x: gpy.signed_distance(x, vv, ec)[0]
-                vv_rfts, ee_rfts = gpy.reach_for_the_spheres(GV, sdf, V=vv_rfts, F=ee_rfts, S=S)
+                vv_rfts, ee_rfts = gpy.reach_for_the_spheres(GV, sdf, V=vv_rfts, F=ee_rfts, S=S, min_h = np.clip(1.5/n, 0.001, 0.1))
                 # plot vv, ee edge by edge
                 # for i in range(ee_rfts.shape[0]):
                 #     plt.plot([vv_rfts[ee_rfts[i,0],0], vv_rfts[ee_rfts[i,1],0]], [vv_rfts[ee_rfts[i,0],1], vv_rfts[ee_rfts[i,1],1]], 'g-')
                 
+                h_mc = gpy.approximate_hausdorff_distance(vv_mc, ee_mc.astype(np.int32), vv, ec.astype(np.int32))
+                h_rfts = gpy.approximate_hausdorff_distance(vv_rfts, ee_rfts.astype(np.int32), vv, ec.astype(np.int32))
+                # print(f"reach_for_the_spheres h: {h_rfts}, MC h: {h_mc} for {png_path} with n={n}")
                 # plt.axis('equal')
                 # plt.show()
+                self.assertTrue(h_rfts < h_mc)
 
 
     def test_noop(self):
