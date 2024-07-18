@@ -10,7 +10,7 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 from distutils.version import LooseVersion
 
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 
 class CMakeExtension(Extension):
