@@ -5,7 +5,7 @@ from gpytoolbox.halfedge_lengths import halfedge_lengths
 from gpytoolbox.non_manifold_edges import non_manifold_edges
 
 
-def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
+def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int), vertex_attrs=None):
     """Remesh a triangular mesh to have a desired edge length
     
     Use the algorithm described by Botsch and Kobbelt's "A Remeshing Approach to Multiresolution Modeling" to remesh a triangular mesh by alternating iterations of subdivision, collapse, edge flips and collapses.
@@ -24,6 +24,8 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
         List of indices of feature vertices that should not change (i.e., they will also be in the output). They will be placed at the beginning of the output array in the same order (as long as they were unique).
     project : bool, optional (default True)
         Whether to reproject the mesh to the input (otherwise, it will smooth over iterations).
+    vertex_attrs : numpy double array
+        Matrix of per-vertex attributes of arbitrary (flat) size
 
     Returns
     -------
@@ -31,7 +33,8 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
         Matrix of output triangle mesh vertex coordinates
     G : numpy int array
         Matrix of output triangle mesh indices into U
-
+    A : numpy double array
+        Matrix of upsampled per-vertex attributes
 
     Notes
     -----
@@ -63,6 +66,12 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
 
     feature = np.concatenate((feature, boundary_vertices(F)), dtype=np.int32)
 
+    if vertex_attrs is None:
+        return_va = False
+        vertex_attrs = np.zeros((V.shape[0], 1), dtype=np.float64)
+    else:
+        return_va = True
+
     # reorder feature nodes to the beginning of the array (contributed by Michael Jäger)
     if feature.shape[0] > 0:
         # feature indices need to be unique (including the boundary_vertices)
@@ -82,6 +91,7 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
 
         # reorder vertex coordinates
         V = V[order]
+        vertex_attrs = vertex_attrs[order]
         # reorder faces
         F = tmp[F]
         # features are now 0 to n_features
@@ -97,6 +107,5 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
         # return error
         raise ValueError("Input mesh is non-manifold.")
 
-    v, f = _remesh_botsch_cpp_impl(V, F.astype(np.int32), i, h, feature, project)
-
-    return v, f
+    v, f, va = _remesh_botsch_cpp_impl(V, F.astype(np.int32), i, h, feature, project, vertex_attrs)
+    return (v,f,va) if return_va else (v, f)
