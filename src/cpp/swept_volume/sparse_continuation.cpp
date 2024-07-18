@@ -143,6 +143,7 @@ void sparse_continuation(const Eigen::RowVector3d p0, const std::vector<Eigen::R
         //double time_seed = 0.0;
         //std::cout << time_seed << std::endl;
         double time_test;
+        // Thank you to Lars Lotter and Johannes Sebastian Mueller-Roemer for finding this bug
         argmins.resize(std::max(argmins.size(), CI_vector.size() + 1));
         argmins[CI_vector.size()].resize(8);
         std::vector<double> argmins_cube;
