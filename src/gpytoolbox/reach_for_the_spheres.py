@@ -664,7 +664,19 @@ def reach_for_the_spheres_iteration(state,
         state.V = sp.sparse.linalg.spsolve(Q,b)
 
     # catching flow singularities so we fail gracefully
-    if np.any((np.isnan(state.V))) or np.any(doublearea(state.V, state.F)==0) or len(non_manifold_edges(state.F))>0 : 
+
+    there_are_non_manifold_edges = False
+    if dim==3:
+        there_are_non_manifold_edges = len(non_manifold_edges(state.F))>0
+    elif dim==2:
+        he_nm = np.sort(state.F, axis=1)
+        # print(he)
+        he_u_nm = np.unique(he_nm, axis=0, return_counts=True)
+        # print(he)
+        ne_nm = he_u_nm[0][he_u_nm[1]>2]
+        there_are_non_manifold_edges = len(ne_nm)>0
+    
+    if np.any((np.isnan(state.V))) or np.any(doublearea(state.V, state.F)==0) or there_are_non_manifold_edges : 
         
         if verbose:
             print("we found a flow singularity. Returning the last converged solution.")
@@ -1034,20 +1046,27 @@ def _sample_sdf(sdf,
 
 def _merge_meshes(V_active, F_active, V_inactive, F_inactive):
     """ Combines the active and inactive mesh while making sure to not merge any *interior* active vertex with a boundary active vertex, avoiding the creation of a non-manifold mesh as shown in gh issue 100 """
-    bd_active = boundary_vertices(F_active) # boundary
-    interior_active = np.setdiff1d(np.arange(V_active.shape[0]), bd_active)
-    V_for_zipping = np.vstack((V_inactive, V_active[bd_active,:]))
-    
-    # now we will merge the boundary vertices of the active mesh with the inactive mesh
-    _, zipped_indices, zipped_indices_inverse = np.unique(np.round(V_for_zipping/np.sqrt(np.finfo(V_active.dtype).eps)),return_index=True,return_inverse=True,axis=0)
-    # add the interior vertices of the active mesh manually into the index list, making sure they are not merged with anything else:
-    unique_num = zipped_indices.shape[0] # number of unique vertices
-    zipped_indices = np.concatenate((zipped_indices, interior_active + V_inactive.shape[0]))
-    # inverse map update
-    zipped_indices_inverse = np.concatenate((zipped_indices_inverse, np.arange(interior_active.shape[0]) + unique_num))
-    # now use the index maps to get the final mesh
-    V = np.vstack((V_inactive, V_active))
-    F_for_zipping = np.vstack((F_inactive, F_active + V_inactive.shape[0]))
-    F = zipped_indices_inverse[F_for_zipping]
-    V = V[zipped_indices,:]
+    dim = V_active.shape[1]
+
+    if dim==3:
+        bd_active = boundary_vertices(F_active) # boundary
+        interior_active = np.setdiff1d(np.arange(V_active.shape[0]), bd_active)
+        V_for_zipping = np.vstack((V_inactive, V_active[bd_active,:]))
+        
+        # now we will merge the boundary vertices of the active mesh with the inactive mesh
+        _, zipped_indices, zipped_indices_inverse = np.unique(np.round(V_for_zipping/np.sqrt(np.finfo(V_active.dtype).eps)),return_index=True,return_inverse=True,axis=0)
+        # add the interior vertices of the active mesh manually into the index list, making sure they are not merged with anything else:
+        unique_num = zipped_indices.shape[0] # number of unique vertices
+        zipped_indices = np.concatenate((zipped_indices, interior_active + V_inactive.shape[0]))
+        # inverse map update
+        zipped_indices_inverse = np.concatenate((zipped_indices_inverse, np.arange(interior_active.shape[0]) + unique_num))
+        # now use the index maps to get the final mesh
+        V = np.vstack((V_inactive, V_active))
+        F_for_zipping = np.vstack((F_inactive, F_active + V_inactive.shape[0]))
+        F = zipped_indices_inverse[F_for_zipping]
+        V = V[zipped_indices,:]
+    elif dim==2:
+        V = np.vstack((V_inactive, V_active))
+        F = np.vstack((F_inactive, F_active + V_inactive.shape[0]))
+        V, _, _, F = remove_duplicate_vertices(V, faces=F, epsilon=np.sqrt(np.finfo(V.dtype).eps))
     return V,F
