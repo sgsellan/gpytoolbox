@@ -28,6 +28,7 @@ jobs:
           ${{ steps.installpython.outputs.python-path }} -m pip install "numpy<=1.96.0"
           ${{ steps.installpython.outputs.python-path }} -m pip install scipy
           ${{ steps.installpython.outputs.python-path }} -m pip install scikit-image
+          ${{ steps.installpython.outputs.python-path }} -m pip install scs
 
       - name: Install c++ bindings
         shell: bash -l {0}

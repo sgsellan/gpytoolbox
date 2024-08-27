@@ -32,6 +32,7 @@ jobs:
           python -m pip install "numpy<=1.96.0"
           python -m pip install scipy
           python -m pip install scikit-image
+          python -m pip install scs
           sudo apt-get install \
               libmpfr-dev \
               libgmp-dev \
