@@ -69,7 +69,7 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
     current_best_guess_hd = 0.0
     for i in range(v1.shape[0]):
         # print("Vertex %d of %d" % (i+1,v1.shape[0]))
-        current_best_guess_dviB = np.Inf # current best guess for d(vi,B)
+        current_best_guess_dviB = np.inf # current best guess for d(vi,B)
 
         queue = [0]
         while (len(queue)>0 and current_best_guess_dviB>current_best_guess_hd):
@@ -108,7 +108,7 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
     # Now we do the other side, i.e., max(d(vB,A))
     for i in range(v2.shape[0]):
         # print("Vertex %d of %d" % (i+1,v2.shape[0]))
-        current_best_guess_dviA = np.Inf
+        current_best_guess_dviA = np.inf
         queue = [0]
         while (len(queue)>0 and current_best_guess_dviA>current_best_guess_hd):
             q2 = queue.pop()

@@ -43,7 +43,7 @@ def minimum_distance(v1,f1,v2,f2):
 
     first_queue_pair = [0,0]
     queue = [first_queue_pair]
-    current_best_guess = np.Inf
+    current_best_guess = np.inf
     while len(queue)>0:
         q1, q2 = queue.pop()
         # print("-----------")

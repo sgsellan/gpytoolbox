@@ -21,7 +21,7 @@ def reach_for_the_arcs(U, S,
     local_search_iters=20,
     local_search_t=0.01,
     tol=1e-4,
-    clamp_value=np.Inf,
+    clamp_value=np.inf,
     force_cpu=False,
     parallel=False,
     verbose=False):
@@ -68,7 +68,7 @@ def reach_for_the_arcs(U, S,
         locally make feasible step
     tol : float, optional (default 1e-4)
         tolerance for determining whether a point is inside a sphere
-    clamp_value : float, optional (default np.Inf)
+    clamp_value : float, optional (default np.inf)
         value to which the SDF is clamped for clamped SDF reconstruction
     force_cpu : bool, optional (default False)
         whether to force rasterization onto the CPU
@@ -259,7 +259,7 @@ def _sdf_to_point_cloud(U, S,
     batch_size=10000,
     num_rasterization_spheres=0,
     tol=1e-4,
-    clamp_value=np.Inf,
+    clamp_value=np.inf,
     force_cpu=False,
     parallel=False,
     verbose=False):
@@ -291,7 +291,7 @@ def _sdf_to_point_cloud(U, S,
         Set to zero to use all spheres.
     tol : float, optional (default 1e-4)
         tolerance for determining whether a point is inside a sphere
-    clamp_value : float, optional (default np.Inf)
+    clamp_value : float, optional (default np.inf)
         value to which the SDF is clamped for clamped SDF reconstruction
     parallel : bool, optional (default False)
         whether to parallelize the algorithm or not
@@ -461,7 +461,7 @@ def _locally_make_feasible(U, S, P,
     local_search_iters=20,
     batch_size=10000,
     tol=1e-4,
-    clamp_value=np.Inf,
+    clamp_value=np.inf,
     parallel=False,
     verbose=False):
     """Given a number of SDF samples and points, tries to make each point
@@ -488,7 +488,7 @@ def _locally_make_feasible(U, S, P,
         how many points in one batch. Set to 0 to disable batching.
     tol : float, optional (default 1e-4)
         tolerance for determining whether a point is inside a sphere
-    clamp_value : float, optional (default np.Inf)
+    clamp_value : float, optional (default np.inf)
         value to which the SDF is clamped for clamped SDF reconstruction
     parallel : bool, optional (default False)
         whether to parallelize the algorithm or not
@@ -557,7 +557,7 @@ def _fine_tune_point_cloud(U, S, P, N, f,
     local_search_iters=20,
     local_search_t=0.01,
     tol=1e-4,
-    clamp_value=np.Inf,
+    clamp_value=np.inf,
     parallel=False,
     verbose=False):
     """Improve the point cloud with respect to the SDF such that the
@@ -602,7 +602,7 @@ def _fine_tune_point_cloud(U, S, P, N, f,
         locally make feasible step
     tol : float, optional (default 1e-4)
         tolerance for determining whether a point is inside a sphere
-    clamp_value : float, optional (default np.Inf)
+    clamp_value : float, optional (default np.inf)
         value to which the SDF is clamped for clamped SDF reconstruction
     parallel : bool, optional (default False)
         whether to parallelize the algorithm or not
