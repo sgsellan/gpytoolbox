@@ -16,12 +16,12 @@ class TestRayTriangleIntersect(unittest.TestCase):
             t,is_hit,hit_coord = gpytoolbox.ray_triangle_intersect(origin,dir,v1,v2,v3)
             F = np.array([[0,1,2]])
             t2,_,lmb = gpytoolbox.ray_mesh_intersect(origin[None,:],dir[None,:],V,F)
-            if t2<np.Inf:
+            if t2<np.inf:
                 self.assertTrue(np.isclose(t-t2,0,atol=1e-4))
                 self.assertTrue(np.isclose(origin + t*dir - hit_coord,0,atol=1e-4).all())
                 self.assertTrue(is_hit)
             else:
-                self.assertTrue(t==np.Inf)
+                self.assertTrue(t==np.inf)
                 self.assertFalse(is_hit)
 
         
