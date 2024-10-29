@@ -3,6 +3,9 @@ __version__ = '0.3.2'
 # This function depends on skimage 
 from .png2poly import png2poly
 
+# This function depends on scs
+from .min_l1_with_fixed import min_l1_with_fixed
+
 # These functions depend ONLY on numpy, scipy and each other
 from .linear_elasticity import linear_elasticity
 from .linear_elasticity_stiffness import linear_elasticity_stiffness
