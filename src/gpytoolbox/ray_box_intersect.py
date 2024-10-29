@@ -49,7 +49,7 @@ def ray_box_intersect(origin,dir,center,width):
     whichPlane = 0
     minB = center - 0.5*width
     maxB = center + 0.5*width
-    hit_coord = np.Inf*np.ones(dim)
+    hit_coord = np.inf*np.ones(dim)
 
     for i in range(dim):
         if (origin[i]<minB[i]):

@@ -11,13 +11,13 @@ class test_closest_point_traversal:
         self.P = P
         self.dim = P.shape[1]
         self.ptest = ptest
-        self.current_best_guess = np.Inf
+        self.current_best_guess = np.inf
         self.current_best_element = -1
         self.others = []
     # Auxiliary function which finds the distance of point to rectangle
     def sdBox(self,p,center,width):
         q = np.abs(p - center) - width
-        maxval = -np.Inf
+        maxval = -np.inf
         for i in range(self.dim):
             maxval = np.maximum(maxval,q[i])
         return np.linalg.norm((np.maximum(q,0.0))) + np.minimum(maxval,0.0)

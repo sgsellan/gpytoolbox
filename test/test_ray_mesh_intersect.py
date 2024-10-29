@@ -28,11 +28,11 @@ class TestRayMeshIntersect(unittest.TestCase):
         cam_pos = np.array([[2,2.0,0.1],[0,2.2,2.0]])
         cam_dir = np.array([[0,0,-1],[1,0,0]])
         t, ids, l = gpytoolbox.ray_mesh_intersect(cam_pos,cam_dir,v,f)
-        self.assertTrue((t==np.Inf).all())
+        self.assertTrue((t==np.inf).all())
         self.assertTrue((ids==-1).all())
         self.assertTrue((l==0.0).all())
         t, ids, l = gpytoolbox.ray_mesh_intersect(cam_pos,cam_dir,v,f,use_embree=False)
-        self.assertTrue((t==np.Inf).all())
+        self.assertTrue((t==np.inf).all())
         self.assertTrue((ids==-1).all())
         self.assertTrue((l==0.0).all())
     def test_embree_vs_no_embree(self):
@@ -49,8 +49,8 @@ class TestRayMeshIntersect(unittest.TestCase):
             te, idse, le = gpytoolbox.ray_mesh_intersect(cam_pos,-cam_pos,v,f,use_embree=True)
             t, ids, l = gpytoolbox.ray_mesh_intersect(cam_pos,-cam_pos,v,f,use_embree=False)
             # To compare
-            t[t==np.Inf] = 0.
-            te[te==np.Inf] = 0.
+            t[t==np.inf] = 0.
+            te[te==np.inf] = 0.
             # print(t)
             # print(te)
             self.assertTrue(np.isclose(te-t,0,atol=1e-4).all())

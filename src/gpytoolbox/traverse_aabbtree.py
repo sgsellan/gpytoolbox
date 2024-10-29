@@ -40,7 +40,7 @@ def traverse_aabbtree(C,W,CH,tri_indices,split_dim,traversal_bool_fun,add_to_que
         def __init__(self,P,ptest):
             self.P = P
             self.ptest = ptest
-            self.current_best_guess = np.Inf
+            self.current_best_guess = np.inf
             self.current_best_element = -1
             self.others = []
         # Auxiliary function which finds the distance of point to rectangle

@@ -29,8 +29,8 @@ jobs:
       - name: Install dependencies (Windows)
         shell: bash -l {0}
         run: |
-          python -m pip install "numpy<=1.96.0"
-          python -m pip install scipy
+          python -m pip install "numpy>=1.16.5,<2.2"
+          python -m pip install "scipy>=1.6,<1.15"
           python -m pip install scikit-image
 
       # - name: Install dependencies (Windows)

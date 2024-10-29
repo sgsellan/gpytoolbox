@@ -2,8 +2,8 @@
 build-verbosity = "3"
 [build-system]
 requires = [
-    "numpy<=1.96.0",
-    "scipy",
+    "numpy>=1.16.5,<2.2",
+    "scipy>=1.6,<1.15",
     "setuptools>=42",
     "wheel",
     "cmake>=3.16",
