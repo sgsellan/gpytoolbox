@@ -17,7 +17,7 @@ class TestMinimumDistance(unittest.TestCase):
                 U2[:,j] += random_displacements[i]
                 dist = gpytoolbox.minimum_distance(V,F,U2,G)
                 # self.assertTrue(np.isclose(dist,0.0,atol=1e-2))
-                dist_gt = np.clip(random_displacements[i]-1,0,np.Inf)
+                dist_gt = np.clip(random_displacements[i]-1,0,np.inf)
                 # print(dist_gt,dist)
                 self.assertTrue(np.isclose(dist,dist_gt,atol=1e-4))
     def test_bunny_faces(self):

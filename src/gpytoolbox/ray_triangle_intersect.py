@@ -60,8 +60,8 @@ def ray_triangle_intersect(origin,dir, v0, v1, v2, return_negative=False):
     det = np.dot(v0v1,pvec)
 
     if (np.abs(det) < 1e-6):
-        t =  np.Inf
-        hit = np.Inf*np.ones(3)
+        t =  np.inf
+        hit = np.inf*np.ones(3)
         is_hit = False
         return t,is_hit, hit
 
@@ -70,8 +70,8 @@ def ray_triangle_intersect(origin,dir, v0, v1, v2, return_negative=False):
     u = np.dot(tvec,pvec) * invDet
 
     if (u < 0 or u > 1):
-        t =  np.Inf
-        hit = np.Inf*np.ones(3)
+        t =  np.inf
+        hit = np.inf*np.ones(3)
         is_hit = False
         return t,is_hit, hit
 
@@ -79,8 +79,8 @@ def ray_triangle_intersect(origin,dir, v0, v1, v2, return_negative=False):
     v = np.dot(dir,qvec)*invDet
 
     if ((v < 0) or ((u + v) > 1)):
-        t =  np.Inf
-        hit = np.Inf*np.ones(3)
+        t =  np.inf
+        hit = np.inf*np.ones(3)
         is_hit = False
         return t,is_hit, hit
 
@@ -89,8 +89,8 @@ def ray_triangle_intersect(origin,dir, v0, v1, v2, return_negative=False):
     is_hit = True
     if (not return_negative):
         if(t<0):
-            t =  np.Inf
-            hit = np.Inf*np.ones(3)
+            t =  np.inf
+            hit = np.inf*np.ones(3)
             is_hit = False
     return t,is_hit, hit
 

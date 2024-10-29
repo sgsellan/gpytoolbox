@@ -1,9 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
 
+# https://discourse.cmake.org/t/msvc-runtime-library-completely-ignored/10004
+cmake_policy(SET CMP0091 NEW)
+
 project(Bindings
 	DESCRIPTION
 		"Python bindings"
 )
+
+# MSVC needs explicit configuration for multithreading
+# Select a multi-threaded statically-linked runtime library
+# 	with or without debug information depending on the configuration
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

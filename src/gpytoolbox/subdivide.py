@@ -212,7 +212,7 @@ def _loop_triangle_mesh(V,F,return_matrix):
     # Compute, for each vertex, the β needed for Loop.
     n_adj = np.bincount(E.ravel(), minlength=n)
     n_adj[n_adj==0] = -1
-    β = np.where(n_adj<3, np.NAN, np.where(n_adj==3, 3./16., (3./8.)/n_adj))
+    β = np.where(n_adj<3, np.nan, np.where(n_adj==3, 3./16., (3./8.)/n_adj))
 
     # We always compute the matrix S since we need it to construct Vu
     i = np.concatenate((

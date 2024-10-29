@@ -87,6 +87,8 @@ def _curved_hessian_energy(l_sq, F, n):
         Q = sp.sparse.block_diag([
             Q, sp.sparse.csr_matrix((n-Q.shape[0], n-Q.shape[0]))],
             format='csr')
+    else:
+        Q = sp.sparse.csr_matrix(Q)
 
     return Q
 

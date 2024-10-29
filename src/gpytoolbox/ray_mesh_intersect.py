@@ -14,7 +14,7 @@ class ray_mesh_intersect_traversal:
         self.V = V
         self.F = F
         self.dim = V.shape[1]
-        self.t = np.Inf
+        self.t = np.inf
         self.id = -1
         self.lmbd = np.array([0,0,0])
     def traversal_function(self,q,C,W,CH,tri_indices,split_dim,is_leaf):        
@@ -100,7 +100,7 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
 
         ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
     else:
-        ts = np.Inf*np.ones(cam_pos.shape[0])
+        ts = np.inf*np.ones(cam_pos.shape[0])
         ids = -np.ones(cam_pos.shape[0],dtype=int)
         lambdas = np.zeros((cam_pos.shape[0],3))
         # print("building tree")
