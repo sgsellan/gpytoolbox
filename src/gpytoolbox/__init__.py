@@ -20,6 +20,7 @@ from .stochastic_poisson_surface_reconstruction import stochastic_poisson_surfac
 from .fd_interpolate import fd_interpolate
 from .fd_grad import fd_grad
 from .fd_partial_derivative import fd_partial_derivative
+from .fd_hessian import fd_hessian
 from .normalize_points import normalize_points
 from .initialize_quadtree import initialize_quadtree
 from .initialize_aabbtree import initialize_aabbtree
