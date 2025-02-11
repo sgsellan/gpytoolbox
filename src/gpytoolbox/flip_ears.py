@@ -229,7 +229,7 @@ def flip_ears(V, F, PlanarOnly=False, PlanarEpsilon=1e-8, FlipAndClip=False):
         # replace the first vertex of the bad edge with the vertex not on the other edge
         FF[ears, edgeToVS[ear_opp][:, 0]] = F[flops, flop_opp]
         # on the other edge, take a bad vertex and overwitte with the vertex not on the edge.
-        FF[flops, edgeToVS[flop_opp][:, 1]] = F[ears, ear_opp]
+        FF[flops, edgeToVS[flop_opp][:, 0]] = F[ears, ear_opp]
 
         if FlipAndClip:
             ears, _, _, _ = find_ears(FF)
