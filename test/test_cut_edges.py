@@ -1,10 +1,6 @@
 from .context import gpytoolbox as gpy
-# from src.cut_edges import cut_edges
 from .context import numpy as np
 from .context import unittest
-from .context import numpy as np
-import numpy as np
-import scipy as sp
 
 class TestCutEdges(unittest.TestCase):
 
