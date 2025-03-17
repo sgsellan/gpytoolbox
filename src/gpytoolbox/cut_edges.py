@@ -36,7 +36,7 @@ def cut_edges(F,E):
     ```python
     _,F = gpy.read_mesh("mesh.obj")
     E = np.array([[0,1], [1,2]])
-    G,I = gpy.cut_edges(F,G)
+    G,I = gpy.cut_edges(F,E)
     W = V[I,:]
     # My new mesh is now W,G
     ```
