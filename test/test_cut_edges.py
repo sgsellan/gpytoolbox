@@ -1,6 +1,10 @@
 from .context import gpytoolbox as gpy
+# from src.cut_edges import cut_edges
 from .context import numpy as np
 from .context import unittest
+from .context import numpy as np
+import numpy as np
+import scipy as sp
 
 class TestCutEdges(unittest.TestCase):
 
@@ -18,6 +22,7 @@ class TestCutEdges(unittest.TestCase):
 
         b = gpy.boundary_loops(G)
         print(b)
+        V_removed, _ = gpy.remove_unreferenced(V[I,:],G)
         self.assertTrue(b[0].size == 2*E.shape[0])
         self.assertTrue(np.all(np.sort(b[0]) == np.sort(
             np.array([
@@ -28,6 +33,8 @@ class TestCutEdges(unittest.TestCase):
                 507,
                 642
                 ]))))
+        # check if the result includes unreferenced vertices 
+        self.assertTrue(V_removed.shape[0] == (V[I,:]).shape[0])
     
     def test_bunny(self):
         V,F = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
@@ -36,6 +43,7 @@ class TestCutEdges(unittest.TestCase):
         G,I = gpy.cut_edges(F,E)
 
         b = gpy.boundary_loops(G)
+        V_removed, F_removed = gpy.remove_unreferenced(V[I,:],G)
         self.assertTrue(b[0].size == 2*E.shape[0])
         self.assertTrue(np.all(np.sort(b[0]) == np.sort(
             np.array([
@@ -52,6 +60,8 @@ class TestCutEdges(unittest.TestCase):
                 2596,
                 2613
                 ]))))
+        # check if the result includes unreferenced vertices 
+        self.assertTrue(V_removed.shape[0] == V[I,:].shape[0])
         
 
 if __name__ == '__main__':
