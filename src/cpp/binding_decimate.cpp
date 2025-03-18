@@ -27,12 +27,12 @@ void binding_decimate(py::module& m) {
             if(method==0) {
                 igl::decimate(v,f,num_faces,
                     //This will be required when we bump the libigl version.
-                    true,
+                    false,
                     SV,SF,I,J);
             } else if(method==1) {
                 igl::qslim(v,f,num_faces,
                     //This will be required when we bump the libigl version.
-                    true,
+                    false,
                     SV,SF,I,J);
             }
             return std::make_tuple(SV,SF,I,J);
