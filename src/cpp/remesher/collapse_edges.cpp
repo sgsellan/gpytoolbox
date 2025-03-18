@@ -25,6 +25,7 @@
 #include <igl/decimate.h>
 #include <igl/shortest_edge_and_midpoint.h>
 #include <igl/infinite_cost_stopping_condition.h>
+#include <igl/decimate_trivial_callbacks.h>
 #include <igl/decimate_callback_types.h>
 using namespace std;
 
@@ -180,11 +181,14 @@ std::vector<int> N;
         };
 
     igl::infinite_cost_stopping_condition(shortest_edge_and_midpoint_lambda,stopping_condition);
+    igl::decimate_pre_collapse_callback pre_collapse;
+    igl::decimate_post_collapse_callback post_collapse;
+    igl::decimate_trivial_callbacks(pre_collapse,post_collapse);
 
 
 
     //std::cout << "??" << std::endl;
-    igl::decimate(V,F,shortest_edge_and_midpoint_lambda,stopping_condition,U,G,J,I);
+    igl::decimate(V,F,shortest_edge_and_midpoint_lambda,stopping_condition,pre_collapse,post_collapse,U,G,J,I);
     //std::cout << "!!" << std::endl;
 
     Eigen::VectorXd high_new,low_new;

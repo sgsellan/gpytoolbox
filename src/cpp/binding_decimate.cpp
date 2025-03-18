@@ -21,15 +21,18 @@ void binding_decimate(py::module& m) {
             Eigen::MatrixXd SV;
             Eigen::MatrixXi SF;
             Eigen::VectorXi J, I;
+    //         igl::decimate_pre_collapse_callback pre_collapse;
+    //         igl::decimate_post_collapse_callback post_collapse;
+    // igl::decimate_trivial_callbacks(pre_collapse,post_collapse);
             if(method==0) {
                 igl::decimate(v,f,num_faces,
                     //This will be required when we bump the libigl version.
-                    //true,
+                    true,
                     SV,SF,I,J);
             } else if(method==1) {
                 igl::qslim(v,f,num_faces,
                     //This will be required when we bump the libigl version.
-                    //true,
+                    true,
                     SV,SF,I,J);
             }
             return std::make_tuple(SV,SF,I,J);

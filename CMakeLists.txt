@@ -1,9 +1,7 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
 # https://discourse.cmake.org/t/msvc-runtime-library-completely-ignored/10004
 cmake_policy(SET CMP0091 NEW)
-# cmake_policy(SET CMP0167 NEW)
-cmake_policy(SET CMP0074 OLD)
 
 project(Bindings
 	DESCRIPTION
@@ -36,6 +34,7 @@ endif()
 # Include libigl
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
+set(BOOST_ROOT "/Users/silviasellan/Dropbox/temp/libigl/build/_deps/boost-src")
 include(libigl)
 igl_include(glfw)
 igl_include(embree)
