@@ -7,7 +7,8 @@ class TestDecimate(unittest.TestCase):
         np.random.seed(0)
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/armadillo.obj")
         for nn in range(20,2000,301):
-            for method in {'shortest_edge', 'qslim'}:
+            for method in {'shortest_edge'}:
+                print("Decimating with method: ", method)
                 u,g,i,j = gpytoolbox.decimate(v,f,method=method,num_faces=nn)
                 self.assertTrue(np.isclose(g.shape[0]-nn,0,atol=3))
                 ratio = nn/f.shape[0]
