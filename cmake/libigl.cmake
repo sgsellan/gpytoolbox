@@ -5,7 +5,7 @@ endif()
 include(FetchContent)
 FetchContent_Declare(
     libigl
-    GIT_REPOSITORY https://github.com/libigl/libigl.git
-    GIT_TAG 0e360d5250b5c24b5c483d850c42cd92e0a09f53
+    GIT_REPOSITORY https://github.com/odedstein/libigl.git
+    GIT_TAG d1a3cd0e8a94c010e452ac0e96dd009200026982
 )
 FetchContent_MakeAvailable(libigl)
