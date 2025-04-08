@@ -128,7 +128,12 @@ add_library(cpytoolbox
 	)
 
 target_link_libraries(cpytoolbox ${LIBRARIES_TO_LINK})
-target_compile_options(cpytoolbox PRIVATE -Wno-missing-template-arg-list-after-template-kw)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "17.0")
+    #To make PSR work on newer Clangs
+    target_compile_options(cpytoolbox PRIVATE -Wno-missing-template-arg-list-after-template-kw)
+  endif()
+endif()
 set(LIBRARIES_TO_LINK cpytoolbox ${LIBRARIES_TO_LINK})
 target_link_libraries(cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
 set(COPYLEFT_LIBRARIES_TO_LINK cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
