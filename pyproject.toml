@@ -1,7 +1,6 @@
 [tool.cibuildwheel]
 build-verbosity = "3"
 [build-system]
-requires-python = ">=3.10"
 requires = [
     "numpy>=1.16.5,<2.3",
     "scipy>=1.6,<1.14",
@@ -12,3 +11,6 @@ requires = [
 ]
 
 build-backend = "setuptools.build_meta"
+
+[project]
+requires-python = ">=3.10"
