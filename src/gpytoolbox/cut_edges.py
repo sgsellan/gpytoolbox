@@ -36,7 +36,7 @@ def cut_edges(F,E):
     ```python
     _,F = gpy.read_mesh("mesh.obj")
     E = np.array([[0,1], [1,2]])
-    G,I = gpy.cut_edges(F,G)
+    G,I = gpy.cut_edges(F,E)
     W = V[I,:]
     # My new mesh is now W,G
     ```
@@ -98,7 +98,7 @@ def cut_edges(F,E):
     I[labels] = I
     FF = labels[FF]
     W,_,IM,_ = remove_unreferenced(VV[:,None], FF, return_maps=True)
-    I = I[IM.ravel()<W.shape[0]]
+    I = I[(IM.ravel() < W.shape[0]) & (IM.ravel() >= 0)]
     G = IM.ravel(order='F')[FF]
 
     return G,I

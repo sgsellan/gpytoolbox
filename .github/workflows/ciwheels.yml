@@ -26,7 +26,7 @@ jobs:
     - name: Check metadata
       run: pipx run twine check dist/*
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         path: dist/*.tar.gz
 
@@ -34,11 +34,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cpversion: ["cp37", "cp38", "cp39", "cp310", "cp311", "cp312"]
+        cpversion: ["cp310", "cp311", "cp312"] # TO DO: 3.13 support
         os: [ { runs-on: ubuntu-latest, cibw-arch: manylinux_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_arm64}, { runs-on: windows-latest, cibw-arch: win_amd64} ]
-        exclude:
-          - os: { runs-on: macos-latest, cibw-arch: macosx_arm64}
-            cpversion: "cp37"
 
     name: Build wheels ${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}
     runs-on: ${{ matrix.os.runs-on }}
@@ -49,6 +46,7 @@ jobs:
       # CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel-symbols --manylinux 2_28 {wheel} && auditwheel repair --plat manylinux_2_28_x86_64 -w {dest_dir} {wheel}"
       CIBW_REPAIR_WHEEL_COMMAND_LINUX: "auditwheel repair --plat manylinux_2_28_x86_64 -w {dest_dir} {wheel}"
       CIBW_MANYLINUX_X86_64_IMAGE: 'manylinux_2_28'
+      CIBW_PRERELEASE_PYTHONS: 1
       # # CIBW_BEFORE_BUILD_LINUX: "dnf install -y libXrandr libXrandr-devel libXinerama libXinerama-devel libXcursor libXcursor-devel libXi libXi-devel"
       # # CIBW_BEFORE_BUILD_LINUX: "apt-get update && apt-get install -y libxrandr2 libxrandr-dev libxinerama1 libxinerama-dev libxcursor1 libxcursor-dev libxi6 libxi-dev"
       # CIBW_BEFORE_BUILD_LINUX: "sed -i 's|http://deb.debian.org/debian|https://archive.debian.org/debian|g' /etc/apt/sources.list && sed -i 's|http://security.debian.org/debian-security|https://archive.debian.org/debian-security|g' /etc/apt/sources.list && apt-get update && apt-get install -y libxrandr2 libxrandr-dev libxinerama1 libxinerama-dev libxcursor1 libxcursor-dev libxi6 libxi-dev"
@@ -60,7 +58,10 @@ jobs:
       CIBW_ENVIRONMENT: "MAX_JOBS=2"
       CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
       CIBW_ENVIRONMENT_MACOS: "CMAKE_OSX_ARCHITECTURES=\"${{ matrix.os.cibw-arch == 'macosx_x86_64' && 'x86_64' || matrix.os.cibw-arch == 'macosx_arm64' && 'arm64' || matrix.os.cibw-arch == 'macosx_universal2' && 'arm64;x86_64' || '' }}\""
-      MACOSX_DEPLOYMENT_TARGET: 10.16
+      MACOSX_DEPLOYMENT_TARGET: 12.0
+      # CIBW_BEFORE_BUILD: >
+      #   python -m pip install cmake==3.26.4 &&
+      #   export PATH="$(python -m site --user-base)/bin:$PATH"
 
     steps:
       - uses: actions/checkout@v3
@@ -68,11 +69,11 @@ jobs:
           submodules: 'recursive'
       
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.17.0
+        uses: pypa/cibuildwheel@v2.21.3
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          # name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: |
             ./wheelhouse/*.whl 
             ./wheelhouse/*.tar.gz

@@ -1,5 +1,5 @@
 #include <igl/nchoosek.h>
-#include <igl/mat_max.h>
+// #include <igl/mat_max.h>
 #include <igl/slice_mask.h>
 #include <igl/edges.h>
 #include <assert.h>
@@ -12,17 +12,48 @@
 
 typedef Eigen::Array<bool, Eigen::Dynamic, Eigen::Dynamic> ArrayXb;
 
-void boundary_is_manifold(const Eigen::MatrixXd& V, const Eigen::MatrixXi& T) {
-    Eigen::MatrixXi F;
-    igl::boundary_facets(T, F);
-    std::cout << "boundary size" << std::endl;
+void mat_max(
+    const Eigen::MatrixXd& X,
+    const int dim,
+    Eigen::VectorXd & Y,
+    Eigen::VectorXi & I)
+  {
+    assert(dim==1||dim==2);
+  
+    // output size
+    int n = (dim==1?X.cols():X.rows());
+    // resize output
+    Y.resize(n);
+    I.resize(n);
+  
+    // loop over dimension opposite of dim
+    for(int j = 0;j<n;j++)
+    {
+      int PHONY,i;
+      double  m;
+      if(dim==1)
+      {
+        m = X.col(j).maxCoeff(&i,&PHONY);
+      }else
+      {
+        m = X.row(j).maxCoeff(&PHONY,&i);
+      }
+      Y(j) = m;
+      I(j) = i;
+    }
+  }
 
-    Eigen::MatrixXi C;
-    igl::extract_manifold_patches(F, C);
-    Eigen::MatrixXd RV;
-    Eigen::MatrixXi tmp1, tmp2, IM;
-    igl::remove_unreferenced(V, F, RV, tmp1, IM, tmp2);
-}
+// void boundary_is_manifold(const Eigen::MatrixXd& V, const Eigen::MatrixXi& T) {
+//     Eigen::MatrixXi F;
+//     igl::boundary_facets(T, F);
+//     std::cout << "boundary size" << std::endl;
+
+//     Eigen::MatrixXi C;
+//     igl::extract_manifold_patches(F, C);
+//     Eigen::MatrixXd RV;
+//     Eigen::MatrixXi tmp1, tmp2, IM;
+//     igl::remove_unreferenced(V, F, RV, tmp1, IM, tmp2);
+// }
 
 void carve_out_material(Eigen::MatrixXi &FT, int &idxF, ArrayXb &LT, const Eigen::MatrixXd& DT, int mid, double material_threshold, Eigen::MatrixXi &CFT) {
 
@@ -35,7 +66,7 @@ void carve_out_material(Eigen::MatrixXi &FT, int &idxF, ArrayXb &LT, const Eigen
 
 	    Eigen::VectorXi I(D.rows());
         Eigen::VectorXd tmp;
-	    igl::mat_max(D, 2, tmp, I);
+	    mat_max(D, 2, tmp, I);
 
 	if ((I.array()==I(0)).all() && I(0) == mid) {
             CT(i) = true;

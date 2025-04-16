@@ -5,6 +5,8 @@
 #include <pybind11/eigen.h>
 #include <pybind11/functional.h>
 #include <string>
+// debugging
+#include <igl/writeOBJ.h>
 
 using namespace Eigen;
 namespace py = pybind11;
@@ -18,18 +20,30 @@ void binding_decimate(py::module& m) {
                          int num_faces,
                          int method)
         {
+            Eigen::MatrixXd V = v;
+            Eigen::MatrixXi F = f;
             Eigen::MatrixXd SV;
             Eigen::MatrixXi SF;
             Eigen::VectorXi J, I;
+            const bool block_intersections = false;
+    //         igl::decimate_pre_collapse_callback pre_collapse;
+    //         igl::decimate_post_collapse_callback post_collapse;
+    // igl::decimate_trivial_callbacks(pre_collapse,post_collapse);
             if(method==0) {
-                igl::decimate(v,f,num_faces,
+                std::cout << "Decimating with method 0" << std::endl;
+                igl::writeOBJ("decimate_input.obj",V,F);
+                std::cout << "Wrote input to decimate_input.obj" << std::endl;
+                std::cout << "Number of faces: " << num_faces << std::endl;
+                igl::decimate(V,F,num_faces,
                     //This will be required when we bump the libigl version.
-                    //true,
+                    block_intersections,
                     SV,SF,I,J);
             } else if(method==1) {
-                igl::qslim(v,f,num_faces,
+                std::cout << "Decimating with method 1" << std::endl;
+                
+                igl::qslim(V,F,num_faces,
                     //This will be required when we bump the libigl version.
-                    //true,
+                    block_intersections,
                     SV,SF,I,J);
             }
             return std::make_tuple(SV,SF,I,J);

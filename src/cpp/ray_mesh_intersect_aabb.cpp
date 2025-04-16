@@ -16,7 +16,7 @@ igl::parallel_for(n,[&](const int si)
 {
 Eigen::Vector3f s = sources.row(si).cast<float>();
 Eigen::Vector3f d = directions.row(si).cast<float>();
-igl::Hit hit;
+igl::Hit<float> hit;
 const float tnear = 1e-4f;
 if(ei.intersectRay(s,d,hit,tnear))
 {

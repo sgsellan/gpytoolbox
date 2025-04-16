@@ -160,6 +160,7 @@ library. We are thankful to them:
 - [Lukas Hermann](https://github.com/lsh) ([PR #135](https://github.com/sgsellan/gpytoolbox/pull/135))
 - [Haoyang Wu](https://github.com/H-YWu) ([PR #142](https://github.com/sgsellan/gpytoolbox/pull/142))
 - [Dylan Rowe](https://github.com/d-r-o-w-e) ([PR #144](https://github.com/sgsellan/gpytoolbox/pull/144))
+- [Alice Wei](https://github.com/AAAAAliceeeeee) ([PR #157](https://github.com/sgsellan/gpytoolbox/pull/157))
 
 
 

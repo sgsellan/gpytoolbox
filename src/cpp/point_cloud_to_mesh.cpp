@@ -15,7 +15,7 @@ sphere(const int i) {
 }
 
 template<typename Real, unsigned int dim>
-struct PointNormalSampler : public Reconstructor::InputSampleStream<Real, dim>
+struct PointNormalSampler : public PoissonRecon::Reconstructor::InputSampleStream<Real, dim>
 {
     using Mat = Eigen::Matrix<Real, Eigen::Dynamic, Eigen::Dynamic>;
 
@@ -31,7 +31,8 @@ struct PointNormalSampler : public Reconstructor::InputSampleStream<Real, dim>
         idx = 0;
     }
 
-    bool base_read(Point<Real, dim> &p, Point<Real, dim> &n)
+    bool base_read(PoissonRecon::Point<Real, dim> &p,
+        PoissonRecon::Point<Real, dim> &n)
     {
         if(idx >= cloud_points.rows()) {
             return false;
@@ -52,14 +53,15 @@ protected:
 
 
 template<typename Real, unsigned int dim>
-struct VertexWriter : public Reconstructor::OutputVertexStream<Real, dim>
+struct VertexWriter : public PoissonRecon::Reconstructor::OutputVertexStream<Real, dim>
 {
     using Vec = Eigen::Matrix<Real, dim, 1>;
 
     VertexWriter(std::vector<Vec>& _vertices) : vertices(_vertices)
     {}
 
-    void base_write(Point<Real, dim> p, Point<Real, dim>, Real)
+    void base_write(PoissonRecon::Point<Real, dim> p,
+        PoissonRecon::Point<Real, dim>, Real)
     {
         Vec x;
         for(int i=0; i<dim; ++i) {
@@ -73,21 +75,21 @@ protected:
 
 
 template<typename Int, unsigned int dim>
-struct FaceWriter : public Reconstructor::OutputFaceStream<dim-1>
+struct FaceWriter : public PoissonRecon::Reconstructor::OutputFaceStream<dim-1>
 {
     using Vec = Eigen::Matrix<Int, dim, 1>;
 
     FaceWriter(std::vector<Vec>& _faces) : faces(_faces)
     {}
 
-    void base_write(const std::pair<node_index_type, node_index_type> &polygon)
+    void base_write(const std::pair<PoissonRecon::node_index_type, PoissonRecon::node_index_type> &polygon)
     {
         Vec x;
         x << polygon.first, polygon.second;
         faces.push_back(x);
     }
 
-    void base_write(const std::vector<node_index_type> &polygon)
+    void base_write(const std::vector<PoissonRecon::node_index_type> &polygon)
     {
         Vec x;
         for(int i=0; i<dim; ++i) {
@@ -122,13 +124,18 @@ void point_cloud_to_mesh(
 
     if(parallel) {
 #ifdef _OPENMP
-        ThreadPool::Init( ThreadPool::OPEN_MP , std::thread::hardware_concurrency() );
+        PoissonRecon::ThreadPool::ParallelizationType =
+        PoissonRecon::ThreadPool::ParallelType::OPEN_MP;
 #else // !_OPENMP
-        ThreadPool::Init( ThreadPool::THREAD_POOL , std::thread::hardware_concurrency() );
+        PoissonRecon::ThreadPool::ParallelizationType =
+        PoissonRecon::ThreadPool::ParallelType::ASYNC;
 #endif // _OPENMP
+    } else {
+        PoissonRecon::ThreadPool::ParallelizationType =
+        PoissonRecon::ThreadPool::ParallelType::NONE;
     }
 
-    Reconstructor::Poisson::SolutionParameters<Real> solver_params;
+    PoissonRecon::Reconstructor::Poisson::SolutionParameters<Real> solver_params;
     solver_params.verbose = verbose;
     solver_params.depth = static_cast<unsigned int>(depth);
     solver_params.pointWeight = screening_weight;
@@ -158,19 +165,19 @@ void point_cloud_to_mesh(
         cloud_normals = _cloud_normals;
     }
 
-    Reconstructor::LevelSetExtractionParameters extraction_params;
+    PoissonRecon::Reconstructor::LevelSetExtractionParameters extraction_params;
     extraction_params.forceManifold = true;
     extraction_params.polygonMesh = false;
     extraction_params.verbose = verbose;
 
-    constexpr BoundaryType obt =
+    constexpr PoissonRecon::BoundaryType obt =
     outerBoundaryType==PointCloudReconstructionOuterBoundaryType::Dirichlet ?
-    BOUNDARY_DIRICHLET : BOUNDARY_NEUMANN;
-    constexpr auto FEMSig = FEMDegreeAndBType<
-    Reconstructor::Poisson::DefaultFEMDegree, obt>::Signature;
+    PoissonRecon::BOUNDARY_DIRICHLET : PoissonRecon::BOUNDARY_NEUMANN;
+    constexpr auto FEMSig = PoissonRecon::FEMDegreeAndBType<
+    PoissonRecon::Reconstructor::Poisson::DefaultFEMDegree, obt>::Signature;
 
     PointNormalSampler<Real, dim> pn_sampler(cloud_points, cloud_normals);
-    using Implicit = Reconstructor::Poisson::Implicit<Real, dim, FEMSig>;
+    using Implicit = PoissonRecon::Reconstructor::Poisson::Implicit<Real, dim, FEMSig>;
     Implicit implicit(pn_sampler, solver_params, nullptr);
 
     std::vector<Vecd> vertices;
@@ -186,10 +193,6 @@ void point_cloud_to_mesh(
     F.resize(faces.size(), dim);
     for(size_t i=0; i<faces.size(); ++i) {
         F.row(i) = faces[i];
-    }
-
-    if(parallel) {
-        ThreadPool::Terminate();
     }
 }
 

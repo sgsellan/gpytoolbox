@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
 # https://discourse.cmake.org/t/msvc-runtime-library-completely-ignored/10004
 cmake_policy(SET CMP0091 NEW)
@@ -34,6 +34,7 @@ endif()
 # Include libigl
 option(LIBIGL_COPYLEFT_CGAL "Use CGAL"          ON)
 option(LIBIGL_EMBREE "Build target igl::embree" ON)
+set(BOOST_ROOT "/Users/silviasellan/Dropbox/temp/libigl/build/_deps/boost-src")
 include(libigl)
 igl_include(glfw)
 igl_include(embree)
@@ -127,6 +128,12 @@ add_library(cpytoolbox
 	)
 
 target_link_libraries(cpytoolbox ${LIBRARIES_TO_LINK})
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "17.0")
+    #To make PSR work on newer Clangs
+    target_compile_options(cpytoolbox PRIVATE -Wno-missing-template-arg-list-after-template-kw)
+  endif()
+endif()
 set(LIBRARIES_TO_LINK cpytoolbox ${LIBRARIES_TO_LINK})
 target_link_libraries(cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
 set(COPYLEFT_LIBRARIES_TO_LINK cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
