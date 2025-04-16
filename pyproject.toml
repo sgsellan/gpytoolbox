@@ -7,7 +7,7 @@ requires = [
     "scipy>=1.6,<1.14",
     "setuptools>=42",
     "wheel",
-    "cmake>=3.16",
+    "cmake>=3.16,<3.27",
     "packaging"
 ]
 
