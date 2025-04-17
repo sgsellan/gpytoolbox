@@ -44,7 +44,7 @@ def write_mesh(file,
     C : (n,4) or (m,4) numpy int array with values in [0,255], optional (default None)
         list of per-vertex or per-face colors.
         Only supported for ply format.
-    stl_binary : bool, optional (default True)
+    binary : bool, optional (default True)
         whether to write the file in binary format (as opposed to ascii). Only supported for stl and ply format.
     fmt : string, optional (default None)
         The file format of the mesh to write.

@@ -70,7 +70,7 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
         Matrix of AABB box widths (if None and use_embree=False, will be computed)
     CH : numpy int array, optional (default None)
         Matrix of child indeces (-1 if leaf node). If None and use_embree=False, will be computed
-    tri_indices : numpy int array, optional (default None)
+    tri_ind : numpy int array, optional (default None)
         Vector of AABB element indices (-1 if *not* leaf node). If None and use_embree=False, will be computed
 
     Returns

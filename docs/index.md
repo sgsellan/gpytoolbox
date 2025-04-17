@@ -16,8 +16,8 @@ tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/windows_build.ym
 
 <!-- ![logo](assets/images/logo.png) -->
 
-*Authors:* [Silvia Sellán](https://www.silviasellan.com), University of Toronto
-and [Oded Stein](https://odedstein.com), MIT
+*Authors:* [Silvia Sellán](https://www.silviasellan.com), Columbia University
+and [Oded Stein](https://odedstein.com), University of Southern California
 
 This is a very young library of general geometry processing Python research
 utility functions that evolves from our personal student codebases. 
@@ -30,7 +30,7 @@ You should be able install the latest release of *Gpytoolbox* with pip:
 ```bash
 python -m pip install gpytoolbox
 ```
-A conda installation will be supported in the future.
+
 
 ### From Git
 
@@ -76,9 +76,6 @@ cotangent_laplacian.
 Notes
 -----
 
-Examples
---------
-TO-DO
 ```
 
 ## Contribute
@@ -152,7 +149,12 @@ library. We are thankful to them:
 
 ### Contributors
 
-- We would like to thank [Michael Jäger](https://github.com/EmJay276) for being our Gpytoolbox's first external contributor (see [PR #45](https://github.com/sgsellan/gpytoolbox/pull/45)).
+- We would like to thank [Michael Jäger](https://github.com/EmJay276) for being Gpytoolbox's first external contributor ([PR #45](https://github.com/sgsellan/gpytoolbox/pull/45), [PR #69](https://github.com/sgsellan/gpytoolbox/pull/69)).
 - [Towaki Takikawa](https://github.com/tovacinni) ([PR #49](https://github.com/sgsellan/gpytoolbox/pull/49))
 - [Otman Benchekroun](https://github.com/otmanon) ([PR #59](https://github.com/sgsellan/gpytoolbox/pull/59))
+- [Abhishek Madan](https://github.com/abhimadan) ([PR #103](https://github.com/sgsellan/gpytoolbox/pull/103))
+- [Lukas Hermann](https://github.com/lsh) ([PR #135](https://github.com/sgsellan/gpytoolbox/pull/135))
+- [Haoyang Wu](https://github.com/H-YWu) ([PR #142](https://github.com/sgsellan/gpytoolbox/pull/142))
+- [Dylan Rowe](https://github.com/d-r-o-w-e) ([PR #144](https://github.com/sgsellan/gpytoolbox/pull/144))
+- [Alice Wei](https://github.com/AAAAAliceeeeee) ([PR #157](https://github.com/sgsellan/gpytoolbox/pull/157))
 
