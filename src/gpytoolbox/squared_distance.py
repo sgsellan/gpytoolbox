@@ -97,7 +97,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
         Matrix of AABB box widths (if None, will be computed)
     CH : numpy int array, optional (default None)
         Matrix of child indeces (-1 if leaf node). If None, will be computed
-    tri_indices : numpy int array, optional (default None)
+    tri_ind : numpy int array, optional (default None)
         Vector of AABB element indices (-1 if *not* leaf node). If None, will be computed
     split_dir : numpy double array, optional (default None)
         Vector of AABB split directions (if None, will be computed)

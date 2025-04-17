@@ -25,7 +25,7 @@ def fd_grad(gs,h):
 
     Notes
     -----
-    For any function f defined on a gs by gs grid, G @ f contains the directional derivatives on a staggered grid, the first gs[1](gs[0]-1) rows are d/dx, while the latter gs[0](gs[1]-1) are d/dy
+    For any function f defined on a gs by gs grid, G @ f contains the directional derivatives on a staggered grid, the first gs[1]*(gs[0]-1) rows are d/dx, while the latter gs[0]*(gs[1]-1) are d/dy
 
     Examples
     --------
