@@ -48,13 +48,15 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
     ```
     """
 
+    dim = v1.shape[1]
+
     # cpp implementation
-    if use_cpp:
+    if use_cpp and dim==3:
         try:
             from gpytoolbox_bindings import _hausdorff_distance_cpp_impl
         except:
             raise ImportError("Gpytoolbox cannot import its C++ fast winding number binding.") 
-        return _hausdorff_distance_cpp_impl(v1,f1,v2,f2)
+        return _hausdorff_distance_cpp_impl(v1.astype(np.float64),f1.astype(np.int32),v2.astype(np.float64),f2.astype(np.int32))
 
     # Let's start by computing the one-sided distance, i.e., max(d(vA,B)). We will do this with a loop, but with pre-computed trees for efficient queriying.
         
@@ -76,7 +78,7 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
             q2 = queue.pop()
             # print("-----------")
             # print("Queue length : {}".format(len(queue)))
-            # print("q1: ",q1)
+            # # print("q1: ",q1)
             # print("q2: ",q2)
             # print("CH1[q1,]: ",CH1[q1,:])
             # print("CH2[q2,]: ",CH2[q2,:])
@@ -85,20 +87,28 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
             if (is_leaf2):
                 # Compute distance between vi and triangle q2
                 d = np.sqrt(squared_distance_to_element(v1[i,:],v2,f2[tri_ind2[q2],:])[0])
+                # print("Inputs to squared_distance_to_element: ")
+                # print("v1[i,:]: {}".format(v1[i,:]))
+                # print("v2: {}".format(v2))
+                # print("f2[tri_ind2[q2],:]: {}".format(f2[tri_ind2[q2],:]))
+                # print("Distance to element: {}".format(d))
                 if d < current_best_guess_dviB:
                     current_best_guess_dviB = d
+                # print("Current best guess: {}".format(current_best_guess_dviB))
             else:
                 # Compute distance between vi and bounding box of q2
                 # Distance from vi to the bounding box of q2
                 d = point_to_box_distance(v1[i,:],C2[q2,:],W2[q2,:])
-                d_max = point_to_box_max_distance(v1[i,:],C2[q2,:],W2[q2,:])
-                # print(d_max)
-                # If d_max is smaller than the current best guess for HD, then we don't need to pursue this part of the tree
-                if ((d < current_best_guess_dviB) and (d_max > current_best_guess_hd)):
+                # d_max = point_to_box_max_distance(v1[i,:],C2[q2,:],W2[q2,:])
+                # print("Distance to bounding box: {}".format(d))
+                # print("Max distance to bounding box: {}".format(d_max))
+
+                if ((d < current_best_guess_dviB)):
                     # Add children to queue
                     queue.append(CH2[q2,0])
                     queue.append(CH2[q2,1])
         # We have computed d(vi,B). Does it change our guess for hausdorff?
+        # print("Current best guess: {}".format(current_best_guess_dviB))
         if current_best_guess_dviB > current_best_guess_hd:
             current_best_guess_hd = current_best_guess_dviB
 
@@ -122,9 +132,9 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
                 # Compute distance between vi and bounding box of q2
                 # Distance from vi to the bounding box of q2
                 d = point_to_box_distance(v2[i,:],C1[q2,:],W1[q2,:])
-                d_max = point_to_box_max_distance(v2[i,:],C1[q2,:],W1[q2,:])
+                # d_max = point_to_box_max_distance(v2[i,:],C1[q2,:],W1[q2,:])
                 # If d_max is smaller than the current best guess for HD, then we don't need to pursue this part of the tree
-                if (d < current_best_guess_dviA and d_max > current_best_guess_hd):
+                if (d < current_best_guess_dviA):
                     # Add children to queue
                     queue.append(CH1[q2,0])
                     queue.append(CH1[q2,1])
@@ -154,7 +164,8 @@ def point_to_box_max_distance(p,C,W):
         Maximum distance between point and box.
     """
     d = 0.0
-    for i in range(3):
+    dim = len(p)
+    for i in range(dim):
         if p[i] < C[i]:
             # Distance to oppoisite corner
             d += (p[i]-C[i]-0.5*W[i])**2
@@ -182,8 +193,9 @@ def point_to_box_distance(p,C,W):
     d : float
         Distance between point and box.
     """
+    dim = len(p)
     d = 0.0
-    for i in range(3):
+    for i in range(dim):
         if p[i] < C[i]-0.5*W[i]:
             d += (p[i]-C[i]+0.5*W[i])**2
         elif p[i] > C[i]+0.5*W[i]:
