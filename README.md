@@ -12,7 +12,7 @@ tests](https://github.com/sgsellan/gpytoolbox/actions/workflows/windows_build.ym
 
 ![logo](https://github.com/sgsellan/gpytoolbox/raw/main/docs/assets/images/logo.png)
 
-*Authors:* [Silvia Sellán](https://www.silviasellan.com), University of Toronto
+*Authors:* [Silvia Sellán](https://www.silviasellan.com), Columbia University
 and [Oded Stein](https://odedstein.com), University of Southern California
 
 This is a very young library of general geometry processing Python research
