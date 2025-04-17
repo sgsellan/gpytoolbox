@@ -26,7 +26,6 @@ You should be able install the latest release of *Gpytoolbox* with pip:
 ```bash
 python -m pip install gpytoolbox
 ```
-A conda installation will be supported in the future.
 
 ### From Git
 
@@ -71,10 +70,6 @@ cotangent_laplacian.
 
 Notes
 -----
-
-Examples
---------
-TO-DO
 ```
 
 ## Contribute
