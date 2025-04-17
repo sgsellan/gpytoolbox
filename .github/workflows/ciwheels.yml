@@ -34,8 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # cpversion: ["cp310", "cp311", "cp312", "cp313"]
-        cpversion: ["cp313"] # for debugging
+        cpversion: ["cp310", "cp311", "cp312", "cp313"]
         os: [ { runs-on: ubuntu-latest, cibw-arch: manylinux_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_x86_64}, { runs-on: macos-latest, cibw-arch: macosx_arm64}, { runs-on: windows-latest, cibw-arch: win_amd64} ]
 
     name: Build wheels ${{ matrix.cpversion }}-${{ matrix.os.cibw-arch }}
