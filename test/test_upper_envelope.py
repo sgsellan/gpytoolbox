@@ -5,7 +5,7 @@ from .context import unittest
 # print("0")
 import tetgen
 
-# Would be nice to expand this... but this is a pretty good algorithm, how to validate it?
+# TO DO: Expand this.
 class TestUpperEnvelope(unittest.TestCase):
     def test_no_inversions(self):
         self.assertTrue(True)
@@ -31,6 +31,20 @@ class TestUpperEnvelope(unittest.TestCase):
             # print("7")
             # self.assertTrue that no tet is flipped:
             self.assertTrue(np.min(gpytoolbox.volume(u,g))>-1e-8)
+    def test_issue_143(self):
+        labels = 4
+        resolution = 4 # The issue said 5, but I needed to make it 4 to break it
+        v, t = gpytoolbox.regular_cube_mesh(resolution)
+        w = np.zeros((v.shape[0],labels))
+        for i in range(labels):
+            p = np.random.rand(3)
+            # print( "Center: ", p )
+            for j in range(v.shape[0]):
+                w[j,i] = -np.linalg.norm( v[j] - p )
+        
+        # This used to crash
+        u, g, l = gpytoolbox.upper_envelope(v,t,w)
+        # but it doesn't anymore
 
 if __name__ == '__main__':
     unittest.main()

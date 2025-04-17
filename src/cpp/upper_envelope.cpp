@@ -472,14 +472,26 @@ void upper_envelope(Eigen::MatrixXd & VT, Eigen::MatrixXi & FT,  Eigen::MatrixXd
     //std::cout << "DT:" << std::endl << DT << std::endl;
 
     //start = clock();
-    if (idxCFT + CFT.rows() > CFTarray.rows() && idxCFT + CFT.rows() > CFTarray.cols()) {
-        int r_CFTarray = CFTarray.rows();
-        CFTarray.conservativeResize(2*r_CFTarray, CFTarray.cols());
-	CFTarray.block(r_CFTarray, 0, r_CFTarray, CFTarray.cols()).setConstant(0);
-        int r_CLTarray = CLTarray.rows();
-	CLTarray.conservativeResize(2*r_CLTarray, CLTarray.cols());
-	CLTarray.block(r_CLTarray, 0, r_CLTarray, CLTarray.cols()).setConstant(false);
+    // if (idxCFT + CFT.rows() > CFTarray.rows() && idxCFT + CFT.rows() > CFTarray.cols()) {
+    //     int r_CFTarray = CFTarray.rows();
+    //     CFTarray.conservativeResize(2*r_CFTarray, CFTarray.cols());
+	// CFTarray.block(r_CFTarray, 0, r_CFTarray, CFTarray.cols()).setConstant(0);
+    //     int r_CLTarray = CLTarray.rows();
+	// CLTarray.conservativeResize(2*r_CLTarray, CLTarray.cols());
+	// CLTarray.block(r_CLTarray, 0, r_CLTarray, CLTarray.cols()).setConstant(false);
+    // }
+
+    // Compute how many rows we *really* need:
+    int needed = idxCFT + CFT.rows();
+    // Double until we have enough
+    while (needed > CFTarray.rows()) {
+        int old = CFTarray.rows();
+        CFTarray.conservativeResize(old*2, Eigen::NoChange);
+        CFTarray.block(old, 0, old, CFTarray.cols()).setConstant(0);
+        CLTarray.conservativeResize(old*2, Eigen::NoChange);
+        CLTarray.block(old, 0, old, CLTarray.cols()).setConstant(false);
     }
+    // Now it's safe:
 
     CFTarray.block(idxCFT, 0, CFT.rows(), CFT.cols()) = CFT;
     ArrayXb CLT(CFT.rows(), DT.cols());
