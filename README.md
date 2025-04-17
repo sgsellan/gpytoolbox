@@ -17,6 +17,7 @@ and [Oded Stein](https://odedstein.com), University of Southern California
 
 This is a very young library of general geometry processing Python research
 utility functions that evolves from our personal student codebases. 
+It is compatible with Python 3.10, 3.11, 3.12 and 3.13.
 
 ## Installation
 
