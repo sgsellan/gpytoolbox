@@ -115,6 +115,13 @@ class TestReachForTheArcs(unittest.TestCase):
             U,G = gpy.reach_for_the_arcs(GV, sdf(GV), fine_tune_iters=3,
                 local_search_iters=3,
                 parallel=True, verbose=False)
+            
+            # debuggin
+            import polyscope as ps
+            ps.init()
+            ps.register_surface_mesh("original", v, f)
+            ps.register_surface_mesh("ours", U, G.astype(np.int32))
+            ps.show()
 
             sdf_rec = lambda x: gpy.signed_distance(x, U, G)[0]
             print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
