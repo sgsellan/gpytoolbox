@@ -4,14 +4,11 @@ from gpytoolbox.squared_distance_to_element import squared_distance_to_element
 
 def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
     """
-    Approximate the Hausdorff distance between two triangle meshes in 3D, i.e.
-    the maximum distance between any point on one mesh and the closest point
-    on the other mesh.
+    Approximate the Hausdorff distance between two triangle meshes in 3D, or polylines in 2D, i.e. the maximum distance between any point on one mesh and the closest point on the other mesh.
 
     d = max { d(pA,B), d(pB,A) }
     
-    where pA is a point on mesh A and pB is a point on mesh B, and d(pA,B) is
-    the distance between pA and the closest point on B. Our approximation will instead compute
+    where pA is a point on mesh/polyline A and pB is a point on mesh/polyline B, and d(pA,B) is the distance between pA and the closest point on B. Our approximation will instead compute
 
     d = max { d(vA,B), d(vB,A) }
 
@@ -19,16 +16,16 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
 
     Parameters
     ----------
-    v1 : (n1,3) array
+    v1 : (n1,dim) array
         Vertices of first mesh.
-    f1 : (m1,3) array
+    f1 : (m1,dim) array
         Faces of first mesh.
-    v2 : (n2,3) array
+    v2 : (n2,dim) array
         Vertices of second mesh.
-    f2 : (m2,3) array
+    f2 : (m2,dim) array
         Faces of second mesh.
     use_cpp : bool, optional (default: True)
-        Whether to use the C++ implementation of triangle_triangle_distance.
+        Whether to use the C++ implementation of triangle_triangle_distance (3D only).
     
     Returns
     -------
@@ -42,9 +39,31 @@ def approximate_hausdorff_distance(v1,f1,v2,f2,use_cpp=True):
     Examples
     --------
     ```python
-    # meshes in v,f and u,g
-    # Minimum distance value
-    d = gpytoolbox.minimum_distance(v,f,u,g)
+    # 2D
+    # segment [0→1] vs [0→2], Hausdorff distance = 1
+    v1 = np.array([[0.0, 0.0],
+                    [1.0, 0.0]])
+    e1 = np.array([[0, 1]])
+    v2 = np.array([[0.0, 0.0],
+                    [2.0, 0.0]])
+    e2 = np.array([[0, 1]])
+    d = gpytoolbox.approximate_hausdorff_distance(v1, e1, v2, e2)
+    disp(d) # 1.0
+    #
+    # 3D
+    # triangle vs same triangle shifted by (1,1) => distance = sqrt(2)
+    v1 = np.array([[0.0, 0.0],
+                    [1.0, 0.0],
+                    [0.0, 1.0]])
+    e1 = np.array([[0, 1],
+                    [1, 2],
+                    [2, 0]])
+    shift = np.array([1.0, 1.0])
+    v2 = v1 + shift
+    e2 = e1.copy()
+    expected = np.linalg.norm(shift)
+    d = gpytoolbox.approximate_hausdorff_distance(v1, e1, v2, e2)
+    disp(d) # 1.4142135623730951
     ```
     """
 
