@@ -5,6 +5,8 @@
 #include <igl/adjacency_list.h>
 #include <igl/per_face_normals.h>
 #include <igl/barycenter.h>
+#include <igl/barycentric_coordinates.h>
+#include <igl/barycentric_interpolation.h>
 #include <igl/pinv.h>
 #include <igl/writeOBJ.h>
 #include <igl/edges.h>
@@ -26,7 +28,7 @@
 using namespace std;
 
 void tangential_relaxation(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature,
-        Eigen::MatrixXd & V0 ,Eigen::MatrixXi & F0, Eigen::VectorXd & lambda){
+        Eigen::MatrixXd & V0 ,Eigen::MatrixXi & F0, Eigen::VectorXd & lambda, Eigen::MatrixXd & VA, Eigen::MatrixXd & VA0){
     using namespace Eigen;
         MatrixXd Q,P,N,V_projected,V_fixed;
         VectorXd dblA,sqrD;
@@ -37,7 +39,9 @@ void tangential_relaxation(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::Vecto
         Eigen::MatrixXd SV;
         Eigen::MatrixXi SVI,SVJ;
 
-
+        MatrixXd VA_projected;
+        VA_projected.resize(VA.rows(), VA.cols());
+    
 
 
 
@@ -54,9 +58,9 @@ void tangential_relaxation(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::Vecto
 
 
         //for (int j = 0; j < m; j++) {
-        //    vertex_areas[F(j,0)] = vertex_areas[F(j,0)] + (abs(dblA(j))/6);
-        //    vertex_areas[F(j,1)] = vertex_areas[F(j,1)] + (abs(dblA(j))/6);
-        //    vertex_areas[F(j,2)] = vertex_areas[F(j,2)] + (abs(dblA(j))/6);
+            //    vertex_areas[F(j,0)] = vertex_areas[F(j,0)] + (abs(dblA(j))/6);
+            //    vertex_areas[F(j,1)] = vertex_areas[F(j,1)] + (abs(dblA(j))/6);
+            //    vertex_areas[F(j,2)] = vertex_areas[F(j,2)] + (abs(dblA(j))/6);
         //}
 
 
@@ -116,8 +120,16 @@ void tangential_relaxation(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::Vecto
 //
 	igl::point_mesh_squared_distance(V,V0,F0,sqrD,sqrI,V_projected);
 //
+    // Use the barycentric coordinates associated with the reprojections to interpolate the vertex attributes
+    MatrixXd B;
+    MatrixXd vA = V0(F0(sqrI, 0), all);
+    MatrixXd vB = V0(F0(sqrI, 1), all);
+    MatrixXd vC = V0(F0(sqrI, 2), all);
+    igl::barycentric_coordinates(V_projected, vA, vB, vC, B);
+    igl::barycentric_interpolation(VA0, F0, B, sqrI, VA_projected);
 //
     V = V_projected;
+    VA = VA_projected;
 //	igl::writeOBJ("post-project.obj",V,F);
 //    igl::remove_duplicate_vertices(V,0,SV,SVI,SVJ);
 //    std::cout << V.rows()-SV.rows() << std::endl;
