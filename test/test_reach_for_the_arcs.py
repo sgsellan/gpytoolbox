@@ -5,7 +5,7 @@ from .context import unittest
 
 class TestReachForTheArcs(unittest.TestCase):
     def test_beat_marching_cubes_low_res(self):
-        meshes = ["bunny_oded.obj", "armadillo.obj"]
+        meshes = ["R.npy", "bunny_oded.obj", "armadillo.obj"]
         for mesh in meshes:
             if mesh[-3:]=="obj":
                 v, f = gpy.read_mesh("test/unit_tests_data/" + mesh)
@@ -39,7 +39,7 @@ class TestReachForTheArcs(unittest.TestCase):
 
 
     def test_noop(self):
-        meshes = ["bunny_oded.obj", "armadillo.obj"]
+        meshes = ["R.npy", "bunny_oded.obj", "armadillo.obj"]
         for mesh in meshes:
             if mesh[-3:]=="obj":
                 v, f = gpy.read_mesh("test/unit_tests_data/" + mesh)
@@ -69,7 +69,7 @@ class TestReachForTheArcs(unittest.TestCase):
 
 
     def test_parallel_is_the_same(self):
-        meshes = ["bunny_oded.obj", "armadillo.obj"]
+        meshes = ["R.npy", "bunny_oded.obj", "armadillo.obj"]
         for mesh in meshes:
             if mesh[-3:]=="obj":
                 v, f = gpy.read_mesh("test/unit_tests_data/" + mesh)
@@ -103,7 +103,7 @@ class TestReachForTheArcs(unittest.TestCase):
 
 
     def test_simple_is_sdf_violated(self):
-        meshes = ["cube.obj", "hemisphere.obj"]
+        meshes = ["bunny_oded.obj", "armadillo.obj"]
         for mesh in meshes:
             n = 10
             v, f = gpy.read_mesh("test/unit_tests_data/" + mesh)
@@ -117,7 +117,7 @@ class TestReachForTheArcs(unittest.TestCase):
                 parallel=True, verbose=False)
 
             sdf_rec = lambda x: gpy.signed_distance(x, U, G)[0]
-            # print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
+            print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
             self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.05)
 
 
