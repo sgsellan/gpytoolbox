@@ -117,7 +117,7 @@ class TestReachForTheArcs(unittest.TestCase):
                 parallel=True, verbose=False)
 
             sdf_rec = lambda x: gpy.signed_distance(x, U, G)[0]
-            print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
+            # print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
             self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.05)
 
 
