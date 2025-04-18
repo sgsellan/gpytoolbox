@@ -5,7 +5,7 @@ from .context import unittest
 
 class TestReachForTheArcs(unittest.TestCase):
     def test_beat_marching_cubes_low_res(self):
-        meshes = ["bunny_oded.obj", "armadillo.obj"]
+        meshes = ["R.npy", "bunny_oded.obj", "armadillo.obj"]
         for mesh in meshes:
             if mesh[-3:]=="obj":
                 v, f = gpy.read_mesh("test/unit_tests_data/" + mesh)
@@ -39,7 +39,7 @@ class TestReachForTheArcs(unittest.TestCase):
 
 
     def test_noop(self):
-        meshes = ["bunny_oded.obj", "armadillo.obj"]
+        meshes = ["R.npy", "bunny_oded.obj", "armadillo.obj"]
         for mesh in meshes:
             if mesh[-3:]=="obj":
                 v, f = gpy.read_mesh("test/unit_tests_data/" + mesh)
@@ -69,7 +69,7 @@ class TestReachForTheArcs(unittest.TestCase):
 
 
     def test_parallel_is_the_same(self):
-        meshes = ["bunny_oded.obj", "armadillo.obj"]
+        meshes = ["R.npy", "bunny_oded.obj", "armadillo.obj"]
         for mesh in meshes:
             if mesh[-3:]=="obj":
                 v, f = gpy.read_mesh("test/unit_tests_data/" + mesh)
