@@ -5,63 +5,6 @@ from scipy.sparse import csr_matrix
 from scipy.spatial import KDTree
 from .tip_angles import tip_angles
 
-def compute_angles(V, F):
-    """Computes the angle at each vertex in a triangle mesh.
-
-    Parameters
-    ----------
-    V : (n,d) numpy array
-        vertex list of a triangle mesh 
-    F : (m,d) numpy int array
-        face index list of a triangle mesh 
-
-    Returns
-    -------
-    angles : (m,d) numpy array
-        Array containing the angles at each vertex of each triangle in radians
-
-    Examples
-    --------
-    ```python
-    from gpytoolbox import read_mesh, compute_angles
-    v,f = read_mesh("test/unit_tests_data/bunny_oded.obj")
-    angles = compute_angles(v,f)
-    ```
-
-    Notes
-    -----
-    The angles are computed using the dot product between vectors formed by 
-    the vertices of each triangle. The angles are then calculated using the 
-    arccosine of the dot product result, which is safeguarded against numerical 
-    issues by clipping the values to the range [-1, 1].
-    """
-    # Extract the vertices of each triangle
-    A = V[F[:, 0]]
-    B = V[F[:, 1]]
-    C = V[F[:, 2]]
-
-    # Compute the edge vectors for each triangle
-    AB = B - A
-    AC = C - A
-    BC = C - B
-    CA = A - C
-    BA = A - B
-    CB = B - C
-
-    # Cosines via dot product
-    cos_a = np.einsum('ij,ij->i', (B - A), (C - A)) / (np.linalg.norm(AB, axis=1) * np.linalg.norm(AC, axis=1))
-    cos_b = np.einsum('ij,ij->i', (C - B), (A - B)) / (np.linalg.norm(BC, axis=1) * np.linalg.norm(BA, axis=1))
-    cos_c = np.einsum('ij,ij->i', (A - C), (B - C)) / (np.linalg.norm(CA, axis=1) * np.linalg.norm(CB, axis=1))
-
-    # Angles via arccos, safeguarded against numerical issues via clipping
-    angles = np.zeros((F.shape[0], 3))
-    angles[:, 0] = np.arccos(np.clip(cos_a, -1, 1))
-    angles[:, 1] = np.arccos(np.clip(cos_b, -1, 1))
-    angles[:, 2] = np.arccos(np.clip(cos_c, -1, 1))
-
-    return angles
-
-
 def per_vertex_normals(V, F, weights='area', correct_invalid_normals=True):
     """Compute per-vertex normal vectors for a triangle mesh with different weighting options,
     with an option to correct invalid normals (True) or omit them (False).
