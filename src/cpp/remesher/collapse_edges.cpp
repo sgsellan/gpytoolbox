@@ -29,7 +29,7 @@
 #include <igl/decimate_callback_types.h>
 using namespace std;
 
-void collapse_edges(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature, Eigen::VectorXd & high, Eigen::VectorXd & low){
+void collapse_edges(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature, Eigen::VectorXd & high, Eigen::VectorXd & low, Eigen::MatrixXd & VA){
         using namespace Eigen;
     MatrixXi E,uE,EI,EF;
     VectorXi EMAP,I,J;
@@ -193,13 +193,17 @@ std::vector<int> N;
 
     Eigen::VectorXd high_new,low_new;
     Eigen::VectorXi feature_new;
+    Eigen::MatrixXd VA_new;
+
     feature_new.resize(num_feature);
     high_new.resize(U.rows());
     low_new.resize(U.rows());
+    VA_new.resize(U.rows(),VA.cols());
     int j = 0;
     for (int s = 0; s<U.rows(); s++) {
         high_new(s) = high(I(s));
         low_new(s) = low(I(s));
+        VA_new.row(s) = VA.row(I(s));
         if (is_feature_vertex[I(s)]) {
             feature_new(j) = s;
             j = j+1;
@@ -213,7 +217,7 @@ std::vector<int> N;
     high = high_new;
     low = low_new;
     feature = feature_new;
-
+    VA = VA_new;
 
 
 
