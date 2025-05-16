@@ -1,0 +1,4197 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../ray_triangle_intersect/">
+      
+      
+        <link rel="next" href="../reach_for_the_spheres/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.12">
+    
+    
+      
+        <title>reach_for_the_arcs - Gpytoolbox</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.2afb09e1.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+<script id="__analytics">function __md_analytics(){function e(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],e("js",new Date),e("config","G-YDMBBH2H8E"),document.addEventListener("DOMContentLoaded",(function(){document.forms.search&&document.forms.search.query.addEventListener("blur",(function(){this.value&&e("event","search",{search_term:this.value})}));document$.subscribe((function(){var t=document.forms.feedback;if(void 0!==t)for(var a of t.querySelectorAll("[type=submit]"))a.addEventListener("click",(function(a){a.preventDefault();var n=document.location.pathname,d=this.getAttribute("data-md-value");e("event","feedback",{page:n,data:d}),t.firstElementChild.disabled=!0;var r=t.querySelector(".md-feedback__note [data-md-value='"+d+"']");r&&(r.hidden=!1)})),t.hidden=!1})),location$.subscribe((function(t){e("config","G-YDMBBH2H8E",{page_path:t.pathname})}))}));var t=document.createElement("script");t.async=!0,t.src="https://www.googletagmanager.com/gtag/js?id=G-YDMBBH2H8E",document.getElementById("__analytics").insertAdjacentElement("afterEnd",t)}</script>
+  
+    <script>"undefined"!=typeof __md_analytics&&__md_analytics()</script>
+  
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#src.gpytoolbox.reach_for_the_arcs.reach_for_the_arcs" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Gpytoolbox" class="md-header__button md-logo" aria-label="Gpytoolbox" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Gpytoolbox
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              reach_for_the_arcs
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sgsellan/gpytoolbox" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sgsellan/gpytoolbox
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Gpytoolbox" class="md-nav__button md-logo" aria-label="Gpytoolbox" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Gpytoolbox
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sgsellan/gpytoolbox" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sgsellan/gpytoolbox
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adjacency_matrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    adjacency_matrix
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../angle_defect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    angle_defect
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../angle_defect_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    angle_defect_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apply_colormap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    apply_colormap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../approximate_hausdorff_distance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    approximate_hausdorff_distance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../array_correspondence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    array_correspondence
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bad_quad_mesh_from_quadtree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    bad_quad_mesh_from_quadtree
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../barycenters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    barycenters
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../barycentric_coordinates/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    barycentric_coordinates
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../biharmonic_energy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    biharmonic_energy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../biharmonic_energy_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    biharmonic_energy_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../boundary_edges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    boundary_edges
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../boundary_faces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    boundary_faces
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../boundary_loops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    boundary_loops
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../boundary_vertices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    boundary_vertices
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../catmull_rom_spline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    catmull_rom_spline
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../colormap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    colormap
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compactly_supported_normal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    compactly_supported_normal
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compactly_supported_normal_kernel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    compactly_supported_normal_kernel
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cone/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cone
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../connected_components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    connected_components
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cotangent_laplacian/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cotangent_laplacian
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cotangent_laplacian_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cotangent_laplacian_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cotangent_weights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cotangent_weights
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cotangent_weights_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cotangent_weights_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cut_edges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cut_edges
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cylinder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cylinder
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_d0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_d0
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_d1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_d1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h0
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h0_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h0_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h0inv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h0inv
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h0inv_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h0inv_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h1
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h1_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h1_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h1inv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h1inv
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h1inv_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h1inv_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h2
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h2_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h2_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h2inv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h2inv
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dec_h2inv_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    dec_h2inv_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../decimate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    decimate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../doublearea/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    doublearea
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../doublearea_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    doublearea_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../edge_edge_distance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    edge_edge_distance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../edge_indices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    edge_indices
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../edges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    edges
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    faces
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fast_winding_number/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    fast_winding_number
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fd_grad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    fd_grad
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fd_interpolate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    fd_interpolate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fd_partial_derivative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    fd_partial_derivative
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fixed_dof_solve/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    fixed_dof_solve
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gaussian_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    gaussian_process
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    grad
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grad_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    grad_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grid_laplacian_eigenfunctions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    grid_laplacian_eigenfunctions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grid_neighbors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    grid_neighbors
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halfedge_edge_map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    halfedge_edge_map
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halfedge_lengths/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    halfedge_lengths
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halfedge_lengths_squared/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    halfedge_lengths_squared
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halfedges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    halfedges
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../halffaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    halffaces
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../icosphere/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    icosphere
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../in_element_aabb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    in_element_aabb
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../in_quadtree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    in_quadtree
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../initialize_aabbtree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    initialize_aabbtree
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../initialize_quadtree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    initialize_quadtree
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear_blend_skinning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    linear_blend_skinning
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear_elasticity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    linear_elasticity
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linear_elasticity_stiffness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    linear_elasticity_stiffness
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../marching_cubes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    marching_cubes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../marching_squares/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    marching_squares
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../massmatrix/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    massmatrix
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../massmatrix_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    massmatrix_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix_from_function/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    matrix_from_function
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metropolis_hastings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    metropolis_hastings
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../min_l1_with_fixed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    min_l1_with_fixed
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../min_quad_with_fixed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    min_quad_with_fixed
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../minimum_distance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    minimum_distance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../non_manifold_edges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    non_manifold_edges
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../normalize_points/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    normalize_points
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../offset_surface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    offset_surface
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../particle_swarm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    particle_swarm
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../per_face_normals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    per_face_normals
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../per_vertex_normals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    per_vertex_normals
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../png2poly/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    png2poly
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../point_cloud_to_mesh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    point_cloud_to_mesh
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quadtree_boundary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    quadtree_boundary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quadtree_children/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    quadtree_children
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quadtree_gradient/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    quadtree_gradient
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quadtree_laplacian/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    quadtree_laplacian
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../random_points_on_mesh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    random_points_on_mesh
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ray_box_intersect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ray_box_intersect
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ray_mesh_intersect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ray_mesh_intersect
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ray_polyline_intersect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ray_polyline_intersect
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ray_triangle_intersect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ray_triangle_intersect
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    reach_for_the_arcs
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    reach_for_the_arcs
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.gpytoolbox.reach_for_the_arcs.reach_for_the_arcs" class="md-nav__link">
+    <span class="md-ellipsis">
+      reach_for_the_arcs
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reach_for_the_spheres/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    reach_for_the_spheres
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../read_dmat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    read_dmat
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../read_mesh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    read_mesh
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regular_circle_polyline/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    regular_circle_polyline
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regular_cube_mesh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    regular_cube_mesh
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../regular_square_mesh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    regular_square_mesh
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../remesh_botsch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    remesh_botsch
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../remove_duplicate_vertices/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    remove_duplicate_vertices
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../remove_unreferenced/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    remove_unreferenced
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rotation_matrix_from_vectors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    rotation_matrix_from_vectors
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../signed_distance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    signed_distance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../signed_distance_polygon/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    signed_distance_polygon
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../squared_distance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    squared_distance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../squared_distance_to_element/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    squared_distance_to_element
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../squared_exponential_kernel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    squared_exponential_kernel
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../stochastic_poisson_surface_reconstruction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    stochastic_poisson_surface_reconstruction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../subdivide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    subdivide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../subdivide_quad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    subdivide_quad
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tip_angles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    tip_angles
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tip_angles_intrinsic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    tip_angles_intrinsic
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../torus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    torus
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../traverse_aabbtree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    traverse_aabbtree
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../triangle_triangle_adjacency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    triangle_triangle_adjacency
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../triangle_triangle_distance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    triangle_triangle_distance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../upper_envelope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    upper_envelope
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    volume
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../winding_number/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    winding_number
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../write_mesh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    write_mesh
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_128" >
+        
+          
+          <label class="md-nav__link" for="__nav_128" id="__nav_128_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Copyleft
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_128_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_128">
+            <span class="md-nav__icon md-icon"></span>
+            Copyleft
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copyleft/do_meshes_intersect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    copyleft.do_meshes_intersect
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copyleft/lazy_cage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    copyleft.lazy_cage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copyleft/mesh_boolean/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    copyleft.mesh_boolean
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../copyleft/swept_volume/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    copyleft.swept_volume
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#src.gpytoolbox.reach_for_the_arcs.reach_for_the_arcs" class="md-nav__link">
+    <span class="md-ellipsis">
+      reach_for_the_arcs
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>reach_for_the_arcs</h1>
+
+<div class="doc doc-object doc-module">
+
+
+
+
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="src.gpytoolbox.reach_for_the_arcs.reach_for_the_arcs" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">reach_for_the_arcs</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">rng_seed</span><span class="o">=</span><span class="mi">3452</span><span class="p">,</span> <span class="n">return_point_cloud</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fine_tune_iters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">num_rasterization_spheres</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">screening_weight</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">rasterization_resolution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_points_per_sphere</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_local_searches</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">local_search_iters</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">local_search_t</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">clamp_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">force_cpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Creates a mesh from a signed distance function (SDF) using the
+"Reach for the Arcs" method of S. Sellán,  Y. Ren, C. Batty, and O. Stein [2024].
+This works for polylines in 2D or triangle meshes in 3D.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>U</code>
+            </td>
+            <td>
+                  <code>(n_sdf,d) numpy array</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>points where the SDF is evaluated</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>S</code>
+            </td>
+            <td>
+                  <code>(n_sdf,) numpy array</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>sdf(U)</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>rng_seed</code>
+            </td>
+            <td>
+                  <code>int, optional (default 3452)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>rng seed where random data is needed</p>
+              </div>
+            </td>
+            <td>
+                  <code>3452</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>return_point_cloud</code>
+            </td>
+            <td>
+                  <code>bool, optional (default False)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>return the reconstructed point cloud normals or not</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>fine_tune_iters</code>
+            </td>
+            <td>
+                  <code>int, optional (default 5)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>how may iterations to do in the fine tuning step</p>
+              </div>
+            </td>
+            <td>
+                  <code>3</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>batch_size</code>
+            </td>
+            <td>
+                  <code>int, optional (default 1000)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>how many points in one batch. Set to 0 to disable batching.</p>
+              </div>
+            </td>
+            <td>
+                  <code>10000</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>num_rasterization_spheres</code>
+            </td>
+            <td>
+                  <code>int, optional (default 0)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>how many spheres to use at most in the rasterization step.
+Set to zero to use all spheres.</p>
+              </div>
+            </td>
+            <td>
+                  <code>0</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>screening_weight</code>
+            </td>
+            <td>
+                  <code>float, optional (default 0.1)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>PSR screening weight</p>
+              </div>
+            </td>
+            <td>
+                  <code>10.0</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>rasterization_resolution</code>
+            </td>
+            <td>
+                  <code>int, optional (default 8*n_sdf**(1/d))</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>the resolution of the rasterization grid</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>max_points_per_sphere</code>
+            </td>
+            <td>
+                  <code>int, optional (default 3)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>How many points should there be at most per sphere.
+Set it to 1 to not add any additional points to any sphere when
+fine-tuning.
+Has to be at least 1 (this is a theoretical minimum).
+If set to larger than 1, spheres that the reconstructed surface
+intersects will have at most max_points_per_sphere added.</p>
+              </div>
+            </td>
+            <td>
+                  <code>3</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>n_local_searches</code>
+            </td>
+            <td>
+                  <code>int, optional (default 2*n_sdf**(1/d))</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>how many local searches to perform for each sphere in the locally make
+feasible step</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>local_search_iters</code>
+            </td>
+            <td>
+                  <code>int, optional (default 20)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>how many iterations to try for in the local search for each sphere in
+the locally make feasible step</p>
+              </div>
+            </td>
+            <td>
+                  <code>20</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>local_search_t</code>
+            </td>
+            <td>
+                  <code>double, optional (default 5e-3)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>how far to move each point in the local search for each point in the
+locally make feasible step</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.01</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>tol</code>
+            </td>
+            <td>
+                  <code>float, optional (default 1e-4)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>tolerance for determining whether a point is inside a sphere</p>
+              </div>
+            </td>
+            <td>
+                  <code>0.0001</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>clamp_value</code>
+            </td>
+            <td>
+                  <code>float, optional (default np.inf)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>value to which the SDF is clamped for clamped SDF reconstruction</p>
+              </div>
+            </td>
+            <td>
+                  <code><span title="numpy.inf">inf</span></code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>force_cpu</code>
+            </td>
+            <td>
+                  <code>bool, optional (default False)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>whether to force rasterization onto the CPU</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>parallel</code>
+            </td>
+            <td>
+                  <code>bool, optional (default False)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>whether to parallelize the algorithm or not</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>verbose</code>
+            </td>
+            <td>
+                  <code>bool, optional (default False)</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>whether to output details on the algorithm when it's running</p>
+              </div>
+            </td>
+            <td>
+                  <code>False</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>V</code></td>            <td>
+                  <code>(n,d) numpy array</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>reconstructed vertices</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>F</code></td>            <td>
+                  <code>(m,d) numpy array</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>reconstructed polyline / triangle mesh indices</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>P</code></td>            <td>
+                  <code>(n_p,d) numpy array, if requested</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>reconstructed point cloud points</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>N</code></td>            <td>
+                  <code>(n_p,d) numpy array, if requested</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>reconstructed point cloud normals</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>src/gpytoolbox/reach_for_the_arcs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 11</span>
+<span class="normal"> 12</span>
+<span class="normal"> 13</span>
+<span class="normal"> 14</span>
+<span class="normal"> 15</span>
+<span class="normal"> 16</span>
+<span class="normal"> 17</span>
+<span class="normal"> 18</span>
+<span class="normal"> 19</span>
+<span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reach_for_the_arcs</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span>
+    <span class="n">rng_seed</span><span class="o">=</span><span class="mi">3452</span><span class="p">,</span>
+    <span class="n">return_point_cloud</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">fine_tune_iters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+    <span class="n">num_rasterization_spheres</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">screening_weight</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span>
+    <span class="n">rasterization_resolution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_points_per_sphere</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">n_local_searches</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">local_search_iters</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">local_search_t</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">tol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">clamp_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+    <span class="n">force_cpu</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a mesh from a signed distance function (SDF) using the</span>
+<span class="sd">    &quot;Reach for the Arcs&quot; method of S. Sellán,  Y. Ren, C. Batty, and O. Stein [2024].</span>
+<span class="sd">    This works for polylines in 2D or triangle meshes in 3D.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    U : (n_sdf,d) numpy array</span>
+<span class="sd">        points where the SDF is evaluated</span>
+<span class="sd">    S : (n_sdf,) numpy array</span>
+<span class="sd">        sdf(U)</span>
+<span class="sd">    rng_seed : int, optional (default 3452)</span>
+<span class="sd">        rng seed where random data is needed</span>
+<span class="sd">    return_point_cloud : bool, optional (default False)</span>
+<span class="sd">        return the reconstructed point cloud normals or not</span>
+<span class="sd">    fine_tune_iters : int, optional (default 5)</span>
+<span class="sd">        how may iterations to do in the fine tuning step</span>
+<span class="sd">    batch_size : int, optional (default 1000)</span>
+<span class="sd">        how many points in one batch. Set to 0 to disable batching.</span>
+<span class="sd">    num_rasterization_spheres : int, optional (default 0)</span>
+<span class="sd">        how many spheres to use at most in the rasterization step.</span>
+<span class="sd">        Set to zero to use all spheres.</span>
+<span class="sd">    screening_weight : float, optional (default 0.1)</span>
+<span class="sd">        PSR screening weight</span>
+<span class="sd">    rasterization_resolution : int, optional (default 8*n_sdf**(1/d))</span>
+<span class="sd">        the resolution of the rasterization grid</span>
+<span class="sd">    max_points_per_sphere : int, optional (default 3)</span>
+<span class="sd">        How many points should there be at most per sphere.</span>
+<span class="sd">        Set it to 1 to not add any additional points to any sphere when</span>
+<span class="sd">        fine-tuning.</span>
+<span class="sd">        Has to be at least 1 (this is a theoretical minimum).</span>
+<span class="sd">        If set to larger than 1, spheres that the reconstructed surface</span>
+<span class="sd">        intersects will have at most max_points_per_sphere added.</span>
+<span class="sd">    n_local_searches : int, optional (default 2*n_sdf**(1/d))</span>
+<span class="sd">        how many local searches to perform for each sphere in the locally make</span>
+<span class="sd">        feasible step</span>
+<span class="sd">    local_search_iters : int, optional (default 20)</span>
+<span class="sd">        how many iterations to try for in the local search for each sphere in</span>
+<span class="sd">        the locally make feasible step</span>
+<span class="sd">    local_search_t : double, optional (default 5e-3)</span>
+<span class="sd">        how far to move each point in the local search for each point in the</span>
+<span class="sd">        locally make feasible step</span>
+<span class="sd">    tol : float, optional (default 1e-4)</span>
+<span class="sd">        tolerance for determining whether a point is inside a sphere</span>
+<span class="sd">    clamp_value : float, optional (default np.inf)</span>
+<span class="sd">        value to which the SDF is clamped for clamped SDF reconstruction</span>
+<span class="sd">    force_cpu : bool, optional (default False)</span>
+<span class="sd">        whether to force rasterization onto the CPU</span>
+<span class="sd">    parallel : bool, optional (default False)</span>
+<span class="sd">        whether to parallelize the algorithm or not</span>
+<span class="sd">    verbose : bool, optional (default False)</span>
+<span class="sd">        whether to output details on the algorithm when it&#39;s running</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    V : (n,d) numpy array</span>
+<span class="sd">        reconstructed vertices</span>
+<span class="sd">    F : (m,d) numpy array</span>
+<span class="sd">        reconstructed polyline / triangle mesh indices</span>
+<span class="sd">    P : (n_p,d) numpy array, if requested</span>
+<span class="sd">        reconstructed point cloud points</span>
+<span class="sd">    N : (n_p,d) numpy array, if requested</span>
+<span class="sd">        reconstructed point cloud normals</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">d</span><span class="o">==</span><span class="mi">2</span> <span class="ow">or</span> <span class="n">d</span><span class="o">==</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;Only dimensions 2 and 3 supported.&quot;</span>
+
+    <span class="n">n_sdf</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Pick default values if not supplied.</span>
+    <span class="k">if</span> <span class="n">rasterization_resolution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rasterization_resolution</span> <span class="o">=</span> <span class="mi">64</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_sdf</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="mf">16.</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_local_searches</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_local_searches</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">n_sdf</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">d</span><span class="p">))</span>
+
+    <span class="c1"># RNG used to compute random numbers and new seeds during the method.</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">rng_seed</span><span class="p">)</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="k">lambda</span> <span class="p">:</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+
+    <span class="c1"># Resize the SDF points in U and the SDF samples in S so it&#39;s in [0,1]^d</span>
+    <span class="n">trans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">U</span> <span class="o">-</span> <span class="n">trans</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">/=</span> <span class="n">scale</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">S</span><span class="o">/</span><span class="n">scale</span>
+    <span class="n">clamp_value</span> <span class="o">=</span> <span class="n">clamp_value</span><span class="o">/</span><span class="n">scale</span>
+
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; --- Starting Reach for the Arcs --- &quot;</span><span class="p">)</span>
+        <span class="n">t0_total</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SDF to point cloud...&quot;</span><span class="p">)</span>
+        <span class="n">t0_sdf_to_point_cloud</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Split the SDF into positive and negative spheres?</span>
+    <span class="n">separate_inside_outside</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">separate_inside_outside</span><span class="p">:</span>
+        <span class="n">neg</span> <span class="o">=</span> <span class="n">S</span><span class="o">&lt;</span><span class="mi">0</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">neg</span><span class="p">)</span>
+        <span class="n">pos</span><span class="p">,</span><span class="n">neg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">pos</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">neg</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">U_pos</span><span class="p">,</span> <span class="n">U_neg</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">pos</span><span class="p">,:],</span> <span class="n">U</span><span class="p">[</span><span class="n">neg</span><span class="p">,:]</span>
+        <span class="n">S_pos</span><span class="p">,</span> <span class="n">S_neg</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="n">neg</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pos</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  positive spheres&quot;</span><span class="p">)</span>
+            <span class="n">P_pos</span><span class="p">,</span><span class="n">N_pos</span><span class="p">,</span><span class="n">f_pos</span> <span class="o">=</span> <span class="n">_sdf_to_point_cloud</span><span class="p">(</span><span class="n">U_pos</span><span class="p">,</span> <span class="n">S_pos</span><span class="p">,</span>
+                <span class="n">rng_seed</span><span class="o">=</span><span class="n">seed</span><span class="p">(),</span>
+                <span class="n">rasterization_resolution</span><span class="o">=</span><span class="n">rasterization_resolution</span><span class="p">,</span>
+                <span class="n">n_local_searches</span><span class="o">=</span><span class="n">n_local_searches</span><span class="p">,</span>
+                <span class="n">local_search_iters</span><span class="o">=</span><span class="n">local_search_iters</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">num_rasterization_spheres</span><span class="o">=</span><span class="n">num_rasterization_spheres</span><span class="p">,</span>
+                <span class="n">force_cpu</span><span class="o">=</span><span class="n">force_cpu</span><span class="p">,</span>
+                <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">clamp_value</span><span class="o">=</span><span class="n">clamp_value</span><span class="p">,</span>
+                <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">P_pos</span><span class="p">,</span><span class="n">N_pos</span><span class="p">,</span><span class="n">f_pos</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span>
+        <span class="k">if</span> <span class="n">neg</span><span class="o">.</span><span class="n">size</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  negative spheres&quot;</span><span class="p">)</span>
+            <span class="n">P_neg</span><span class="p">,</span><span class="n">N_neg</span><span class="p">,</span><span class="n">f_neg</span> <span class="o">=</span> <span class="n">_sdf_to_point_cloud</span><span class="p">(</span><span class="n">U_neg</span><span class="p">,</span> <span class="n">S_neg</span><span class="p">,</span>
+                <span class="n">rng_seed</span><span class="o">=</span><span class="n">seed</span><span class="p">(),</span>
+                <span class="n">rasterization_resolution</span><span class="o">=</span><span class="n">rasterization_resolution</span><span class="p">,</span>
+                <span class="n">n_local_searches</span><span class="o">=</span><span class="n">n_local_searches</span><span class="p">,</span>
+                <span class="n">local_search_iters</span><span class="o">=</span><span class="n">local_search_iters</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">num_rasterization_spheres</span><span class="o">=</span><span class="n">num_rasterization_spheres</span><span class="p">,</span>
+                <span class="n">force_cpu</span><span class="o">=</span><span class="n">force_cpu</span><span class="p">,</span>
+                <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">clamp_value</span><span class="o">=</span><span class="n">clamp_value</span><span class="p">,</span>
+                <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">P_neg</span><span class="p">,</span><span class="n">N_neg</span><span class="p">,</span><span class="n">f_neg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">P_pos</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">P_pos</span><span class="o">.</span><span class="n">size</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">P</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">f</span> <span class="o">=</span> <span class="n">P_neg</span><span class="p">,</span><span class="n">N_neg</span><span class="p">,</span><span class="n">neg</span><span class="p">[</span><span class="n">f_neg</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">P_neg</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">P_neg</span><span class="o">.</span><span class="n">size</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">P</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">f</span> <span class="o">=</span> <span class="n">P_pos</span><span class="p">,</span><span class="n">N_pos</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="n">f_pos</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">P_pos</span><span class="p">,</span> <span class="n">P_neg</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">N_pos</span><span class="p">,</span> <span class="n">N_neg</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">pos</span><span class="p">[</span><span class="n">f_pos</span><span class="p">],</span> <span class="n">neg</span><span class="p">[</span><span class="n">f_neg</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">P</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">f</span> <span class="o">=</span> <span class="n">_sdf_to_point_cloud</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span>
+            <span class="n">rng_seed</span><span class="o">=</span><span class="n">seed</span><span class="p">(),</span>
+            <span class="n">rasterization_resolution</span><span class="o">=</span><span class="n">rasterization_resolution</span><span class="p">,</span>
+            <span class="n">n_local_searches</span><span class="o">=</span><span class="n">n_local_searches</span><span class="p">,</span>
+            <span class="n">local_search_iters</span><span class="o">=</span><span class="n">local_search_iters</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">force_cpu</span><span class="o">=</span><span class="n">force_cpu</span><span class="p">,</span>
+            <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="n">clamp_value</span><span class="o">=</span><span class="n">clamp_value</span><span class="p">,</span>
+            <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">P</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to find any point cloud point.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_point_cloud</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">N</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">F</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SDF to point cloud took </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0_sdf_to_point_cloud</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fine tuning point cloud...&quot;</span><span class="p">)</span>
+        <span class="n">t0_fine_tune</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">P</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">f</span> <span class="o">=</span> <span class="n">_fine_tune_point_cloud</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span>
+        <span class="n">rng_seed</span><span class="o">=</span><span class="n">seed</span><span class="p">(),</span>
+        <span class="n">fine_tune_iters</span><span class="o">=</span><span class="n">fine_tune_iters</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">screening_weight</span><span class="o">=</span><span class="n">screening_weight</span><span class="p">,</span>
+        <span class="n">max_points_per_sphere</span><span class="o">=</span><span class="n">max_points_per_sphere</span><span class="p">,</span>
+        <span class="n">n_local_searches</span><span class="o">=</span><span class="n">n_local_searches</span><span class="p">,</span>
+        <span class="n">local_search_iters</span><span class="o">=</span><span class="n">local_search_iters</span><span class="p">,</span>
+        <span class="n">local_search_t</span><span class="o">=</span><span class="n">local_search_t</span><span class="p">,</span>
+        <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span><span class="n">clamp_value</span><span class="o">=</span><span class="n">clamp_value</span><span class="p">,</span>
+        <span class="n">parallel</span><span class="o">=</span><span class="n">parallel</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fine tuning point cloud took </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0_fine_tune</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converting point cloud to mesh...&quot;</span><span class="p">)</span>
+        <span class="n">t0_point_cloud_to_mesh</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">V</span><span class="p">,</span><span class="n">F</span> <span class="o">=</span> <span class="n">point_cloud_to_mesh</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;PSR&#39;</span><span class="p">,</span>
+        <span class="n">psr_screening_weight</span><span class="o">=</span><span class="n">screening_weight</span><span class="p">,</span>
+        <span class="n">psr_outer_boundary_type</span><span class="o">=</span><span class="s2">&quot;Neumann&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">V</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">V</span><span class="o">.</span><span class="n">size</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reconstructing point cloud failed.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_point_cloud</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">P</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">P</span><span class="o">.</span><span class="n">size</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">N</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">scale</span><span class="o">*</span><span class="n">P</span><span class="o">+</span><span class="n">trans</span><span class="p">[</span><span class="kc">None</span><span class="p">,:],</span> <span class="n">N</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">F</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converting point cloud to mesh took </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0_point_cloud_to_mesh</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; --- Finished Reach for the Arcs --- &quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total elapsed time: </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">t0_total</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Undo recentering</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">scale</span><span class="o">*</span><span class="n">V</span> <span class="o">+</span> <span class="n">trans</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">scale</span><span class="o">*</span><span class="n">P</span> <span class="o">+</span> <span class="n">trans</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span>
+
+    <span class="k">if</span> <span class="n">return_point_cloud</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">N</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">V</span><span class="p">,</span> <span class="n">F</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
