@@ -120,6 +120,13 @@ class TestReachForTheArcs(unittest.TestCase):
             # print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
             self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.05)
 
+    def test_issue_147(self):
+        grid_path = "test/unit_tests_data/issue-147/grid_1.txt"
+        sdf_path = "test/unit_tests_data/issue-147/sdf_1.txt"
+        grid = np.loadtxt(grid_path,dtype=float)
+        sdf = np.loadtxt(sdf_path,dtype=float)
+        vr,fr = gpy.reach_for_the_arcs(grid,sdf,verbose=True)
+
 
 if __name__ == '__main__':
     unittest.main()
