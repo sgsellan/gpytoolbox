@@ -54,17 +54,23 @@ def squared_distance_to_element(point,V,element):
         line_vec = end - start
         pnt_vec = point - start
         line_len = np.linalg.norm(line_vec)
-        line_unitvec = line_vec/line_len
-        pnt_vec_scaled = pnt_vec/line_len
-        t = np.dot(line_unitvec, pnt_vec_scaled)    
-        if t < 0.0:
-            t = 0.0
-        elif t > 1.0:
-            t = 1.0
-        nearest = t*line_vec
-        sqrD = np.sum((nearest - pnt_vec)**2.0)
-        nearest = start + nearest
-        lmb = [1-t,t]
+        if line_len<1e-10:
+            # then it's just distance to a point
+            sqrD = np.sum((start - point)**2.0)
+            nearest = start
+            lmb = [1,0]
+        else:
+            line_unitvec = line_vec/line_len
+            pnt_vec_scaled = pnt_vec/line_len
+            t = np.dot(line_unitvec, pnt_vec_scaled)    
+            if t < 0.0:
+                t = 0.0
+            elif t > 1.0:
+                t = 1.0
+            nearest = t*line_vec
+            sqrD = np.sum((nearest - pnt_vec)**2.0)
+            nearest = start + nearest
+            lmb = [1-t,t]
     elif simplex_size==3:
         assert(dim==3)
         sqrD = 0
