@@ -20,6 +20,10 @@ def squared_distance_to_element(point,V,element):
     lmb : (s,) numpy double array
         Barycentric coordinates into the element of the closest point to the query point
 
+    Notes
+    -----
+    If s = 2 and the edge is degenerate (the line length is below 1e-10), the distance is measured against the starting point of the edge, and lambda is arbitrarily made [1,0].
+
     See Also
     --------
     squared_distance.
