@@ -112,15 +112,6 @@ class TestSquaredDistanceToElement(unittest.TestCase):
             # Is our computed distance close to the minimum distance to the random points
             self.assertTrue(np.isclose(sqrD-smallest_rand_distance,0.0,atol=1e-3))
             self.assertTrue(np.isclose(b[best_rand_guess,:]-lmb,0.0,atol=1e-2).all())
-
-    def test_degenerate_edge(self):
-        # We will do the same test as above, but with an edge that has the same point as start and end (plus a random +e-11 offset)
-        np.random.seed(0)
-        num_tests = 100
-        
-
-
-
         
 
 
