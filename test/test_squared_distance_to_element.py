@@ -71,6 +71,19 @@ class TestSquaredDistanceToElement(unittest.TestCase):
             sqrD,lmb = gpytoolbox.squared_distance_to_element(rndpt @ Rz.T @ Ry.T @ Rx.T,V @ Rz.T @ Ry.T @ Rx.T,edge)
             self.assertTrue(np.isclose(sqrD-dist_gt,0.0,atol=1e-5))
             self.assertTrue(np.isclose( lmb[0]*V[0,:] + lmb[1]*V[1,:] - nearest_point,0).all())
+    def test_degenerate_edge_3d(self):
+        # We will do the same test as above, but with an edge that has the same point as start and end (plus a random +e-11 offset)
+        np.random.seed(0)
+        num_tests = 100
+        for i in range(num_tests):
+            p = np.random.rand(1,3)
+            V = np.array([[0,0,0],[0,0,1e-11]])
+            edge = np.array([0,1],dtype=int)
+            sqrD,lmb = gpytoolbox.squared_distance_to_element(p,V,edge)
+            distance_gt = np.linalg.norm(p-V[0,:])
+            self.assertTrue(np.isclose(np.sqrt(sqrD) - distance_gt,0.0,atol=1e-4))
+            self.assertTrue(lmb[0]==1)
+            self.assertTrue(lmb[1]==0)
 
     def test_random_triangle(self):
         # Generate random triangle
@@ -99,10 +112,6 @@ class TestSquaredDistanceToElement(unittest.TestCase):
             # Is our computed distance close to the minimum distance to the random points
             self.assertTrue(np.isclose(sqrD-smallest_rand_distance,0.0,atol=1e-3))
             self.assertTrue(np.isclose(b[best_rand_guess,:]-lmb,0.0,atol=1e-2).all())
-
-
-
-
         
 
 
