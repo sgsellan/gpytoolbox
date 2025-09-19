@@ -16,6 +16,11 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Setup CMake
+        uses: actions/setup-cmake@v3
+        with:
+          cmake-version: '3.26.3'
+
       - uses: actions/setup-python@v4
         id: installpython
         name: Install Python

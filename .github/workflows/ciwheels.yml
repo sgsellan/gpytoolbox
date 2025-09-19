@@ -67,6 +67,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: 'recursive'
+
+      - name: Setup CMake
+        uses: actions/setup-cmake@v3
+        with:
+          cmake-version: '3.26.3'
       
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.2
