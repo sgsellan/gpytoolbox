@@ -1,4 +1,4 @@
-__version__ = '0.3.6'
+__version__ = '0.3.7'
 
 # This function depends on skimage 
 from .png2poly import png2poly
