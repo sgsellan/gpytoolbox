@@ -19,7 +19,7 @@ jobs:
       - name: Install specific CMake version
         uses: lukka/get-cmake@v2
         with:
-          cmake-version: '3.26.3'
+          cmakeVersion: '3.26.3'
 
       - uses: actions/setup-python@v4
         id: installpython

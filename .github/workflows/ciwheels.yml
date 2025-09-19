@@ -71,7 +71,7 @@ jobs:
       - name: Install specific CMake version
         uses: lukka/get-cmake@v2
         with:
-          cmake-version: '3.26.3'
+          cmakeVersion: '3.26.3'
       
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.2
