@@ -68,8 +68,8 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Setup CMake
-        uses: actions/setup-cmake@v3
+      - name: Install specific CMake version
+        uses: lukka/get-cmake@v2
         with:
           cmake-version: '3.26.3'
       
