@@ -35,7 +35,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=${{ steps.installpython.outputs.python-path }} ..  
+          cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.6 -DCMAKE_BUILD_TYPE=Release -DPYTHON_EXECUTABLE=${{ steps.installpython.outputs.python-path }} ..  
           cmake --build "." --config Release
 
       - name: Run unit tests

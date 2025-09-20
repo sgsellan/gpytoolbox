@@ -54,7 +54,7 @@ jobs:
       - name: Install c++ bindings
         shell: bash -l {0}
         run: |
-          mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && 
+          mkdir build && cd build && cmake -DCMAKE_POLICY_VERSION_MINIMUM=3.6 -DCMAKE_BUILD_TYPE=Release .. && 
           cmake --build "." --config Release
 
       - name: Debug
