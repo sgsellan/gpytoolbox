@@ -16,10 +16,8 @@ jobs:
         with:
           submodules: 'recursive'
 
-      - name: Install specific CMake version
-        uses: lukka/get-cmake@v2
-        with:
-          cmakeVersion: '3.26.3'
+      - name: Get specific version of CMake, v3.26.3
+        uses: lukka/get-cmake@v3.26.3
 
       - uses: actions/setup-python@v4
         id: installpython
