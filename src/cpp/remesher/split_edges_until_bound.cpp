@@ -28,7 +28,7 @@
 #include "split_edges.h"
 using namespace std;
 
-void split_edges_until_bound(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature, Eigen::VectorXd & high, Eigen::VectorXd & low){
+void split_edges_until_bound(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature, Eigen::VectorXd & high, Eigen::VectorXd & low, Eigen::MatrixXd & VA){
 
     using namespace Eigen;
     int m = F.rows();
@@ -82,7 +82,7 @@ void split_edges_until_bound(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::Vec
 
             //std::cout << "Before call to split_edges" << std::endl;
             //std::cout << edges_to_split.size() << std::endl;
-            split_edges(V,F,E,uE,EMAP,uE2E,high,low,edges_to_split);
+            split_edges(V,F,E,uE,EMAP,uE2E,high,low,edges_to_split,VA);
             //igl::writeOBJ("test.obj",V,F);
             //igl::unique_edge_map(F,E,uE,EMAP,uE2E);
             //std::cout << igl::is_edge_manifold(F) << std::endl;

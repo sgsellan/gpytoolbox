@@ -25,7 +25,7 @@
 #include <igl/infinite_cost_stopping_condition.h>
 using namespace std;
 
-void split_edges(Eigen::MatrixXd & V, Eigen::MatrixXi & F, Eigen::MatrixXi & E0, Eigen::MatrixXi & uE, Eigen::VectorXi & EMAP0, std::vector<std::vector<int>> & uE2E,Eigen::VectorXd & high, Eigen::VectorXd & low,const std::vector<int> & edges_to_split){
+void split_edges(Eigen::MatrixXd & V, Eigen::MatrixXi & F, Eigen::MatrixXi & E0, Eigen::MatrixXi & uE, Eigen::VectorXi & EMAP0, std::vector<std::vector<int>> & uE2E,Eigen::VectorXd & high, Eigen::VectorXd & low,const std::vector<int> & edges_to_split, Eigen::MatrixXd & VA){
     using namespace Eigen;
 
     Eigen::VectorXi EMAP;
@@ -72,6 +72,7 @@ void split_edges(Eigen::MatrixXd & V, Eigen::MatrixXi & F, Eigen::MatrixXi & E0,
 
     F.conservativeResize(num_faces,3);
     V.conservativeResize(num_vertices,3);
+    VA.conservativeResize(num_vertices,VA.cols());
     high.conservativeResize(num_vertices);
     low.conservativeResize(num_vertices);
     uE.conservativeResize(num_uE,2);
@@ -176,6 +177,7 @@ void split_edges(Eigen::MatrixXd & V, Eigen::MatrixXi & F, Eigen::MatrixXi & E0,
 
         // naïve: use mid-point
         V.row(n+i) = (V.row(v1)+V.row(v2))/2;
+        VA.row(n+i) = (VA.row(v1)+VA.row(v2))/2;
         high(n+i) = (high(v1)+high(v2))/2;
         low(n+i) = (low(v1)+low(v2))/2;
         // *** UPDATE F ***
