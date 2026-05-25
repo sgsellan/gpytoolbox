@@ -3,6 +3,8 @@ from .particle_swarm import particle_swarm
 from .signed_distance import signed_distance
 from .ray_mesh_intersect import ray_mesh_intersect
 from .random_points_on_mesh import random_points_on_mesh
+from .AABBTree import AABBTree
+from .FastWindingNumberBVH import FastWindingNumberBVH
 
 
 def _axis_angle_to_matrix(aa):
@@ -35,6 +37,7 @@ def _transform_points(B, s, R, c, B_center):
 def _feasible(samples_TB, A_V, A_F,
               cut_point, cut_normal,
               a_plus, a_minus,
+              aabb=None, fwn_bvh=None,
               sd_tol=1e-6, plane_tol=1e-6):
     """Test if a configuration of T(B) sample points nests inside A and the two
     halves of A can clear T(B) along a+/a-.
@@ -43,10 +46,14 @@ def _feasible(samples_TB, A_V, A_F,
     cut_normal : unit vector defining the cut plane.
     a_plus     : removal direction for A_top (above the plane). a+ · n > 0.
     a_minus    : removal direction for A_bot. a- · n < 0.
+    aabb, fwn_bvh : precomputed AABBTree / FastWindingNumberBVH for `A`. If
+        provided, the signed-distance call reuses them instead of rebuilding
+        on every evaluation. This is the dominant cost of the optimization.
     """
     # 1) Containment: every surface sample of T(B) is strictly inside A
     #    (signed_distance < 0 inside, > 0 outside).
-    sd, _, _ = signed_distance(samples_TB, A_V, A_F)
+    sd, _, _ = signed_distance(samples_TB, A_V, A_F,
+                               aabb=aabb, fwn_bvh=fwn_bvh)
     if np.any(sd > -sd_tol):
         return False
 
@@ -89,6 +96,7 @@ def _sample_B_surface(B_V, B_F, n_samples, rng):
 
 def _largest_feasible_scale(samples_B, B_center, A_V, A_F, R, c,
                             cut_point, cut_normal, a_plus, a_minus,
+                            aabb=None, fwn_bvh=None,
                             s_lo=0.0, s_hi=1.0, tol=1e-3, max_iter=15):
     """Binary-search the largest s in [s_lo, s_hi] for which the nesting is feasible.
 
@@ -98,7 +106,7 @@ def _largest_feasible_scale(samples_B, B_center, A_V, A_F, R, c,
     def feas(s):
         samples_TB = _transform_points(samples_B, s, R, c, B_center)
         return _feasible(samples_TB, A_V, A_F, cut_point, cut_normal,
-                         a_plus, a_minus)
+                         a_plus, a_minus, aabb=aabb, fwn_bvh=fwn_bvh)
 
     # Sanity check the lower bound; if even small scale fails, the centroid is
     # outside A (or some other invalid config) — give up.
@@ -303,6 +311,13 @@ def matryoshka(V, F,
     # Surface samples of B (canonical, before transformation).
     samples_B = _sample_B_surface(VB, FB, n_samples, rng)
 
+    # Build the AABB tree + fast winding number BVH for A once and reuse them
+    # across every feasibility evaluation. This is the single biggest CPU win
+    # for the optimization — `signed_distance` is called hundreds of times
+    # and would otherwise rebuild both trees on each call.
+    A_aabb = AABBTree(V, F)
+    A_fwn_bvh = FastWindingNumberBVH(V, F)
+
     if optimize == 'scale_only':
         if R is None:
             R = np.eye(3)
@@ -310,6 +325,7 @@ def matryoshka(V, F,
             c = A_center.copy()
         s = _largest_feasible_scale(samples_B, B_center, V, F, R, c,
                                     cut_point, cut_normal, a_plus, a_minus,
+                                    aabb=A_aabb, fwn_bvh=A_fwn_bvh,
                                     tol=scale_tol)
         return dict(s=s, R=R, c=c, B_center=B_center,
                     cut_point=cut_point, cut_normal=cut_normal,
@@ -375,13 +391,16 @@ def matryoshka(V, F,
             R_s, c_s, cp_s, cn_s, ap_s, am_s = _decode(seed_x, 'all', fixed)
             best['s'] = _largest_feasible_scale(
                 samples_B, B_center, V, F, R_s, c_s,
-                cp_s, cn_s, ap_s, am_s, tol=scale_tol)
+                cp_s, cn_s, ap_s, am_s,
+                aabb=A_aabb, fwn_bvh=A_fwn_bvh, tol=scale_tol)
             best['x'] = seed_x
 
     def objective(x):
         R_x, c_x, cp, cn, ap, am = _decode(x, optimize, fixed)
         s = _largest_feasible_scale(samples_B, B_center, V, F, R_x, c_x,
-                                    cp, cn, ap, am, tol=scale_tol)
+                                    cp, cn, ap, am,
+                                    aabb=A_aabb, fwn_bvh=A_fwn_bvh,
+                                    tol=scale_tol)
         if s > best['s']:
             best['s'] = s
             best['x'] = x.copy()
