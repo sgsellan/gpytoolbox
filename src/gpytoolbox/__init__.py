@@ -108,6 +108,7 @@ from .torus import torus
 from .marching_squares import marching_squares
 from .winding_number import winding_number
 from .particle_swarm import particle_swarm
+from .matryoshka import matryoshka
 from .read_dmat import read_dmat
 from .linear_blend_skinning import linear_blend_skinning
 from .barycenters import barycenters
