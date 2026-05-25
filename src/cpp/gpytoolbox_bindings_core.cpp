@@ -14,6 +14,8 @@ void binding_read_obj(py::module& m);
 void binding_write_obj(py::module& m);
 void binding_decimate(py::module& m);
 void binding_fast_winding_number(py::module& m);
+void binding_fast_winding_number_bvh(py::module& m);
+void binding_aabb_tree(py::module& m);
 void binding_hausdorff_distance(py::module& m);
 void binding_in_element_aabb(py::module& m);
 void binding_marching_cubes(py::module& m);
@@ -41,6 +43,8 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_write_obj(m);
     binding_decimate(m);
     binding_fast_winding_number(m);
+    binding_fast_winding_number_bvh(m);
+    binding_aabb_tree(m);
     binding_hausdorff_distance(m);
     binding_in_element_aabb(m);
     binding_marching_cubes(m);

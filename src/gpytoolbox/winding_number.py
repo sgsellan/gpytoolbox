@@ -1,7 +1,7 @@
 import numpy as np
 from gpytoolbox.fast_winding_number import fast_winding_number
 
-def winding_number(O, V, F):
+def winding_number(O, V, F, fwn_bvh=None):
     """
     Compute the sum of solid angles subtended by the faces of a mesh at a set of points. In 2D, this outputs the exact winding number by summing up solid angles; in 3D, this uses the fast winding number approximation by Barrill et al. "Fast Winding Numbers for Soups and Clouds" (SIGGRAPH 2018).
 
@@ -13,7 +13,10 @@ def winding_number(O, V, F):
         Matrix of mesh/polyline/pointcloud coordinates (in 2D, this is a polyline)
     F : (f,s) numpy int array
         Matrix of mesh/polyline/pointcloud indices into V
-    
+    fwn_bvh : gpytoolbox.FastWindingNumberBVH, optional (default None)
+        Precomputed BVH for the 3D fast winding number. Ignored in 2D. If
+        provided, reuses the BVH across calls instead of rebuilding it.
+
     Returns
     -------
     W : (p,) numpy double array
@@ -21,10 +24,11 @@ def winding_number(O, V, F):
 
     See Also
     --------
-    signed_distance, squared_distance, fast_winding_number
+    signed_distance, squared_distance, fast_winding_number, FastWindingNumberBVH
 
     Examples
     --------
+    Standard one-shot call (in 3D, rebuilds the BVH internally each time):
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj") # Read a mesh
     v = gpytoolbox.normalize_points(v) # Normalize mesh
@@ -33,10 +37,22 @@ def winding_number(O, V, F):
     # Compute winding numbers
     W = gpytoolbox.winding_number(P,v,f)
     ```
+
+    In 3D, when making many calls against the same mesh, build the BVH
+    once and reuse it via the `fwn_bvh=` kwarg to avoid the O(n)
+    precomputation cost on every call:
+    ```python
+    v,f = gpytoolbox.read_mesh("bunny.obj")
+    v = gpytoolbox.normalize_points(v)
+    bvh = gpytoolbox.FastWindingNumberBVH(v, f) # build once
+    for _ in range(num_iters):
+        P = 2*np.random.rand(num_samples,3)-4
+        W = gpytoolbox.winding_number(P,v,f,fwn_bvh=bvh)
+    ```
     """
     dim = V.shape[1]
-    if dim == 2:   
-        # Compute solid angles     
+    if dim == 2:
+        # Compute solid angles
         VS = V[F[:, 0], :]
         VD = V[F[:, 1], :]
 
@@ -48,5 +64,5 @@ def winding_number(O, V, F):
         W = np.sum(S, axis=1) / (2 * np.pi)
     elif dim == 3:
         # Compute winding number. It would be nice to have the exact winding number using solid angle in 3D too, but for now this is good for most times I want it.
-        W = fast_winding_number(O,V,F)
+        W = fast_winding_number(O,V,F,fwn_bvh=fwn_bvh)
     return W
