@@ -203,7 +203,26 @@ class TestSquaredDistance(unittest.TestCase):
             self.is_consistent(sqrD_aabb_2,sqrD_gt,ind_aabb_2,ind_gt,lmb_aabb_2,lmb_gt,v,f)
             self.is_consistent(sqrD_gt,sqrD_cpp,ind_gt,ind_cpp,lmb_gt,lmb_cpp,v,f)
 
+            # Use precomputed C++ AABBTree
+            tree = gpytoolbox.AABBTree(v, f)
+            sqrD_tree,ind_tree,lmb_tree = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,aabb=tree)
+            self.is_consistent(sqrD_cpp,sqrD_tree,ind_cpp,ind_tree,lmb_cpp,lmb_tree,v,f)
+            # Calling it a second time on the same tree must reproduce the result
+            sqrD_tree2,ind_tree2,lmb_tree2 = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,aabb=tree)
+            self.assertTrue(np.array_equal(sqrD_tree, sqrD_tree2))
+            self.assertTrue(np.array_equal(ind_tree, ind_tree2))
 
+    def test_aabb_tree_polyline(self):
+        # 2D polyline (closed circle) reuse test
+        theta = np.linspace(0, 2*np.pi, 200, endpoint=False)
+        V = np.stack([np.cos(theta), np.sin(theta)], axis=1)
+        E = gpytoolbox.edge_indices(V.shape[0], closed=True)
+        P = 2*np.random.default_rng(0).random((50, 2)) - 1
+        sqrD_ref,ind_ref,lmb_ref = gpytoolbox.squared_distance(P,V,F=E,use_cpp=True)
+        tree = gpytoolbox.AABBTree(V, E)
+        self.assertEqual(tree.dim, 2)
+        sqrD_tree,ind_tree,lmb_tree = gpytoolbox.squared_distance(P,V,F=E,use_cpp=True,aabb=tree)
+        self.is_consistent(sqrD_ref,sqrD_tree,ind_ref,ind_tree,lmb_ref,lmb_tree,V,E)
 
 
 

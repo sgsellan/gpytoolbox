@@ -146,6 +146,8 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_obj.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_decimate.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_fast_winding_number.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_fast_winding_number_bvh.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_aabb_tree.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_hausdorff_distance.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_in_element_aabb.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_marching_cubes.cpp"
