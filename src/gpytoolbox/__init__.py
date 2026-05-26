@@ -77,6 +77,7 @@ from .write_mesh import write_mesh
 from .decimate import decimate
 from .in_element_aabb import in_element_aabb
 from .ray_mesh_intersect import ray_mesh_intersect
+from .RayMeshIntersector import RayMeshIntersector
 from .remesh_botsch import remesh_botsch
 from .upper_envelope import upper_envelope
 from .colormap import colormap

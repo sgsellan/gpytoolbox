@@ -47,7 +47,7 @@ class ray_mesh_intersect_traversal:
 
 
 
-def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None,tri_ind=None):
+def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None,tri_ind=None,intersector=None):
     """Shoot a ray from a position and see where it crashes into a given mesh
 
     Uses a bounding volume hierarchy to efficiently compute intersections of many different rays with a given mesh.
@@ -72,6 +72,11 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
         Matrix of child indeces (-1 if leaf node). If None and use_embree=False, will be computed
     tri_ind : numpy int array, optional (default None)
         Vector of AABB element indices (-1 if *not* leaf node). If None and use_embree=False, will be computed
+    intersector : gpytoolbox.RayMeshIntersector, optional (default None)
+        Precomputed Embree intersector built via `gpytoolbox.RayMeshIntersector(V, F)`.
+        When provided (and `use_embree=True`), reuses the persistent Embree scene
+        across calls instead of rebuilding it. V and F are still consulted only
+        for shape; the actual queries go through the cached intersector.
 
     Returns
     -------
@@ -93,12 +98,15 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     ```
     """
     if use_embree:
-        try:
-            from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
-        except:
-            raise ImportError("Gpytoolbox cannot import its C++ ray_mesh_intersect binding.")
+        if intersector is not None:
+            ts, ids, lambdas = intersector.intersect(cam_pos, cam_dir)
+        else:
+            try:
+                from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
+            except:
+                raise ImportError("Gpytoolbox cannot import its C++ ray_mesh_intersect binding.")
 
-        ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
+            ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
     else:
         ts = np.inf*np.ones(cam_pos.shape[0])
         ids = -np.ones(cam_pos.shape[0],dtype=int)

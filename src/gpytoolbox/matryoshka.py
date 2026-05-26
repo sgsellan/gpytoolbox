@@ -5,6 +5,7 @@ from .ray_mesh_intersect import ray_mesh_intersect
 from .random_points_on_mesh import random_points_on_mesh
 from .AABBTree import AABBTree
 from .FastWindingNumberBVH import FastWindingNumberBVH
+from .RayMeshIntersector import RayMeshIntersector
 
 
 def _axis_angle_to_matrix(aa):
@@ -37,7 +38,7 @@ def _transform_points(B, s, R, c, B_center):
 def _feasible(samples_TB, A_V, A_F,
               cut_point, cut_normal,
               a_plus, a_minus,
-              aabb=None, fwn_bvh=None,
+              aabb=None, fwn_bvh=None, intersector=None,
               sd_tol=1e-6, plane_tol=1e-6):
     """Test if a configuration of T(B) sample points nests inside A and the two
     halves of A can clear T(B) along a+/a-.
@@ -66,7 +67,8 @@ def _feasible(samples_TB, A_V, A_F,
     dirs_plus = np.tile(-a_plus_n[None, :], (m, 1))
     dirs_minus = np.tile(-a_minus_n[None, :], (m, 1))
 
-    ts, ids, _ = ray_mesh_intersect(samples_TB, dirs_plus, A_V, A_F)
+    ts, ids, _ = ray_mesh_intersect(samples_TB, dirs_plus, A_V, A_F,
+                                    intersector=intersector)
     if np.any(ids >= 0):
         hit_mask = ids >= 0
         hits = samples_TB[hit_mask] + ts[hit_mask, None] * dirs_plus[hit_mask]
@@ -74,7 +76,8 @@ def _feasible(samples_TB, A_V, A_F,
         if np.any(side > plane_tol):
             return False
 
-    ts, ids, _ = ray_mesh_intersect(samples_TB, dirs_minus, A_V, A_F)
+    ts, ids, _ = ray_mesh_intersect(samples_TB, dirs_minus, A_V, A_F,
+                                    intersector=intersector)
     if np.any(ids >= 0):
         hit_mask = ids >= 0
         hits = samples_TB[hit_mask] + ts[hit_mask, None] * dirs_minus[hit_mask]
@@ -96,7 +99,7 @@ def _sample_B_surface(B_V, B_F, n_samples, rng):
 
 def _largest_feasible_scale(samples_B, B_center, A_V, A_F, R, c,
                             cut_point, cut_normal, a_plus, a_minus,
-                            aabb=None, fwn_bvh=None,
+                            aabb=None, fwn_bvh=None, intersector=None,
                             s_lo=0.0, s_hi=1.0, tol=1e-3, max_iter=15):
     """Binary-search the largest s in [s_lo, s_hi] for which the nesting is feasible.
 
@@ -106,7 +109,8 @@ def _largest_feasible_scale(samples_B, B_center, A_V, A_F, R, c,
     def feas(s):
         samples_TB = _transform_points(samples_B, s, R, c, B_center)
         return _feasible(samples_TB, A_V, A_F, cut_point, cut_normal,
-                         a_plus, a_minus, aabb=aabb, fwn_bvh=fwn_bvh)
+                         a_plus, a_minus, aabb=aabb, fwn_bvh=fwn_bvh,
+                         intersector=intersector)
 
     # Sanity check the lower bound; if even small scale fails, the centroid is
     # outside A (or some other invalid config) — give up.
@@ -317,6 +321,7 @@ def matryoshka(V, F,
     # and would otherwise rebuild both trees on each call.
     A_aabb = AABBTree(V, F)
     A_fwn_bvh = FastWindingNumberBVH(V, F)
+    A_rmi = RayMeshIntersector(V, F)
 
     if optimize == 'scale_only':
         if R is None:
@@ -326,6 +331,7 @@ def matryoshka(V, F,
         s = _largest_feasible_scale(samples_B, B_center, V, F, R, c,
                                     cut_point, cut_normal, a_plus, a_minus,
                                     aabb=A_aabb, fwn_bvh=A_fwn_bvh,
+                                    intersector=A_rmi,
                                     tol=scale_tol)
         return dict(s=s, R=R, c=c, B_center=B_center,
                     cut_point=cut_point, cut_normal=cut_normal,
@@ -392,7 +398,8 @@ def matryoshka(V, F,
             best['s'] = _largest_feasible_scale(
                 samples_B, B_center, V, F, R_s, c_s,
                 cp_s, cn_s, ap_s, am_s,
-                aabb=A_aabb, fwn_bvh=A_fwn_bvh, tol=scale_tol)
+                aabb=A_aabb, fwn_bvh=A_fwn_bvh, intersector=A_rmi,
+                tol=scale_tol)
             best['x'] = seed_x
 
     def objective(x):
@@ -400,6 +407,7 @@ def matryoshka(V, F,
         s = _largest_feasible_scale(samples_B, B_center, V, F, R_x, c_x,
                                     cp, cn, ap, am,
                                     aabb=A_aabb, fwn_bvh=A_fwn_bvh,
+                                    intersector=A_rmi,
                                     tol=scale_tol)
         if s > best['s']:
             best['s'] = s

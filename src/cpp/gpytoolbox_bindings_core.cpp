@@ -22,6 +22,7 @@ void binding_marching_cubes(py::module& m);
 void binding_offset_surface(py::module& m);
 void binding_point_mesh_squared_distance(py::module& m);
 void binding_ray_mesh_intersect(py::module& m);
+void binding_ray_mesh_intersector(py::module& m);
 void binding_particle_swarm(py::module& m);
 void binding_read_stl(py::module& m);
 void binding_write_stl(py::module& m);
@@ -51,6 +52,7 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_offset_surface(m);
     binding_point_mesh_squared_distance(m);
     binding_ray_mesh_intersect(m);
+    binding_ray_mesh_intersector(m);
     binding_particle_swarm(m);
     binding_read_stl(m);
     binding_write_stl(m);
