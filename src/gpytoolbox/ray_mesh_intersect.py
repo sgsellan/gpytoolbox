@@ -89,12 +89,25 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
 
     Examples
     --------
+    Standard one-shot call (rebuilds the Embree scene internally each time):
     ```python
     from gpytoolbox import ray_mesh_intersect
     v,f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
     cam_pos = np.array([[1,0.1,0.1],[1,0.2,0.0]])
     cam_dir = np.array([[-1,0,0],[-1,0,0]])
     t, ids, l = ray_mesh_intersect(cam_pos,cam_dir,v,f)
+    ```
+
+    When making many calls against the same mesh, build the Embree
+    intersector once and reuse it via the `intersector=` kwarg to avoid
+    the O(n) construction cost on every call:
+    ```python
+    v,f = gpytoolbox.read_mesh("bunny.obj")
+    rmi = gpytoolbox.RayMeshIntersector(v, f) # build once
+    for _ in range(num_iters):
+        origins = 2*np.random.rand(num_rays,3)-1
+        dirs = np.random.randn(num_rays,3)
+        t, ids, l = gpytoolbox.ray_mesh_intersect(origins,dirs,v,f,intersector=rmi)
     ```
     """
     if use_embree:
