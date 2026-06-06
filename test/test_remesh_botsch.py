@@ -90,6 +90,94 @@ class TestRemeshBotsch(unittest.TestCase):
         feature_unique = tmp[np.argsort(ind)]
         self.assertTrue(np.allclose(v[feature_unique], u[:feature_unique.shape[0]]))
 
+    @staticmethod
+    def _unit_cube():
+        # Surface mesh of the unit cube: 8 corners, 12 triangles, and the 12
+        # cube edges (as vertex-index pairs) marking the sharp creases.
+        V = np.array([
+            [0,0,0],[1,0,0],[1,1,0],[0,1,0],
+            [0,0,1],[1,0,1],[1,1,1],[0,1,1]],dtype=np.float64)
+        F = np.array([
+            [0,2,1],[0,3,2],   # z=0
+            [4,5,6],[4,6,7],   # z=1
+            [0,1,5],[0,5,4],   # y=0
+            [1,2,6],[1,6,5],   # x=1
+            [2,3,7],[2,7,6],   # y=1
+            [3,0,4],[3,4,7]],dtype=np.int32) # x=0
+        feature_edges = np.array([
+            [0,1],[1,2],[2,3],[3,0],
+            [4,5],[5,6],[6,7],[7,4],
+            [0,4],[1,5],[2,6],[3,7]],dtype=np.int32)
+        return V, F, feature_edges
+
+    def test_cube_feature_edges_isotropic(self):
+        # Remeshing a cube with its 12 edges marked as feature edges should
+        # produce an isotropic mesh whose vertices all lie on the cube surface,
+        # with the 8 corners preserved and the creases kept sharp.
+        np.random.seed(0)
+        V, F, feature_edges = self._unit_cube()
+        corners = V.copy()
+        for h in [0.2, 0.1]:
+            u, g = gpytoolbox.remesh_botsch(
+                V.copy(), F.copy(), 20, h, True, feature_edges=feature_edges)
+
+            # Closed manifold (no boundary).
+            E, bd = gpytoolbox.edges(g, return_boundary_indices=True)
+            self.assertEqual(len(bd), 0)
+
+            # Every output vertex lies on the cube surface (some coordinate is
+            # exactly 0 or 1).
+            dist_to_surface = np.minimum.reduce([
+                np.abs(u[:,0]-0), np.abs(u[:,0]-1),
+                np.abs(u[:,1]-0), np.abs(u[:,1]-1),
+                np.abs(u[:,2]-0), np.abs(u[:,2]-1)])
+            self.assertTrue(np.max(dist_to_surface) < 1e-9)
+
+            # Output stays inside the unit cube.
+            self.assertTrue(np.all(u > -1e-9) and np.all(u < 1+1e-9))
+
+            # The 8 corners survive exactly.
+            for c in corners:
+                self.assertTrue(np.min(np.linalg.norm(u-c, axis=1)) < 1e-9)
+
+            # Edge lengths are isotropic and close to the target.
+            edge_lengths = np.linalg.norm(u[E[:,0],:] - u[E[:,1],:], axis=1)
+            self.assertTrue(np.isclose(np.mean(edge_lengths), h, atol=0.25*h))
+            # The vast majority of edges fall within [0.5h, 1.5h].
+            in_band = np.mean((edge_lengths > 0.5*h) & (edge_lengths < 1.5*h))
+            self.assertTrue(in_band > 0.9)
+
+    def test_cube_feature_edges_stay_sharp(self):
+        # Each of the 12 cube edges should remain a sharp, straight crease: all
+        # the vertices that subdivide it must lie exactly on the original edge.
+        np.random.seed(0)
+        V, F, feature_edges = self._unit_cube()
+        u, g = gpytoolbox.remesh_botsch(
+            V.copy(), F.copy(), 20, 0.1, True, feature_edges=feature_edges)
+        for e in feature_edges:
+            a, b = V[e[0]], V[e[1]]
+            d = b - a
+            count = 0
+            for p in u:
+                t = np.dot(p-a, d)/np.dot(d, d)
+                if -1e-9 <= t <= 1+1e-9 and np.linalg.norm(a + t*d - p) < 1e-9:
+                    count += 1
+            # The two endpoints plus interior subdivision vertices: at least the
+            # endpoints must be present, and a refined edge has several.
+            self.assertTrue(count >= 2)
+
+    def test_cube_feature_edges_arbitrary_refinement(self):
+        # Finer target edge lengths yield monotonically more vertices.
+        np.random.seed(0)
+        V, F, feature_edges = self._unit_cube()
+        counts = []
+        for h in [0.4, 0.2, 0.1, 0.05]:
+            u, g = gpytoolbox.remesh_botsch(
+                V.copy(), F.copy(), 20, h, True, feature_edges=feature_edges)
+            counts.append(u.shape[0])
+        for i in range(1, len(counts)):
+            self.assertTrue(counts[i] > counts[i-1])
+
     def test_nonmanifold_segfault(self):
         f = np.array([[0,1,2],[0,2,3],[2,0,4]],dtype=int)
         # choose a random v

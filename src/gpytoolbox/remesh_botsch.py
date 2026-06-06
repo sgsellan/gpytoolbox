@@ -5,9 +5,9 @@ from gpytoolbox.halfedge_lengths import halfedge_lengths
 from gpytoolbox.non_manifold_edges import non_manifold_edges
 
 
-def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int)):
+def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int), feature_edges=None):
     """Remesh a triangular mesh to have a desired edge length
-    
+
     Use the algorithm described by Botsch and Kobbelt's "A Remeshing Approach to Multiresolution Modeling" to remesh a triangular mesh by alternating iterations of subdivision, collapse, edge flips and collapses.
 
     Parameters
@@ -22,6 +22,8 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
         Desired edge length (if None, will pick average edge length)
     feature : numpy int array, optional (default np.array([], dtype=int))
         List of indices of feature vertices that should not change (i.e., they will also be in the output). They will be placed at the beginning of the output array in the same order (as long as they were unique).
+    feature_edges : numpy int array, optional (default None)
+        #FE by 2 matrix of indices into V marking feature edges (e.g. sharp creases). Unlike `feature` vertices, feature edges can be split (the new midpoint stays on the feature and the two halves remain feature edges), are never flipped, and can only be collapsed along the feature (the surviving vertex stays on the crease). Feature-line vertices slide along the crease and are reprojected onto the original feature polyline.
     project : bool, optional (default True)
         Whether to reproject the mesh to the input (otherwise, it will smooth over iterations).
 
@@ -54,6 +56,10 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
     if h is None:
         h = np.mean(halfedge_lengths(V, F))
 
+    if feature_edges is None:
+        feature_edges = np.zeros((0, 2), dtype=np.int32)
+    feature_edges = np.asarray(feature_edges, dtype=np.int32).reshape((-1, 2))
+
     # check that feature is unique
     if feature.shape[0] > 0:
         if np.unique(feature).shape[0] != feature.shape[0]:
@@ -84,6 +90,9 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
         V = V[order]
         # reorder faces
         F = tmp[F]
+        # remap feature edges to the new vertex ordering
+        if feature_edges.shape[0] > 0:
+            feature_edges = tmp[feature_edges]
         # features are now 0 to n_features
         feature = old_order[:feature.shape[0]]
 
@@ -97,6 +106,6 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
         # return error
         raise ValueError("Input mesh is non-manifold.")
 
-    v, f = _remesh_botsch_cpp_impl(V, F.astype(np.int32), i, h, feature, project)
+    v, f = _remesh_botsch_cpp_impl(V, F.astype(np.int32), i, h, feature, feature_edges.astype(np.int32), project)
 
     return v, f
