@@ -123,8 +123,7 @@ except Exception as e:
 
 def _read_obj(file,return_UV,return_N,reader):
     # Private helper function for reading an OBJ file.
-    # Triangle and quad meshes are supported; the C++ reader only handles
-    # triangle meshes, so we fall back to the Python reader for quads.
+    # Triangle and quad meshes are supported by both the C++ and Python readers.
 
     # Pick a reader default
     if reader is None:
@@ -139,9 +138,8 @@ def _read_obj(file,return_UV,return_N,reader):
             elif err == -7:
                 raise Exception(f"A line in {file} was ill-formed.")
             elif err == -8:
-                # C++ reader only supports triangle meshes; retry in Python
-                # to support quad meshes.
-                V,F,UV,Ft,N,Fn = _read_obj_python(file,return_UV,return_N)
+                raise Exception(f"{file} is not a triangle or quad mesh, "
+                                f"or mixes triangle and quad faces.")
             else:
                 raise Exception(f"Unknown error {err} reading obj file.")
     elif reader=="Python":

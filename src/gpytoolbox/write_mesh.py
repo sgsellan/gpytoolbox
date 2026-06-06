@@ -93,16 +93,11 @@ except Exception as e:
 
 def _write_obj(file,V,F,UV,Ft,N,Fn,writer):
     # Private helper function for writing an OBJ file.
-    # Triangle and quad meshes are supported; the C++ writer only handles
-    # triangle meshes, so we fall back to the Python writer for quads.
+    # Triangle and quad meshes are supported by both the C++ and Python writers.
 
     # Pick a writer default
     if writer is None:
         writer = "C++" if _CPP_WRITER_AVAILABLE else "Python"
-
-    # The C++ writer only supports triangle meshes; route quads through Python.
-    if writer=="C++" and F is not None and F.shape[1] != 3:
-        writer = "Python"
 
     # Select appropriate writer
     if writer=="C++":
