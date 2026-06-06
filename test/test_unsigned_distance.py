@@ -32,6 +32,11 @@ class TestUnsignedDistance(unittest.TestCase):
             self.is_consistent(sqrD_gt, dist_1**2.0, ind_gt, ind_1, lmb_gt, lmb_1, v, f)
             self.is_consistent(sqrD_gt, dist_2**2.0, ind_gt, ind_2, lmb_gt, lmb_2, v, f)
 
+            # Reuse a precomputed C++ AABBTree (mirrors squared_distance's aabb= usage)
+            tree = gpytoolbox.AABBTree(v, f)
+            dist_t, ind_t, lmb_t = gpytoolbox.unsigned_distance(P, v, f, use_cpp=True, aabb=tree)
+            self.is_consistent(sqrD_gt, dist_t**2.0, ind_gt, ind_t, lmb_gt, lmb_t, v, f)
+
     def is_consistent(self, sqrD1, sqrD2, ind1, ind2, lmbd1, lmbd2, V, F):
         dim = V.shape[1]
         ss = F.shape[1]

@@ -51,6 +51,7 @@ from .boundary_faces import boundary_faces
 from .min_quad_with_fixed import min_quad_with_fixed
 from .min_quad_with_fixed import min_quad_with_fixed_precompute
 from .fast_winding_number import fast_winding_number
+from .AABBTree import AABBTree
 from .fixed_dof_solve import fixed_dof_solve
 from .fixed_dof_solve import fixed_dof_solve_precompute
 from .halfedge_lengths import halfedge_lengths
