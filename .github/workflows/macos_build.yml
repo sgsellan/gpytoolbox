@@ -41,7 +41,7 @@ jobs:
       - name: Run unit tests
         shell: bash -l {0}
         run: |
-          ${{ steps.installpython.outputs.python-path }} -m pip install tetgen
+          ${{ steps.installpython.outputs.python-path }} -m pip install "tetgen<0.7"
           ${{ steps.installpython.outputs.python-path }} -m unittest -v
 
 # see https://github.com/libigl/libigl/blob/main/.github/workflows/continuous.yml
