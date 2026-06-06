@@ -26,9 +26,12 @@ class TestReadMesh(unittest.TestCase):
                 self.assertTrue((Fn_py==Fn_cpp).all())
 
     def test_stl_reader(self):
-        stl_meshes = ["sphere_binary.stl", "fox_ascii.stl"]
-        gt_v_sizes = [4080,1866]
-        gt_f_sizes = [1360,622]
+        # sphere_binary_solid_header.stl is a binary STL whose 80-byte header
+        # starts with "solid" (as written by some CAD exporters). It must not be
+        # misdetected as an ASCII file (see issue #151).
+        stl_meshes = ["sphere_binary.stl", "fox_ascii.stl", "sphere_binary_solid_header.stl"]
+        gt_v_sizes = [4080,1866,4080]
+        gt_f_sizes = [1360,622,1360]
         for mesh in stl_meshes:
             V,F = gpy.read_mesh("test/unit_tests_data/" + mesh,merge_stl=False)
             self.assertTrue(V.shape[0] == gt_v_sizes[stl_meshes.index(mesh)])
