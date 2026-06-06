@@ -166,6 +166,45 @@ class TestRemeshBotsch(unittest.TestCase):
             # endpoints must be present, and a refined edge has several.
             self.assertTrue(count >= 2)
 
+    def test_cube_detect_feature_edges(self):
+        # Auto-detecting feature edges from the dihedral angle should recover
+        # the cube's creases and give the same result as passing them manually.
+        np.random.seed(0)
+        V, F, feature_edges = self._unit_cube()
+        corners = V.copy()
+        u_manual, g_manual = gpytoolbox.remesh_botsch(
+            V.copy(), F.copy(), 20, 0.1, True, feature_edges=feature_edges)
+        u_auto, g_auto = gpytoolbox.remesh_botsch(
+            V.copy(), F.copy(), 20, 0.1, True, detect_feature_edges=True)
+        # Same topology and geometry as the manual feature-edge run.
+        self.assertEqual(u_auto.shape, u_manual.shape)
+        self.assertEqual(g_auto.shape, g_manual.shape)
+        self.assertTrue(np.allclose(u_auto, u_manual))
+        # Vertices stay on the cube surface and corners are preserved.
+        dist_to_surface = np.minimum.reduce([
+            np.abs(u_auto[:,0]-0), np.abs(u_auto[:,0]-1),
+            np.abs(u_auto[:,1]-0), np.abs(u_auto[:,1]-1),
+            np.abs(u_auto[:,2]-0), np.abs(u_auto[:,2]-1)])
+        self.assertTrue(np.max(dist_to_surface) < 1e-9)
+        for c in corners:
+            self.assertTrue(np.min(np.linalg.norm(u_auto-c, axis=1)) < 1e-9)
+
+    def test_cube_detect_feature_edges_high_threshold(self):
+        # With a threshold above the cube's 90-degree creases, nothing is
+        # detected, so the cube is free to lose its sharp edges (the result
+        # differs from the crease-preserving run).
+        np.random.seed(0)
+        V, F, feature_edges = self._unit_cube()
+        u_sharp, _ = gpytoolbox.remesh_botsch(
+            V.copy(), F.copy(), 20, 0.2, True, detect_feature_edges=True,
+            feature_dihedral_threshold=45.0)
+        u_none, _ = gpytoolbox.remesh_botsch(
+            V.copy(), F.copy(), 20, 0.2, True, detect_feature_edges=True,
+            feature_dihedral_threshold=120.0)
+        # The high-threshold run detects no features, so the two outputs should
+        # not be identical in size/shape.
+        self.assertFalse(u_sharp.shape == u_none.shape and np.allclose(u_sharp, u_none))
+
     def test_cube_feature_edges_arbitrary_refinement(self):
         # Finer target edge lengths yield monotonically more vertices.
         np.random.seed(0)

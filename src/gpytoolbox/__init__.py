@@ -58,6 +58,7 @@ from .halfedge_lengths_squared import halfedge_lengths_squared
 from .cotangent_laplacian_intrinsic import cotangent_laplacian_intrinsic
 from .tip_angles import tip_angles
 from .tip_angles_intrinsic import tip_angles_intrinsic
+from .dihedral_angles import dihedral_angles
 from .cotangent_laplacian import cotangent_laplacian
 from .cotangent_weights_intrinsic import cotangent_weights_intrinsic
 from .cotangent_weights import cotangent_weights

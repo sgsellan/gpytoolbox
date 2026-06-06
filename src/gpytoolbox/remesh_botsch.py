@@ -5,7 +5,7 @@ from gpytoolbox.halfedge_lengths import halfedge_lengths
 from gpytoolbox.non_manifold_edges import non_manifold_edges
 
 
-def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int), feature_edges=None):
+def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=int), feature_edges=None, detect_feature_edges=False, feature_dihedral_threshold=45.0):
     """Remesh a triangular mesh to have a desired edge length
 
     Use the algorithm described by Botsch and Kobbelt's "A Remeshing Approach to Multiresolution Modeling" to remesh a triangular mesh by alternating iterations of subdivision, collapse, edge flips and collapses.
@@ -24,6 +24,10 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
         List of indices of feature vertices that should not change (i.e., they will also be in the output). They will be placed at the beginning of the output array in the same order (as long as they were unique).
     feature_edges : numpy int array, optional (default None)
         #FE by 2 matrix of indices into V marking feature edges (e.g. sharp creases). Unlike `feature` vertices, feature edges can be split (the new midpoint stays on the feature and the two halves remain feature edges), are never flipped, and can only be collapsed along the feature (the surviving vertex stays on the crease). Feature-line vertices slide along the crease and are reprojected onto the original feature polyline.
+    detect_feature_edges : bool, optional (default False)
+        If True, automatically detect sharp feature edges from the mesh's dihedral angle (using `dihedral_angles`) and add them to `feature_edges`. An edge is considered a feature when the angle between its two adjacent faces exceeds `feature_dihedral_threshold`.
+    feature_dihedral_threshold : float, optional (default 45.0)
+        Dihedral angle threshold *in degrees* used when `detect_feature_edges` is True. Edges whose adjacent faces meet at an angle larger than this are treated as feature edges.
     project : bool, optional (default True)
         Whether to reproject the mesh to the input (otherwise, it will smooth over iterations).
 
@@ -59,6 +63,27 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
     if feature_edges is None:
         feature_edges = np.zeros((0, 2), dtype=np.int32)
     feature_edges = np.asarray(feature_edges, dtype=np.int32).reshape((-1, 2))
+
+    # Optionally auto-detect sharp feature edges from the dihedral angle and add
+    # them to the (possibly empty) user-provided feature edges.
+    if detect_feature_edges:
+        from gpytoolbox.dihedral_angles import dihedral_angles
+        theta = dihedral_angles(V, F.astype(np.int32))
+        thresh = np.deg2rad(feature_dihedral_threshold)
+        # NaN entries (boundary halfedges) compare False, so they are ignored.
+        sharp = theta > thresh
+        detected = []
+        for c in range(3):
+            mask = sharp[:, c]
+            if np.any(mask):
+                a = F[mask, (c+1) % 3]
+                b = F[mask, (c+2) % 3]
+                detected.append(np.stack([a, b], axis=1))
+        if len(detected) > 0:
+            feature_edges = np.concatenate([feature_edges] + detected, axis=0).astype(np.int32)
+        # De-duplicate unordered feature edges.
+        if feature_edges.shape[0] > 0:
+            feature_edges = np.unique(np.sort(feature_edges, axis=1), axis=0).astype(np.int32)
 
     # check that feature is unique
     if feature.shape[0] > 0:
