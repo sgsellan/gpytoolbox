@@ -17,6 +17,7 @@ void binding_fast_winding_number(py::module& m);
 void binding_hausdorff_distance(py::module& m);
 void binding_in_element_aabb(py::module& m);
 void binding_marching_cubes(py::module& m);
+void binding_swept_volume(py::module& m);
 void binding_offset_surface(py::module& m);
 void binding_point_mesh_squared_distance(py::module& m);
 void binding_ray_mesh_intersect(py::module& m);
@@ -43,6 +44,7 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_hausdorff_distance(m);
     binding_in_element_aabb(m);
     binding_marching_cubes(m);
+    binding_swept_volume(m);
     binding_offset_surface(m);
     binding_point_mesh_squared_distance(m);
     binding_ray_mesh_intersect(m);

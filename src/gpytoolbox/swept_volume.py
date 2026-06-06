@@ -30,7 +30,7 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
         If not None, will decimate output to have this desired number of faces.
     verbose : bool, optional (default False)
         Whether to print runtime and other performance information.
-    
+
 
     Returns
     -------
@@ -50,10 +50,9 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
     Examples
     --------
     ```python
-    from gpytoolbox import read_mesh  
-    from gpytoolbox.copyleft import swept_volume
+    from gpytoolbox import read_mesh, swept_volume
     # Read sample mesh
-    v, f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
+    v, f = read_mesh("test/unit_tests_data/bunny_oded.obj")
     # Translation vectors to make Catmull-Rom spline
     translation_0 = np.array([0,0,0])
     translation_1 = np.array([1,0,-1])
@@ -67,12 +66,12 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
     """
 
     try:
-        from gpytoolbox_bindings_copyleft import _swept_volume_impl
+        from gpytoolbox_bindings import _swept_volume_impl
     except:
         raise ImportError("Gpytoolbox cannot import its C++ binding.")
 
 
-        
+
     if(translations is not None):
         transformations = []
         num_transformations = len(translations)
@@ -103,7 +102,7 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
     if(num_faces is not None):
         v,f,_,_ = decimate(v,f,num_faces=num_faces)
 
-    
+
     return v,f
 
 
@@ -111,7 +110,7 @@ def rotation_matrix_from_vectors(vec1, vec2):
     # This function is due to Kevin R. on https://stackoverflow.com/questions/45142959/calculate-rotation-matrix-to-align-two-vectors-in-3d-space
     a, b = (vec1 / np.linalg.norm(vec1)).reshape(3), (vec2 / np.linalg.norm(vec2)).reshape(3)
     v = np.cross(a, b)
-    if any(v): #if not all zeros then 
+    if any(v): #if not all zeros then
         c = np.dot(a, b)
         s = np.linalg.norm(v)
         kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])

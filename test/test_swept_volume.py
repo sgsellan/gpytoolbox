@@ -1,7 +1,7 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-from gpytoolbox.copyleft import swept_volume
+from gpytoolbox import swept_volume
 # import polyscope as ps
 # import igl
 

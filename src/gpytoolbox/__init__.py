@@ -38,6 +38,7 @@ from .doublearea import doublearea
 from .doublearea_intrinsic import doublearea_intrinsic
 from .volume import volume
 from .marching_cubes import marching_cubes
+from .swept_volume import swept_volume
 from .massmatrix import massmatrix
 from .massmatrix_intrinsic import massmatrix_intrinsic
 from .halfedges import halfedges
