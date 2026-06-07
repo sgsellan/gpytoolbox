@@ -18,11 +18,11 @@ def signed_distance(Q,V,F=None,use_cpp=True,aabb=None,fwn_bvh=None):
         Matrix of mesh/polyline/pointcloud indices into V. If None, input is assumed to be an ordered *closed* polyline in 2D.
     use_cpp : bool, optional (default False)
         If True, uses a C++ implementation to compute the squared distances. This is much faster but requires compilation of the C++ code.
-    aabb : gpytoolbox.AABBTree, optional (default None)
-        Precomputed AABB tree built via `gpytoolbox.AABBTree(V, F)`. Only used
+    aabb : gpytoolbox.squared_distance_precompute, optional (default None)
+        Precomputed AABB tree built via `gpytoolbox.squared_distance_precompute(V, F)`. Only used
         when `use_cpp=True`. Reuses the tree across calls instead of rebuilding
         it.
-    fwn_bvh : gpytoolbox.FastWindingNumberBVH, optional (default None)
+    fwn_bvh : gpytoolbox.fast_winding_number_precompute, optional (default None)
         Precomputed BVH for the 3D fast winding number. Ignored in 2D. Reuses
         the BVH across calls instead of rebuilding it.
 
@@ -37,7 +37,7 @@ def signed_distance(Q,V,F=None,use_cpp=True,aabb=None,fwn_bvh=None):
 
     See Also
     --------
-    squared_distance, winding_number, AABBTree, FastWindingNumberBVH
+    squared_distance, winding_number, squared_distance_precompute, fast_winding_number_precompute
 
     Examples
     --------
@@ -59,8 +59,8 @@ def signed_distance(Q,V,F=None,use_cpp=True,aabb=None,fwn_bvh=None):
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj")
     v = gpytoolbox.normalize_points(v)
-    tree = gpytoolbox.AABBTree(v, f)              # build once
-    bvh = gpytoolbox.FastWindingNumberBVH(v, f)   # 3D only
+    tree = gpytoolbox.squared_distance_precompute(v, f)              # build once
+    bvh = gpytoolbox.fast_winding_number_precompute(v, f)   # 3D only
     for _ in range(num_iters):
         P = 2*np.random.rand(num_samples,3)-4
         signed_distances,ind,b = gpytoolbox.signed_distance(

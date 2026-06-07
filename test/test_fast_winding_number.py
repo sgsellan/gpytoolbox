@@ -53,7 +53,7 @@ class TestFastWindingNumber(unittest.TestCase):
         wn_in_ref = gpytoolbox.fast_winding_number(points_in,V,F)
         wn_out_ref = gpytoolbox.fast_winding_number(points_out,V,F)
 
-        bvh = gpytoolbox.FastWindingNumberBVH(V, F)
+        bvh = gpytoolbox.fast_winding_number_precompute(V, F)
         wn_in_bvh = gpytoolbox.fast_winding_number(points_in,V,F,fwn_bvh=bvh)
         wn_out_bvh = gpytoolbox.fast_winding_number(points_out,V,F,fwn_bvh=bvh)
         # winding_number should route through the same code path in 3D.

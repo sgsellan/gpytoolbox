@@ -2,12 +2,12 @@ import numpy as np
 from gpytoolbox.edge_indices import edge_indices
 
 
-class AABBTree:
+class squared_distance_precompute:
     """Precomputed AABB tree for repeated closest-point queries.
 
     Wraps libigl's C++ `igl::AABB` so the bounding volume hierarchy is built
     once and reused across many `squared_distance` / `signed_distance` /
-    `winding_number` calls (when paired with a `FastWindingNumberBVH`),
+    `winding_number` calls (when paired with a `fast_winding_number_precompute`),
     avoiding the per-call O(n) tree construction cost.
 
     Parameters
@@ -21,7 +21,7 @@ class AABBTree:
 
     See Also
     --------
-    squared_distance, signed_distance, FastWindingNumberBVH
+    squared_distance, signed_distance, fast_winding_number_precompute
 
     Examples
     --------
@@ -29,7 +29,7 @@ class AABBTree:
     every iteration:
     ```python
     v, f = gpytoolbox.read_mesh("bunny.obj")
-    tree = gpytoolbox.AABBTree(v, f)
+    tree = gpytoolbox.squared_distance_precompute(v, f)
     for _ in range(num_iters):
         P = 2*np.random.rand(num_samples,3)-4
         sqrD, I, lmbs = gpytoolbox.squared_distance(P, v, F=f, use_cpp=True, aabb=tree)
@@ -38,7 +38,7 @@ class AABBTree:
     The tree can also be queried directly without going through the
     `squared_distance` wrapper:
     ```python
-    tree = gpytoolbox.AABBTree(v, f)
+    tree = gpytoolbox.squared_distance_precompute(v, f)
     sqrD, I, C = tree.squared_distance(P)  # closest-point queries
     ```
     """
@@ -47,7 +47,7 @@ class AABBTree:
         try:
             from gpytoolbox_bindings import _AABBTree_cpp_impl
         except ImportError:
-            raise ImportError("Gpytoolbox cannot import its C++ AABBTree binding.")
+            raise ImportError("Gpytoolbox cannot import its C++ squared_distance_precompute binding.")
 
         V = np.ascontiguousarray(V, dtype=np.float64)
         dim = V.shape[1]

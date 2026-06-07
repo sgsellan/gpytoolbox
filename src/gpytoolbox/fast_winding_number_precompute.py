@@ -1,10 +1,10 @@
 import numpy as np
 
 
-class FastWindingNumberBVH:
+class fast_winding_number_precompute:
     """Precomputed BVH for repeated fast winding number queries.
 
-    Wraps libigl's C++ `igl::FastWindingNumberBVH` so the bounding volume
+    Wraps libigl's C++ `igl::fast_winding_number_precompute` so the bounding volume
     hierarchy is built once and reused across many `fast_winding_number` /
     `winding_number` / `signed_distance` calls, avoiding the per-call O(n)
     precomputation cost (Barill et al. "Fast Winding Numbers for Soups and
@@ -21,7 +21,7 @@ class FastWindingNumberBVH:
 
     See Also
     --------
-    fast_winding_number, winding_number, signed_distance, AABBTree
+    fast_winding_number, winding_number, signed_distance, squared_distance_precompute
 
     Examples
     --------
@@ -29,7 +29,7 @@ class FastWindingNumberBVH:
     `signed_distance` on every iteration:
     ```python
     v, f = gpytoolbox.read_mesh("bunny.obj")
-    bvh = gpytoolbox.FastWindingNumberBVH(v, f)
+    bvh = gpytoolbox.fast_winding_number_precompute(v, f)
     for _ in range(num_iters):
         Q = 2*np.random.rand(num_samples,3)-4
         W = gpytoolbox.fast_winding_number(Q, v, f, fwn_bvh=bvh)
@@ -38,7 +38,7 @@ class FastWindingNumberBVH:
     The BVH can also be queried directly without going through the
     `fast_winding_number` wrapper:
     ```python
-    bvh = gpytoolbox.FastWindingNumberBVH(v, f)
+    bvh = gpytoolbox.fast_winding_number_precompute(v, f)
     W = bvh.winding_number(Q)
     ```
     """
@@ -48,13 +48,13 @@ class FastWindingNumberBVH:
             from gpytoolbox_bindings import _FastWindingNumberBVH_cpp_impl
         except ImportError:
             raise ImportError(
-                "Gpytoolbox cannot import its C++ FastWindingNumberBVH binding.")
+                "Gpytoolbox cannot import its C++ fast_winding_number_precompute binding.")
 
         V = np.ascontiguousarray(V, dtype=np.float64)
         F = np.ascontiguousarray(F, dtype=np.int32)
         if V.shape[1] != 3 or F.shape[1] != 3:
             raise ValueError(
-                "FastWindingNumberBVH only supports 3D triangle meshes (V must "
+                "fast_winding_number_precompute only supports 3D triangle meshes (V must "
                 "have 3 columns and F must have 3 columns).")
 
         self._V = V

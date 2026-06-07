@@ -3,9 +3,9 @@ from .particle_swarm import particle_swarm
 from .signed_distance import signed_distance
 from .ray_mesh_intersect import ray_mesh_intersect
 from .random_points_on_mesh import random_points_on_mesh
-from .AABBTree import AABBTree
-from .FastWindingNumberBVH import FastWindingNumberBVH
-from .RayMeshIntersector import RayMeshIntersector
+from .squared_distance_precompute import squared_distance_precompute
+from .fast_winding_number_precompute import fast_winding_number_precompute
+from .ray_mesh_intersect_precompute import ray_mesh_intersect_precompute
 
 
 def _axis_angle_to_matrix(aa):
@@ -47,7 +47,7 @@ def _feasible(samples_TB, A_V, A_F,
     cut_normal : unit vector defining the cut plane.
     a_plus     : removal direction for A_top (above the plane). a+ · n > 0.
     a_minus    : removal direction for A_bot. a- · n < 0.
-    aabb, fwn_bvh : precomputed AABBTree / FastWindingNumberBVH for `A`. If
+    aabb, fwn_bvh : precomputed squared_distance_precompute / fast_winding_number_precompute for `A`. If
         provided, the signed-distance call reuses them instead of rebuilding
         on every evaluation. This is the dominant cost of the optimization.
     """
@@ -276,6 +276,49 @@ def matryoshka(V, F,
     This is a CPU implementation of a method originally formulated with GPU
     depth peeling. It is therefore much slower than the original. Use modest
     `n_samples`, `n_particles` and `max_iter` for interactive experimentation.
+
+    Examples
+    --------
+    Inspect a result interactively with polyscope. The transformed inner
+    copy is `T(B) = c + s · R · (B − B_center)`; the cut plane is rendered
+    as a square in the normal's tangent frame, and the two removal
+    directions are drawn as a curve network:
+    ```python
+    import polyscope as ps
+    import numpy as np
+    import gpytoolbox as gpy
+
+    V, F = gpy.read_mesh("bunny.obj")
+    V = V - V.mean(0); V = V / np.max(np.abs(V))
+    res = gpy.matryoshka(V, F, optimize='rigid',
+                         n_samples=80, n_particles=20, max_iter=20, seed=0)
+
+    # Inner copy.
+    T_B = (res['s'] * (V - res['B_center']) @ res['R'].T) + res['c']
+
+    # Cut plane as a square in the tangent frame of cut_normal.
+    diag = float(np.linalg.norm(V.max(0) - V.min(0)))
+    n = res['cut_normal']
+    e = np.array([1.,0.,0.]) if abs(n[0])<0.9 else np.array([0.,1.,0.])
+    t1 = e - np.dot(e, n) * n; t1 /= np.linalg.norm(t1)
+    t2 = np.cross(n, t1)
+    h, p0 = 0.75*diag, res['cut_point']
+    quad_V = np.stack([p0 + a*h*t1 + b*h*t2
+                       for (a,b) in [(-1,-1),(1,-1),(1,1),(-1,1)]])
+    quad_F = np.array([[0,1,2],[0,2,3]], dtype=np.int32)
+
+    # Removal directions as a 2-edge curve network.
+    arrows = np.stack([p0, p0+0.5*diag*res['a_plus'],
+                       p0, p0+0.5*diag*res['a_minus']])
+    edges = np.array([[0,1],[2,3]], dtype=np.int32)
+
+    ps.init()
+    ps.register_surface_mesh("A", V, F, transparency=0.35)
+    ps.register_surface_mesh("T(B)", T_B, F)
+    ps.register_surface_mesh("cut plane", quad_V, quad_F, transparency=0.4)
+    ps.register_curve_network("removal dirs", arrows, edges, radius=0.005)
+    ps.show()
+    ```
     """
     V = np.asarray(V, dtype=np.float64)
     F = np.asarray(F, dtype=np.int32)
@@ -319,9 +362,9 @@ def matryoshka(V, F,
     # across every feasibility evaluation. This is the single biggest CPU win
     # for the optimization — `signed_distance` is called hundreds of times
     # and would otherwise rebuild both trees on each call.
-    A_aabb = AABBTree(V, F)
-    A_fwn_bvh = FastWindingNumberBVH(V, F)
-    A_rmi = RayMeshIntersector(V, F)
+    A_aabb = squared_distance_precompute(V, F)
+    A_fwn_bvh = fast_winding_number_precompute(V, F)
+    A_rmi = ray_mesh_intersect_precompute(V, F)
 
     if optimize == 'scale_only':
         if R is None:

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class RayMeshIntersector:
+class ray_mesh_intersect_precompute:
     """Precomputed Embree intersector for repeated ray-mesh queries.
 
     Wraps libigl's `igl::embree::EmbreeIntersector` so the Embree scene is
@@ -17,14 +17,14 @@ class RayMeshIntersector:
 
     See Also
     --------
-    ray_mesh_intersect, AABBTree
+    ray_mesh_intersect, squared_distance_precompute
 
     Examples
     --------
     Build once, then pass to `ray_mesh_intersect` on every iteration:
     ```python
     v, f = gpytoolbox.read_mesh("bunny.obj")
-    rmi = gpytoolbox.RayMeshIntersector(v, f)
+    rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f)
     for _ in range(num_iters):
         ts, ids, lambdas = gpytoolbox.ray_mesh_intersect(
             origins, dirs, v, f, intersector=rmi)
@@ -32,7 +32,7 @@ class RayMeshIntersector:
 
     The intersector can also be queried directly:
     ```python
-    rmi = gpytoolbox.RayMeshIntersector(v, f)
+    rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f)
     ts, ids, lambdas = rmi.intersect(origins, dirs)
     ```
     """
@@ -42,12 +42,12 @@ class RayMeshIntersector:
             from gpytoolbox_bindings import _RayMeshIntersector_cpp_impl
         except ImportError:
             raise ImportError(
-                "Gpytoolbox cannot import its C++ RayMeshIntersector binding.")
+                "Gpytoolbox cannot import its C++ ray_mesh_intersect_precompute binding.")
 
         V = np.ascontiguousarray(V, dtype=np.float64)
         F = np.ascontiguousarray(F, dtype=np.int32)
         if V.shape[1] != 3 or F.shape[1] != 3:
-            raise ValueError("RayMeshIntersector requires a 3D triangle mesh.")
+            raise ValueError("ray_mesh_intersect_precompute requires a 3D triangle mesh.")
 
         self._V = V
         self._F = F

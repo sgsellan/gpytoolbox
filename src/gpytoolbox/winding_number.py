@@ -13,7 +13,7 @@ def winding_number(O, V, F, fwn_bvh=None):
         Matrix of mesh/polyline/pointcloud coordinates (in 2D, this is a polyline)
     F : (f,s) numpy int array
         Matrix of mesh/polyline/pointcloud indices into V
-    fwn_bvh : gpytoolbox.FastWindingNumberBVH, optional (default None)
+    fwn_bvh : gpytoolbox.fast_winding_number_precompute, optional (default None)
         Precomputed BVH for the 3D fast winding number. Ignored in 2D. If
         provided, reuses the BVH across calls instead of rebuilding it.
 
@@ -24,7 +24,7 @@ def winding_number(O, V, F, fwn_bvh=None):
 
     See Also
     --------
-    signed_distance, squared_distance, fast_winding_number, FastWindingNumberBVH
+    signed_distance, squared_distance, fast_winding_number, fast_winding_number_precompute
 
     Examples
     --------
@@ -44,7 +44,7 @@ def winding_number(O, V, F, fwn_bvh=None):
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj")
     v = gpytoolbox.normalize_points(v)
-    bvh = gpytoolbox.FastWindingNumberBVH(v, f) # build once
+    bvh = gpytoolbox.fast_winding_number_precompute(v, f) # build once
     for _ in range(num_iters):
         P = 2*np.random.rand(num_samples,3)-4
         W = gpytoolbox.winding_number(P,v,f,fwn_bvh=bvh)

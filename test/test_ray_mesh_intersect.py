@@ -68,7 +68,7 @@ class TestRayMeshIntersect(unittest.TestCase):
 
 
     def test_intersector_cache_matches_uncached(self):
-        # The cached RayMeshIntersector must produce identical results to the
+        # The cached ray_mesh_intersect_precompute must produce identical results to the
         # uncached path.
         v, f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
         rng = np.random.default_rng(0)
@@ -78,7 +78,7 @@ class TestRayMeshIntersect(unittest.TestCase):
 
         t_u, id_u, l_u = gpytoolbox.ray_mesh_intersect(origins, dirs, v, f)
 
-        rmi = gpytoolbox.RayMeshIntersector(v, f)
+        rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f)
         t_c, id_c, l_c = gpytoolbox.ray_mesh_intersect(
             origins, dirs, v, f, intersector=rmi)
 
@@ -116,7 +116,7 @@ class TestRayMeshIntersect(unittest.TestCase):
         t_uncached = time.perf_counter() - t0
 
         # Cached: builds once, reuses.
-        rmi = gpytoolbox.RayMeshIntersector(v, f)
+        rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f)
         t0 = time.perf_counter()
         for _ in range(n_iters):
             origins = rng.uniform(-2, 2, size=(n_rays, 3))

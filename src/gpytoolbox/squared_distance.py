@@ -101,8 +101,8 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
         Vector of AABB element indices (-1 if *not* leaf node). If None, will be computed
     split_dir : numpy double array, optional (default None)
         Vector of AABB split directions (if None, will be computed)
-    aabb : gpytoolbox.AABBTree, optional (default None)
-        Precomputed AABB tree built via `gpytoolbox.AABBTree(V, F)`. Only used
+    aabb : gpytoolbox.squared_distance_precompute, optional (default None)
+        Precomputed AABB tree built via `gpytoolbox.squared_distance_precompute(V, F)`. Only used
         when `use_cpp=True`. Reuses the tree across calls instead of rebuilding
         it, avoiding the O(n) construction cost on every query.
 
@@ -118,7 +118,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
 
     See Also
     --------
-    squared_distance_to_element, initialize_aabb, AABBTree.
+    squared_distance_to_element, initialize_aabb, squared_distance_precompute.
 
     Examples
     --------
@@ -138,7 +138,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj")
     v = gpytoolbox.normalize_points(v)
-    tree = gpytoolbox.AABBTree(v, f) # build once
+    tree = gpytoolbox.squared_distance_precompute(v, f) # build once
     for _ in range(num_iters):
         P = 2*np.random.rand(num_samples,3)-4
         sqrD,ind,b = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,aabb=tree)

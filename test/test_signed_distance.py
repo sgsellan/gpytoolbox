@@ -47,7 +47,7 @@ class TestSignedDistance(unittest.TestCase):
             self.is_consistent(sqrD_gt,dist_1**2.0,ind_gt,ind_1,lmb_gt,lmb_1,v,f)
             self.is_consistent(sqrD_gt,dist_2**2.0,ind_gt,ind_2,lmb_gt,lmb_2,v,f)
     def test_precomputed_structures(self):
-        # Building the AABBTree and FastWindingNumberBVH once and reusing
+        # Building the squared_distance_precompute and fast_winding_number_precompute once and reusing
         # them must match the one-shot call.
         meshes = ["bunny_oded.obj", "cube.obj"]
         num_samples = 50
@@ -57,8 +57,8 @@ class TestSignedDistance(unittest.TestCase):
             P = 2*np.random.default_rng(0).random((num_samples, 3)) - 1
             dist_ref,ind_ref,lmb_ref = gpytoolbox.signed_distance(P,V,F,use_cpp=True)
 
-            tree = gpytoolbox.AABBTree(V, F)
-            bvh = gpytoolbox.FastWindingNumberBVH(V, F)
+            tree = gpytoolbox.squared_distance_precompute(V, F)
+            bvh = gpytoolbox.fast_winding_number_precompute(V, F)
             dist_pre,ind_pre,lmb_pre = gpytoolbox.signed_distance(
                 P,V,F,use_cpp=True,aabb=tree,fwn_bvh=bvh)
             self.assertTrue(np.allclose(dist_ref, dist_pre, atol=1e-6))

@@ -4,69 +4,6 @@ from .context import gpytoolbox as gpy
 from gpytoolbox.matryoshka import _feasible, _transform_points, _sample_B_surface
 
 
-def _visualize_nesting(VA, FA, res, VB=None, FB=None, title=""):
-    """Polyscope viewer for a matryoshka result. Shows the outer mesh `A`
-    (semi-transparent), the transformed inner copy `T(B)`, the cut plane
-    rendered as a disk, and the two removal directions as arrows.
-
-    Not invoked by the unit tests — kept as a debugging helper. Call it
-    explicitly while iterating on the implementation, e.g.:
-
-        from test.test_matryoshka import _visualize_nesting
-        _visualize_nesting(V, F, r_all, title='bunny all-warm')
-    """
-    import polyscope as ps
-    if VB is None:
-        VB = VA
-        FB = FA
-    ps.init()
-    ps.remove_all_structures()
-    ps.set_window_size(1024, 768)
-
-    ps_A = ps.register_surface_mesh("A", VA, FA,
-                                    color=(0.65, 0.7, 0.85),
-                                    transparency=0.35)
-    ps_A.set_back_face_policy('cull')
-
-    # T(B) = c + s * R * (B - B_center)
-    T_B = (res['s'] * (VB - res['B_center']) @ res['R'].T) + res['c']
-    ps.register_surface_mesh("T(B)", T_B, FB,
-                             color=(0.95, 0.55, 0.3))
-
-    # Cut plane as a square of side = 1.5x A's bbox diagonal
-    diag = float(np.linalg.norm(VA.max(0) - VA.min(0)))
-    n = res['cut_normal'] / np.linalg.norm(res['cut_normal'])
-    # Build two orthogonal tangents.
-    e = np.array([1.0, 0.0, 0.0]) if abs(n[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
-    t1 = e - np.dot(e, n) * n
-    t1 /= np.linalg.norm(t1)
-    t2 = np.cross(n, t1)
-    h = 0.75 * diag
-    p0 = res['cut_point']
-    quad_V = np.stack([p0 + a * h * t1 + b * h * t2
-                       for (a, b) in [(-1, -1), (1, -1), (1, 1), (-1, 1)]])
-    quad_F = np.array([[0, 1, 2], [0, 2, 3]], dtype=np.int32)
-    ps.register_surface_mesh("cut plane", quad_V, quad_F,
-                             color=(0.4, 0.85, 0.4),
-                             transparency=0.4,
-                             material='flat')
-
-    # Removal directions, drawn as arrows from cut_point.
-    arrow_len = 0.5 * diag
-    nodes = np.stack([p0, p0 + arrow_len * res['a_plus'],
-                      p0, p0 + arrow_len * res['a_minus']])
-    edges = np.array([[0, 1], [2, 3]], dtype=np.int32)
-    ps_arrows = ps.register_curve_network("removal dirs", nodes, edges,
-                                          radius=0.005)
-    ps_arrows.add_color_quantity(
-        "color", np.array([[1.0, 0.2, 0.2], [0.2, 0.2, 1.0]]),
-        defined_on='edges', enabled=True)
-
-    if title:
-        ps.info(title)
-    ps.show()
-
-
 def _unit_cube():
     V = np.array([
         [-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],
@@ -126,7 +63,7 @@ class TestMatryoshka(unittest.TestCase):
 
     def test_sphere_all(self):
         # Full optimization (16 free params) is the hardest case. We only
-        # require a non-trivial feasible nesting on the smoke budget.
+        # require a non-trivial feasible nesting on the sanity-check budget.
         V, F = gpy.icosphere(2)
         np.random.seed(0)
         res = gpy.matryoshka(V, F, optimize='all',
@@ -213,10 +150,6 @@ class TestMatryoshka(unittest.TestCase):
         self.assertGreaterEqual(r_all['s'] + 1e-3, r_baseline['s'])
         self.assertTrue(_verify_feasible(V, F, r_all))
 
-        # Uncomment to inspect visually with polyscope:
-        # _visualize_nesting(V, F, r_rigid, title='bunny rigid')
-        # _visualize_nesting(V, F, r_all, title='bunny all (warm-started)')
-
     def test_teddy_warm_started_beats_rigid(self):
         # Same invariant on the teddy mesh.
         V, F = gpy.read_mesh('test/unit_tests_data/teddy.obj')
@@ -241,10 +174,6 @@ class TestMatryoshka(unittest.TestCase):
                            msg="rigid baseline collapsed — algorithm broken?")
         self.assertGreaterEqual(r_all['s'] + 1e-3, r_baseline['s'])
         self.assertTrue(_verify_feasible(V, F, r_all))
-
-        # Uncomment to inspect visually with polyscope:
-        # _visualize_nesting(V, F, r_rigid, title='teddy rigid')
-        # _visualize_nesting(V, F, r_all, title='teddy all (warm-started)')
 
 
 if __name__ == '__main__':

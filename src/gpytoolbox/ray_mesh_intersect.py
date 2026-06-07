@@ -72,8 +72,8 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
         Matrix of child indeces (-1 if leaf node). If None and use_embree=False, will be computed
     tri_ind : numpy int array, optional (default None)
         Vector of AABB element indices (-1 if *not* leaf node). If None and use_embree=False, will be computed
-    intersector : gpytoolbox.RayMeshIntersector, optional (default None)
-        Precomputed Embree intersector built via `gpytoolbox.RayMeshIntersector(V, F)`.
+    intersector : gpytoolbox.ray_mesh_intersect_precompute, optional (default None)
+        Precomputed Embree intersector built via `gpytoolbox.ray_mesh_intersect_precompute(V, F)`.
         When provided (and `use_embree=True`), reuses the persistent Embree scene
         across calls instead of rebuilding it. V and F are still consulted only
         for shape; the actual queries go through the cached intersector.
@@ -103,7 +103,7 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     the O(n) construction cost on every call:
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj")
-    rmi = gpytoolbox.RayMeshIntersector(v, f) # build once
+    rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f) # build once
     for _ in range(num_iters):
         origins = 2*np.random.rand(num_rays,3)-1
         dirs = np.random.randn(num_rays,3)

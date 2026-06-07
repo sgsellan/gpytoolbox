@@ -11,8 +11,8 @@ def fast_winding_number(Q,V,F,fwn_bvh=None):
         Matrix of mesh vertices
     F : (p,3) numpy int array
         Matrix of triangle indices
-    fwn_bvh : gpytoolbox.FastWindingNumberBVH, optional (default None)
-        Precomputed BVH built via `gpytoolbox.FastWindingNumberBVH(V, F)`.
+    fwn_bvh : gpytoolbox.fast_winding_number_precompute, optional (default None)
+        Precomputed BVH built via `gpytoolbox.fast_winding_number_precompute(V, F)`.
         If provided, reuses the BVH across calls instead of rebuilding it,
         avoiding the O(n) precomputation cost on every query.
 
@@ -23,7 +23,7 @@ def fast_winding_number(Q,V,F,fwn_bvh=None):
 
     See Also
     --------
-    lazy_cage, FastWindingNumberBVH.
+    lazy_cage, fast_winding_number_precompute.
 
     Notes
     -----
@@ -48,7 +48,7 @@ def fast_winding_number(Q,V,F,fwn_bvh=None):
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj")
     v = gpytoolbox.normalize_points(v)
-    bvh = gpytoolbox.FastWindingNumberBVH(v, f) # build once
+    bvh = gpytoolbox.fast_winding_number_precompute(v, f) # build once
     for _ in range(num_iters):
         P = 2*np.random.rand(num_samples,3)-4
         W = gpytoolbox.fast_winding_number(P,v,f,fwn_bvh=bvh)
