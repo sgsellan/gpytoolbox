@@ -29,6 +29,21 @@ def particle_swarm(fun,lb,ub,n_particles=100,max_iter=100,momentum=0.9,phi=0.1,v
         Best solution
     f : double
         Best objective value
+
+    Examples
+    --------
+    ```python
+    import numpy as np
+    from gpytoolbox import particle_swarm
+    # Minimize a function with a known minimum at x = val
+    val = 3.5
+    def fun(x):
+        return (x - val)**2
+    lb = np.array([-10])
+    ub = np.array([10])
+    x, f = particle_swarm(fun, lb, ub, max_iter=1000)
+    # x is now close to val
+    ```
     """
     lb = np.asarray(lb, dtype=np.float64)
     ub = np.asarray(ub, dtype=np.float64)
