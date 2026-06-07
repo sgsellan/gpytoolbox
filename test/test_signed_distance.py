@@ -60,13 +60,13 @@ class TestSignedDistance(unittest.TestCase):
             tree = gpytoolbox.squared_distance_precompute(V, F)
             bvh = gpytoolbox.fast_winding_number_precompute(V, F)
             dist_pre,ind_pre,lmb_pre = gpytoolbox.signed_distance(
-                P,V,F,use_cpp=True,aabb=tree,fwn_bvh=bvh)
+                P,V,F,use_cpp=True,cpp_aabb=tree,fwn_bvh=bvh)
             self.assertTrue(np.allclose(dist_ref, dist_pre, atol=1e-6))
             self.is_consistent(dist_ref**2.0,dist_pre**2.0,ind_ref,ind_pre,lmb_ref,lmb_pre,V,F)
 
             # Reuse must be deterministic.
             dist_pre_2,_,_ = gpytoolbox.signed_distance(
-                P,V,F,use_cpp=True,aabb=tree,fwn_bvh=bvh)
+                P,V,F,use_cpp=True,cpp_aabb=tree,fwn_bvh=bvh)
             self.assertTrue(np.array_equal(dist_pre, dist_pre_2))
 
     def test_sign_bunny(self):

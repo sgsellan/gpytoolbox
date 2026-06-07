@@ -74,7 +74,7 @@ class closest_point_traversal:
 
 
 
-def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=None,tri_ind=None,split_dir=None,aabb=None):
+def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=None,tri_ind=None,split_dir=None,cpp_aabb=None):
     """Squared distances from a set of points in space.
 
     General-purpose function which computes the squared distance from a set of points to a mesh, point cloud or polyline, in two or three dimensions. Optionally, uses an aabb tree for efficient computation.
@@ -101,7 +101,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
         Vector of AABB element indices (-1 if *not* leaf node). If None, will be computed
     split_dir : numpy double array, optional (default None)
         Vector of AABB split directions (if None, will be computed)
-    aabb : gpytoolbox.squared_distance_precompute, optional (default None)
+    cpp_aabb : gpytoolbox.squared_distance_precompute, optional (default None)
         Precomputed AABB tree built via `gpytoolbox.squared_distance_precompute(V, F)`. Only used
         when `use_cpp=True`. Reuses the tree across calls instead of rebuilding
         it, avoiding the O(n) construction cost on every query.
@@ -133,7 +133,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
     ```
 
     When making many calls against the same mesh, build the AABB tree
-    once and reuse it via the `aabb=` kwarg to avoid the O(n) construction
+    once and reuse it via the `cpp_aabb=` kwarg to avoid the O(n) construction
     cost on every call:
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj")
@@ -141,7 +141,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
     tree = gpytoolbox.squared_distance_precompute(v, f) # build once
     for _ in range(num_iters):
         P = 2*np.random.rand(num_samples,3)-4
-        sqrD,ind,b = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,aabb=tree)
+        sqrD,ind,b = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,cpp_aabb=tree)
     ```
     """
     if (F is None):
@@ -151,8 +151,8 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
 
 
     if use_cpp:
-        if aabb is not None:
-            squared_distances, indices, closest_points = aabb.squared_distance(P.astype(np.float64))
+        if cpp_aabb is not None:
+            squared_distances, indices, closest_points = cpp_aabb.squared_distance(P.astype(np.float64))
         else:
             try:
                 from gpytoolbox_bindings import _point_mesh_squared_distance_cpp_impl

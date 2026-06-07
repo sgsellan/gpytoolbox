@@ -205,10 +205,10 @@ class TestSquaredDistance(unittest.TestCase):
 
             # Use precomputed C++ squared_distance_precompute
             tree = gpytoolbox.squared_distance_precompute(v, f)
-            sqrD_tree,ind_tree,lmb_tree = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,aabb=tree)
+            sqrD_tree,ind_tree,lmb_tree = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,cpp_aabb=tree)
             self.is_consistent(sqrD_cpp,sqrD_tree,ind_cpp,ind_tree,lmb_cpp,lmb_tree,v,f)
             # Calling it a second time on the same tree must reproduce the result
-            sqrD_tree2,ind_tree2,lmb_tree2 = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,aabb=tree)
+            sqrD_tree2,ind_tree2,lmb_tree2 = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,cpp_aabb=tree)
             self.assertTrue(np.array_equal(sqrD_tree, sqrD_tree2))
             self.assertTrue(np.array_equal(ind_tree, ind_tree2))
 
@@ -221,7 +221,7 @@ class TestSquaredDistance(unittest.TestCase):
         sqrD_ref,ind_ref,lmb_ref = gpytoolbox.squared_distance(P,V,F=E,use_cpp=True)
         tree = gpytoolbox.squared_distance_precompute(V, E)
         self.assertEqual(tree.dim, 2)
-        sqrD_tree,ind_tree,lmb_tree = gpytoolbox.squared_distance(P,V,F=E,use_cpp=True,aabb=tree)
+        sqrD_tree,ind_tree,lmb_tree = gpytoolbox.squared_distance(P,V,F=E,use_cpp=True,cpp_aabb=tree)
         self.is_consistent(sqrD_ref,sqrD_tree,ind_ref,ind_tree,lmb_ref,lmb_tree,V,E)
 
 
