@@ -5,16 +5,13 @@ from gpytoolbox.triangle_triangle_adjacency import triangle_triangle_adjacency
 def dihedral_angles(V, F):
     """Angle between adjacent faces across each (half-)edge of a triangle mesh.
 
-    For every halfedge of every face, computes the angle between the normal of
+    For every halfedge of every face, computes the (unsigned) angle between the normal of
     that face and the normal of the face on the other side of the edge (the
-    "crease" or "turning" angle). The convention is:
+    "crease" or "turning" angle). Importantly, this uses the following convention:
 
     - `0` when the two faces are coplanar (a flat surface),
     - `pi/2` when they meet at a right angle (e.g. an edge of a cube),
     - approaching `pi` when they fold back onto each other.
-
-    The angle is unsigned (it does not distinguish convex from concave creases),
-    which makes it directly usable as a sharpness measure for feature detection.
 
     Parameters
     ----------

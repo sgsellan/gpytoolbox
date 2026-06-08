@@ -102,7 +102,7 @@ void collapse_edges(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & f
         const int a = E(e,0);
         const int b = E(e,1);
 
-        // Fully fixed feature vertices are never collapsed (original behavior).
+        // Fully fixed feature vertices are never collapsed.
         if (explicit_fixed[a] || explicit_fixed[b]) {
             cost = std::numeric_limits<double>::infinity();
             return;
@@ -227,14 +227,24 @@ std::vector<int> N;
         };
 
     igl::infinite_cost_stopping_condition(shortest_edge_and_midpoint_lambda,stopping_condition);
-    igl::decimate_pre_collapse_callback pre_collapse;
-    igl::decimate_post_collapse_callback post_collapse_trivial;
-    igl::decimate_trivial_callbacks(pre_collapse,post_collapse_trivial);
 
     // Record every successful collapse so we can remap feature data afterwards.
+    //
+    // IMPORTANT: igl::collapse_edge nulls out the collapsed edge's entries
+    // (E(e,0) = E(e,1) = IGL_COLLAPSE_EDGE_NULL = 0) as part of performing the
+    // collapse. By the time the *post*-collapse callback runs, E(e,*) therefore
+    // no longer holds the two endpoints (it reads back as (0,0)), which would
+    // make the union-find remap below a no-op and silently *drop* — rather than
+    // merge — the feature edges incident to a collapsed vertex. That lowers the
+    // feature-edge degree of crease junctions, so corners get mistaken for
+    // degree-2 "line" vertices and slid along the crease (chamfered).
+    //
+    // We instead capture the endpoints in the *pre*-collapse callback (where E
+    // is still intact) and only commit them if the collapse actually happened.
     std::vector<std::pair<int,int>> merges;
-    igl::decimate_post_collapse_callback post_collapse =
-        [&merges](
+    int pending_a = -1, pending_b = -1;
+    igl::decimate_pre_collapse_callback pre_collapse =
+        [&pending_a,&pending_b](
             const Eigen::MatrixXd & /*V*/,
             const Eigen::MatrixXi & /*F*/,
             const Eigen::MatrixXi & E,
@@ -244,16 +254,34 @@ std::vector<int> N;
             const igl::min_heap<std::tuple<double,int,int>> & /*Q*/,
             const Eigen::VectorXi & /*EQ*/,
             const Eigen::MatrixXd & /*C*/,
-            const int e,
+            const int e) -> bool
+        {
+            pending_a = E(e,0);
+            pending_b = E(e,1);
+            return true;
+        };
+    igl::decimate_post_collapse_callback post_collapse =
+        [&merges,&pending_a,&pending_b](
+            const Eigen::MatrixXd & /*V*/,
+            const Eigen::MatrixXi & /*F*/,
+            const Eigen::MatrixXi & /*E*/,
+            const Eigen::VectorXi & /*EMAP*/,
+            const Eigen::MatrixXi & /*EF*/,
+            const Eigen::MatrixXi & /*EI*/,
+            const igl::min_heap<std::tuple<double,int,int>> & /*Q*/,
+            const Eigen::VectorXi & /*EQ*/,
+            const Eigen::MatrixXd & /*C*/,
+            const int /*e*/,
             const int /*e1*/,
             const int /*e2*/,
             const int /*f1*/,
             const int /*f2*/,
             const bool collapsed)
         {
-            if (collapsed) {
-                merges.emplace_back(E(e,0), E(e,1));
+            if (collapsed && pending_a >= 0) {
+                merges.emplace_back(pending_a, pending_b);
             }
+            pending_a = -1; pending_b = -1;
         };
 
     igl::decimate(V,F,shortest_edge_and_midpoint_lambda,stopping_condition,pre_collapse,post_collapse,U,G,J,I);
