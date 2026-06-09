@@ -50,6 +50,8 @@ def remesh_botsch(V, F, i=10, h=None, project=True, feature=np.array([], dtype=i
     v, f = gpytoolbox.read_mesh("bunny_oded.obj")
     # Do 20 iterations of remeshing with a target length of 0.01
     u, g = gpytoolbox.remesh_botsch(v, f, 20, 0.01, True)
+    # Automatically detect feature edges with a dihedral angle threshold of 30 degrees
+    u, g = gpytoolbox.remesh_botsch(v, f, 20, 0.01, True, detect_feature_edges=True, feature_dihedral_threshold=30.0)
     ```
     """
     try:
