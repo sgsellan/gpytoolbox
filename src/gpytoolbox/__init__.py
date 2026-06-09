@@ -51,7 +51,8 @@ from .boundary_faces import boundary_faces
 from .min_quad_with_fixed import min_quad_with_fixed
 from .min_quad_with_fixed import min_quad_with_fixed_precompute
 from .fast_winding_number import fast_winding_number
-from .AABBTree import AABBTree
+from .squared_distance_precompute import squared_distance_precompute
+from .fast_winding_number_precompute import fast_winding_number_precompute
 from .fixed_dof_solve import fixed_dof_solve
 from .fixed_dof_solve import fixed_dof_solve_precompute
 from .halfedge_lengths import halfedge_lengths
@@ -77,6 +78,7 @@ from .write_mesh import write_mesh
 from .decimate import decimate
 from .in_element_aabb import in_element_aabb
 from .ray_mesh_intersect import ray_mesh_intersect
+from .ray_mesh_intersect_precompute import ray_mesh_intersect_precompute
 from .remesh_botsch import remesh_botsch
 from .upper_envelope import upper_envelope
 from .colormap import colormap
@@ -110,6 +112,7 @@ from .torus import torus
 from .marching_squares import marching_squares
 from .winding_number import winding_number
 from .particle_swarm import particle_swarm
+from .matryoshka import matryoshka
 from .read_dmat import read_dmat
 from .linear_blend_skinning import linear_blend_skinning
 from .barycenters import barycenters

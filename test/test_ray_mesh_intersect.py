@@ -1,6 +1,7 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
+import time
 
 class TestRayMeshIntersect(unittest.TestCase):
     def test_simple_cube(self):
@@ -64,6 +65,76 @@ class TestRayMeshIntersect(unittest.TestCase):
             self.assertTrue(np.isclose(l-le,0,atol=1e-4).all())
 
 
+
+
+    def test_intersector_cache_matches_uncached(self):
+        # The cached ray_mesh_intersect_precompute must produce identical results to the
+        # uncached path.
+        v, f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
+        rng = np.random.default_rng(0)
+        n_rays = 500
+        origins = rng.uniform(-2, 2, size=(n_rays, 3))
+        dirs = rng.standard_normal(size=(n_rays, 3))
+
+        t_u, id_u, l_u = gpytoolbox.ray_mesh_intersect(origins, dirs, v, f)
+
+        rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f)
+        t_c, id_c, l_c = gpytoolbox.ray_mesh_intersect(
+            origins, dirs, v, f, intersector=rmi)
+
+        # Replace inf with 0 (as the existing tests do) so comparison is safe.
+        t_u_finite = np.where(np.isfinite(t_u), t_u, 0.0)
+        t_c_finite = np.where(np.isfinite(t_c), t_c, 0.0)
+        self.assertTrue(np.allclose(t_u_finite, t_c_finite, atol=1e-5))
+        self.assertTrue(np.array_equal(id_u, id_c))
+        self.assertTrue(np.allclose(l_u, l_c, atol=1e-5))
+
+        # And the intersector's direct .intersect call is consistent too.
+        t_d, id_d, l_d = rmi.intersect(origins, dirs)
+        self.assertTrue(np.array_equal(id_d, id_c))
+
+    def test_intersector_cache_is_faster(self):
+        # Sanity check the whole point of the cache: many calls against the
+        # same mesh are faster with the precomputed Embree scene than without.
+        v, f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
+        rng = np.random.default_rng(0)
+        n_rays = 200
+        n_iters = 20
+
+        # Warm-up (Embree scene init can hit caches, ensure both paths get one).
+        gpytoolbox.ray_mesh_intersect(
+            rng.uniform(-2, 2, size=(n_rays, 3)),
+            rng.standard_normal(size=(n_rays, 3)),
+            v, f)
+
+        # Uncached: rebuilds the Embree scene on every call.
+        t0 = time.perf_counter()
+        for _ in range(n_iters):
+            origins = rng.uniform(-2, 2, size=(n_rays, 3))
+            dirs = rng.standard_normal(size=(n_rays, 3))
+            gpytoolbox.ray_mesh_intersect(origins, dirs, v, f)
+        t_uncached = time.perf_counter() - t0
+
+        # Cached: builds once, reuses.
+        rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f)
+        t0 = time.perf_counter()
+        for _ in range(n_iters):
+            origins = rng.uniform(-2, 2, size=(n_rays, 3))
+            dirs = rng.standard_normal(size=(n_rays, 3))
+            gpytoolbox.ray_mesh_intersect(
+                origins, dirs, v, f, intersector=rmi)
+        t_cached = time.perf_counter() - t0
+
+        speedup = t_uncached / t_cached if t_cached > 0 else float('inf')
+        print(
+            "\n[ray_mesh_intersect cache] n_rays={}, n_iters={}, "
+            "bunny ({} verts, {} tris)\n"
+            "  uncached: {:.4f} s\n"
+            "  cached:   {:.4f} s\n"
+            "  speedup:  {:.2f}x".format(
+                n_rays, n_iters, v.shape[0], f.shape[0],
+                t_uncached, t_cached, speedup))
+        self.assertLess(t_cached, t_uncached)
 
 
 if __name__ == '__main__':

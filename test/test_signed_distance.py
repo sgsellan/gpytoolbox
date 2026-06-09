@@ -46,6 +46,29 @@ class TestSignedDistance(unittest.TestCase):
             dist_2,ind_2,lmb_2 = gpytoolbox.signed_distance(P,v,f,use_cpp=False)
             self.is_consistent(sqrD_gt,dist_1**2.0,ind_gt,ind_1,lmb_gt,lmb_1,v,f)
             self.is_consistent(sqrD_gt,dist_2**2.0,ind_gt,ind_2,lmb_gt,lmb_2,v,f)
+    def test_precomputed_structures(self):
+        # Building the squared_distance_precompute and fast_winding_number_precompute once and reusing
+        # them must match the one-shot call.
+        meshes = ["bunny_oded.obj", "cube.obj"]
+        num_samples = 50
+        for mesh in meshes:
+            V,F = gpytoolbox.read_mesh("test/unit_tests_data/" + mesh)
+            V = gpytoolbox.normalize_points(V)
+            P = 2*np.random.default_rng(0).random((num_samples, 3)) - 1
+            dist_ref,ind_ref,lmb_ref = gpytoolbox.signed_distance(P,V,F,use_cpp=True)
+
+            tree = gpytoolbox.squared_distance_precompute(V, F)
+            bvh = gpytoolbox.fast_winding_number_precompute(V, F)
+            dist_pre,ind_pre,lmb_pre = gpytoolbox.signed_distance(
+                P,V,F,use_cpp=True,cpp_aabb=tree,fwn_bvh=bvh)
+            self.assertTrue(np.allclose(dist_ref, dist_pre, atol=1e-6))
+            self.is_consistent(dist_ref**2.0,dist_pre**2.0,ind_ref,ind_pre,lmb_ref,lmb_pre,V,F)
+
+            # Reuse must be deterministic.
+            dist_pre_2,_,_ = gpytoolbox.signed_distance(
+                P,V,F,use_cpp=True,cpp_aabb=tree,fwn_bvh=bvh)
+            self.assertTrue(np.array_equal(dist_pre, dist_pre_2))
+
     def test_sign_bunny(self):
         meshes = ["bunny_oded.obj", "cube.obj"]
         bools = [True, False]
