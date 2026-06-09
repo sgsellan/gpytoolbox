@@ -120,6 +120,38 @@ class TestReachForTheArcs(unittest.TestCase):
             # print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
             self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.05)
 
+    def test_issue_147(self):
+        # A coarse, reinitialized SDF can leave fewer than two feasible points
+        # after fine tuning. reach_for_the_arcs used to crash on this input
+        # (AssertionError in point_cloud_to_mesh / UnboundLocalError). It should
+        # now gracefully return an empty mesh instead.
+        grid_path = "test/unit_tests_data/issue-147/grid_1.txt"
+        sdf_path = "test/unit_tests_data/issue-147/sdf_1.txt"
+        grid = np.loadtxt(grid_path, dtype=float)
+        sdf = np.loadtxt(sdf_path, dtype=float)
+        d = grid.shape[1]
+        vr, fr = gpy.reach_for_the_arcs(grid, sdf, verbose=True)
+        # No mesh can be reconstructed from so few points: expect empty, but
+        # well-formed (d-column) arrays rather than an exception.
+        self.assertEqual(vr.ndim, 2)
+        self.assertEqual(fr.ndim, 2)
+        self.assertEqual(vr.shape[1], d)
+        self.assertEqual(fr.shape[1], d)
+
+    def test_no_feasible_points(self):
+        # An SDF with no zero crossing anywhere in the domain yields no point
+        # cloud at all. This used to raise UnboundLocalError; now it should
+        # return an empty mesh, including when the point cloud is requested.
+        gx, gy = np.meshgrid(np.linspace(0., 1., 6), np.linspace(0., 1., 6))
+        U = np.stack([gx.ravel(), gy.ravel()], axis=1)
+        S = np.full(U.shape[0], 5.0)  # far from any surface, all positive
+        V, F = gpy.reach_for_the_arcs(U, S, verbose=True)
+        self.assertEqual(V.shape, (0, 2))
+        self.assertEqual(F.shape, (0, 2))
+        V, F, P, N = gpy.reach_for_the_arcs(U, S, return_point_cloud=True)
+        self.assertEqual(V.shape, (0, 2))
+        self.assertEqual(F.shape, (0, 2))
+
 
 if __name__ == '__main__':
     unittest.main()
