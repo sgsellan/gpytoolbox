@@ -105,14 +105,7 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
 
 def velocity_alignment_rotations(translations):
     # Build a rotation for each keyframe that aligns the shape's local x-axis
-    # with the (finite-difference) velocity along the trajectory.
-    #
-    # Rather than computing each rotation independently as the minimal rotation
-    # from a fixed global reference, we compose the minimal rotations *between
-    # consecutive velocities*. This propagates a consistent frame along the
-    # path (a discrete rotation-minimizing frame), avoiding the spurious roll
-    # about the velocity axis that otherwise makes the shape flip on curved
-    # paths such as spirals (see issue #136).
+    # with the (finite-difference) velocity along the trajectory (see issue #136).
     num = len(translations)
     velocities = []
     for i in range(num):
