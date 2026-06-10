@@ -120,6 +120,27 @@ class TestReachForTheArcs(unittest.TestCase):
             # print(np.max(np.abs(sdf(GV)-sdf_rec(GV))))
             self.assertTrue(np.max(np.abs(sdf(GV)-sdf_rec(GV))) < 0.05)
 
+    def test_issue_147(self):
+        grid_path = "test/unit_tests_data/issue-147/grid_1.txt"
+        sdf_path = "test/unit_tests_data/issue-147/sdf_1.txt"
+        grid = np.loadtxt(grid_path,dtype=float)
+        sdf = np.loadtxt(sdf_path,dtype=float)
+        vr,fr = gpy.reach_for_the_arcs(grid,sdf,verbose=True)
+
+    def test_no_feasible_points(self):
+        # An SDF with no zero crossing anywhere in the domain yields no point
+        # cloud at all. This used to raise UnboundLocalError; now it should
+        # return an empty mesh, including when the point cloud is requested.
+        gx, gy = np.meshgrid(np.linspace(0., 1., 6), np.linspace(0., 1., 6))
+        U = np.stack([gx.ravel(), gy.ravel()], axis=1)
+        S = np.full(U.shape[0], 5.0)  # far from any surface, all positive
+        V, F = gpy.reach_for_the_arcs(U, S, verbose=True)
+        self.assertEqual(V.shape, (0, 2))
+        self.assertEqual(F.shape, (0, 2))
+        V, F, P, N = gpy.reach_for_the_arcs(U, S, return_point_cloud=True)
+        self.assertEqual(V.shape, (0, 2))
+        self.assertEqual(F.shape, (0, 2))
+
 
 if __name__ == '__main__':
     unittest.main()
