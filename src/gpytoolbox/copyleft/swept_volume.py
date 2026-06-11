@@ -76,23 +76,19 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
     if(translations is not None):
         transformations = []
         num_transformations = len(translations)
+        translations = [np.asarray(t, dtype=np.float64) for t in translations]
+
+        velocity_rotations = None
+        if (rotations is None and align_rotations_with_velocity):
+            velocity_rotations = velocity_alignment_rotations(translations)
+
         for i in range(num_transformations):
             this_transformation = np.eye(4)
             this_transformation[0:3,3] = translations[i]
             if (rotations is not None):
                 this_transformation[0:3,0:3] = rotations[i]
-            elif (align_rotations_with_velocity):
-                vel_0 = np.array([1,0,0])
-                # Three cases
-                if i==0: # We are at the first point
-                    vel_1 = translations[1] - translations[0]
-                elif i==(num_transformations-1):
-                    vel_1 = translations[num_transformations-1] - translations[num_transformations-2]
-                else:
-                    vel_1 = translations[i+1] - translations[i-1]
-                vel_1 = vel_1/np.linalg.norm(vel_1)
-                rotation = rotation_matrix_from_vectors(vel_0, vel_1)
-                this_transformation[0:3,0:3] = rotation
+            elif (velocity_rotations is not None):
+                this_transformation[0:3,0:3] = velocity_rotations[i]
             if (scales is not None):
                 this_transformation[0:3,0:3] = scales[i]*this_transformation[0:3,0:3]
             transformations.append(this_transformation)
@@ -107,15 +103,45 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
     return v,f
 
 
+def velocity_alignment_rotations(translations):
+    # Build a rotation for each keyframe that aligns the shape's local x-axis
+    # with the (finite-difference) velocity along the trajectory (see issue #136).
+    num = len(translations)
+    velocities = []
+    for i in range(num):
+        if i == 0:
+            vel = translations[1] - translations[0]
+        elif i == num - 1:
+            vel = translations[-1] - translations[-2]
+        else:
+            vel = translations[i + 1] - translations[i - 1]
+        velocities.append(vel / np.linalg.norm(vel))
+
+    reference = np.array([1.0, 0.0, 0.0])
+    rotations = [rotation_matrix_from_vectors(reference, velocities[0])]
+    for i in range(1, num):
+        delta = rotation_matrix_from_vectors(velocities[i - 1], velocities[i])
+        rotations.append(delta @ rotations[-1])
+    return rotations
+
+
 def rotation_matrix_from_vectors(vec1, vec2):
     # This function is due to Kevin R. on https://stackoverflow.com/questions/45142959/calculate-rotation-matrix-to-align-two-vectors-in-3d-space
     a, b = (vec1 / np.linalg.norm(vec1)).reshape(3), (vec2 / np.linalg.norm(vec2)).reshape(3)
     v = np.cross(a, b)
-    if any(v): #if not all zeros then 
-        c = np.dot(a, b)
-        s = np.linalg.norm(v)
+    s = np.linalg.norm(v)
+    c = np.dot(a, b)
+    if s > 1e-8: # vectors are not (anti)parallel
         kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
         return np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
-
+    elif c > 0:
+        return np.eye(3) # identical directions
     else:
-        return np.eye(3) #cross of all zeros only occurs on identical directions
+        # antiparallel directions: rotate 180 degrees about any axis
+        # perpendicular to a (the minimal rotation is undefined here)
+        axis = np.cross(a, np.array([1.0, 0.0, 0.0]))
+        if np.linalg.norm(axis) < 1e-8:
+            axis = np.cross(a, np.array([0.0, 1.0, 0.0]))
+        axis = axis / np.linalg.norm(axis)
+        kmat = np.array([[0, -axis[2], axis[1]], [axis[2], 0, -axis[0]], [-axis[1], axis[0], 0]])
+        return np.eye(3) + 2 * kmat.dot(kmat)
