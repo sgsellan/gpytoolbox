@@ -262,6 +262,12 @@ void process_edge(
     int neighbor_idx_1 = cellIndex3D(ni_1, nj_1, nk_1, resX, resY, resZ);
     int neighbor_idx_2 = cellIndex3D(ni_2, nj_2, nk_2, resX, resY, resZ);
     int neighbor_idx_3 = cellIndex3D(ni_3, nj_3, nk_3, resX, resY, resZ);
+
+    if (neighbor_idx_1 < 0 || neighbor_idx_1 >= (int)cells.size() ||
+         neighbor_idx_2 < 0 || neighbor_idx_2 >= (int)cells.size() ||
+         neighbor_idx_3 < 0 || neighbor_idx_3 >= (int)cells.size()) {
+         return;
+     }
     
     // Assert that these are truly neighboring cells (debug-only)
     {
@@ -400,7 +406,7 @@ void average_hermite_normals(
     }
 
     // for each cell in edge_cells, accumulate normals from all edges it participates in and average
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (size_t ei = 0; ei < edge_cells.size(); ++ei) {
         Eigen::Vector4i cell_indices = edge_cells[ei];
         Eigen::Vector4i local_edge_indices = edge_local_edge_idxs[ei];
@@ -418,6 +424,8 @@ void average_hermite_normals(
                 }
             }
         }
+
+        if (normal_contributions == 0) { continue; }
         accumulated_normal.normalize();
         // Now write back the averaged normal to each cell's corresponding edge normal
         for (int ci = 0; ci < 4; ++ci) {
@@ -559,8 +567,11 @@ void update_hermite_points_and_normals(
         for(int ci = 0; ci < 4; ++ci) {
             int cell_idx = cell_indices(ci);
             int local_edge_idx = local_edge_indices(ci);
+            if (cell_idx < 0 || local_edge_idx < 0) { continue; }
             Cell& cell = cells[cell_idx];
-            Eigen::Vector3d& existing_normal = cell.hermite_normals[local_edge_idx];
+            auto itn = cell.hermite_normals.find(local_edge_idx);
+            if (itn == cell.hermite_normals.end()) { continue; }
+            Eigen::Vector3d& existing_normal = itn->second;
             if(normal_vector.norm() > 0) {
                 Eigen::Vector3d updated_normal = 
                     (1.0 - hermite_normal_weight) * existing_normal +

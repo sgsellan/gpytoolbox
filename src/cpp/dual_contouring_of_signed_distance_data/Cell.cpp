@@ -204,7 +204,7 @@ void Cell::fill_hermite_data(
 
             // If even the true SDF doesn’t see a sign change, fall back
             if (f0 * f1 > 0.0) {
-            // if (true) {zß
+            // if (true) {
                 double t = lerp_t(fa, fb);
 
                 Eigen::Vector3d p =
@@ -396,7 +396,7 @@ void Cell::minimize_qef(
         double beta  = info.barycentric_coords(1);
         double gamma = info.barycentric_coords(2);
 
-        if (abs(alpha) < 1e-6){
+        if (std::abs(alpha) < 1e-6){
             // alpha = 0.001;
             alpha = 1.0;
             beta = 0.0;

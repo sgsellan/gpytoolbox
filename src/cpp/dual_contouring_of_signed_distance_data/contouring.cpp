@@ -862,9 +862,6 @@ void assign_spheres_to_cells(
         double radius = std::abs(sdf);
         int sign = (sdf >= 0.0) ? +1 : -1;
 
-        // Get the closest point on the mesh
-        Eigen::Vector3d closest_pt = C.row(gv).transpose();
-
         double dist_to_closest = std::sqrt(sqrD(gv));
         
         // If the sphere is "floating" too far from the surface, ignore it

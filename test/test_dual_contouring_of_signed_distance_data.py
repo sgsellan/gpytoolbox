@@ -158,17 +158,16 @@ class TestDualContouringOfSignedDistanceData(unittest.TestCase):
         # when the input mesh is randomly rotated.
         rng = np.random.default_rng(0)
         V, F = gpy.read_mesh("test/unit_tests_data/cube.obj")
-
+        V0 = V.copy()
         resolutions = rng.integers(8, 40, size=6)
+
         for n in resolutions:
             n = int(n)
-
-            axis = np.random.rand(3)
+            axis = rng.random(3)
             axis = axis / np.linalg.norm(axis)
-            angle = np.random.rand() * 2 * np.pi
+            angle = float(rng.random()) * 2 * np.pi
             R = _axis_angle_rotation_matrix(axis, angle)
-            V = V @ R
-
+            V = V0 @ R
             V = gpy.normalize_points(V, center=np.array([0.5, 0.5, 0.5]))
             V = 0.5 + 0.9 * (V - 0.5)
 
@@ -279,5 +278,4 @@ class TestDualContouringOfSignedDistanceData(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    np.random.seed(42)
     unittest.main()
