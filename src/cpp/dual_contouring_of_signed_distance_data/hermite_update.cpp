@@ -344,7 +344,7 @@ void average_hermite_normals(
     std::vector<Eigen::Vector4i> edge_local_edge_idxs;
     int edge_ordinal = 0; // ordinal index for each processed edge
 
-    #pragma omp parallel for collapse(3)
+// #pragma omp parallel for collapse(3)  // NOTE: disabled because process_edge mutates shared vectors
     for (int k = 0; k < resZ; ++k) {
             for (int j = 0; j < resY; ++j) {
                 for (int i = 0; i < resX; ++i) {
