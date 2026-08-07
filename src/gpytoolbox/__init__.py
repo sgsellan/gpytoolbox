@@ -142,3 +142,4 @@ from .dec_h1_intrinsic import dec_h1_intrinsic
 from .dec_h1inv_intrinsic import dec_h1inv_intrinsic
 from .dec_h2_intrinsic import dec_h2_intrinsic
 from .dec_h2inv_intrinsic import dec_h2inv_intrinsic
+from .dual_contouring_of_signed_distance_data import dual_contouring_of_signed_distance_data

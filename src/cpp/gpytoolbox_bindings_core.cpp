@@ -36,6 +36,7 @@ void binding_outside_points_from_rasterization(py::module& m);
 void binding_outside_points_from_rejection_sampling(py::module& m);
 void binding_locally_make_feasible(py::module& m);
 void binding_fine_tune_point_cloud_iter(py::module& m);
+void binding_dcsdd(py::module& m);
 
 PYBIND11_MODULE(gpytoolbox_bindings, m) {
 
@@ -65,6 +66,7 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_outside_points_from_rasterization(m);
     binding_locally_make_feasible(m);
     binding_fine_tune_point_cloud_iter(m);
+    binding_dcsdd(m);
 
     m.def("help", [&]() {printf("hi"); });
 }
