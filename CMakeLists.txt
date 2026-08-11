@@ -40,7 +40,9 @@ option(LIBIGL_EMBREE "Build target igl::embree" ON)
 set(BOOST_ROOT "/Users/silviasellan/Dropbox/temp/libigl/build/_deps/boost-src")
 include(libigl)
 igl_include(glfw)
-igl_include(embree)
+if(LIBIGL_EMBREE)
+	igl_include(embree)
+endif()
 
 # Include PoissonRecon
 include(PoissonRecon)
@@ -61,7 +63,10 @@ else()
 endif()
 
 # List of all libraries to link
-set(LIBRARIES_TO_LINK igl::core igl::embree nanoflann PoissonRecon ${GL_LIBS})
+set(LIBRARIES_TO_LINK igl::core nanoflann PoissonRecon ${GL_LIBS})
+if(LIBIGL_EMBREE)
+	list(APPEND LIBRARIES_TO_LINK igl::embree)
+endif()
 set(COPYLEFT_LIBRARIES_TO_LINK igl::core igl_copyleft::cgal)
 
 add_library(cpytoolbox
@@ -69,7 +74,6 @@ add_library(cpytoolbox
 	# SHARED
 	# Headers
 	src/cpp/upper_envelope.h
-	src/cpp/ray_mesh_intersect_aabb.h
 	src/cpp/particle_swarm.h
 	src/cpp/in_element_aabb.h
 	src/cpp/read_obj.h
@@ -95,7 +99,6 @@ add_library(cpytoolbox
 	src/cpp/dual_contouring_of_signed_distance_data/vertex_refinement.h
 	# Source
 	src/cpp/upper_envelope.cpp
-	src/cpp/ray_mesh_intersect_aabb.cpp
 	src/cpp/particle_swarm.cpp
 	src/cpp/in_element_aabb.cpp
 	src/cpp/read_obj.cpp
@@ -124,6 +127,13 @@ add_library(cpytoolbox
 	# tinyply
 	src/cpp/tinyply/tinyply.h
 	)
+
+if(LIBIGL_EMBREE)
+	target_sources(cpytoolbox PRIVATE
+		src/cpp/ray_mesh_intersect_aabb.h
+		src/cpp/ray_mesh_intersect_aabb.cpp
+	)
+endif()
 
 	add_library(cpytoolbox_copyleft
 	STATIC
@@ -168,8 +178,6 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_marching_cubes.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_offset_surface.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_point_mesh_squared_distance.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersect.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersector.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_particle_swarm.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_read_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_stl.cpp"
@@ -184,6 +192,14 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs//binding_fine_tune_point_cloud_iter.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/dual_contouring_of_signed_distance_data/binding_dcsdd.cpp"
 )
+
+if(LIBIGL_EMBREE)
+	target_sources(gpytoolbox_bindings PRIVATE
+		"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersect.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersector.cpp"
+	)
+	target_compile_definitions(gpytoolbox_bindings PRIVATE GPYTOOLBOX_WITH_EMBREE)
+endif()
 
 pybind11_add_module(gpytoolbox_bindings_copyleft
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/gpytoolbox_bindings_copyleft_core.cpp"
@@ -222,4 +238,3 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 		VERBATIM
 	)
 endif()
-

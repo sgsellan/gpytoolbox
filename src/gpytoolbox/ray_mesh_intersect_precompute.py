@@ -42,7 +42,8 @@ class ray_mesh_intersect_precompute:
             from gpytoolbox_bindings import _RayMeshIntersector_cpp_impl
         except ImportError:
             raise ImportError(
-                "Gpytoolbox cannot import its C++ ray_mesh_intersect_precompute binding.")
+                "Gpytoolbox cannot import its C++ ray_mesh_intersect_precompute "
+                "binding. The package may have been built without Embree.")
 
         V = np.ascontiguousarray(V, dtype=np.float64)
         F = np.ascontiguousarray(F, dtype=np.int32)

@@ -63,7 +63,9 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     F : (m,3) numpy int array
         face index list of a triangle mesh
     use_embree : bool, optional (default True)
-        Whether to use the much more optimzed C++ AABB embree implementation of ray mesh intersections. If False, uses gpytoolbox's native AABB tree and gpytoolbox's intersection queries.
+        Whether to use the optimized C++ Embree implementation of ray-mesh
+        intersections. If False, or if GPyToolbox was built without Embree,
+        uses GPyToolbox's native AABB tree and intersection queries.
     C : numpy double array, optional (default None)
         Matrix of AABB box centers (if None and use_embree=False, will be computed)
     W : numpy double array, optional (default None)
@@ -111,16 +113,22 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     ```
     """
     if use_embree:
-        if intersector is not None:
-            ts, ids, lambdas = intersector.intersect(cam_pos, cam_dir)
+        import gpytoolbox_bindings
+        if getattr(gpytoolbox_bindings, "_has_embree", True):
+            if intersector is not None:
+                ts, ids, lambdas = intersector.intersect(cam_pos, cam_dir)
+            else:
+                ts, ids, lambdas = (
+                    gpytoolbox_bindings._ray_mesh_intersect_cpp_impl(
+                        cam_pos.astype(np.float64),
+                        cam_dir.astype(np.float64),
+                        V.astype(np.float64),
+                        F.astype(np.int32),
+                    )
+                )
         else:
-            try:
-                from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
-            except:
-                raise ImportError("Gpytoolbox cannot import its C++ ray_mesh_intersect binding.")
-
-            ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
-    else:
+            use_embree = False
+    if not use_embree:
         ts = np.inf*np.ones(cam_pos.shape[0])
         ids = -np.ones(cam_pos.shape[0],dtype=int)
         lambdas = np.zeros((cam_pos.shape[0],3))

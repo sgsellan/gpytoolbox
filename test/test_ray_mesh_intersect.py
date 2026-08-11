@@ -2,8 +2,23 @@ from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
 import time
+from unittest import mock
 
 class TestRayMeshIntersect(unittest.TestCase):
+    def test_default_falls_back_without_embree(self):
+        import gpytoolbox_bindings
+
+        v, f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
+        cam_pos = np.array([[1, 0.1, 0.1], [1, 0.2, 0.0]])
+        cam_dir = np.array([[-1, 0, 0], [-1, 0, 0]])
+        with mock.patch.object(gpytoolbox_bindings, "_has_embree", False):
+            fallback = gpytoolbox.ray_mesh_intersect(cam_pos, cam_dir, v, f)
+        portable = gpytoolbox.ray_mesh_intersect(
+            cam_pos, cam_dir, v, f, use_embree=False)
+
+        for actual, expected in zip(fallback, portable):
+            np.testing.assert_allclose(actual, expected)
+
     def test_simple_cube(self):
         # This is a cube, centered at the origin, with side length 1
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
