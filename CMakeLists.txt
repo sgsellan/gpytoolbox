@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
+# We need CMAKE at least 4.2 in order for the Github actions to work, but this breaks some dependencies, so we add this policy.
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+
 # https://discourse.cmake.org/t/msvc-runtime-library-completely-ignored/10004
 cmake_policy(SET CMP0091 NEW)
 
