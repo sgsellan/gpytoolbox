@@ -23,20 +23,39 @@
 #include <igl/C_STR.h>
 #include <igl/circulation.h>
 #include <igl/decimate.h>
+#include <igl/min_heap.h>
 #include <igl/shortest_edge_and_midpoint.h>
 #include <igl/infinite_cost_stopping_condition.h>
 #include <igl/decimate_trivial_callbacks.h>
 #include <igl/decimate_callback_types.h>
+#include <unordered_set>
+#include <array>
+#include <set>
+#include <utility>
 using namespace std;
 
-void collapse_edges(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature, Eigen::VectorXd & high, Eigen::VectorXd & low){
+namespace {
+    inline long long edge_key(int a, int b) {
+        if (a > b) std::swap(a, b);
+        return ((long long)a << 32) | (long long)(unsigned int)b;
+    }
+    int uf_find(std::vector<int>& parent, int x) {
+        while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+        return x;
+    }
+    void uf_union(std::vector<int>& parent, int a, int b) {
+        a = uf_find(parent,a); b = uf_find(parent,b);
+        if (a != b) parent[a] = b;
+    }
+}
+
+void collapse_edges(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature, Eigen::MatrixXi & feature_edges, Eigen::VectorXd & high, Eigen::VectorXd & low){
         using namespace Eigen;
     MatrixXi E,uE,EI,EF;
     VectorXi EMAP,I,J;
     VectorXd data;
     Eigen::MatrixXd U;
     Eigen::MatrixXi G;
-    // VectorXd p;
     std::vector<std::vector<int>> uE2E;
     std::vector<std::vector<int>> vertex_face_adjacency;
     std::vector<int> small_edges;
@@ -48,19 +67,27 @@ void collapse_edges(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & f
     std::vector<std::vector<int>> A;
     igl::adjacency_list(F,A);
 
-    std::vector<bool> is_feature_vertex;
-    is_feature_vertex.resize(n);
-
+    // Fixed (frozen) feature vertices: never collapsed.
+    std::vector<bool> explicit_fixed;
+    explicit_fixed.resize(n,false);
     for (int s = 0; s < num_feature; s++) {
-        is_feature_vertex[feature(s)] = true;
+        explicit_fixed[feature(s)] = true;
     }
 
-    //igl::is_edge_manifold(F);
+    // Feature-edge bookkeeping: degree (number of incident feature edges) and a
+    // set for fast "is this edge a feature edge" lookups.
+    std::vector<int> feat_deg(n,0);
+    std::unordered_set<long long> fe_set;
+    for (int j = 0; j < feature_edges.rows(); j++) {
+        feat_deg[feature_edges(j,0)]++;
+        feat_deg[feature_edges(j,1)]++;
+        fe_set.insert(edge_key(feature_edges(j,0),feature_edges(j,1)));
+    }
 
     igl::decimate_stopping_condition_callback stopping_condition;
 
     igl::decimate_cost_and_placement_callback shortest_edge_and_midpoint_lambda =
-        [&A,&feature,&low,&high,&is_feature_vertex](
+        [&A,&low,&high,&explicit_fixed,&feat_deg,&fe_set](
             const int e,
             const Eigen::MatrixXd & V,
             const Eigen::MatrixXi & F,
@@ -71,35 +98,64 @@ void collapse_edges(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & f
             double & cost,
             Eigen::RowVectorXd & p)
     {
-        // std::cout << high(E(e,0)) << std::endl;
-        // std::cout << high(E(e,1)) << std::endl;
         igl::shortest_edge_and_midpoint(e,V,F,E,EMAP,EF,EI,cost,p);
-        if (is_feature_vertex[E(e,0)] || is_feature_vertex[E(e,1)] ) {
-            cost = std::numeric_limits<double>::infinity();
-            return;
-        // }
-        }else if (is_feature_vertex[E(e,0)]){
-            p = V.row(E(e,0));
-        }else if(is_feature_vertex[E(e,1)]){
-            p = V.row(E(e,1));
-        }
-        if ( (V.row(E(e,0))-V.row(E(e,1))).norm() > ((low(E(e,0))+low(E(e,1)))/2) ) {
+        const int a = E(e,0);
+        const int b = E(e,1);
+
+        // Fully fixed feature vertices are never collapsed.
+        if (explicit_fixed[a] || explicit_fixed[b]) {
             cost = std::numeric_limits<double>::infinity();
             return;
         }
-        for(int i = 0; i < A[E(e,1)].size(); i++){
-            if(!is_feature_vertex[E(e,1)] && (V.row(A[E(e,1)][i])-p).norm() > high(E(e,1))){
+
+        const bool fva = feat_deg[a] >= 1; // a is on a feature edge
+        const bool fvb = feat_deg[b] >= 1; // b is on a feature edge
+        if (fva || fvb) {
+            if (fva && fvb) {
+                // Both endpoints are feature vertices.
+                const bool is_fe = fe_set.count(edge_key(a,b)) > 0;
+                if (!is_fe) {
+                    // Collapsing would merge two different feature curves.
+                    cost = std::numeric_limits<double>::infinity();
+                    return;
+                }
+                const bool corner_a = feat_deg[a] != 2; // junction / endpoint
+                const bool corner_b = feat_deg[b] != 2;
+                if (corner_a && corner_b) {
+                    // Would remove a feature junction/corner.
+                    cost = std::numeric_limits<double>::infinity();
+                    return;
+                }
+                // Collapse along the feature: keep the result on an endpoint so
+                // it stays on the feature. Prefer a corner if there is one.
+                if (corner_a) p = V.row(a);
+                else if (corner_b) p = V.row(b);
+                else p = V.row(a);
+            } else {
+                // Exactly one endpoint is a feature vertex (the edge is not a
+                // feature edge): collapse the regular vertex onto the feature
+                // vertex, which therefore does not move.
+                if (fva) p = V.row(a);
+                else p = V.row(b);
+            }
+        }
+
+        if ( (V.row(a)-V.row(b)).norm() > ((low(a)+low(b))/2) ) {
+            cost = std::numeric_limits<double>::infinity();
+            return;
+        }
+        for(int i = 0; i < A[b].size(); i++){
+            if(!fvb && (V.row(A[b][i])-p).norm() > high(b)){
                 cost = std::numeric_limits<double>::infinity();
                 return;
             }
         }
-        for(int r = 0; r < A[E(e,0)].size(); r++){
-            if(!is_feature_vertex[E(e,0)] && (V.row(A[E(e,0)][r])-p).norm() > high(E(e,0))){
+        for(int r = 0; r < A[a].size(); r++){
+            if(!fva && (V.row(A[a][r])-p).norm() > high(a)){
                 cost = std::numeric_limits<double>::infinity();
                 return;
             }
         }
-            // consider each face
 
 	// BUILD N
 	int ccw = E(e,0)>E(e,1);
@@ -114,7 +170,6 @@ std::vector<int> N;
     int & nf)
   {
     assert((EF(e,1) == ff || EF(e,0) == ff) && "e should touch ff");
-    //const int fside = EF(e,1)==ff?1:0;
     const int nside = EF(e,0)==ff?1:0;
     const int nv = EI(e,nside);
     // get next face
@@ -140,7 +195,6 @@ std::vector<int> N;
   }
 		for(const int f : N)
 	            {
-	                //std::cout << f << std::endl;
 	                if( f == 0 || f ==  N.size()-1)
 	                {
 
@@ -151,10 +205,6 @@ std::vector<int> N;
 	                Eigen::RowVector3d p_before[3], p_after[3];
 	                for(int c = 0;c<3;c++)
 	                {
-	                    // vertex index
-	//                    std::cout << e << std::endl;
-	//                    std::cout << f << std::endl;
-	//                    std::cout << c << std::endl;
 	                    const int v = F(f,c);
 	                    if( v == E(e,0) || v == E(e,1))
 	                    {
@@ -174,52 +224,129 @@ std::vector<int> N;
 	                       cost = std::numeric_limits<double>::infinity();
 	                   }
 	                   }
-
-        //std::cout << "Mathed!" << std::endl;
-
-
         };
 
     igl::infinite_cost_stopping_condition(shortest_edge_and_midpoint_lambda,stopping_condition);
-    igl::decimate_pre_collapse_callback pre_collapse;
-    igl::decimate_post_collapse_callback post_collapse;
-    igl::decimate_trivial_callbacks(pre_collapse,post_collapse);
 
+    // Record every successful collapse so we can remap feature data afterwards.
+    //
+    // IMPORTANT: igl::collapse_edge nulls out the collapsed edge's entries
+    // (E(e,0) = E(e,1) = IGL_COLLAPSE_EDGE_NULL = 0) as part of performing the
+    // collapse. By the time the *post*-collapse callback runs, E(e,*) therefore
+    // no longer holds the two endpoints (it reads back as (0,0)), which would
+    // make the union-find remap below a no-op and silently *drop* — rather than
+    // merge — the feature edges incident to a collapsed vertex. That lowers the
+    // feature-edge degree of crease junctions, so corners get mistaken for
+    // degree-2 "line" vertices and slid along the crease (chamfered).
+    //
+    // We instead capture the endpoints in the *pre*-collapse callback (where E
+    // is still intact) and only commit them if the collapse actually happened.
+    std::vector<std::pair<int,int>> merges;
+    int pending_a = -1, pending_b = -1;
+    igl::decimate_pre_collapse_callback pre_collapse =
+        [&pending_a,&pending_b](
+            const Eigen::MatrixXd & /*V*/,
+            const Eigen::MatrixXi & /*F*/,
+            const Eigen::MatrixXi & E,
+            const Eigen::VectorXi & /*EMAP*/,
+            const Eigen::MatrixXi & /*EF*/,
+            const Eigen::MatrixXi & /*EI*/,
+            const igl::min_heap<std::tuple<double,int,int>> & /*Q*/,
+            const Eigen::VectorXi & /*EQ*/,
+            const Eigen::MatrixXd & /*C*/,
+            const int e) -> bool
+        {
+            pending_a = E(e,0);
+            pending_b = E(e,1);
+            return true;
+        };
+    igl::decimate_post_collapse_callback post_collapse =
+        [&merges,&pending_a,&pending_b](
+            const Eigen::MatrixXd & /*V*/,
+            const Eigen::MatrixXi & /*F*/,
+            const Eigen::MatrixXi & /*E*/,
+            const Eigen::VectorXi & /*EMAP*/,
+            const Eigen::MatrixXi & /*EF*/,
+            const Eigen::MatrixXi & /*EI*/,
+            const igl::min_heap<std::tuple<double,int,int>> & /*Q*/,
+            const Eigen::VectorXi & /*EQ*/,
+            const Eigen::MatrixXd & /*C*/,
+            const int /*e*/,
+            const int /*e1*/,
+            const int /*e2*/,
+            const int /*f1*/,
+            const int /*f2*/,
+            const bool collapsed)
+        {
+            if (collapsed && pending_a >= 0) {
+                merges.emplace_back(pending_a, pending_b);
+            }
+            pending_a = -1; pending_b = -1;
+        };
 
-
-    //std::cout << "??" << std::endl;
     igl::decimate(V,F,shortest_edge_and_midpoint_lambda,stopping_condition,pre_collapse,post_collapse,U,G,J,I);
-    //std::cout << "!!" << std::endl;
 
+    // Build a map from each original (pre-collapse) vertex index to its index in
+    // the output mesh, accounting for merges (so that a removed vertex maps to
+    // whichever endpoint survived).
+    std::vector<int> parent(n);
+    for (int i = 0; i < n; i++) parent[i] = i;
+    for (const auto & mp : merges) uf_union(parent, mp.first, mp.second);
+
+    std::vector<int> birth2new(n,-1);
+    for (int s = 0; s < U.rows(); s++) birth2new[I(s)] = s;
+    std::vector<int> root_new(n,-1);
+    for (int o = 0; o < n; o++) {
+        if (birth2new[o] >= 0) root_new[uf_find(parent,o)] = birth2new[o];
+    }
+    for (int o = 0; o < n; o++) birth2new[o] = root_new[uf_find(parent,o)];
+
+    // Remap high/low to the surviving vertices.
     Eigen::VectorXd high_new,low_new;
-    Eigen::VectorXi feature_new;
-    feature_new.resize(num_feature);
     high_new.resize(U.rows());
     low_new.resize(U.rows());
-    int j = 0;
-    for (int s = 0; s<U.rows(); s++) {
+    for (int s = 0; s < U.rows(); s++) {
         high_new(s) = high(I(s));
         low_new(s) = low(I(s));
-        if (is_feature_vertex[I(s)]) {
-            feature_new(j) = s;
-            j = j+1;
-        }
     }
 
-    // PLACEHOLDER
+    // Remap fixed feature vertices (they never collapse, so they survive).
+    Eigen::VectorXi feature_new;
+    feature_new.resize(num_feature);
+    {
+        int j = 0;
+        for (int s = 0; s < num_feature; s++) {
+            int nv = birth2new[feature(s)];
+            if (nv >= 0) { feature_new(j) = nv; j++; }
+        }
+        feature_new.conservativeResize(j);
+    }
+
+    // Remap feature edges, dropping any that fully collapsed and de-duplicating.
+    std::vector<std::array<int,2>> fe_new;
+    std::set<long long> seen;
+    for (int j = 0; j < feature_edges.rows(); j++) {
+        int a = birth2new[feature_edges(j,0)];
+        int b = birth2new[feature_edges(j,1)];
+        if (a < 0 || b < 0 || a == b) continue;
+        long long k = edge_key(a,b);
+        if (seen.count(k)) continue;
+        seen.insert(k);
+        fe_new.push_back({a,b});
+    }
+    Eigen::MatrixXi feature_edges_new((int)fe_new.size(),2);
+    for (int j = 0; j < (int)fe_new.size(); j++) {
+        feature_edges_new(j,0) = fe_new[j][0];
+        feature_edges_new(j,1) = fe_new[j][1];
+    }
 
     V = U;
     F = G;
     high = high_new;
     low = low_new;
     feature = feature_new;
-
-
-
-
-
+    feature_edges = feature_edges_new;
 }
 
 
 // g++ -I/usr/local/libigl/external/eigen -I/usr/local/libigl/include -std=c++11 -framework Accelerate main.cpp remesh_botsch.cpp -o main
-
