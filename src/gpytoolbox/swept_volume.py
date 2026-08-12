@@ -30,7 +30,7 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
         If not None, will decimate output to have this desired number of faces.
     verbose : bool, optional (default False)
         Whether to print runtime and other performance information.
-    
+
 
     Returns
     -------
@@ -50,10 +50,9 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
     Examples
     --------
     ```python
-    from gpytoolbox import read_mesh  
-    from gpytoolbox.copyleft import swept_volume
+    from gpytoolbox import read_mesh, swept_volume
     # Read sample mesh
-    v, f = gpytoolbox.read_mesh("test/unit_tests_data/bunny_oded.obj")
+    v, f = read_mesh("test/unit_tests_data/bunny_oded.obj")
     # Translation vectors to make Catmull-Rom spline
     translation_0 = np.array([0,0,0])
     translation_1 = np.array([1,0,-1])
@@ -67,12 +66,12 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
     """
 
     try:
-        from gpytoolbox_bindings_copyleft import _swept_volume_impl
+        from gpytoolbox_bindings import _swept_volume_impl
     except:
         raise ImportError("Gpytoolbox cannot import its C++ binding.")
 
 
-        
+
     if(translations is not None):
         transformations = []
         num_transformations = len(translations)
@@ -99,7 +98,7 @@ def swept_volume(V,F,transformations=None,rotations=None,translations=None,scale
     if(num_faces is not None):
         v,f,_,_ = decimate(v,f,num_faces=num_faces)
 
-    
+
     return v,f
 
 
