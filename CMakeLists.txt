@@ -88,6 +88,11 @@ add_library(cpytoolbox
 	src/cpp/remesher/tangential_relaxation.h
 	src/cpp/microstl/microstl_wrappers.h
 	src/cpp/tinyply/tinyply_wrappers.h
+	src/cpp/dual_contouring_of_signed_distance_data/Cell.h
+	src/cpp/dual_contouring_of_signed_distance_data/Sphere.h
+	src/cpp/dual_contouring_of_signed_distance_data/contouring.h
+	src/cpp/dual_contouring_of_signed_distance_data/hermite_update.h
+	src/cpp/dual_contouring_of_signed_distance_data/vertex_refinement.h
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
@@ -109,6 +114,11 @@ add_library(cpytoolbox
 	src/cpp/remesher/tangential_relaxation.cpp
 	src/cpp/microstl/microstl_wrappers.cpp
 	src/cpp/tinyply/tinyply_wrappers.cpp
+	src/cpp/dual_contouring_of_signed_distance_data/Cell.cpp
+	src/cpp/dual_contouring_of_signed_distance_data/Sphere.cpp
+	src/cpp/dual_contouring_of_signed_distance_data/contouring.cpp
+	src/cpp/dual_contouring_of_signed_distance_data/hermite_update.cpp
+	src/cpp/dual_contouring_of_signed_distance_data/vertex_refinement.cpp
 	# microstl
 	src/cpp/microstl/microstl.h
 	# tinyply
@@ -172,6 +182,7 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs/binding_outside_points_from_rasterization.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs//binding_locally_make_feasible.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs//binding_fine_tune_point_cloud_iter.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/dual_contouring_of_signed_distance_data/binding_dcsdd.cpp"
 )
 
 pybind11_add_module(gpytoolbox_bindings_copyleft
