@@ -1,8 +1,9 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
-from gpytoolbox.copyleft import swept_volume
-from gpytoolbox.copyleft.swept_volume import velocity_alignment_rotations
+from gpytoolbox import swept_volume
+from gpytoolbox.swept_volume import velocity_alignment_rotations
+import warnings
 # import polyscope as ps
 # import igl
 
@@ -45,6 +46,19 @@ class TestSweptVolume(unittest.TestCase):
         # ps.init()
         # ps.register_surface_mesh("test_sv",u,g)
         # ps.show()
+
+    def test_copyleft_import_is_deprecated(self):
+        # swept_volume is now MIT-licensed and lives in the main namespace, but
+        # the old gpytoolbox.copyleft.swept_volume path is kept for backwards
+        # compatibility and should emit a DeprecationWarning (to be removed in 0.4.0).
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            from gpytoolbox.copyleft import swept_volume as legacy_swept_volume
+        deprecations = [w for w in caught if issubclass(w.category, DeprecationWarning)]
+        self.assertTrue(len(deprecations) > 0)
+        self.assertIn("0.4.0", str(deprecations[-1].message))
+        # The legacy alias must still point to the same callable.
+        self.assertIs(legacy_swept_volume, swept_volume)
 
     def test_velocity_alignment_on_spiral(self):
         # Regression test for issue #136: on a spiral path, aligning rotations

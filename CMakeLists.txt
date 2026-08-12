@@ -92,6 +92,11 @@ add_library(cpytoolbox
 	src/cpp/remesher/tangential_relaxation.h
 	src/cpp/microstl/microstl_wrappers.h
 	src/cpp/tinyply/tinyply_wrappers.h
+	src/cpp/swept_volume/fd_interpolate.h
+	src/cpp/swept_volume/gradient_descent_test.h
+	src/cpp/swept_volume/random_points_on_mesh.h
+	src/cpp/swept_volume/sparse_continuation.h
+	src/cpp/swept_volume/swept_volume.h
 	src/cpp/dual_contouring_of_signed_distance_data/Cell.h
 	src/cpp/dual_contouring_of_signed_distance_data/Sphere.h
 	src/cpp/dual_contouring_of_signed_distance_data/contouring.h
@@ -122,6 +127,11 @@ add_library(cpytoolbox
 	src/cpp/dual_contouring_of_signed_distance_data/contouring.cpp
 	src/cpp/dual_contouring_of_signed_distance_data/hermite_update.cpp
 	src/cpp/dual_contouring_of_signed_distance_data/vertex_refinement.cpp
+	src/cpp/swept_volume/fd_interpolate.cpp
+	src/cpp/swept_volume/gradient_descent_test.cpp
+	src/cpp/swept_volume/random_points_on_mesh.cpp
+	src/cpp/swept_volume/sparse_continuation.cpp
+	src/cpp/swept_volume/swept_volume.cpp
 	# microstl
 	src/cpp/microstl/microstl.h
 	# tinyply
@@ -135,23 +145,6 @@ if(LIBIGL_EMBREE)
 	)
 endif()
 
-	add_library(cpytoolbox_copyleft
-	STATIC
-	# SHARED
-	# Headers
-	src/cpp/swept_volume/fd_interpolate.cpp
-	src/cpp/swept_volume/gradient_descent_test.cpp
-	src/cpp/swept_volume/random_points_on_mesh.cpp
-	src/cpp/swept_volume/sparse_continuation.cpp
-	src/cpp/swept_volume/swept_volume.cpp
-	# Source
-	src/cpp/swept_volume/fd_interpolate.h
-	src/cpp/swept_volume/gradient_descent_test.h
-	src/cpp/swept_volume/random_points_on_mesh.h
-	src/cpp/swept_volume/sparse_continuation.h
-	src/cpp/swept_volume/swept_volume.h
-	)
-
 target_link_libraries(cpytoolbox ${LIBRARIES_TO_LINK})
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "17.0")
@@ -160,8 +153,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   endif()
 endif()
 set(LIBRARIES_TO_LINK cpytoolbox ${LIBRARIES_TO_LINK})
-target_link_libraries(cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
-set(COPYLEFT_LIBRARIES_TO_LINK cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
 
 # Otman's python bindings using pybind11
 add_subdirectory(./ext/pybind11/)
@@ -176,6 +167,7 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_hausdorff_distance.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_in_element_aabb.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_marching_cubes.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_swept_volume.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_offset_surface.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_point_mesh_squared_distance.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_particle_swarm.cpp"
@@ -203,7 +195,6 @@ endif()
 
 pybind11_add_module(gpytoolbox_bindings_copyleft
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/gpytoolbox_bindings_copyleft_core.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_swept_volume.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_booleans.cpp"
 )
 
