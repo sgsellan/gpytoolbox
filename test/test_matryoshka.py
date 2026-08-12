@@ -2,6 +2,8 @@ from .context import numpy as np
 from .context import unittest
 from .context import gpytoolbox as gpy
 from gpytoolbox.matryoshka import _feasible, _transform_points, _sample_B_surface
+import gpytoolbox_bindings
+from unittest import mock
 
 
 def _unit_cube():
@@ -49,6 +51,15 @@ class TestMatryoshka(unittest.TestCase):
                              n_samples=300, seed=0)
         self.assertGreater(res['s'], 0.95)
         self.assertTrue(_verify_feasible(V, F, res))
+
+    def test_cube_scale_only_without_embree(self):
+        # matryoshka should reuse the portable cached intersector when Embree
+        # is unavailable rather than losing the whole public operation.
+        V, F = _unit_cube()
+        with mock.patch.object(gpytoolbox_bindings, "_has_embree", False):
+            res = gpy.matryoshka(V, F, optimize='scale_only',
+                                 n_samples=50, seed=0)
+        self.assertGreater(res['s'], 0.95)
 
     def test_sphere_rigid(self):
         # With rigid (scale + rotation + centroid) optimization, the sphere

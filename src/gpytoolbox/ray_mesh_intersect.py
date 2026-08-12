@@ -75,10 +75,11 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     tri_ind : numpy int array, optional (default None)
         Vector of AABB element indices (-1 if *not* leaf node). If None and use_embree=False, will be computed
     intersector : gpytoolbox.ray_mesh_intersect_precompute, optional (default None)
-        Precomputed Embree intersector built via `gpytoolbox.ray_mesh_intersect_precompute(V, F)`.
-        When provided (and `use_embree=True`), reuses the persistent Embree scene
-        across calls instead of rebuilding it. V and F are still consulted only
-        for shape; the actual queries go through the cached intersector.
+        Precomputed intersector built via
+        `gpytoolbox.ray_mesh_intersect_precompute(V, F)`. When provided (and
+        `use_embree=True`), reuses the available Embree scene or portable AABB
+        tree across calls instead of rebuilding it. V and F are still consulted
+        only for shape; the actual queries go through the cached intersector.
 
     Returns
     -------
@@ -91,7 +92,8 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
 
     Examples
     --------
-    Standard one-shot call (rebuilds the Embree scene internally each time):
+    Standard one-shot call (rebuilds the available acceleration structure
+    internally each time):
     ```python
     from gpytoolbox import ray_mesh_intersect
     v,f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
@@ -100,9 +102,9 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     t, ids, l = ray_mesh_intersect(cam_pos,cam_dir,v,f)
     ```
 
-    When making many calls against the same mesh, build the Embree
-    intersector once and reuse it via the `intersector=` kwarg to avoid
-    the O(n) construction cost on every call:
+    When making many calls against the same mesh, build the intersector once
+    and reuse it via the `intersector=` kwarg to avoid the O(n) construction
+    cost on every call:
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj")
     rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f) # build once
@@ -113,11 +115,11 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     ```
     """
     if use_embree:
-        import gpytoolbox_bindings
-        if getattr(gpytoolbox_bindings, "_has_embree", True):
-            if intersector is not None:
-                ts, ids, lambdas = intersector.intersect(cam_pos, cam_dir)
-            else:
+        if intersector is not None:
+            ts, ids, lambdas = intersector.intersect(cam_pos, cam_dir)
+        else:
+            import gpytoolbox_bindings
+            if getattr(gpytoolbox_bindings, "_has_embree", True):
                 ts, ids, lambdas = (
                     gpytoolbox_bindings._ray_mesh_intersect_cpp_impl(
                         cam_pos.astype(np.float64),
@@ -126,8 +128,8 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
                         F.astype(np.int32),
                     )
                 )
-        else:
-            use_embree = False
+            else:
+                use_embree = False
     if not use_embree:
         ts = np.inf*np.ones(cam_pos.shape[0])
         ids = -np.ones(cam_pos.shape[0],dtype=int)

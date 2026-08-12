@@ -20,11 +20,19 @@ class TestRayMeshIntersect(unittest.TestCase):
         for actual, expected in zip(fallback, portable):
             np.testing.assert_allclose(actual, expected)
 
-    @unittest.skipIf(_HAS_EMBREE, "requires a build without Embree")
-    def test_precompute_reports_missing_embree(self):
+    def test_precompute_falls_back_without_embree(self):
         v, f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
-        with self.assertRaisesRegex(ImportError, "built without Embree"):
-            gpytoolbox.ray_mesh_intersect_precompute(v, f)
+        cam_pos = np.array([[1, 0.1, 0.1], [1, 0.2, 0.0]])
+        cam_dir = np.array([[-1, 0, 0], [-1, 0, 0]])
+        with mock.patch.object(gpytoolbox_bindings, "_has_embree", False):
+            intersector = gpytoolbox.ray_mesh_intersect_precompute(v, f)
+            actual = gpytoolbox.ray_mesh_intersect(
+                cam_pos, cam_dir, v, f, intersector=intersector)
+        expected = gpytoolbox.ray_mesh_intersect(
+            cam_pos, cam_dir, v, f, use_embree=False)
+
+        for cached, uncached in zip(actual, expected):
+            np.testing.assert_allclose(cached, uncached)
 
     def test_simple_cube(self):
         # This is a cube, centered at the origin, with side length 1
