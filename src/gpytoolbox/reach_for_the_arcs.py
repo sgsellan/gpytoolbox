@@ -88,6 +88,25 @@ def reach_for_the_arcs(U, S,
         reconstructed point cloud points
     N : (n_p,d) numpy array, if requested
         reconstructed point cloud normals
+
+    Examples
+    --------
+    ```python
+    import numpy as np
+    import gpytoolbox as gpy
+    # Read a mesh and normalize it
+    v, f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
+    v = gpy.normalize_points(v)
+    # Sample the signed distance function on a grid
+    n = 10
+    gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, n+1),
+                             np.linspace(-1.0, 1.0, n+1),
+                             np.linspace(-1.0, 1.0, n+1))
+    GV = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+    S = gpy.signed_distance(GV, v, f)[0]
+    # Reconstruct a mesh from the SDF samples
+    U, G = gpy.reach_for_the_arcs(GV, S)
+    ```
     """
 
     d = U.shape[1]
