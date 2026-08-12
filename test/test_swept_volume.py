@@ -2,6 +2,7 @@ from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
 from gpytoolbox import swept_volume
+from gpytoolbox.swept_volume import velocity_alignment_rotations
 import warnings
 # import polyscope as ps
 # import igl
@@ -59,5 +60,49 @@ class TestSweptVolume(unittest.TestCase):
         # The legacy alias must still point to the same callable.
         self.assertIs(legacy_swept_volume, swept_volume)
 
+    def test_velocity_alignment_on_spiral(self):
+        # Regression test for issue #136: on a spiral path, aligning rotations
+        # with velocity used to introduce a spurious roll about the velocity
+        # axis (computed each keyframe from a fixed global reference), making
+        # the shape flip on one side of the helix. The rotation-minimizing
+        # frame should instead produce proper rotations whose local x-axis
+        # tracks the velocity and which vary smoothly (no sudden flips).
+        radius, start_y, end_y, num_steps, pitch = 0.025, -0.07, 0.07, 50, 0.2
+        h_step = (end_y - start_y) / num_steps
+        translations = []
+        for i in range(num_steps):
+            theta = 2 * np.pi * i / (num_steps * pitch)
+            translations.append(np.array([radius * np.cos(theta),
+                                          start_y + i * h_step,
+                                          radius * np.sin(theta)]))
+
+        rotations = velocity_alignment_rotations(translations)
+        self.assertEqual(len(rotations), num_steps)
+
+        velocities = []
+        for i in range(num_steps):
+            if i == 0:
+                vel = translations[1] - translations[0]
+            elif i == num_steps - 1:
+                vel = translations[-1] - translations[-2]
+            else:
+                vel = translations[i + 1] - translations[i - 1]
+            velocities.append(vel / np.linalg.norm(vel))
+
+        x_axis = np.array([1.0, 0.0, 0.0])
+        for R, vel in zip(rotations, velocities):
+            # proper rotation
+            self.assertTrue(np.allclose(R @ R.T, np.eye(3), atol=1e-8))
+            self.assertTrue(np.isclose(np.linalg.det(R), 1.0, atol=1e-8))
+            # local x-axis aligns with the velocity
+            self.assertTrue(np.allclose(R @ x_axis, vel, atol=1e-7))
+
+        # frame must vary smoothly: no near-180-degree flip between neighbours
+        up = np.array([0.0, 1.0, 0.0])
+        max_up_jump = max(np.linalg.norm(rotations[i] @ up - rotations[i - 1] @ up)
+                          for i in range(1, num_steps))
+        self.assertLess(max_up_jump, 1.0)
+
 if __name__ == '__main__':
     unittest.main()
+    

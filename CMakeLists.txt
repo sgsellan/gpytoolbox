@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
+# We need CMAKE at least 4.2 in order for the Github actions to work, but this breaks some dependencies, so we add this policy.
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+
 # https://discourse.cmake.org/t/msvc-runtime-library-completely-ignored/10004
 cmake_policy(SET CMP0091 NEW)
 
@@ -67,6 +70,7 @@ add_library(cpytoolbox
 	# Headers
 	src/cpp/upper_envelope.h
 	src/cpp/ray_mesh_intersect_aabb.h
+	src/cpp/particle_swarm.h
 	src/cpp/in_element_aabb.h
 	src/cpp/read_obj.h
 	src/cpp/write_obj.h
@@ -92,6 +96,7 @@ add_library(cpytoolbox
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
+	src/cpp/particle_swarm.cpp
 	src/cpp/in_element_aabb.cpp
 	src/cpp/read_obj.cpp
 	src/cpp/write_obj.cpp
@@ -137,6 +142,8 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_obj.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_decimate.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_fast_winding_number.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_fast_winding_number_bvh.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_aabb_tree.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_hausdorff_distance.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_in_element_aabb.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_marching_cubes.cpp"
@@ -144,6 +151,8 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_offset_surface.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_point_mesh_squared_distance.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersect.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersector.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_particle_swarm.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_read_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_remesher_botsch.cpp"
