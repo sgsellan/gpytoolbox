@@ -157,6 +157,7 @@ library. We are thankful to them:
 - [Haoyang Wu](https://github.com/H-YWu) ([PR #142](https://github.com/sgsellan/gpytoolbox/pull/142))
 - [Dylan Rowe](https://github.com/d-r-o-w-e) ([PR #144](https://github.com/sgsellan/gpytoolbox/pull/144))
 - [Alice Wei](https://github.com/AAAAAliceeeeee) ([PR #157](https://github.com/sgsellan/gpytoolbox/pull/157))
+- [Xiana Carrera](https://xianacarrera.github.io/) ([PR #184](https://github.com/sgsellan/gpytoolbox/pull/184))
 
 
 

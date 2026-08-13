@@ -47,7 +47,7 @@ class ray_mesh_intersect_traversal:
 
 
 
-def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None,tri_ind=None):
+def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None,tri_ind=None,intersector=None):
     """Shoot a ray from a position and see where it crashes into a given mesh
 
     Uses a bounding volume hierarchy to efficiently compute intersections of many different rays with a given mesh.
@@ -72,6 +72,11 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
         Matrix of child indeces (-1 if leaf node). If None and use_embree=False, will be computed
     tri_ind : numpy int array, optional (default None)
         Vector of AABB element indices (-1 if *not* leaf node). If None and use_embree=False, will be computed
+    intersector : gpytoolbox.ray_mesh_intersect_precompute, optional (default None)
+        Precomputed Embree intersector built via `gpytoolbox.ray_mesh_intersect_precompute(V, F)`.
+        When provided (and `use_embree=True`), reuses the persistent Embree scene
+        across calls instead of rebuilding it. V and F are still consulted only
+        for shape; the actual queries go through the cached intersector.
 
     Returns
     -------
@@ -84,6 +89,7 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
 
     Examples
     --------
+    Standard one-shot call (rebuilds the Embree scene internally each time):
     ```python
     from gpytoolbox import ray_mesh_intersect
     v,f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
@@ -91,14 +97,29 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     cam_dir = np.array([[-1,0,0],[-1,0,0]])
     t, ids, l = ray_mesh_intersect(cam_pos,cam_dir,v,f)
     ```
+
+    When making many calls against the same mesh, build the Embree
+    intersector once and reuse it via the `intersector=` kwarg to avoid
+    the O(n) construction cost on every call:
+    ```python
+    v,f = gpytoolbox.read_mesh("bunny.obj")
+    rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f) # build once
+    for _ in range(num_iters):
+        origins = 2*np.random.rand(num_rays,3)-1
+        dirs = np.random.randn(num_rays,3)
+        t, ids, l = gpytoolbox.ray_mesh_intersect(origins,dirs,v,f,intersector=rmi)
+    ```
     """
     if use_embree:
-        try:
-            from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
-        except:
-            raise ImportError("Gpytoolbox cannot import its C++ ray_mesh_intersect binding.")
+        if intersector is not None:
+            ts, ids, lambdas = intersector.intersect(cam_pos, cam_dir)
+        else:
+            try:
+                from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
+            except:
+                raise ImportError("Gpytoolbox cannot import its C++ ray_mesh_intersect binding.")
 
-        ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
+            ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
     else:
         ts = np.inf*np.ones(cam_pos.shape[0])
         ids = -np.ones(cam_pos.shape[0],dtype=int)
