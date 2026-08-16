@@ -117,6 +117,17 @@ class TestReadMesh(unittest.TestCase):
             self.assertTrue(np.isclose(C_2,C).all)
             self.assertTrue((F_2==F).all())
     
+    def test_quad_obj(self):
+        # Quad OBJ meshes should read via the Python reader directly, and via
+        # the C++ reader by falling back to Python.
+        for reader in ["Python", "C++", None]:
+            V, F = gpy.read_mesh("test/unit_tests_data/quad_cube.obj",
+                                 reader=reader)
+            self.assertEqual(V.shape, (8, 3))
+            self.assertEqual(F.shape, (6, 4))
+            # Sanity check: all face indices reference valid vertices.
+            self.assertTrue(F.min() >= 0 and F.max() < V.shape[0])
+
     def test_ply_index_vs_indices_faces(self):
         # this used to fail:
         V, F = gpy.read_mesh("test/unit_tests_data/mesh-indices.ply")

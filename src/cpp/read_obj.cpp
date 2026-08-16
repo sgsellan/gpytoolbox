@@ -273,11 +273,16 @@ int read_obj(
                     //The F array has not yet been initialized.
                     //Our job here is to find out i
                     const int k = count_non_spaces(line.begin()+1, line.end());
-                    if(k != 3) {
-                        return -8; //Only triangle meshes currently supported.
+                    if(k != 3 && k != 4) {
+                        return -8; //Only triangle and quad meshes supported.
                     }
                     initialize_F(k);
                 } else {
+                    //Reject mixed-arity face lists (e.g. tri + quad in one file).
+                    const int k = count_non_spaces(line.begin()+1, line.end());
+                    if(k != F.cols()) {
+                        return -8;
+                    }
                     addrow_Fs();
                 }
                 std::string::iterator at = line.begin()+1;

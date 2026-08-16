@@ -49,6 +49,20 @@ class TestWriteMesh(unittest.TestCase):
                 self.assertTrue(filecmp.cmp("test/unit_tests_data/temp.UV.0.obj", "test/unit_tests_data/temp.UV.1.obj", shallow=False))
                 self.assertTrue(filecmp.cmp("test/unit_tests_data/temp.N.0.obj", "test/unit_tests_data/temp.N.1.obj", shallow=False))
 
+    def test_quad_obj_read_then_write(self):
+        # Roundtrip a quad mesh through every writer/reader combination.
+        V, F = gpy.read_mesh("test/unit_tests_data/quad_cube.obj")
+        self.assertEqual(F.shape[1], 4)
+        for writer in ["C++", "Python", None]:
+            gpy.write_mesh("test/unit_tests_data/temp_quad.obj", V, F,
+                           writer=writer)
+            for reader in ["Python", "C++", None]:
+                V_2, F_2 = gpy.read_mesh("test/unit_tests_data/temp_quad.obj",
+                                         reader=reader)
+                self.assertTrue(np.isclose(V_2, V).all())
+                self.assertEqual(F_2.shape, F.shape)
+                self.assertTrue((F_2 == F).all())
+
     def test_stl_read_then_write(self):
         stl_meshes = ["sphere_binary.stl", "fox_ascii.stl"]
         for mesh in stl_meshes:

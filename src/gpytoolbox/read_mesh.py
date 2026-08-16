@@ -17,7 +17,8 @@ def read_mesh(file,
     If you have the approproate C++ extensions installed, this will use a fast
     C++-based reader. If you do not, this will use a slow python reader.
     
-    Currently only supports triangle meshes.
+    For OBJ files, both triangle and quad meshes are supported. Other formats
+    (STL, PLY) currently only support triangle meshes.
 
     Parameters
     -------
@@ -45,9 +46,10 @@ def read_mesh(file,
     Returns
     ----------
     V : (n,3) numpy array
-        vertex list of a triangle mesh
-    F : (m,3) numpy int array
-        face index list of a triangle mesh (into V)
+        vertex list of a mesh
+    F : (m,3) or (m,4) numpy int array
+        face index list (into V); (m,3) for triangle meshes,
+        (m,4) for quad meshes (OBJ only).
     UV : (n_uv,2) numpy array, if requested
         vertex list for texture coordinates
     Ft : (m,3) numpy int array, if requested
@@ -121,7 +123,7 @@ except Exception as e:
 
 def _read_obj(file,return_UV,return_N,reader):
     # Private helper function for reading an OBJ file.
-    # Currently, only triangle meshes are supported.
+    # Triangle and quad meshes are supported by both the C++ and Python readers.
 
     # Pick a reader default
     if reader is None:
@@ -136,7 +138,8 @@ def _read_obj(file,return_UV,return_N,reader):
             elif err == -7:
                 raise Exception(f"A line in {file} was ill-formed.")
             elif err == -8:
-                raise Exception(f"{file} does not seem to be a triangle mesh.")
+                raise Exception(f"{file} is not a triangle or quad mesh, "
+                                f"or mixes triangle and quad faces.")
             else:
                 raise Exception(f"Unknown error {err} reading obj file.")
     elif reader=="Python":
@@ -149,7 +152,7 @@ def _read_obj(file,return_UV,return_N,reader):
 
 def _read_obj_python(file,return_UV,return_N):
     # Private helper function for reading an OBJ file in pure Python.
-    # Currently, only triangle meshes are supported.
+    # Supports triangle and quad meshes (faces must have consistent arity).
 
     V = None
     UV = None
@@ -200,8 +203,10 @@ def _read_obj_python(file,return_UV,return_N):
             elif s=='f':
                 #Special treatment to separate face/texture/normal
                 d = len(row)-1
-                assert d == 3, "Only triangle meshes supported"
+                assert d == 3 or d == 4, "Only triangle and quad meshes supported"
                 f_split = [x.split('/') for x in row[1:]]
+                if F is not None:
+                    assert d == F.shape[1], "Mixed triangle/quad meshes are not supported"
                 if F is None:
                     F = np.zeros((1,d), dtype=np.int64)
                     if return_UV:
