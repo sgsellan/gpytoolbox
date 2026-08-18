@@ -1,9 +1,39 @@
 from .context import gpytoolbox
 from .context import numpy as np
 from .context import unittest
+import gpytoolbox_bindings
 import time
+from unittest import mock
+
+_HAS_EMBREE = getattr(gpytoolbox_bindings, "_has_embree", True)
 
 class TestRayMeshIntersect(unittest.TestCase):
+    def test_default_falls_back_without_embree(self):
+        v, f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
+        cam_pos = np.array([[1, 0.1, 0.1], [1, 0.2, 0.0]])
+        cam_dir = np.array([[-1, 0, 0], [-1, 0, 0]])
+        with mock.patch.object(gpytoolbox_bindings, "_has_embree", False):
+            fallback = gpytoolbox.ray_mesh_intersect(cam_pos, cam_dir, v, f)
+        portable = gpytoolbox.ray_mesh_intersect(
+            cam_pos, cam_dir, v, f, use_embree=False)
+
+        for actual, expected in zip(fallback, portable):
+            np.testing.assert_allclose(actual, expected)
+
+    def test_precompute_falls_back_without_embree(self):
+        v, f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
+        cam_pos = np.array([[1, 0.1, 0.1], [1, 0.2, 0.0]])
+        cam_dir = np.array([[-1, 0, 0], [-1, 0, 0]])
+        with mock.patch.object(gpytoolbox_bindings, "_has_embree", False):
+            intersector = gpytoolbox.ray_mesh_intersect_precompute(v, f)
+            actual = gpytoolbox.ray_mesh_intersect(
+                cam_pos, cam_dir, v, f, intersector=intersector)
+        expected = gpytoolbox.ray_mesh_intersect(
+            cam_pos, cam_dir, v, f, use_embree=False)
+
+        for cached, uncached in zip(actual, expected):
+            np.testing.assert_allclose(cached, uncached)
+
     def test_simple_cube(self):
         # This is a cube, centered at the origin, with side length 1
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
@@ -67,6 +97,7 @@ class TestRayMeshIntersect(unittest.TestCase):
 
 
 
+    @unittest.skipUnless(_HAS_EMBREE, "requires an Embree-enabled build")
     def test_intersector_cache_matches_uncached(self):
         # The cached ray_mesh_intersect_precompute must produce identical results to the
         # uncached path.
@@ -93,6 +124,7 @@ class TestRayMeshIntersect(unittest.TestCase):
         t_d, id_d, l_d = rmi.intersect(origins, dirs)
         self.assertTrue(np.array_equal(id_d, id_c))
 
+    @unittest.skipUnless(_HAS_EMBREE, "requires an Embree-enabled build")
     def test_intersector_cache_is_faster(self):
         # Sanity check the whole point of the cache: many calls against the
         # same mesh are faster with the precomputed Embree scene than without.

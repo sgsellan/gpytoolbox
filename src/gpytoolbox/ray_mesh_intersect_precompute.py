@@ -2,11 +2,12 @@ import numpy as np
 
 
 class ray_mesh_intersect_precompute:
-    """Precomputed Embree intersector for repeated ray-mesh queries.
+    """Precomputed intersector for repeated ray-mesh queries.
 
-    Wraps libigl's `igl::embree::EmbreeIntersector` so the Embree scene is
-    built once and reused across many `ray_mesh_intersect` calls, avoiding
-    the per-call construction cost.
+    Uses libigl's `igl::embree::EmbreeIntersector` when GPyToolbox was built
+    with Embree. Otherwise, it builds and reuses GPyToolbox's portable AABB
+    tree. Both backends avoid rebuilding their acceleration structure on
+    every `ray_mesh_intersect` call.
 
     Parameters
     ----------
@@ -38,20 +39,24 @@ class ray_mesh_intersect_precompute:
     """
 
     def __init__(self, V, F):
-        try:
-            from gpytoolbox_bindings import _RayMeshIntersector_cpp_impl
-        except ImportError:
-            raise ImportError(
-                "Gpytoolbox cannot import its C++ ray_mesh_intersect_precompute binding.")
-
         V = np.ascontiguousarray(V, dtype=np.float64)
         F = np.ascontiguousarray(F, dtype=np.int32)
         if V.shape[1] != 3 or F.shape[1] != 3:
             raise ValueError("ray_mesh_intersect_precompute requires a 3D triangle mesh.")
 
+        import gpytoolbox_bindings
+        self._impl = None
+        self._aabb = None
+        if getattr(gpytoolbox_bindings, "_has_embree", True):
+            from gpytoolbox_bindings import _RayMeshIntersector_cpp_impl
+            self._impl = _RayMeshIntersector_cpp_impl(V, F)
+        else:
+            from gpytoolbox.initialize_aabbtree import initialize_aabbtree
+            C, W, CH, _, _, tri_ind, _ = initialize_aabbtree(V, F=F)
+            self._aabb = (C, W, CH, tri_ind)
+
         self._V = V
         self._F = F
-        self._impl = _RayMeshIntersector_cpp_impl(V, F)
 
     @property
     def V(self):
@@ -83,4 +88,11 @@ class ray_mesh_intersect_precompute:
         origins = np.ascontiguousarray(np.atleast_2d(origins), dtype=np.float64)
         directions = np.ascontiguousarray(np.atleast_2d(directions),
                                           dtype=np.float64)
-        return self._impl.intersect(origins, directions)
+        if self._impl is not None:
+            return self._impl.intersect(origins, directions)
+
+        from gpytoolbox.ray_mesh_intersect import ray_mesh_intersect
+        C, W, CH, tri_ind = self._aabb
+        return ray_mesh_intersect(
+            origins, directions, self._V, self._F, use_embree=False,
+            C=C, W=W, CH=CH, tri_ind=tri_ind)
