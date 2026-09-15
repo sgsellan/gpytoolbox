@@ -76,17 +76,20 @@ double doublearea(const Point& p0, const Point& p1, const Point& p2) {
     return (p1.x-p0.x)*(p2.y-p0.y) - (p1.y-p0.y)*(p2.x-p0.x);
 }
 
-// Angle of the triangle (p,p0,p1) at the vertex p
-double angle_at(const Point& p, const Point& p0, const Point& p1) {
-    const double ax = p0.x-p.x, ay = p0.y-p.y;
-    const double bx = p1.x-p.x, by = p1.y-p.y;
-    return std::atan2(std::abs(ax*by-ay*bx), ax*bx+ay*by);
+// Squared distance between the points u and v
+double sqdist(const Point& u, const Point& v) {
+    return (u.x-v.x)*(u.x-v.x) + (u.y-v.y)*(u.y-v.y);
 }
 
-// Smallest of the three angles of the triangle (p0,p1,p2)
-double min_angle(const Point& p0, const Point& p1, const Point& p2) {
-    return std::min(angle_at(p0,p1,p2),
-        std::min(angle_at(p1,p2,p0), angle_at(p2,p0,p1)));
+// Whether the smallest angle of the triangle (p0,p1,p2) is below the angle
+// whose squared cosine is cos2q.
+bool too_sharp(const Point& p0, const Point& p1, const Point& p2,
+    const double cos2q) {
+    double l[3] = {sqdist(p1,p2), sqdist(p2,p0), sqdist(p0,p1)};
+    std::sort(l,l+3);
+    // The smallest angle is the one opposite l[0], and is obtuse if s<=0
+    const double s = l[1]+l[2]-l[0];
+    return s>0. && s*s > 4.*l[1]*l[2]*cos2q;
 }
 
 // Circumcenter of the triangle (p0,p1,p2), in the form given in
@@ -143,6 +146,7 @@ void triangulate_polygon(
         segs.push_back(CDT::Edge(CDT::VertInd(F(i,0)),CDT::VertInd(F(i,1))));
     }
     const bool refining = a>0. || q>0.;
+    const double cos2q = std::cos(q)*std::cos(q);
 
     // A vertex closer than this to a constraint edge counts as lying on it,
     // and splits it there
@@ -240,7 +244,7 @@ void triangulate_polygon(
             }
             // A triangle meeting both constraints is left alone: if they all
             // do, nothing is inserted and the loop stops at the end of the pass
-            if((a<=0. || 0.5*da<=a) && (q<=0. || min_angle(p0,p1,p2)>=q)) {
+            if((a<=0. || 0.5*da<=a) && (q<=0. || !too_sharp(p0,p1,p2,cos2q))) {
                 continue;
             }
             const Point c = circumcenter(p0,p1,p2);

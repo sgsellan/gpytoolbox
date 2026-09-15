@@ -3,6 +3,16 @@ from .context import gpytoolbox
 from .context import unittest
 
 
+# Vertices are snapped to this grid, which makes every coordinate exact in
+# binary floating point. Without it the polygons come out of cos and sin, whose
+# last bit differs between platforms, and a single bit is enough to change the
+# triangulation.
+_GRID = 2.**20
+
+def _snap(V):
+    return np.round(V*_GRID)/_GRID
+
+
 # Every test polygon is a closed loop, or several:
 # outer loops run counterclockwise and the loops bounding a hole run clockwise.
 def _rectangle():
@@ -14,7 +24,7 @@ def _circle(n=32,r=1.):
     th = np.linspace(0.,2.*np.pi,n,endpoint=False)
     V = np.stack((r*np.cos(th),r*np.sin(th)),axis=-1)
     F = np.stack((np.arange(n),(np.arange(n)+1)%n),axis=-1)
-    return V,F
+    return _snap(V),F
 
 def _annulus(n=32,ro=1.,ri=0.5):
     Vo,Fo = _circle(n,ro)
@@ -31,7 +41,7 @@ def _arch(n=16,ro=1.,ri=0.6):
                    np.stack((ri*np.cos(thi),ri*np.sin(thi)),axis=-1)))
     m = V.shape[0]
     F = np.stack((np.arange(m),(np.arange(m)+1)%m),axis=-1)
-    return V,F
+    return _snap(V),F
 
 def _polygons():
     return {"rectangle":_rectangle(), "circle":_circle(), "circle2":_circle(100,0.3),
@@ -91,10 +101,13 @@ class TestTriangulatePolygon(unittest.TestCase):
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
             data = np.load(
                 f"test/unit_tests_data/triangulate_polygon_{name}.npz")
-            self.assertTrue(V2.shape==data["V"].shape)
+            # The triangles have to be exactly the ones that were stored.
+            # Their vertices only have to agree to a tolerance, since the last
+            # bits of a coordinate depend on the platform's arithmetic
             self.assertTrue(F2.shape==data["F"].shape)
-            self.assertTrue(np.allclose(V2,data["V"]))
             self.assertTrue(np.all(F2==data["F"]))
+            self.assertTrue(V2.shape==data["V"].shape)
+            self.assertTrue(np.allclose(V2,data["V"]))
 
     def test_area_argument(self):
         for name,(V,F) in _polygons().items():
