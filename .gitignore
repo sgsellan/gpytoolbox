@@ -5,6 +5,7 @@
 *.code-workspace
 build-arm/
 build/
+.venv/
 build-linux/
 build-arm/
 .vs-code/
@@ -18,3 +19,4 @@ dist/*
 src/gpytoolbox.egg-info/*
 *.pyd
 *.egg-info
+uv.lock
