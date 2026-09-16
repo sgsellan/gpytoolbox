@@ -1,6 +1,3 @@
-import base64
-import hashlib
-import io
 import os
 import platform
 import sys
@@ -51,9 +48,7 @@ def _polygons():
     return {"rectangle":_rectangle(), "circle":_circle(), "circle2":_circle(100,0.3),
             "annulus":_annulus(), "annulus2":_annulus(64,1.,0.2), "arch":_arch()}
 
-# The a and q the stored triangulations were made with. Each polygon gets its
-# own, and none of them is a default, so the stored meshes pin down refinement
-# as well as the triangulation underneath it
+# The a and q the stored triangulations were made with.
 def _regression_parameters():
     return {"rectangle":(0.05,20.*np.pi/180.),
             "circle":(0.1,25.*np.pi/180.),
@@ -62,45 +57,12 @@ def _regression_parameters():
             "annulus2":(0.03,15.*np.pi/180.),
             "arch":(0.01,28.*np.pi/180.)}
 
-# Refinement makes a chain of threshold decisions, so a difference of one bit
-# anywhere changes the mesh, and machines do not round identically. Each
-# platform therefore gets its triangulations stored for it.
 def _platform_key():
     return f"{sys.platform}-{platform.machine()}"
 
 def _correct_output_path(name):
     return ("test/unit_tests_data/"
         f"triangulate_polygon_{name}_{_platform_key()}.npz")
-
-
-# Prints a mesh as the exact bytes of the .npz that should be stored for this
-# platform, so a machine we cannot log in to can still produce one. It goes out
-# in one write to stderr, the stream the test runner uses, with the file name
-# on every line and a checksum at the end. To rebuild the files from a log:
-#     import base64, collections, hashlib, re
-#     chunks, want = collections.defaultdict(str), {}
-#     for l in open("ci.log"):
-#         m = re.search(r"npz (\S+\.npz) ([A-Za-z0-9+/=]+)\s*$", l)
-#         if m: chunks[m.group(1)] += m.group(2)
-#         m = re.search(r"npzend (\S+\.npz) (\d+) ([0-9a-f]+)\s*$", l)
-#         if m: want[m.group(1)] = (int(m.group(2)), m.group(3))
-#     for fn,text in chunks.items():
-#         raw = base64.b64decode(text)
-#         assert (len(text),hashlib.sha256(raw).hexdigest()[:16])==want[fn], fn
-#         open("test/unit_tests_data/"+fn,"wb").write(raw)
-def _dump_correct_output(name,V2,F2):
-    buf = io.BytesIO()
-    np.savez_compressed(buf,V=V2,F=F2.astype(np.int32),
-        platform=_platform_key())
-    raw = buf.getvalue()
-    text = base64.b64encode(raw).decode()
-    fn = os.path.basename(_correct_output_path(name))
-    lines = [f"npz {fn} {text[i:i+68]}" for i in range(0,len(text),68)]
-    lines.append(f"npzend {fn} {len(text)} "
-        f"{hashlib.sha256(raw).hexdigest()[:16]}")
-    # The test runner writes to stderr, so this does too: two streams into one
-    # log interleave, one stream cannot
-    print("\n".join(lines),file=sys.stderr,flush=True)
 
 
 # Signed area of the region bounded by the edges F of the polygon V
@@ -140,17 +102,13 @@ class TestTriangulatePolygon(unittest.TestCase):
     def test_regression(self):
         # The triangulation of each polygon has to be the one that was stored.
         # Every platform has its own stored meshes, because no two of them
-        # round alike. A platform that has none yet prints what to store for
-        # it, and fails: there is nothing to compare against, so nothing here
-        # is testing anything until those files are added.
-        missing = []
+        # round alike.
         for name,(V,F) in _polygons().items():
             a,q = _regression_parameters()[name]
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
-            if not os.path.isfile(_correct_output_path(name)):
-                missing.append(name)
-                _dump_correct_output(name,V2,F2)
-                continue
+            self.assertTrue(os.path.isfile(_correct_output_path(name)),
+                f"there is no stored triangulation of the {name} for "
+                f"{_platform_key()}, so nothing was compared for it")
             data = np.load(_correct_output_path(name))
             report = (f"\n  {name}: a={a!r} q={q!r} on {_platform_key()}"
                 f"\n  stored    {data['V'].shape[0]} vertices, "
@@ -163,11 +121,6 @@ class TestTriangulatePolygon(unittest.TestCase):
             self.assertTrue(np.all(F2==data["F"]),report)
             self.assertEqual(V2.shape,data["V"].shape,report)
             self.assertTrue(np.allclose(V2,data["V"],rtol=0.,atol=1e-9),report)
-        if missing:
-            self.fail(f"no stored triangulations for {_platform_key()}: "
-                f"{', '.join(missing)}. Nothing was compared for them. The npz "
-                f"lines above are the files to add to test/unit_tests_data, "
-                f"after which this platform is pinned down like the others.")
 
     def test_area_argument(self):
         for name,(V,F) in _polygons().items():
