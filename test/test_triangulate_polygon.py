@@ -1,3 +1,5 @@
+import base64
+import io
 import os
 import platform
 import sys
@@ -69,6 +71,25 @@ def _correct_output_path(name):
 def _polygon_area(V,F):
     return 0.5*np.sum(V[F[:,0],0]*V[F[:,1],1] - V[F[:,1],0]*V[F[:,0],1])
 
+# A mesh as the bytes of its .npz, base64-encoded, so that a platform with no
+# stored meshes can hand back exactly what it computed
+def _encode_mesh(V,F):
+    buf = io.BytesIO()
+    np.savez_compressed(buf,V=V,F=F,platform=_platform_key())
+    return base64.b64encode(buf.getvalue()).decode("ascii")
+
+def _missing_report(missing):
+    lines = ["save everything between the markers to a file and run "
+        "test/unit_tests_data/decode_triangulate_polygon_regression.py on it "
+        f"to make the stored meshes for {_platform_key()}",
+        f"----- BEGIN triangulate_polygon regression {_platform_key()} -----"]
+    for name,blob in missing.items():
+        lines.append(name)
+        lines.extend("  "+blob[i:i+110] for i in range(0,len(blob),110))
+    lines.append(
+        f"----- END triangulate_polygon regression {_platform_key()} -----")
+    return "\n".join(lines)
+
 # Set of the unoriented edges of the mesh with faces F
 def _edge_set(F):
     return set(map(tuple,np.unique(np.sort(np.reshape(
@@ -100,27 +121,36 @@ class TestTriangulatePolygon(unittest.TestCase):
                 _polygon_area(V,F)))
 
     def test_regression(self):
-        # The triangulation of each polygon has to be the one that was stored.
-        # Every platform has its own stored meshes, because no two of them
-        # round alike.
+        # The triangulation of each polygon has to be the one that was
+        # stored. Every platform has its own, because no two round alike; one
+        # with none fails here and prints what it computed instead
+        missing = {}
         for name,(V,F) in _polygons().items():
             a,q = _regression_parameters()[name]
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
-            self.assertTrue(os.path.isfile(_correct_output_path(name)),
-                f"there is no stored triangulation of the {name} for "
-                f"{_platform_key()}, so nothing was compared for it")
-            data = np.load(_correct_output_path(name))
-            report = (f"\n  {name}: a={a!r} q={q!r} on {_platform_key()}"
-                f"\n  stored    {data['V'].shape[0]} vertices, "
-                f"{data['F'].shape[0]} faces"
-                f"\n  computed  {V2.shape[0]} vertices, {F2.shape[0]} faces")
-            # The triangles have to be exactly the ones that were stored. Their
-            # vertices only have to agree to a tolerance, since the last bits
-            # of a coordinate are not worth pinning down
-            self.assertEqual(F2.shape,data["F"].shape,report)
-            self.assertTrue(np.all(F2==data["F"]),report)
-            self.assertEqual(V2.shape,data["V"].shape,report)
-            self.assertTrue(np.allclose(V2,data["V"],rtol=0.,atol=1e-9),report)
+            if not os.path.isfile(_correct_output_path(name)):
+                missing[name] = _encode_mesh(V2,F2)
+                continue
+            with np.load(_correct_output_path(name)) as data:
+                report = (f"\n  {name}: a={a!r} q={q!r} on {_platform_key()}"
+                    f"\n  stored    {data['V'].shape[0]} vertices, "
+                    f"{data['F'].shape[0]} faces"
+                    f"\n  computed  {V2.shape[0]} vertices, {F2.shape[0]} faces")
+                # The triangles have to be exactly the ones that were stored.
+                # Their vertices only have to agree to a tolerance, since the
+                # last bits of a coordinate are not worth pinning down
+                self.assertEqual(F2.shape,data["F"].shape,report)
+                self.assertTrue(np.all(F2==data["F"]),report)
+                self.assertEqual(V2.shape,data["V"].shape,report)
+                self.assertTrue(np.allclose(V2,data["V"],rtol=0.,atol=1e-9),
+                    report)
+        if missing:
+            # Printed, not raised, so the block appears once and copies out of
+            # the log in one piece
+            print(_missing_report(missing))
+            self.fail(f"no stored triangulations for {_platform_key()}, so "
+                f"nothing was compared for {', '.join(missing)}; what this "
+                "platform computed was printed above")
 
     def test_area_argument(self):
         for name,(V,F) in _polygons().items():
@@ -158,6 +188,43 @@ class TestTriangulatePolygon(unittest.TestCase):
             # q=0. means no constraint at all, so nothing is refined
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=0.,q=0.)
             self.assertTrue(V2.shape[0]==V.shape[0])
+
+    def test_area_and_angle_arguments_together(self):
+        # Both limits at once have to hold at once. The mesh is not monotone
+        # in a and q -- the area pass changes the order the angle pass inserts
+        # in, so tightening one limit can give a slightly smaller mesh that
+        # still meets both -- so only the limits themselves are asserted
+        for name,(V,F) in _polygons().items():
+            for a,q in [(0.2,np.pi/12), (0.1,np.pi/8), (0.05,np.pi/12),
+                        (0.05,np.pi/8), (0.02,np.pi/8),
+                        (0.02,25.*np.pi/180.), (0.005,np.pi/8)]:
+                V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
+                areas = 0.5*gpytoolbox.doublearea(V2,F2)
+                self.assertTrue(np.max(areas)<=a*(1.+1e-10))
+                self.assertTrue(
+                    np.min(gpytoolbox.tip_angles(V2,F2))>=q*(1.-1e-10))
+                # ...and it is still a valid mesh of the polygon
+                self.assertTrue(np.all(areas>0.))
+                self.assertTrue(len(gpytoolbox.non_manifold_edges(F2))==0)
+                self.assertTrue(np.isclose(np.sum(areas),_polygon_area(V,F)))
+                self.assertTrue(np.array_equal(np.unique(F2),
+                    np.arange(V2.shape[0])))
+                self.assertTrue(np.allclose(V2[:V.shape[0],:],V))
+
+    def test_area_and_angle_arguments_are_both_active(self):
+        # Each limit on its own leaves the other one violated, so asking for
+        # both is doing the work of both
+        V,F = _circle(64,1.)
+        a,q = 0.02,np.pi/8
+        Va,Fa = gpytoolbox.triangulate_polygon(V,F,a=a,q=0.)
+        self.assertTrue(np.max(0.5*gpytoolbox.doublearea(Va,Fa))<=a*(1.+1e-10))
+        self.assertTrue(np.min(gpytoolbox.tip_angles(Va,Fa))<q)
+        Vq,Fq = gpytoolbox.triangulate_polygon(V,F,a=0.,q=q)
+        self.assertTrue(np.min(gpytoolbox.tip_angles(Vq,Fq))>=q*(1.-1e-10))
+        self.assertTrue(np.max(0.5*gpytoolbox.doublearea(Vq,Fq))>a)
+        V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
+        self.assertTrue(np.max(0.5*gpytoolbox.doublearea(V2,F2))<=a*(1.+1e-10))
+        self.assertTrue(np.min(gpytoolbox.tip_angles(V2,F2))>=q*(1.-1e-10))
 
     def test_steiner_argument(self):
         for name,(V,F) in _polygons().items():

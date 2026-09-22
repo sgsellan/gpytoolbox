@@ -22,12 +22,16 @@ def triangulate_polygon(V,
         hole is filled again, and so on
     a : double, optional (default 0.0)
         Maximum area of any output triangle. If 0., there is no maximum area
-        constraint
+        constraint. A maximum area also sets the resolution of the boundary:
+        the edges of F are cut into pieces no longer than sqrt(a) before the
+        polygon is triangulated, so a small a adds vertices along the boundary
+        as well as inside
     q : double, optional (default np.pi/8)
         Minimum angle of any output triangle, in radians
     steiner : bool, optional (default True)
         Whether the insertion of Steiner points on the polygon boundary is
-        allowed
+        allowed. Without them the edges of F are all edges of the output, and
+        a and q hold wherever they can be met without splitting one
 
     Returns
     -------
@@ -42,10 +46,9 @@ def triangulate_polygon(V,
     [https://github.com/artem-ogre/CDT](https://github.com/artem-ogre/CDT).
     The syntax is inspired by libigl's `triangulate.h`,
     [https://github.com/libigl/libigl/blob/main/include/igl/triangle/triangulate.h](https://github.com/libigl/libigl/blob/main/include/igl/triangle/triangulate.h).
-    CDT does not refine, so the area and angle constraints are enforced by
-    Ruppert's algorithm on top of it, following J. Ruppert, "A Delaunay
-    Refinement Algorithm for Quality 2-Dimensional Mesh Generation", Journal
-    of Algorithms 18(3), 1995.
+    The area and angle constraints are enforced by CDT's Delaunay refinement,
+    which follows J. Ruppert, "A Delaunay Refinement Algorithm for Quality
+    2-Dimensional Mesh Generation", Journal of Algorithms 18(3), 1995.
 
     The vertices in V must be distinct, and the edges in F must not cross each
     other except at their endpoints, so a closed polyline whose last
@@ -57,6 +60,9 @@ def triangulate_polygon(V,
     lie inside the polygon: a vertex outside it, or inside one of its holes,
     raises a `ValueError`. A vertex within a rounding error of a hole's
     boundary counts as lying on the boundary, and is included.
+
+    Both limits can be asked for at once, and the refinement alternates
+    between them until neither has anything left to do.
 
     Refinement to ensure a and q limits hold stops after 100 passes or 1000000
     vertices, whichever comes first.
@@ -86,6 +92,10 @@ def triangulate_polygon(V,
     F = np.asarray(F,dtype=np.int32)
     if F.ndim != 2 or F.shape[1] != 2:
         raise ValueError("F must be a matrix of edge indices into V.")
+
+    if F.size > 0 and (F.min() < 0 or F.max() >= V.shape[0]):
+        raise ValueError("F must contain indices into V, so every entry has "
+            "to be between 0 and V.shape[0]-1.")
 
     if a < 0.0:
         raise ValueError("a must be nonnegative.")
