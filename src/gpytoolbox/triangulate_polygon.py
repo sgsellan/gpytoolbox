@@ -89,18 +89,23 @@ def triangulate_polygon(V,
 
     if F is None:
         F = np.zeros((0,2),dtype=np.int32)
-    F = np.asarray(F,dtype=np.int32)
+    # Checked before the cast to int32, or an index too large for it would
+    # wrap around into a valid one and quietly triangulate a different polygon
+    F = np.asarray(F)
     if F.ndim != 2 or F.shape[1] != 2:
         raise ValueError("F must be a matrix of edge indices into V.")
 
-    if F.size > 0 and (F.min() < 0 or F.max() >= V.shape[0]):
+    if F.size > 0 and (not np.all(np.isfinite(F))
+        or F.min() < 0 or F.max() >= V.shape[0]):
         raise ValueError("F must contain indices into V, so every entry has "
             "to be between 0 and V.shape[0]-1.")
+    F = F.astype(np.int32)
 
-    if a < 0.0:
+    # Written so that a nan is rejected rather than taken for no constraint
+    if not a >= 0.0:
         raise ValueError("a must be nonnegative.")
 
-    if q < 0.0 or q >= np.pi/3.:
+    if not 0.0 <= q < np.pi/3.:
         raise ValueError("q must be between zero and pi/3.")
 
     V2, F2 = _triangulate_polygon_cpp_impl(V,F,float(a),float(q),bool(steiner))

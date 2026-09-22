@@ -1,8 +1,4 @@
-import base64
-import io
 import os
-import platform
-import sys
 import numpy as np
 from .context import gpytoolbox
 from .context import unittest
@@ -59,36 +55,13 @@ def _regression_parameters():
             "annulus2":(0.03,15.*np.pi/180.),
             "arch":(0.01,28.*np.pi/180.)}
 
-def _platform_key():
-    return f"{sys.platform}-{platform.machine()}"
-
 def _correct_output_path(name):
-    return ("test/unit_tests_data/"
-        f"triangulate_polygon_{name}_{_platform_key()}.npz")
+    return f"test/unit_tests_data/triangulate_polygon_{name}.npz"
 
 
 # Signed area of the region bounded by the edges F of the polygon V
 def _polygon_area(V,F):
     return 0.5*np.sum(V[F[:,0],0]*V[F[:,1],1] - V[F[:,1],0]*V[F[:,0],1])
-
-# A mesh as the bytes of its .npz, base64-encoded, so that a platform with no
-# stored meshes can hand back exactly what it computed
-def _encode_mesh(V,F):
-    buf = io.BytesIO()
-    np.savez_compressed(buf,V=V,F=F,platform=_platform_key())
-    return base64.b64encode(buf.getvalue()).decode("ascii")
-
-def _missing_report(missing):
-    lines = ["save everything between the markers to a file and run "
-        "test/unit_tests_data/decode_triangulate_polygon_regression.py on it "
-        f"to make the stored meshes for {_platform_key()}",
-        f"----- BEGIN triangulate_polygon regression {_platform_key()} -----"]
-    for name,blob in missing.items():
-        lines.append(name)
-        lines.extend("  "+blob[i:i+110] for i in range(0,len(blob),110))
-    lines.append(
-        f"----- END triangulate_polygon regression {_platform_key()} -----")
-    return "\n".join(lines)
 
 # Set of the unoriented edges of the mesh with faces F
 def _edge_set(F):
@@ -121,36 +94,23 @@ class TestTriangulatePolygon(unittest.TestCase):
                 _polygon_area(V,F)))
 
     def test_regression(self):
-        # The triangulation of each polygon has to be the one that was
-        # stored. Every platform has its own, because no two round alike; one
-        # with none fails here and prints what it computed instead
-        missing = {}
+        # The triangulation of each polygon has to be the one that was stored.
+        # The stored meshes are not per-platform: the triangles come out the
+        # same everywhere, and the last bits of a coordinate are covered by
+        # the tolerance below
         for name,(V,F) in _polygons().items():
             a,q = _regression_parameters()[name]
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
-            if not os.path.isfile(_correct_output_path(name)):
-                missing[name] = _encode_mesh(V2,F2)
-                continue
             with np.load(_correct_output_path(name)) as data:
-                report = (f"\n  {name}: a={a!r} q={q!r} on {_platform_key()}"
+                report = (f"\n  {name}: a={a!r} q={q!r}"
                     f"\n  stored    {data['V'].shape[0]} vertices, "
                     f"{data['F'].shape[0]} faces"
                     f"\n  computed  {V2.shape[0]} vertices, {F2.shape[0]} faces")
-                # The triangles have to be exactly the ones that were stored.
-                # Their vertices only have to agree to a tolerance, since the
-                # last bits of a coordinate are not worth pinning down
                 self.assertEqual(F2.shape,data["F"].shape,report)
                 self.assertTrue(np.all(F2==data["F"]),report)
                 self.assertEqual(V2.shape,data["V"].shape,report)
                 self.assertTrue(np.allclose(V2,data["V"],rtol=0.,atol=1e-9),
                     report)
-        if missing:
-            # Printed, not raised, so the block appears once and copies out of
-            # the log in one piece
-            print(_missing_report(missing))
-            self.fail(f"no stored triangulations for {_platform_key()}, so "
-                f"nothing was compared for {', '.join(missing)}; what this "
-                "platform computed was printed above")
 
     def test_area_argument(self):
         for name,(V,F) in _polygons().items():
@@ -228,24 +188,31 @@ class TestTriangulatePolygon(unittest.TestCase):
 
     def test_steiner_argument(self):
         for name,(V,F) in _polygons().items():
-            # Without Steiner points on the boundary, every edge of the polygon.
-            V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=0.02,q=np.pi/8,
-                steiner=False)
-            edges = _edge_set(F2)
-            self.assertTrue(all(tuple(e) in edges
-                for e in np.sort(F,axis=1)))
-            # ...and the vertices of the polygon are still the first ones, in
-            # the order they were given
-            self.assertTrue(np.allclose(V2[:V.shape[0],:],V))
-            # Allowing them can only ever add vertices
-            V3,F3 = gpytoolbox.triangulate_polygon(V,F,a=0.02,q=np.pi/8,
-                steiner=True)
-            self.assertTrue(V3.shape[0]>=V2.shape[0])
+            # a has to be small enough that the boundary is too coarse for it,
+            # or steiner would have nothing to decide and this would compare a
+            # mesh against itself. Just under the longest edge squared does it
+            longest = np.max(np.linalg.norm(V[F[:,1],:]-V[F[:,0],:],axis=1))
+            a,q = 0.9*longest**2, np.pi/8
+            V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q,steiner=False)
+            V3,F3 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q,steiner=True)
+            polygon_edges = np.sort(F,axis=1)
+            kept_without, kept_with = _edge_set(F2), _edge_set(F3)
+            # Allowing them, the boundary is split: without this the rest of
+            # the test would hold whether steiner did anything or not
+            self.assertFalse(all(tuple(e) in kept_with
+                for e in polygon_edges), name)
+            # Forbidding them, every edge of the polygon survives
+            self.assertTrue(all(tuple(e) in kept_without
+                for e in polygon_edges), name)
+            # ...the vertices of the polygon are still the first ones, in the
+            # order they were given, and allowing them only adds vertices
+            self.assertTrue(np.allclose(V2[:V.shape[0],:],V), name)
+            self.assertTrue(np.allclose(V3[:V.shape[0],:],V), name)
+            self.assertTrue(V3.shape[0]>=V2.shape[0], name)
 
-        # Where it makes a difference is a polygon whose boundary is too coarse
-        # for the constraint: the rectangle is four long edges, and no triangle
+        # What it costs: the rectangle is four long edges, and no triangle
         # meeting one of them can be small enough until it is split, so only
-        # Steiner points on the boundary can meet the constraint at all
+        # Steiner points on the boundary can meet the area constraint at all
         V,F = _rectangle()
         V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=0.02,q=np.pi/8,
             steiner=False)
@@ -254,8 +221,6 @@ class TestTriangulatePolygon(unittest.TestCase):
         self.assertTrue(np.max(0.5*gpytoolbox.doublearea(V2,F2))>0.02)
         self.assertTrue(np.max(0.5*gpytoolbox.doublearea(V3,F3))<=0.02*(1.+1e-10))
         self.assertTrue(V3.shape[0]>V2.shape[0])
-        self.assertTrue(not all(tuple(e) in _edge_set(F3)
-            for e in np.sort(F,axis=1)))
 
     def test_no_edges_is_convex_hull(self):
         # Without edges the convex hull of the points is triangulated, so for a
