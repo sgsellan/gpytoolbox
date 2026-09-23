@@ -1,4 +1,3 @@
-import hashlib
 import numpy as np
 from .context import gpytoolbox
 from .context import unittest
@@ -68,31 +67,6 @@ def _sorted_mesh(V,F):
     T = T[np.arange(T.shape[0])[:,None],np.argsort(T@sort_axis,axis=1)]
     return T[np.argsort(T.mean(axis=1)@sort_axis)]
 
-# What a failing regression test reports. The digest lets two platforms be
-# compared without anyone having to read a mesh
-def _digest(T):
-    return hashlib.sha256(
-        np.round(T/_TOL).astype(np.int64).tobytes()).hexdigest()[:12]
-
-def _triangle(t):
-    return " ".join(f"({x:+.9f},{y:+.9f})" for x,y in t)
-
-def _regression_report(name,a,q,computed,stored):
-    out = [f"{name}: a={a!r} q={q!r}",
-        f"{name}: computed {computed.shape[0]} triangles, "
-        f"stored {stored.shape[0]}",
-        f"{name}: digests computed/stored "
-        f"{_digest(computed)}/{_digest(stored)}"]
-    if computed.shape==stored.shape:
-        d = np.max(np.abs(computed-stored),axis=(1,2))
-        i = int(np.argmax(d))
-        out += [f"{name}: {int(np.sum(d>_TOL))} triangles differ, the worst "
-            f"of them by {d[i]:.3e}",
-            f"{name}: computed {_triangle(computed[i])}",
-            f"{name}: stored   {_triangle(stored[i])}"]
-    return "\n  ".join(out)
-
-
 # Signed area of the region bounded by the edges F of the polygon V
 def _polygon_area(V,F):
     return 0.5*np.sum(V[F[:,0],0]*V[F[:,1],1] - V[F[:,1],0]*V[F[:,0],1])
@@ -138,10 +112,9 @@ class TestTriangulatePolygon(unittest.TestCase):
             # Sorting the triangles loses the winding, so it is checked here
             self.assertTrue(
                 np.all(gpytoolbox.doublearea(V2,F2,signed=True)>0.),name)
-            if not (computed.shape==stored.shape
-                and np.allclose(computed,stored,rtol=0.,atol=_TOL)):
-                self.fail("\n  "
-                    +_regression_report(name,a,q,computed,stored))
+            self.assertEqual(computed.shape,stored.shape,name)
+            self.assertTrue(np.allclose(computed,stored,rtol=0.,atol=_TOL),
+                name)
 
     def test_area_argument(self):
         for name,(V,F) in _polygons().items():

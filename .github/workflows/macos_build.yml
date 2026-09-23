@@ -41,8 +41,7 @@ jobs:
       - name: Run unit tests
         shell: bash -l {0}
         run: |
-          # TEMPORARY, remove before merging: only the triangulation
-          # tests run, so the regression failure shows up quickly
-          ${{ steps.installpython.outputs.python-path }} -m unittest -v test.test_triangulate_polygon
+          ${{ steps.installpython.outputs.python-path }} -m pip install "tetgen<0.7"
+          ${{ steps.installpython.outputs.python-path }} -m unittest -v
 
 # see https://github.com/libigl/libigl/blob/main/.github/workflows/continuous.yml
