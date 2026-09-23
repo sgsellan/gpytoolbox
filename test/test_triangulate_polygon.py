@@ -1,3 +1,4 @@
+import hashlib
 import numpy as np
 from .context import gpytoolbox
 from .context import unittest
@@ -41,20 +42,55 @@ def _arch(n=16,ro=1.,ri=0.6):
     return _snap(V),F
 
 def _polygons():
-    return {"rectangle":_rectangle(), "circle":_circle(), "circle2":_circle(100,0.3),
-            "annulus":_annulus(), "annulus2":_annulus(64,1.,0.2), "arch":_arch()}
+    return {"rectangle":_rectangle(), "circle":_circle(),
+            "circle2":_circle(100,0.3), "annulus":_annulus(),
+            "annulus2":_annulus(64,1.,0.2), "arch":_arch()}
 
-# The a and q the stored triangulations were made with.
-def _regression_parameters():
-    return {"rectangle":(0.05,20.*np.pi/180.),
-            "circle":(0.1,25.*np.pi/180.),
-            "circle2":(0.005,20.*np.pi/180.),
-            "annulus":(0.02,24.*np.pi/180.),
-            "annulus2":(0.03,15.*np.pi/180.),
-            "arch":(0.008,26.*np.pi/180.)}
+# The a and q the stored triangulations were made with. Every edge of the arch
+# is kept off a whole number of sqrt(a) long: on one, the pre-split inside
+# triangulate_polygon cuts it into a different number of pieces on a machine
+# that rounds the other way, and the mesh is no longer the stored one
+_REGRESSION_PARAMETERS = {"rectangle":(0.05,20.*np.pi/180.),
+    "circle":(0.1,25.*np.pi/180.), "circle2":(0.005,20.*np.pi/180.),
+    "annulus":(0.02,24.*np.pi/180.), "annulus2":(0.03,15.*np.pi/180.),
+    "arch":(0.008,26.*np.pi/180.)}
 
-def _correct_output_path(name):
-    return f"test/unit_tests_data/triangulate_polygon_{name}.npz"
+# How far apart two of these meshes may be and still count as the same
+_TOL = 1e-9
+
+# The mesh as the coordinates of its sorted triangles, which is what the
+# regression test compares: neither the numbering of the vertices nor the
+# order the triangles come in is the same on every platform
+def _sorted_mesh(V,F):
+    # Weird axis to sort along to avoid symmetry problems
+    sort_axis = np.array([1.,0.7548776662466927])
+    T = V[F]
+    T = T[np.arange(T.shape[0])[:,None],np.argsort(T@sort_axis,axis=1)]
+    return T[np.argsort(T.mean(axis=1)@sort_axis)]
+
+# What a failing regression test reports. The digest lets two platforms be
+# compared without anyone having to read a mesh
+def _digest(T):
+    return hashlib.sha256(
+        np.round(T/_TOL).astype(np.int64).tobytes()).hexdigest()[:12]
+
+def _triangle(t):
+    return " ".join(f"({x:+.9f},{y:+.9f})" for x,y in t)
+
+def _regression_report(name,a,q,computed,stored):
+    out = [f"{name}: a={a!r} q={q!r}",
+        f"{name}: computed {computed.shape[0]} triangles, "
+        f"stored {stored.shape[0]}",
+        f"{name}: digests computed/stored "
+        f"{_digest(computed)}/{_digest(stored)}"]
+    if computed.shape==stored.shape:
+        d = np.max(np.abs(computed-stored),axis=(1,2))
+        i = int(np.argmax(d))
+        out += [f"{name}: {int(np.sum(d>_TOL))} triangles differ, the worst "
+            f"of them by {d[i]:.3e}",
+            f"{name}: computed {_triangle(computed[i])}",
+            f"{name}: stored   {_triangle(stored[i])}"]
+    return "\n  ".join(out)
 
 
 # Signed area of the region bounded by the edges F of the polygon V
@@ -75,35 +111,37 @@ class TestTriangulatePolygon(unittest.TestCase):
             self.assertTrue(F2.ndim==2 and F2.shape[1]==3)
             self.assertTrue(V2.shape[0]>0)
             self.assertTrue(F2.shape[0]>0)
-            # Every index points at a vertex that exists
             self.assertTrue(np.all(F2>=0))
             self.assertTrue(np.all(F2<V2.shape[0]))
-            # No triangle is degenerate, and they are all oriented the same way
-            self.assertTrue(np.all(0.5*gpytoolbox.doublearea(V2,F2)>0.))
+            # No triangle is degenerate, and they are all wound the same way
+            self.assertTrue(
+                np.all(gpytoolbox.doublearea(V2,F2,signed=True)>0.))
             # No triangle uses the same vertex twice
             self.assertTrue(np.all(F2[:,0]!=F2[:,1]))
             self.assertTrue(np.all(F2[:,1]!=F2[:,2]))
             self.assertTrue(np.all(F2[:,2]!=F2[:,0]))
             self.assertTrue(len(gpytoolbox.non_manifold_edges(F2))==0)
             # The triangles cover the polygon exactly, holes excluded
-            self.assertTrue(np.isclose(np.sum(0.5*gpytoolbox.doublearea(V2,F2)),
+            self.assertTrue(np.isclose(
+                np.sum(0.5*gpytoolbox.doublearea(V2,F2,signed=True)),
                 _polygon_area(V,F)))
 
     def test_regression(self):
         # The triangulation of each polygon has to be the one that was stored
         for name,(V,F) in _polygons().items():
-            a,q = _regression_parameters()[name]
+            a,q = _REGRESSION_PARAMETERS[name]
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
-            with np.load(_correct_output_path(name)) as data:
-                report = (f"\n  {name}: a={a!r} q={q!r}"
-                    f"\n  stored    {data['V'].shape[0]} vertices, "
-                    f"{data['F'].shape[0]} faces"
-                    f"\n  computed  {V2.shape[0]} vertices, {F2.shape[0]} faces")
-                self.assertEqual(F2.shape,data["F"].shape,report)
-                self.assertTrue(np.all(F2==data["F"]),report)
-                self.assertEqual(V2.shape,data["V"].shape,report)
-                self.assertTrue(np.allclose(V2,data["V"],rtol=0.,atol=1e-9),
-                    report)
+            with np.load("test/unit_tests_data/"
+                f"triangulate_polygon_{name}.npz") as data:
+                stored = _sorted_mesh(data["V"],data["F"])
+            computed = _sorted_mesh(V2,F2)
+            # Sorting the triangles loses the winding, so it is checked here
+            self.assertTrue(
+                np.all(gpytoolbox.doublearea(V2,F2,signed=True)>0.),name)
+            if not (computed.shape==stored.shape
+                and np.allclose(computed,stored,rtol=0.,atol=_TOL)):
+                self.fail("\n  "
+                    +_regression_report(name,a,q,computed,stored))
 
     def test_area_argument(self):
         for name,(V,F) in _polygons().items():
@@ -143,15 +181,12 @@ class TestTriangulatePolygon(unittest.TestCase):
             self.assertTrue(V2.shape[0]==V.shape[0])
 
     def test_area_and_angle_arguments_together(self):
-        # Both limits have to hold at the same time. Only the limits
-        # themselves are asserted: the mesh is not monotone in a and q, since
-        # the area pass changes the order the angle pass inserts in
         for name,(V,F) in _polygons().items():
             for a,q in [(0.2,np.pi/12), (0.1,np.pi/8), (0.05,np.pi/12),
                         (0.05,np.pi/8), (0.02,np.pi/8),
                         (0.02,25.*np.pi/180.), (0.005,np.pi/8)]:
                 V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
-                areas = 0.5*gpytoolbox.doublearea(V2,F2)
+                areas = 0.5*gpytoolbox.doublearea(V2,F2,signed=True)
                 self.assertTrue(np.max(areas)<=a*(1.+1e-10))
                 self.assertTrue(
                     np.min(gpytoolbox.tip_angles(V2,F2))>=q*(1.-1e-10))
@@ -180,37 +215,28 @@ class TestTriangulatePolygon(unittest.TestCase):
 
     def test_steiner_argument(self):
         for name,(V,F) in _polygons().items():
-            # a has to be small enough that the boundary is too coarse for
-            # it, or both calls would return the same mesh
             longest = np.max(np.linalg.norm(V[F[:,1],:]-V[F[:,0],:],axis=1))
             a,q = 0.9*longest**2, np.pi/8
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q,steiner=False)
             V3,F3 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q,steiner=True)
             polygon_edges = np.sort(F,axis=1)
             kept_without, kept_with = _edge_set(F2), _edge_set(F3)
-            # Allowing them, the boundary is split: without this the rest of
-            # the test would hold whether steiner did anything or not
             self.assertFalse(all(tuple(e) in kept_with
                 for e in polygon_edges), name)
-            # Forbidding them, every edge of the polygon survives
             self.assertTrue(all(tuple(e) in kept_without
                 for e in polygon_edges), name)
-            # Either way the polygon's vertices are the first ones, in the
-            # order they were given, and allowing splits only adds vertices
             self.assertTrue(np.allclose(V2[:V.shape[0],:],V), name)
             self.assertTrue(np.allclose(V3[:V.shape[0],:],V), name)
             self.assertTrue(V3.shape[0]>=V2.shape[0], name)
 
-        # What it costs: the rectangle's four edges are long, and a triangle
-        # against one of them cannot meet a until it is split, so without
-        # Steiner points the area constraint is out of reach
         V,F = _rectangle()
         V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=0.02,q=np.pi/8,
             steiner=False)
         V3,F3 = gpytoolbox.triangulate_polygon(V,F,a=0.02,q=np.pi/8,
             steiner=True)
         self.assertTrue(np.max(0.5*gpytoolbox.doublearea(V2,F2))>0.02)
-        self.assertTrue(np.max(0.5*gpytoolbox.doublearea(V3,F3))<=0.02*(1.+1e-10))
+        self.assertTrue(
+            np.max(0.5*gpytoolbox.doublearea(V3,F3))<=0.02*(1.+1e-10))
         self.assertTrue(V3.shape[0]>V2.shape[0])
 
     def test_no_edges_is_convex_hull(self):
@@ -219,7 +245,9 @@ class TestTriangulatePolygon(unittest.TestCase):
         V,F = _circle()
         V2,F2 = gpytoolbox.triangulate_polygon(V,a=0.,q=0.)
         self.assertTrue(V2.shape[0]==V.shape[0])
-        self.assertTrue(np.isclose(np.sum(0.5*gpytoolbox.doublearea(V2,F2)),_polygon_area(V,F)))
+        self.assertTrue(np.isclose(
+            np.sum(0.5*gpytoolbox.doublearea(V2,F2,signed=True)),
+            _polygon_area(V,F)))
 
     def test_every_output_vertex_is_used(self):
         # No vertex of the output is left without a triangle using it
