@@ -1,19 +1,18 @@
-import os
 import numpy as np
 from .context import gpytoolbox
 from .context import unittest
 
 
-# Vertices are snapped to this grid, which makes every coordinate exact in
-# binary floating point.
+# Vertices are snapped to this grid, so every coordinate is exact in binary
+# floating point.
 _GRID = 2.**20
 
 def _snap(V):
     return np.round(V*_GRID)/_GRID
 
 
-# Every test polygon is a closed loop, or several:
-# outer loops run counterclockwise and the loops bounding a hole run clockwise.
+# Every test polygon is one or more closed loops: outer loops run
+# counterclockwise, the loops bounding a hole clockwise.
 def _rectangle():
     V = np.array([[0.,0.],[2.,0.],[2.,1.],[0.,1.]])
     F = np.array([[0,1],[1,2],[2,3],[3,0]])
@@ -32,8 +31,7 @@ def _annulus(n=32,ro=1.,ri=0.5):
     return np.vstack((Vo,Vi)), np.vstack((Fo,np.fliplr(Fi)+n))
 
 def _arch(n=16,ro=1.,ri=0.6):
-    # A semicircular band: the outer arc, then the inner arc back, which the
-    # two feet close up
+    # A semicircular band: the outer arc, the inner arc back, and two feet
     tho = np.linspace(0.,np.pi,n)
     thi = np.linspace(np.pi,0.,n)
     V = np.vstack((np.stack((ro*np.cos(tho),ro*np.sin(tho)),axis=-1),
@@ -53,7 +51,7 @@ def _regression_parameters():
             "circle2":(0.005,20.*np.pi/180.),
             "annulus":(0.02,24.*np.pi/180.),
             "annulus2":(0.03,15.*np.pi/180.),
-            "arch":(0.01,28.*np.pi/180.)}
+            "arch":(0.008,26.*np.pi/180.)}
 
 def _correct_output_path(name):
     return f"test/unit_tests_data/triangulate_polygon_{name}.npz"
@@ -73,7 +71,6 @@ class TestTriangulatePolygon(unittest.TestCase):
     def test_manifold(self):
         for name,(V,F) in _polygons().items():
             V2,F2 = gpytoolbox.triangulate_polygon(V,F)
-            # The triangulation is not empty and has the right shape
             self.assertTrue(V2.ndim==2 and V2.shape[1]==2)
             self.assertTrue(F2.ndim==2 and F2.shape[1]==3)
             self.assertTrue(V2.shape[0]>0)
@@ -87,17 +84,13 @@ class TestTriangulatePolygon(unittest.TestCase):
             self.assertTrue(np.all(F2[:,0]!=F2[:,1]))
             self.assertTrue(np.all(F2[:,1]!=F2[:,2]))
             self.assertTrue(np.all(F2[:,2]!=F2[:,0]))
-            # The mesh is manifold
             self.assertTrue(len(gpytoolbox.non_manifold_edges(F2))==0)
-            # ...and it covers the polygon exactly, holes excluded
+            # The triangles cover the polygon exactly, holes excluded
             self.assertTrue(np.isclose(np.sum(0.5*gpytoolbox.doublearea(V2,F2)),
                 _polygon_area(V,F)))
 
     def test_regression(self):
-        # The triangulation of each polygon has to be the one that was stored.
-        # The stored meshes are not per-platform: the triangles come out the
-        # same everywhere, and the last bits of a coordinate are covered by
-        # the tolerance below
+        # The triangulation of each polygon has to be the one that was stored
         for name,(V,F) in _polygons().items():
             a,q = _regression_parameters()[name]
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
@@ -114,8 +107,8 @@ class TestTriangulatePolygon(unittest.TestCase):
 
     def test_area_argument(self):
         for name,(V,F) in _polygons().items():
-            # Each a asks for half the area of the coarsest triangle the last
-            # one produced, so every step has something left to refine
+            # Each a is half the largest triangle of the mesh before it, so
+            # every step has something left to refine
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=0.,q=0.)
             for step in range(3):
                 a = 0.5*np.max(0.5*gpytoolbox.doublearea(V2,F2))
@@ -139,8 +132,8 @@ class TestTriangulatePolygon(unittest.TestCase):
                 # No triangle has an angle smaller than q
                 self.assertTrue(
                     np.min(gpytoolbox.tip_angles(V2,F2))>=q*(1.-1e-10))
-                # A q the unrefined mesh does not already meet forces
-                # refinement, and a larger q never asks for a coarser mesh
+                # A q the unrefined mesh does not meet forces refinement,
+                # and a larger q never gives a coarser mesh
                 if base_angle<q:
                     self.assertTrue(V2.shape[0]>Vb.shape[0])
                 self.assertTrue(V2.shape[0]>=coarser)
@@ -150,10 +143,9 @@ class TestTriangulatePolygon(unittest.TestCase):
             self.assertTrue(V2.shape[0]==V.shape[0])
 
     def test_area_and_angle_arguments_together(self):
-        # Both limits at once have to hold at once. The mesh is not monotone
-        # in a and q -- the area pass changes the order the angle pass inserts
-        # in, so tightening one limit can give a slightly smaller mesh that
-        # still meets both -- so only the limits themselves are asserted
+        # Both limits have to hold at the same time. Only the limits
+        # themselves are asserted: the mesh is not monotone in a and q, since
+        # the area pass changes the order the angle pass inserts in
         for name,(V,F) in _polygons().items():
             for a,q in [(0.2,np.pi/12), (0.1,np.pi/8), (0.05,np.pi/12),
                         (0.05,np.pi/8), (0.02,np.pi/8),
@@ -163,7 +155,7 @@ class TestTriangulatePolygon(unittest.TestCase):
                 self.assertTrue(np.max(areas)<=a*(1.+1e-10))
                 self.assertTrue(
                     np.min(gpytoolbox.tip_angles(V2,F2))>=q*(1.-1e-10))
-                # ...and it is still a valid mesh of the polygon
+                # It is still a valid mesh of the polygon
                 self.assertTrue(np.all(areas>0.))
                 self.assertTrue(len(gpytoolbox.non_manifold_edges(F2))==0)
                 self.assertTrue(np.isclose(np.sum(areas),_polygon_area(V,F)))
@@ -188,9 +180,8 @@ class TestTriangulatePolygon(unittest.TestCase):
 
     def test_steiner_argument(self):
         for name,(V,F) in _polygons().items():
-            # a has to be small enough that the boundary is too coarse for it,
-            # or steiner would have nothing to decide and this would compare a
-            # mesh against itself. Just under the longest edge squared does it
+            # a has to be small enough that the boundary is too coarse for
+            # it, or both calls would return the same mesh
             longest = np.max(np.linalg.norm(V[F[:,1],:]-V[F[:,0],:],axis=1))
             a,q = 0.9*longest**2, np.pi/8
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q,steiner=False)
@@ -204,15 +195,15 @@ class TestTriangulatePolygon(unittest.TestCase):
             # Forbidding them, every edge of the polygon survives
             self.assertTrue(all(tuple(e) in kept_without
                 for e in polygon_edges), name)
-            # ...the vertices of the polygon are still the first ones, in the
-            # order they were given, and allowing them only adds vertices
+            # Either way the polygon's vertices are the first ones, in the
+            # order they were given, and allowing splits only adds vertices
             self.assertTrue(np.allclose(V2[:V.shape[0],:],V), name)
             self.assertTrue(np.allclose(V3[:V.shape[0],:],V), name)
             self.assertTrue(V3.shape[0]>=V2.shape[0], name)
 
-        # What it costs: the rectangle is four long edges, and no triangle
-        # meeting one of them can be small enough until it is split, so only
-        # Steiner points on the boundary can meet the area constraint at all
+        # What it costs: the rectangle's four edges are long, and a triangle
+        # against one of them cannot meet a until it is split, so without
+        # Steiner points the area constraint is out of reach
         V,F = _rectangle()
         V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=0.02,q=np.pi/8,
             steiner=False)
@@ -240,9 +231,8 @@ class TestTriangulatePolygon(unittest.TestCase):
                     np.arange(V2.shape[0])))
 
     def test_points_are_kept(self):
-        # Points appended to V that no edge of F refers to are triangulated
-        # along with the polygon, which is how a caller forces the output to
-        # contain points of their choosing
+        # Points of V that no edge of F refers to are triangulated along with
+        # the polygon
         V,F = _rectangle()
         loose = np.array([[0.5,0.5],[1.,0.25],[1.5,0.75]])
         Vp = np.vstack((V,loose))
@@ -251,8 +241,7 @@ class TestTriangulatePolygon(unittest.TestCase):
             V2,F2 = gpytoolbox.triangulate_polygon(Vp,F,a=a,q=q)
             # The input vertices are all there, unmoved and in the same order
             self.assertTrue(np.array_equal(V2[:Vp.shape[0],:],Vp))
-            # ...and every one of them is used by a triangle, the loose ones
-            # along with the rest
+            # Every one of them is used by a triangle, loose or not
             for i in range(Vp.shape[0]):
                 self.assertTrue(np.any(F2==i))
             self.assertTrue(np.array_equal(np.unique(F2),
@@ -264,7 +253,7 @@ class TestTriangulatePolygon(unittest.TestCase):
         with self.assertRaises(ValueError) as e:
             gpytoolbox.triangulate_polygon(np.vstack((V,[[3.,3.]])),F)
         self.assertTrue("outside the polygon" in str(e.exception))
-        # ...and a point inside a hole is such a vertex
+        # A point inside a hole is such a vertex
         V,F = _annulus()
         for p in [[0.,0.],[0.25,0.],[0.,-0.3]]:
             with self.assertRaises(ValueError) as e:
@@ -272,16 +261,15 @@ class TestTriangulatePolygon(unittest.TestCase):
             self.assertTrue("inside one of its holes" in str(e.exception))
 
     def test_points_on_a_hole_boundary_are_not_an_error(self):
-        # A point on the boundary of a hole is on the polygon, not in the hole.
-        # A rounding error to either side of it must not change that, or points
-        # a caller computed to lie on a hole would fail half of the time
+        # A point on the boundary of a hole is on the polygon, not in the
+        # hole, and a rounding error to either side must not change that
         V,F = _annulus()
         inner = V[V.shape[0]//2:,:]
         mid = 0.5*(inner[0,:]+inner[1,:])
         for eps in [0.,1e-16,-1e-16,1e-15,-1e-15,1e-13,-1e-13]:
             Vp = np.vstack((V,mid*(1.+eps)))
             V2,F2 = gpytoolbox.triangulate_polygon(Vp,F,a=0.,q=0.)
-            # It is in the mesh, used by a triangle, and where it was put
+            # The point is kept where it was put, and used by a triangle
             self.assertTrue(np.array_equal(V2[:Vp.shape[0],:],Vp))
             self.assertTrue(np.any(F2==V.shape[0]))
             self.assertTrue(np.array_equal(np.unique(F2),
@@ -289,7 +277,7 @@ class TestTriangulatePolygon(unittest.TestCase):
 
     def test_cdt_errors(self):
         V,F = _rectangle()
-        # A polygon that repeats a vertex.
+        # A polygon that repeats a vertex
         with self.assertRaises(ValueError) as e:
             gpytoolbox.triangulate_polygon(np.vstack((V,V[0,:])),F)
         self.assertTrue("CDT" in str(e.exception))

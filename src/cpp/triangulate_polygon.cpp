@@ -1,16 +1,14 @@
 // Triangulates a polygon with CDT (https://github.com/artem-ogre/CDT), which
-// does both the constrained Delaunay triangulation and the Delaunay refinement
-// that a and q need. Four things it does not do, and this file does:
+// does the constrained Delaunay triangulation and the refinement that a and q
+// need. What CDT does not do, and this file adds:
 //
-//  - It refines for one criterion at a time, so a and q alternate until a pass
-//    inserts nothing.
-//  - It always splits a constraint edge that a point it inserts encroaches
-//    upon, which is exactly what steiner=false must not do, so that case drops
-//    the points that caused a split afterwards.
-//  - Its splitting halves an edge, and halves again when that still does not
-//    separate the point from it, ending at minEdgeLength with one piece far
-//    shorter than its neighbours and a triangle against it too thin for q.
-//    presplit gives it a boundary fine enough that it has nothing to halve.
+//  - CDT refines for one criterion at a time, so a and q alternate here.
+//  - CDT always splits a constraint edge encroached upon by a point it inserts,
+//    so steiner=false drops the points that caused a split afterwards.
+//  - CDT splits by halving, and halves again while the point is still not
+//    separated, leaving one piece far shorter than its neighbours and a
+//    triangle against it too thin for q. presplit hands it a boundary fine
+//    enough that it has nothing left to halve.
 //  - Without constraint edges the polygon is the convex hull of V, which has
 //    to be spelled out or the refinement cannot reach it.
 
@@ -27,12 +25,11 @@ namespace {
 typedef CDT::V2d<double> Point;
 typedef CDT::Triangulation<double> Triangulation;
 
-// So that a constraint that cannot be attained does not loop forever
+// So an unattainable constraint does not loop forever
 const int max_refinement_passes = 100;
 const CDT::VertInd max_refinement_vertices = 1000000;
 
-// The triangles outside the polygon: what the erase step removes and what the
-// refinement has to leave alone
+// The triangles outside the polygon, which the refinement has to leave alone
 CDT::TriIndUSet outside(const Triangulation& cdt) {
     return cdt.fixedEdges.empty() ? cdt.collectSuperTriangle()
                                   : cdt.collectOuterTrianglesAndHoles();
@@ -89,8 +86,9 @@ Triangulation build(const std::vector<Point>& pts,
     try {
         cdt.insertVertices(pts);
         if(!segs.empty()) {
-            cdt.insertEdges(segs); // insertEdges keeps the edges whole,
-        }                          // conformToEdges would split them
+            // insertEdges keeps the edges whole, conformToEdges would split
+            cdt.insertEdges(segs);
+        }
     } catch(const CDT::Error& e) {
         throw std::invalid_argument(std::string("CDT could not triangulate "
             "this polygon. Its vertices must all be distinct, and its edges "
@@ -101,13 +99,13 @@ Triangulation build(const std::vector<Point>& pts,
 }
 
 // pts and segs refined to meet a and q, erased to the region the polygon
-// encloses. Its vertices are pts, then the refinement's
+// encloses. Its vertices are pts, followed by the inserted ones
 Triangulation triangulate(const std::vector<Point>& pts,
     const std::vector<CDT::Edge>& segs, const double a, const double q,
     const double tol, const double min_edge_length) {
     Triangulation cdt = build(pts,segs,tol);
     // Collected, not erased: erasing finalizes, and refining needs it
-    // unfinalized. CDT keeps the set up to date as it refines
+    // unfinalized. CDT keeps the set up to date
     CDT::TriIndUSet erased = outside(cdt);
     for(int pass=0; pass<max_refinement_passes && (a>0. || q>0.); ++pass) {
         const std::size_t before = cdt.vertices.size();
@@ -117,8 +115,7 @@ Triangulation triangulate(const std::vector<Point>& pts,
         }
         const CDT::VertInd budget = CDT::VertInd(max_refinement_vertices-used);
         // Each call resumes where the last left off, so a pass that inserts
-        // nothing had nothing left for either. The order of the two does not
-        // matter
+        // nothing had nothing left for either. Their order does not matter
         if(a>0.) {
             cdt.refineTriangles(budget, CDT::RefinementCriterion::LargestArea,
                 a, &erased, min_edge_length);
@@ -175,9 +172,9 @@ void triangulate_polygon(
     const bool refining = a>0. || q>0.;
 
     // The extent of the input is the only scale there is. A vertex within tol
-    // of a constraint edge counts as lying on it; an edge or triangle shorter
-    // than min_edge_length is left alone, which is what stops the refinement
-    // where a sharp corner makes q unattainable
+    // of a constraint edge lies on it; an edge or triangle shorter than
+    // min_edge_length is left alone, which stops the refinement where a sharp
+    // corner makes q unattainable
     const double scale = V.rows()>0
         ? (V.colwise().maxCoeff()-V.colwise().minCoeff()).norm() : 0.;
     const double tol = 1e-12*scale;
@@ -186,8 +183,7 @@ void triangulate_polygon(
     if(segs.empty() && refining) {
         segs = hull_edges(pts,tol);
     }
-    // pts and segs stay as given: that is the polygon the vertices below are
-    // measured against
+    // pts and segs stay as given: the steiner test below measures against them
     std::vector<Point> refined_pts = pts;
     const std::vector<CDT::Edge> refined_segs =
         refining ? presplit(refined_pts,segs,a) : segs;
@@ -195,9 +191,9 @@ void triangulate_polygon(
         triangulate(refined_pts,refined_segs,a,q,tol,min_edge_length);
 
     if(refining && !steiner) {
-        // What the refinement would have added had it not been allowed to
-        // split the edges. presplit's points lie on the edges, so they
-        // encroach too and the polygon goes back to the edges it was given
+        // Keep what the refinement would have added without splitting an
+        // edge. presplit's points lie on the edges, so they go too and the
+        // boundary is back to the edges given
         std::vector<Point> kept(pts);
         for(std::size_t i=pts.size(); i<cdt.vertices.size(); ++i) {
             if(!encroaches(pts,segs,cdt.vertices[i])) {
@@ -223,8 +219,8 @@ void triangulate_polygon(
         }
     }
 
-    // Any other unused vertex escaped the polygon, so drop it. V's vertices
-    // all survive, and keep their indices
+    // Any other unused vertex is outside the polygon, so drop it. V's
+    // vertices all survive, with their indices
     std::vector<int> remap(cdt.vertices.size(), -1);
     int n = 0;
     for(std::size_t i=0; i<cdt.vertices.size(); ++i) {

@@ -31,7 +31,8 @@ def triangulate_polygon(V,
     steiner : bool, optional (default True)
         Whether the insertion of Steiner points on the polygon boundary is
         allowed. Without them the edges of F are all edges of the output, and
-        a and q hold wherever they can be met without splitting one
+        a and q hold wherever they can be met without splitting one.
+        This is not enforced by CDT, but by our own hack.
 
     Returns
     -------
@@ -46,19 +47,19 @@ def triangulate_polygon(V,
     [https://github.com/artem-ogre/CDT](https://github.com/artem-ogre/CDT).
     The syntax is inspired by libigl's `triangulate.h`,
     [https://github.com/libigl/libigl/blob/main/include/igl/triangle/triangulate.h](https://github.com/libigl/libigl/blob/main/include/igl/triangle/triangulate.h).
-    The area and angle constraints are enforced by CDT's Delaunay refinement,
-    which follows J. Ruppert, "A Delaunay Refinement Algorithm for Quality
-    2-Dimensional Mesh Generation", Journal of Algorithms 18(3), 1995.
+    The area and angle constraints are enforced by CDT's Delaunay refinement
+    with some modifications to make the area constraints work, and to make
+    both constraints work at the same time.
 
     The vertices in V must be distinct, and the edges in F must not cross each
     other except at their endpoints, so a closed polyline whose last
     vertex repeats its first must have that repeat removed.
 
     Every vertex of V ends up in the output, used by its triangles, including
-    the vertices that no edge of F refers to. Appending such points to V is how
-    you force the triangulation to contain points of your choosing. They have to
-    lie inside the polygon: a vertex outside it, or inside one of its holes,
-    raises a `ValueError`. A vertex within a rounding error of a hole's
+    the vertices that no edge of F refers to. Appending unreferenced points to
+    V is how you force the triangulation to contain points of your choosing.
+    They have to lie inside the polygon: a vertex outside it, or inside one
+    of its holes, is an error. A vertex close enough to a hole's
     boundary counts as lying on the boundary, and is included.
 
     Both limits can be asked for at once, and the refinement alternates
@@ -89,8 +90,6 @@ def triangulate_polygon(V,
 
     if F is None:
         F = np.zeros((0,2),dtype=np.int32)
-    # Checked before the cast to int32, or an index too large for it would
-    # wrap around into a valid one and quietly triangulate a different polygon
     F = np.asarray(F)
     if F.ndim != 2 or F.shape[1] != 2:
         raise ValueError("F must be a matrix of edge indices into V.")
