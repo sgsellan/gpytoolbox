@@ -49,6 +49,7 @@ from .boundary_vertices import boundary_vertices
 from .halffaces import halffaces
 from .faces import faces
 from .boundary_faces import boundary_faces
+from .tetrahedron_edge_map import tetrahedron_edge_map
 from .min_quad_with_fixed import min_quad_with_fixed
 from .min_quad_with_fixed import min_quad_with_fixed_precompute
 from .fast_winding_number import fast_winding_number
