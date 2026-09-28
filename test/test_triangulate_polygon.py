@@ -105,9 +105,9 @@ class TestTriangulatePolygon(unittest.TestCase):
         for name,(V,F) in _polygons().items():
             a,q = _REGRESSION_PARAMETERS[name]
             V2,F2 = gpytoolbox.triangulate_polygon(V,F,a=a,q=q)
-            with np.load("test/unit_tests_data/"
-                f"triangulate_polygon_{name}.npz") as data:
-                stored = _sorted_mesh(data["V"],data["F"])
+            Vs,Fs = gpytoolbox.read_mesh("test/unit_tests_data/"
+                f"triangulate_polygon_{name}.obj")
+            stored = _sorted_mesh(Vs[:,:2],Fs)
             computed = _sorted_mesh(V2,F2)
             # Sorting the triangles loses the winding, so it is checked here
             self.assertTrue(
