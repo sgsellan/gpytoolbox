@@ -145,6 +145,20 @@ int read_obj(
         }
         m = 1;
     };
+    //Grow a triangle face list to 4 columns once the first quad is found.
+    //Triangles are padded with -1 in the last column.
+    const auto widen_Fs = [&F,&Ft,&Fn,return_UV,return_N] () {
+        F.conservativeResize(Eigen::NoChange, 4);
+        F.col(3).array() = -1;
+        if(return_UV) {
+            Ft.conservativeResize(Eigen::NoChange, 4);
+            Ft.col(3).array() = -1;
+        }
+        if(return_N) {
+            Fn.conservativeResize(Eigen::NoChange, 4);
+            Fn.col(3).array() = -1;
+        }
+    };
     const auto addrow_Fs = [&F,&Ft,&Fn,&m,return_UV,return_N] () {
         ++m;
         if(m>F.rows()) {
@@ -269,24 +283,25 @@ int read_obj(
                     //Unrecognized start to line, ignore.
                     break;
                 }
+                const int k = count_non_spaces(line.begin()+1, line.end());
+                if(k != 3 && k != 4) {
+                    return -8; //Only triangle and quad faces supported.
+                }
                 if(F.size()==0) {
                     //The F array has not yet been initialized.
-                    //Our job here is to find out i
-                    const int k = count_non_spaces(line.begin()+1, line.end());
-                    if(k != 3 && k != 4) {
-                        return -8; //Only triangle and quad meshes supported.
-                    }
                     initialize_F(k);
                 } else {
-                    //Reject mixed-arity face lists (e.g. tri + quad in one file).
-                    const int k = count_non_spaces(line.begin()+1, line.end());
-                    if(k != F.cols()) {
-                        return -8;
+                    if(k > F.cols()) {
+                        widen_Fs();
                     }
                     addrow_Fs();
                 }
+                if(k < F.cols()) {
+                    //Triangle in a mixed triangle/quad mesh.
+                    F(m-1,3) = -1;
+                }
                 std::string::iterator at = line.begin()+1;
-                for(int i=0; i<F.cols(); ++i) {
+                for(int i=0; i<k; ++i) {
                     const auto its = non_space(at, line.end());
                     //Split again, this time by forward slashes.
                     const auto slash1 = std::find

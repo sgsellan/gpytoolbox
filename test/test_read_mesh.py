@@ -115,15 +115,73 @@ class TestReadMesh(unittest.TestCase):
             self.assertTrue((F_2==F).all())
     
     def test_quad_obj(self):
-        # Quad OBJ meshes should read via the Python reader directly, and via
-        # the C++ reader by falling back to Python.
-        for reader in ["Python", "C++", None]:
-            V, F = gpy.read_mesh("test/unit_tests_data/quad_cube.obj",
-                                 reader=reader)
-            self.assertEqual(V.shape, (8, 3))
-            self.assertEqual(F.shape, (6, 4))
-            # Sanity check: all face indices reference valid vertices.
-            self.assertTrue(F.min() >= 0 and F.max() < V.shape[0])
+        # Pure quad and mixed triangle/quad OBJ meshes. The Python and C++
+        # readers must agree exactly, including texture and normal indices.
+        meshes = ["quad_cube.obj", "quad_cube_uv_n.obj", "mixed_tri_quad.obj"]
+        for mesh in meshes:
+            V_py,F_py,UV_py,Ft_py,N_py,Fn_py = \
+            gpy.read_mesh("test/unit_tests_data/" + mesh,
+                return_UV=True, return_N=True, reader='Python')
+            V_cpp,F_cpp,UV_cpp,Ft_cpp,N_cpp,Fn_cpp = \
+            gpy.read_mesh("test/unit_tests_data/" + mesh,
+                return_UV=True, return_N=True, reader='C++')
+            V_def,F_def = gpy.read_mesh("test/unit_tests_data/" + mesh)
+
+            self.assertEqual(F_py.shape[1], 4)
+            self.assertTrue(np.array_equal(V_py,V_cpp))
+            self.assertTrue(np.array_equal(F_py,F_cpp))
+            self.assertTrue(np.array_equal(Ft_py,Ft_cpp))
+            self.assertTrue(np.array_equal(Fn_py,Fn_cpp))
+            self.assertTrue(np.array_equal(V_py,V_def))
+            self.assertTrue(np.array_equal(F_py,F_def))
+            if UV_py is None:
+                self.assertEqual(UV_cpp.size, 0)
+            else:
+                self.assertTrue(np.array_equal(UV_py,UV_cpp))
+            if N_py is None:
+                self.assertEqual(N_cpp.size, 0)
+            else:
+                self.assertTrue(np.array_equal(N_py,N_cpp))
+
+        # Check the quad cube with texture coordinates and normals against
+        # ground truth.
+        V,F,UV,Ft,N,Fn = gpy.read_mesh("test/unit_tests_data/quad_cube_uv_n.obj",
+            return_UV=True, return_N=True)
+        self.assertEqual(V.shape, (8,3))
+        self.assertEqual(UV.shape, (4,2))
+        self.assertEqual(N.shape, (6,3))
+        self.assertTrue(np.array_equal(F, np.array([[0,3,2,1],[4,5,6,7],
+            [0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]])))
+        self.assertTrue(np.array_equal(Ft, np.tile([0,1,2,3], (6,1))))
+        self.assertTrue(np.array_equal(Fn, np.repeat(np.arange(6)[:,None], 4, axis=1)))
+
+        # Check the mixed triangle/quad mesh against ground truth: triangles
+        # are padded with -1 in F, Ft and Fn.
+        for reader in ["Python", "C++"]:
+            V,F,UV,Ft,N,Fn = gpy.read_mesh("test/unit_tests_data/mixed_tri_quad.obj",
+                return_UV=True, return_N=True, reader=reader)
+            self.assertEqual(V.shape, (9,3))
+            self.assertEqual(UV.shape, (5,2))
+            self.assertEqual(N.shape, (9,3))
+            self.assertTrue(np.array_equal(F, np.array([[4,5,8,-1],
+                [0,3,2,1],[0,1,5,4],[5,6,8,-1],[1,2,6,5],[2,3,7,6],
+                [3,0,4,7],[6,7,8,-1],[7,4,8,-1]])))
+            tri = F[:,3] == -1
+            self.assertTrue(np.array_equal(Ft[tri], np.tile([0,1,4,-1], (4,1))))
+            self.assertTrue(np.array_equal(Ft[~tri], np.tile([0,1,2,3], (5,1))))
+            self.assertTrue(np.array_equal(Fn, np.array([[5,5,5,-1],
+                [0,0,0,0],[1,1,1,1],[6,6,6,-1],[2,2,2,2],[3,3,3,3],
+                [4,4,4,4],[7,7,7,-1],[8,8,8,-1]])))
+
+    def test_non_tri_quad_obj(self):
+        # Faces with more than four vertices are still not supported.
+        with open("test/unit_tests_data/temp.pentagon.obj", "w") as f:
+            f.write("v 0 0 0\nv 1 0 0\nv 1 1 0\nv 0 1 0\nv -1 0.5 0\n"
+                    "f 1 2 3\nf 1 2 3 4 5\n")
+        for reader in ["Python", "C++"]:
+            with self.assertRaises(Exception):
+                gpy.read_mesh("test/unit_tests_data/temp.pentagon.obj",
+                    reader=reader)
 
     def test_ply_index_vs_indices_faces(self):
         # this used to fail:
