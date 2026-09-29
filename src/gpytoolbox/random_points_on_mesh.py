@@ -42,8 +42,18 @@ def random_points_on_mesh(V,F,
 
     Examples
     --------
-    TODO
-    
+    ```python
+    import numpy as np
+    import gpytoolbox as gpy
+    # Sample 100 points uniformly on a triangle mesh
+    V, F = gpy.read_mesh("test/unit_tests_data/cube.obj")
+    rng = np.random.default_rng(0)
+    x = gpy.random_points_on_mesh(V, F, 100, rng=rng)
+    # Also return the element indices and barycentric coordinates,
+    # so that x == sum_d u[:,d] * V[F[I,d],:]
+    x, I, u = gpy.random_points_on_mesh(V, F, 100, rng=rng,
+                                        return_indices=True)
+    ```
     """
 
 

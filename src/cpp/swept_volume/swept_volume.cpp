@@ -15,7 +15,7 @@
 #include <igl/facet_adjacency_matrix.h>
 #include <igl/barycentric_coordinates.h>
 #include <igl/grid.h>
-#include <igl/copyleft/marching_cubes.h>
+#include <igl/marching_cubes.h>
 #include <igl/connected_components.h>
 #include <igl/polygon_corners.h>
 #include <igl/per_face_normals.h>
@@ -394,7 +394,7 @@ void swept_volume(const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Ei
     // std::system((make_dir + dir_name).c_str());
     // Eigen::MatrixXd Umc;
     // Eigen::MatrixXi Gmc;
-    igl::copyleft::marching_cubes(CS,CV,CI,0.0,U,G); // our mesh
+    igl::marching_cubes(CS,CV,CI,0.0,U,G); // our mesh
 
 
 //     igl::writeOBJ(dir_name + "/input.obj",V,F);

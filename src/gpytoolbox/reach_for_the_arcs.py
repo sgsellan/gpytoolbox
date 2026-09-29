@@ -88,6 +88,25 @@ def reach_for_the_arcs(U, S,
         reconstructed point cloud points
     N : (n_p,d) numpy array, if requested
         reconstructed point cloud normals
+
+    Examples
+    --------
+    ```python
+    import numpy as np
+    import gpytoolbox as gpy
+    # Read a mesh and normalize it
+    v, f = gpy.read_mesh("test/unit_tests_data/bunny_oded.obj")
+    v = gpy.normalize_points(v)
+    # Sample the signed distance function on a grid
+    n = 10
+    gx, gy, gz = np.meshgrid(np.linspace(-1.0, 1.0, n+1),
+                             np.linspace(-1.0, 1.0, n+1),
+                             np.linspace(-1.0, 1.0, n+1))
+    GV = np.vstack((gx.flatten(), gy.flatten(), gz.flatten())).T
+    S = gpy.signed_distance(GV, v, f)[0]
+    # Reconstruct a mesh from the SDF samples
+    U, G = gpy.reach_for_the_arcs(GV, S)
+    ```
     """
 
     d = U.shape[1]
@@ -183,6 +202,9 @@ def reach_for_the_arcs(U, S,
     if P is None or P.size==0:
         if verbose:
             print(f"Unable to find any point cloud point.")
+        # No point cloud could be found, so there is no mesh to return.
+        V = np.zeros((0,d), dtype=np.float64)
+        F = np.zeros((0,d), dtype=np.int32)
         if return_point_cloud:
             return V, F, P, N
         else:
@@ -216,11 +238,19 @@ def reach_for_the_arcs(U, S,
         print(f"Converting point cloud to mesh...")
         t0_point_cloud_to_mesh = time.time()
 
-    V,F = point_cloud_to_mesh(P, N,
-        method='PSR',
-        psr_screening_weight=screening_weight,
-        psr_outer_boundary_type="Neumann",
-        verbose=False)
+    if P is None or P.size==0 or P.shape[0]<2:
+        # Surface reconstruction needs at least two points; if fine tuning left
+        # us with fewer, there is no mesh to reconstruct.
+        if verbose:
+            print(f"Too few point cloud points to reconstruct a mesh.")
+        V = np.zeros((0,d), dtype=np.float64)
+        F = np.zeros((0,d), dtype=np.int32)
+    else:
+        V,F = point_cloud_to_mesh(P, N,
+            method='PSR',
+            psr_screening_weight=screening_weight,
+            psr_outer_boundary_type="Neumann",
+            verbose=False)
 
     if V is None or V.size==0:
         if verbose:
@@ -644,6 +674,13 @@ def _fine_tune_point_cloud(U, S, P, N, f,
         else:
             batch = np.arange(n_sdf)
             rng.shuffle(batch)
+
+        if P is None or P.size==0 or P.shape[0]<2:
+            # point_cloud_to_mesh needs at least two points; if fine tuning
+            # removed too many, we cannot build a mesh and are done.
+            if(verbose):
+                print(f"    Too few points to produce a mesh.")
+            return P, N, f
 
         V,F = point_cloud_to_mesh(P, N,
             psr_screening_weight=screening_weight,

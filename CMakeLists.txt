@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 
+# We need CMAKE at least 4.2 in order for the Github actions to work, but this breaks some dependencies, so we add this policy.
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+
 # https://discourse.cmake.org/t/msvc-runtime-library-completely-ignored/10004
 cmake_policy(SET CMP0091 NEW)
 
@@ -67,6 +70,7 @@ add_library(cpytoolbox
 	# Headers
 	src/cpp/upper_envelope.h
 	src/cpp/ray_mesh_intersect_aabb.h
+	src/cpp/particle_swarm.h
 	src/cpp/in_element_aabb.h
 	src/cpp/read_obj.h
 	src/cpp/write_obj.h
@@ -84,9 +88,20 @@ add_library(cpytoolbox
 	src/cpp/remesher/tangential_relaxation.h
 	src/cpp/microstl/microstl_wrappers.h
 	src/cpp/tinyply/tinyply_wrappers.h
+	src/cpp/swept_volume/fd_interpolate.h
+	src/cpp/swept_volume/gradient_descent_test.h
+	src/cpp/swept_volume/random_points_on_mesh.h
+	src/cpp/swept_volume/sparse_continuation.h
+	src/cpp/swept_volume/swept_volume.h
+	src/cpp/dual_contouring_of_signed_distance_data/Cell.h
+	src/cpp/dual_contouring_of_signed_distance_data/Sphere.h
+	src/cpp/dual_contouring_of_signed_distance_data/contouring.h
+	src/cpp/dual_contouring_of_signed_distance_data/hermite_update.h
+	src/cpp/dual_contouring_of_signed_distance_data/vertex_refinement.h
 	# Source
 	src/cpp/upper_envelope.cpp
 	src/cpp/ray_mesh_intersect_aabb.cpp
+	src/cpp/particle_swarm.cpp
 	src/cpp/in_element_aabb.cpp
 	src/cpp/read_obj.cpp
 	src/cpp/write_obj.cpp
@@ -104,27 +119,20 @@ add_library(cpytoolbox
 	src/cpp/remesher/tangential_relaxation.cpp
 	src/cpp/microstl/microstl_wrappers.cpp
 	src/cpp/tinyply/tinyply_wrappers.cpp
-	# microstl
-	src/cpp/microstl/microstl.h
-	# tinyply
-	src/cpp/tinyply/tinyply.h
-	)
-
-	add_library(cpytoolbox_copyleft
-	STATIC
-	# SHARED
-	# Headers
+	src/cpp/dual_contouring_of_signed_distance_data/Cell.cpp
+	src/cpp/dual_contouring_of_signed_distance_data/Sphere.cpp
+	src/cpp/dual_contouring_of_signed_distance_data/contouring.cpp
+	src/cpp/dual_contouring_of_signed_distance_data/hermite_update.cpp
+	src/cpp/dual_contouring_of_signed_distance_data/vertex_refinement.cpp
 	src/cpp/swept_volume/fd_interpolate.cpp
 	src/cpp/swept_volume/gradient_descent_test.cpp
 	src/cpp/swept_volume/random_points_on_mesh.cpp
 	src/cpp/swept_volume/sparse_continuation.cpp
 	src/cpp/swept_volume/swept_volume.cpp
-	# Source
-	src/cpp/swept_volume/fd_interpolate.h
-	src/cpp/swept_volume/gradient_descent_test.h
-	src/cpp/swept_volume/random_points_on_mesh.h
-	src/cpp/swept_volume/sparse_continuation.h
-	src/cpp/swept_volume/swept_volume.h
+	# microstl
+	src/cpp/microstl/microstl.h
+	# tinyply
+	src/cpp/tinyply/tinyply.h
 	)
 
 target_link_libraries(cpytoolbox ${LIBRARIES_TO_LINK})
@@ -135,8 +143,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   endif()
 endif()
 set(LIBRARIES_TO_LINK cpytoolbox ${LIBRARIES_TO_LINK})
-target_link_libraries(cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
-set(COPYLEFT_LIBRARIES_TO_LINK cpytoolbox_copyleft ${COPYLEFT_LIBRARIES_TO_LINK})
 
 # Otman's python bindings using pybind11
 add_subdirectory(./ext/pybind11/)
@@ -146,12 +152,17 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_obj.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_decimate.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_fast_winding_number.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_fast_winding_number_bvh.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_aabb_tree.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_hausdorff_distance.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_in_element_aabb.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_marching_cubes.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_swept_volume.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_offset_surface.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_point_mesh_squared_distance.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersect.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_ray_mesh_intersector.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_particle_swarm.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_read_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_write_stl.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_remesher_botsch.cpp"
@@ -163,11 +174,11 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs/binding_outside_points_from_rasterization.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs//binding_locally_make_feasible.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs//binding_fine_tune_point_cloud_iter.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/dual_contouring_of_signed_distance_data/binding_dcsdd.cpp"
 )
 
 pybind11_add_module(gpytoolbox_bindings_copyleft
     "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/gpytoolbox_bindings_copyleft_core.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_swept_volume.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_booleans.cpp"
 )
 

@@ -24,8 +24,17 @@ def compactly_supported_normal_kernel(X1,X2,length=0.2,scale=1,derivatives=(-1,-
     
     Examples
     --------
-    TODO
-    
+    ```python
+    import numpy as np
+    from gpytoolbox import compactly_supported_normal_kernel
+    # Evaluate the kernel between two sets of 2D points
+    X1 = np.random.rand(100,2)
+    X2 = np.zeros((100,2))
+    K = compactly_supported_normal_kernel(X1, X2, scale=0.5, length=0.5)
+    # Evaluate the derivative d K / dx1_0 instead
+    dK = compactly_supported_normal_kernel(X1, X2, scale=0.5, length=0.5,
+                                           derivatives=(0,-1))
+    ```
     """
     r = X1 - X2
     ndim = r.ndim

@@ -26,6 +26,15 @@ def regular_cube_mesh(nx,
     T : (m,T) numpy int array
         tet index list of a tet mesh
 
+    Notes
+    -----
+    The dimensions are incremented in the grid in the following order: `z, x, y` (i.e., all `z` values are iterated over before incrementing `y`). Obtaining a meshgrid-style `(nx,ny,nz)` tensor for each coordinate dimension of `V` can be done as follows:
+    ```python
+    # Get the x coordinate of V from `regular_cube_mesh` in a (nx,ny,nz) tensor
+    Vx = V[:,0]
+    Vx_grid = Vx.reshape((ny,nx,nz)).transpose(1,0,2)
+    ```
+
     See Also
     --------
     regular_square_mesh.

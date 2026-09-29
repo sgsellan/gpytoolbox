@@ -10,14 +10,12 @@ namespace py = pybind11;
 // using EigenDRef = Ref<MatrixType, 0, EigenDStride>; //allows passing column/row order matrices easily
 
 //forward declare all bindings
-void binding_swept_volume(py::module& m);
 void binding_booleans(py::module& m);
 
 
 PYBIND11_MODULE(gpytoolbox_bindings_copyleft, m) {
 
-    /// call all bindings declared above  
-    binding_swept_volume(m);
+    /// call all bindings declared above
     binding_booleans(m);
 
     m.def("help", [&]() {printf("hi"); });

@@ -5,6 +5,10 @@
 
 #include <Eigen/Core>
 
+void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F,Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature, Eigen::MatrixXi & feature_edges, bool project);
+
+void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double,int iters, Eigen::VectorXi feature, Eigen::MatrixXi feature_edges, bool project);
+
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F,Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature, bool project);
 
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double,int iters, Eigen::VectorXi feature, bool project);

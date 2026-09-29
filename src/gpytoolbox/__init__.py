@@ -38,6 +38,7 @@ from .doublearea import doublearea
 from .doublearea_intrinsic import doublearea_intrinsic
 from .volume import volume
 from .marching_cubes import marching_cubes
+from .swept_volume import swept_volume
 from .massmatrix import massmatrix
 from .massmatrix_intrinsic import massmatrix_intrinsic
 from .halfedges import halfedges
@@ -51,6 +52,8 @@ from .boundary_faces import boundary_faces
 from .min_quad_with_fixed import min_quad_with_fixed
 from .min_quad_with_fixed import min_quad_with_fixed_precompute
 from .fast_winding_number import fast_winding_number
+from .squared_distance_precompute import squared_distance_precompute
+from .fast_winding_number_precompute import fast_winding_number_precompute
 from .fixed_dof_solve import fixed_dof_solve
 from .fixed_dof_solve import fixed_dof_solve_precompute
 from .halfedge_lengths import halfedge_lengths
@@ -58,6 +61,7 @@ from .halfedge_lengths_squared import halfedge_lengths_squared
 from .cotangent_laplacian_intrinsic import cotangent_laplacian_intrinsic
 from .tip_angles import tip_angles
 from .tip_angles_intrinsic import tip_angles_intrinsic
+from .dihedral_angles import dihedral_angles
 from .cotangent_laplacian import cotangent_laplacian
 from .cotangent_weights_intrinsic import cotangent_weights_intrinsic
 from .cotangent_weights import cotangent_weights
@@ -69,12 +73,14 @@ from .triangle_triangle_adjacency import triangle_triangle_adjacency
 from .halfedge_edge_map import halfedge_edge_map
 from .array_correspondence import array_correspondence
 from .signed_distance import signed_distance
+from .unsigned_distance import unsigned_distance
 from .subdivide import subdivide
 from .read_mesh import read_mesh
 from .write_mesh import write_mesh
 from .decimate import decimate
 from .in_element_aabb import in_element_aabb
 from .ray_mesh_intersect import ray_mesh_intersect
+from .ray_mesh_intersect_precompute import ray_mesh_intersect_precompute
 from .remesh_botsch import remesh_botsch
 from .upper_envelope import upper_envelope
 from .colormap import colormap
@@ -108,6 +114,7 @@ from .torus import torus
 from .marching_squares import marching_squares
 from .winding_number import winding_number
 from .particle_swarm import particle_swarm
+from .matryoshka import matryoshka
 from .read_dmat import read_dmat
 from .linear_blend_skinning import linear_blend_skinning
 from .barycenters import barycenters
@@ -137,3 +144,4 @@ from .dec_h1_intrinsic import dec_h1_intrinsic
 from .dec_h1inv_intrinsic import dec_h1inv_intrinsic
 from .dec_h2_intrinsic import dec_h2_intrinsic
 from .dec_h2inv_intrinsic import dec_h2inv_intrinsic
+from .dual_contouring_of_signed_distance_data import dual_contouring_of_signed_distance_data

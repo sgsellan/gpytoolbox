@@ -20,9 +20,18 @@
 #include <igl/collapse_edge.h>
 #include <igl/C_STR.h>
 #include <igl/flip_edge.h>
+#include <unordered_set>
+#include <utility>
 using namespace std;
 
-void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature){
+namespace {
+    inline long long edge_key(int a, int b) {
+        if (a > b) std::swap(a, b);
+        return ((long long)a << 32) | (long long)(unsigned int)b;
+    }
+}
+
+void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature, Eigen::MatrixXi & feature_edges){
     using namespace igl;
     using namespace Eigen;
     VectorXd p;
@@ -42,28 +51,26 @@ void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi 
 //
     vertex_valences.setZero(n);
 
-   // std::cout << "A" << std::endl;
     for(int j = 0; j < m; j++){
         vertex_valences(F(j,0)) = vertex_valences(F(j,0))+1;
         vertex_valences(F(j,1)) = vertex_valences(F(j,1))+1;
         vertex_valences(F(j,2)) = vertex_valences(F(j,2))+1;
     }
- //   std::cout << vertex_valences << std::endl;
 
 //
     int k = uE.rows();
     int num_feat = feature.size();
     is_feature_vertex.resize(n);
 
-   // std::cout << "B" << std::endl;
-
     for (int s = 0; s < num_feat; s++) {
         is_feature_vertex[feature(s)] = true;
     }
 
-
-//
-  //  std::cout << "C" << std::endl;
+    // Set of feature edges: these are never flipped.
+    std::unordered_set<long long> fe_set;
+    for (int j = 0; j < feature_edges.rows(); j++) {
+        fe_set.insert(edge_key(feature_edges(j,0),feature_edges(j,1)));
+    }
 
     std::function<void(
             Eigen::MatrixXi &, //F
@@ -78,7 +85,6 @@ void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi 
             Eigen::VectorXi & EMAP, //EMAP
             std::vector<std::vector<int>>  & uE2E, //uE2E
             int & uei)->void{
-      //  std::cout << "Lambda call" << std::endl;
         int num_faces = F.rows();
         auto& half_edges = uE2E[uei];
         int f1 = half_edges[0] % num_faces;
@@ -158,14 +164,10 @@ void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi 
 
 
          if (!bad){
-             //std::cout << "D1" << std::endl;
         igl::flip_edge(F,E,uE,EMAP,uE2E,uei);
-             //std::cout << "D2" << std::endl;
-        //std::cout << "Lambda call test" << std::endl;
         assert(uE(uei,0)==v3);
         assert(uE(uei,1)==v4);
 
-      //  std::cout << "updating_valences" << std::endl;
         vertex_valences(v1) = vertex_valences(v1)-1;
         vertex_valences(v2) = vertex_valences(v2)-1;
         vertex_valences(v3) = vertex_valences(v3)+1;
@@ -177,23 +179,10 @@ void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi 
              A[v4].push_back(v3);
 
          }
-        //std::cout << "Lambda call end" << std::endl;
     };
 
 
-
-
-
-
-
-
-
-
-    //std::cout << "D" << std::endl;
-
-
     for(int i = 0; i < k; i++){
-        //std::cout << uE2E[i].size() << std::endl;
         if(uE2E[i].size()!=2){
             continue;
         }
@@ -202,18 +191,18 @@ void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi 
         int f2 = uE2E[i][1] % m;
         int c1 = uE2E[i][0] / m;
         int c2 = uE2E[i][1] / m;
-//        std::cout << f1 << std::endl;
-//        std::cout << f2 << std::endl;
-//        std::cout << c1 << std::endl;
-//        std::cout << c2 << std::endl;
         int a = F(f1, (c1+1)%3);
         int b = F(f1, (c1+2)%3);
         int c = F(f1, c1);
         int d = F(f2, c2);
+        // Never flip an actual feature edge. Also keep the original behavior of
+        // not flipping edges incident to a fully fixed feature vertex.
+        if (fe_set.count(edge_key(a,b)) > 0) {
+            is_feature_edge = true;
+        }
         if (is_feature_vertex[a] || is_feature_vertex[b] || is_feature_vertex[c] || is_feature_vertex[d]) {
             is_feature_edge = true;
         }
-        //std::cout << "E" << std::endl;
 
         if(!is_feature_edge){
             // FIND VALENCES
@@ -221,15 +210,10 @@ void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi 
                     abs(vertex_valences(b)-6)+
                     abs(vertex_valences(c)-6)+
                     abs(vertex_valences(d)-6);
-//std::cout << i << std::endl;
-            // igl::flip_edge(V,F,E,uE,EMAP,uE2E,i);
             int deviation_post = abs(vertex_valences(a)-1-6)+
                     abs(vertex_valences(b)-6-1)+
                     abs(vertex_valences(c)-6+1)+
                     abs(vertex_valences(d)-6+1);
-            // std::cout << i << std::endl;
-       //     std::cout << deviation_pre << std::endl;
-       //     std::cout << deviation_post << std::endl;
 
             if(deviation_pre > deviation_post){
                 flip_edge_adjacency(F,E,uE,EMAP,uE2E,i);
@@ -237,13 +221,7 @@ void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi 
 
         }
 
-        //std::cout << uE.row(i+1) << std::endl;
     }
-//    std::cout << flipped << std::endl;
-//    std::cout << k << std::endl;
-//
-
-
 
 
     // PLACEHOLDER
@@ -251,4 +229,3 @@ void equalize_valences(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi 
 
 
 // g++ -I/usr/local/libigl/external/eigen -I/usr/local/libigl/include -std=c++11 -framework Accelerate main.cpp remesh_botsch.cpp -o main
-

@@ -74,7 +74,7 @@ class closest_point_traversal:
 
 
 
-def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=None,tri_ind=None,split_dir=None):
+def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=None,tri_ind=None,split_dir=None,cpp_aabb=None):
     """Squared distances from a set of points in space.
 
     General-purpose function which computes the squared distance from a set of points to a mesh, point cloud or polyline, in two or three dimensions. Optionally, uses an aabb tree for efficient computation.
@@ -90,7 +90,7 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
     use_cpp : bool, optional (default False)
         Whether to use the C++ libigl implementation of the AABB tree (much faster). If True, the following parameters are ignored.
     use_aabb : bool, optional (default False)
-        Whether to use an AABB tree for logarithmic computation 
+        Whether to use an AABB tree for logarithmic computation
     C : numpy double array, optional (default None)
         Matrix of AABB box centers (if None, will be computed)
     W : numpy double array, optional (default None)
@@ -101,6 +101,10 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
         Vector of AABB element indices (-1 if *not* leaf node). If None, will be computed
     split_dir : numpy double array, optional (default None)
         Vector of AABB split directions (if None, will be computed)
+    cpp_aabb : gpytoolbox.squared_distance_precompute, optional (default None)
+        Precomputed AABB tree built via `gpytoolbox.squared_distance_precompute(V, F)`. Only used
+        when `use_cpp=True`. Reuses the tree across calls instead of rebuilding
+        it, avoiding the O(n) construction cost on every query.
 
     Returns
     -------
@@ -110,21 +114,34 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
         Indices into F (or V, if F is None) of closest elements to each query point
     lmbs : (p,s) numpy double array
         Barycentric coordinates into the closest element of each closest mesh point to each query point
-    
+
 
     See Also
     --------
-    squared_distance_to_element, initialize_aabb.
+    squared_distance_to_element, initialize_aabb, squared_distance_precompute.
 
     Examples
     --------
+    Standard one-shot call (rebuilds the AABB tree internally each time):
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj") # Read a mesh
     v = gpytoolbox.normalize_points(v) # Normalize mesh
     # Generate query points
     P = 2*np.random.rand(num_samples,3)-4
     # Compute distances
-    sqrD_gt,ind,b = gpytoolbox.squared_distance(P,v,F=f,use_aabb=True)
+    sqrD,ind,b = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True)
+    ```
+
+    When making many calls against the same mesh, build the AABB tree
+    once and reuse it via the `cpp_aabb=` kwarg to avoid the O(n) construction
+    cost on every call:
+    ```python
+    v,f = gpytoolbox.read_mesh("bunny.obj")
+    v = gpytoolbox.normalize_points(v)
+    tree = gpytoolbox.squared_distance_precompute(v, f) # build once
+    for _ in range(num_iters):
+        P = 2*np.random.rand(num_samples,3)-4
+        sqrD,ind,b = gpytoolbox.squared_distance(P,v,F=f,use_cpp=True,cpp_aabb=tree)
     ```
     """
     if (F is None):
@@ -134,11 +151,14 @@ def squared_distance(P,V,F=None,use_cpp=False,use_aabb=False,C=None,W=None,CH=No
 
 
     if use_cpp:
-        try:
-            from gpytoolbox_bindings import _point_mesh_squared_distance_cpp_impl
-        except:
-            raise ImportError("Gpytoolbox cannot import its C++ point_mesh_squared_distance binding.")
-        squared_distances, indices, closest_points = _point_mesh_squared_distance_cpp_impl(V.astype(np.float64),F.astype(np.int32),P.astype(np.float64))
+        if cpp_aabb is not None:
+            squared_distances, indices, closest_points = cpp_aabb.squared_distance(P.astype(np.float64))
+        else:
+            try:
+                from gpytoolbox_bindings import _point_mesh_squared_distance_cpp_impl
+            except:
+                raise ImportError("Gpytoolbox cannot import its C++ point_mesh_squared_distance binding.")
+            squared_distances, indices, closest_points = _point_mesh_squared_distance_cpp_impl(V.astype(np.float64),F.astype(np.int32),P.astype(np.float64))
         lmbs = np.zeros((P.shape[0],F.shape[1]))
         if (F.shape[1] == 1):
             lmbs = np.ones((P.shape[0],1))

@@ -127,11 +127,45 @@ namespace microstl
 	private:
 		static bool isAsciiFormat(std::istream& is)
 		{
+			// An ASCII STL file must start with the keyword "solid". However, many
+			// binary STL files written by CAD software (e.g. SolidWorks) also begin
+			// their 80-byte header with "solid", which would cause them to be
+			// misdetected as ASCII and fail to parse. To disambiguate, when the file
+			// starts with "solid" we additionally check whether its total size exactly
+			// matches the binary layout (80-byte header + 4-byte facet count +
+			// 50 bytes per facet). If it does, we treat it as binary.
 			const char expected[] = {'s', 'o', 'l', 'i', 'd'};
 			char header[sizeof(expected)] = { 0, };
 			is.read(header, sizeof(expected));
+			bool startsWithSolid = is.gcount() == static_cast<std::streamsize>(sizeof(expected))
+				&& memcmp(expected, header, sizeof(expected)) == 0;
+			is.clear();
 			is.seekg(0, std::ios::beg);
-			return memcmp(expected, header, sizeof(expected)) == 0;
+
+			if (!startsWithSolid)
+				return false;
+
+			// Determine the total file/stream size.
+			is.seekg(0, std::ios::end);
+			std::streamoff size = is.tellg();
+			is.seekg(0, std::ios::beg);
+
+			// Read the facet count stored at offset 80 in a binary file.
+			if (size >= 84)
+			{
+				is.seekg(80, std::ios::beg);
+				char countBuffer[4] = { 0, };
+				is.read(countBuffer, sizeof(countBuffer));
+				is.clear();
+				is.seekg(0, std::ios::beg);
+				uint32_t facetCount = 0;
+				memcpy(&facetCount, countBuffer, sizeof(facetCount));
+				std::streamoff expectedBinarySize = 84 + static_cast<std::streamoff>(facetCount) * 50;
+				if (size == expectedBinarySize)
+					return false;
+			}
+
+			return true;
 		}
 
 		static bool readNextLine(std::istream& is, std::string& output)

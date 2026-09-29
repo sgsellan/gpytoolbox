@@ -11,7 +11,7 @@
 #include <igl/avg_edge_length.h>
 #include <iostream>
 
-void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature, bool project){
+void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature, Eigen::MatrixXi & feature_edges, bool project){
     Eigen::MatrixXd V0;
     Eigen::MatrixXi F0;
 
@@ -21,19 +21,28 @@ void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & ta
 
 	F0 = F;
 	V0 = V;
+    // Frozen copy of the original feature geometry. Feature-line vertices are
+    // reprojected onto these segments so that creases stay sharp.
+    Eigen::MatrixXd featV0 = V;
+    Eigen::MatrixXi featE0 = feature_edges;
     // Iterate the four steps
     for (int i = 0; i<iters; i++) {
-    	split_edges_until_bound(V,F,feature,high,low); // Split
-    	collapse_edges(V,F,feature,high,low); // Collapse
-    	equalize_valences(V,F,feature); // Flip
+    	split_edges_until_bound(V,F,feature,feature_edges,high,low); // Split
+    	collapse_edges(V,F,feature,feature_edges,high,low); // Collapse
+    	equalize_valences(V,F,feature,feature_edges); // Flip
     	int n = V.rows();
     	lambda = Eigen::VectorXd::Constant(n,1.0);
 	if(!project){
 		V0 = V;
 		F0 = F;
 	}
-	tangential_relaxation(V,F,feature,V0,F0,lambda); // Relax
+	tangential_relaxation(V,F,feature,feature_edges,V0,F0,lambda,featV0,featE0,project); // Relax
     }
+}
+
+void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature, bool project){
+	Eigen::MatrixXi feature_edges(0,2);
+	remesh_botsch(V,F,target,iters,feature,feature_edges,project);
 }
 
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXd & target,int iters, Eigen::VectorXi & feature){
@@ -82,6 +91,13 @@ void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double
 	remesh_botsch(V,F,target,iters,feature,project);
 }
 
+void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double,int iters, Eigen::VectorXi feature, Eigen::MatrixXi feature_edges, bool project){
+	Eigen::VectorXd target;
+	int n = V.rows();
+	target = Eigen::VectorXd::Constant(n,target_double);
+	remesh_botsch(V,F,target,iters,feature,feature_edges,project);
+}
+
 void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F, double target_double){
 	int iters = 10;
 	Eigen::VectorXd target;
@@ -98,4 +114,3 @@ void remesh_botsch(Eigen::MatrixXd & V,Eigen::MatrixXi & F){
 	remesh_botsch(V,F,target);
 }
 // g++ -I/usr/local/libigl/external/eigen -I/usr/local/libigl/include -std=c++11 -framework Accelerate main.cpp remesh_botsch.cpp -o main
-

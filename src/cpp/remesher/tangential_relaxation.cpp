@@ -23,107 +23,124 @@
 #include <igl/C_STR.h>
 #include <igl/flip_edge.h>
 #include <igl/remove_duplicate_vertices.h>
+#include <limits>
 using namespace std;
 
-void tangential_relaxation(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature,
-        Eigen::MatrixXd & V0 ,Eigen::MatrixXi & F0, Eigen::VectorXd & lambda){
+namespace {
+    // Closest point to `p` on the segment [a,b].
+    inline Eigen::RowVector3d closest_point_on_segment(
+            const Eigen::RowVector3d & p,
+            const Eigen::RowVector3d & a,
+            const Eigen::RowVector3d & b) {
+        Eigen::RowVector3d ab = b - a;
+        double denom = ab.dot(ab);
+        if (denom <= 0.0) return a;
+        double t = (p - a).dot(ab) / denom;
+        if (t < 0.0) t = 0.0;
+        if (t > 1.0) t = 1.0;
+        return a + t * ab;
+    }
+}
+
+void tangential_relaxation(Eigen::MatrixXd & V,Eigen::MatrixXi & F, Eigen::VectorXi & feature, Eigen::MatrixXi & feature_edges,
+        Eigen::MatrixXd & V0 ,Eigen::MatrixXi & F0, Eigen::VectorXd & lambda,
+        Eigen::MatrixXd & featV0, Eigen::MatrixXi & featE0, bool project){
     using namespace Eigen;
-        MatrixXd Q,P,N,V_projected,V_fixed;
-        VectorXd dblA,sqrD;
+        MatrixXd N,V_projected,V_fixed;
+        VectorXd sqrD;
         VectorXi sqrI;
         std::vector<std::vector<int>> A;
-        Matrix3d I, NN;
-        I.setIdentity();
-        Eigen::MatrixXd SV;
-        Eigen::MatrixXi SVI,SVJ;
-
-
-
-
-
+        Matrix3d NN;
 
         V_fixed = V;
 
         int n = V.rows();
-        int m = F.rows();
 
-        //igl::doublearea(V,F,dblA);
-
-        //std::vector<double> vertex_areas;
-        //vertex_areas.setZero(m);
-
-
-        //for (int j = 0; j < m; j++) {
-        //    vertex_areas[F(j,0)] = vertex_areas[F(j,0)] + (abs(dblA(j))/6);
-        //    vertex_areas[F(j,1)] = vertex_areas[F(j,1)] + (abs(dblA(j))/6);
-        //    vertex_areas[F(j,2)] = vertex_areas[F(j,2)] + (abs(dblA(j))/6);
-        //}
-
-
-        Eigen::MatrixXd N_before,N_after;
         igl::adjacency_list(F,A);
 
-
         int num_feat = feature.size();
-        std::vector<bool> is_feature_vertex;
-        is_feature_vertex.resize(n);
 
+        // Fully fixed (explicit) feature vertices: never moved.
+        std::vector<bool> explicit_fixed(n,false);
         for (int s = 0; s < num_feat; s++) {
-            is_feature_vertex[feature(s)] = true;
+            explicit_fixed[feature(s)] = true;
         }
 
-        Q.resize(n,3);
-        P.resize(n,3);
-        //           Eigen::MatrixXd N;
+        // Feature-edge adjacency: for each vertex on a feature edge, list its
+        // feature-edge neighbors. Degree-2 vertices are "line" vertices that
+        // slide along the crease; any other (nonzero) degree marks a corner /
+        // junction that stays fixed.
+        std::vector<std::vector<int>> feat_adj(n);
+        for (int j = 0; j < feature_edges.rows(); j++) {
+            int u = feature_edges(j,0);
+            int v = feature_edges(j,1);
+            feat_adj[u].push_back(v);
+            feat_adj[v].push_back(u);
+        }
+
         igl::per_vertex_normals(V,F,N);
 
+        // Smooth: fixed vertices stay put, feature-line vertices get a 1D
+        // Laplacian along the crease, everything else gets tangent-plane
+        // smoothing.
         for(int i = 0; i < n; i++){
-            bool is_feature = is_feature_vertex[i];
-            if (!is_feature) {
-
+            int fdeg = (int)feat_adj[i].size();
+            bool is_fixed = explicit_fixed[i] || (fdeg >= 1 && fdeg != 2);
+            if (is_fixed) {
+                continue;
+            }
+            if (fdeg == 2) {
+                // 1D Laplacian along the feature line.
+                Eigen::RowVector3d q = 0.5*(V.row(feat_adj[i][0]) + V.row(feat_adj[i][1]));
+                V.row(i) = q;
+                continue;
+            }
+            // Regular vertex: tangent-plane smoothing.
             Eigen::RowVector3d q,p;
             q.setZero();
             p.setZero();
-            double denominator = 0.0;
             for(int j = 0; j < A[i].size(); j++){
                 q = q + (V.row(A[i][j])/A[i].size());
-                // q = q + (V.row(A[i][j])*vertex_areas[A[i][j]]);
-                // std::cout << q << std::endl;
-                // denominator = denominator + vertex_areas[A[i][j]];
-                } // q is )( barycenter?
-            // q = q/denominator;
-            // N.row(i) = N.row(i)/N.row(i).norm();
-            NN = lambda(i)*(Eigen::MatrixXd::Identity(3,3) - N.row(i).transpose()*(N.row(i)));
-             p = (V.row(i).transpose()-(NN*(V.row(i).transpose() - q.transpose()))).transpose();
-            // p = q;
-             // std::cout << N.row(i) << std::endl;
-
-            V.row(i) = p;
-
-            // igl::per_face_normals(V_projected,F,Eigen::Vector3d(0,0,0),N_after);
-    //            for (int j = 0; j < m ; j++) {
-    //                if (N_before.row(j).dot(N_after.row(j)) < 0) {
-    //                    // std::cout << "Avoided face flipping, I think." << std::endl;
-    //                    V.row(i) = V_fixed.row(i);
-    //                }
-    //            }
-
             }
+            NN = lambda(i)*(Eigen::MatrixXd::Identity(3,3) - N.row(i).transpose()*(N.row(i)));
+            p = (V.row(i).transpose()-(NN*(V.row(i).transpose() - q.transpose()))).transpose();
+            V.row(i) = p;
         }
-//        igl::remove_duplicate_vertices(V,0,SV,SVI,SVJ);
-//        std::cout << V.rows()-SV.rows() << std::endl;
-//	igl::writeOBJ("pre-project.obj",V,F);
-//
-	igl::point_mesh_squared_distance(V,V0,F0,sqrD,sqrI,V_projected);
-//
-//
-    V = V_projected;
-//	igl::writeOBJ("post-project.obj",V,F);
-//    igl::remove_duplicate_vertices(V,0,SV,SVI,SVJ);
-//    std::cout << V.rows()-SV.rows() << std::endl;
- //   std::cout << "not projecting!" << std::endl;
+
+        // Reproject regular vertices onto the original surface.
+        igl::point_mesh_squared_distance(V,V0,F0,sqrD,sqrI,V_projected);
+
+        for(int i = 0; i < n; i++){
+            int fdeg = (int)feat_adj[i].size();
+            bool is_fixed = explicit_fixed[i] || (fdeg >= 1 && fdeg != 2);
+            if (is_fixed) {
+                // Restore exact original position.
+                V.row(i) = V_fixed.row(i);
+                continue;
+            }
+            if (fdeg == 2) {
+                if (project && featE0.rows() > 0) {
+                    // Reproject the smoothed feature-line vertex onto the
+                    // frozen original feature polyline so the crease stays sharp.
+                    Eigen::RowVector3d p = V.row(i);
+                    double best = std::numeric_limits<double>::infinity();
+                    Eigen::RowVector3d best_pt = p;
+                    for (int j = 0; j < featE0.rows(); j++) {
+                        Eigen::RowVector3d a = featV0.row(featE0(j,0));
+                        Eigen::RowVector3d b = featV0.row(featE0(j,1));
+                        Eigen::RowVector3d c = closest_point_on_segment(p,a,b);
+                        double d = (p-c).squaredNorm();
+                        if (d < best) { best = d; best_pt = c; }
+                    }
+                    V.row(i) = best_pt;
+                }
+                // else: keep the smoothed (already-assigned) position.
+                continue;
+            }
+            // Regular vertex: take the surface-projected position.
+            V.row(i) = V_projected.row(i);
+        }
 }
 
 
 // g++ -I/usr/local/libigl/external/eigen -I/usr/local/libigl/include -std=c++11 -framework Accelerate main.cpp remesh_botsch.cpp -o main
-

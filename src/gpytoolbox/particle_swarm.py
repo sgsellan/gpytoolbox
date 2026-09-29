@@ -1,8 +1,8 @@
 import numpy as np
 
-def particle_swarm(fun,lb,ub,n_particles=100,max_iter=100,momentum=0.9,phi=0.1,verbose=False, topology='full'):
+def particle_swarm(fun,lb,ub,n_particles=100,max_iter=100,momentum=0.9,phi=0.1,verbose=False, topology='full', use_cpp=True):
     """Particle swarm optimization.
-    
+
     Parameters
     ----------
     fun : callable
@@ -19,14 +19,49 @@ def particle_swarm(fun,lb,ub,n_particles=100,max_iter=100,momentum=0.9,phi=0.1,v
         Connectivity of the swarm. Either 'full' or 'ring'.
     verbose : bool, optional (default: False)
         Print progress to stdout
-    
+    use_cpp : bool, optional (default: True)
+        Whether to use the C++ binding when available. Falls back to the
+        pure-Python implementation if the binding cannot be imported.
+
     Returns
     -------
     x : (n,) numpy double array
         Best solution
     f : double
         Best objective value
+
+    Examples
+    --------
+    ```python
+    import numpy as np
+    from gpytoolbox import particle_swarm
+    # Minimize a function with a known minimum at x = val
+    val = 3.5
+    def fun(x):
+        return (x - val)**2
+    lb = np.array([-10])
+    ub = np.array([10])
+    x, f = particle_swarm(fun, lb, ub, max_iter=1000)
+    # x is now close to val
+    ```
     """
+    lb = np.asarray(lb, dtype=np.float64)
+    ub = np.asarray(ub, dtype=np.float64)
+
+    if use_cpp:
+        try:
+            from gpytoolbox_bindings import _particle_swarm_cpp_impl
+            def _fun_wrapper(x):
+                return float(np.squeeze(fun(x)))
+            best_x, best_f = _particle_swarm_cpp_impl(
+                _fun_wrapper, lb, ub,
+                int(n_particles), int(max_iter),
+                float(momentum), float(phi),
+                bool(verbose), str(topology))
+            return best_x, best_f
+        except ImportError:
+            pass
+
     current_best_f = np.inf
     n = len(lb)
     x = np.random.uniform(lb,ub,(n_particles,n))
@@ -85,4 +120,4 @@ def particle_swarm(fun,lb,ub,n_particles=100,max_iter=100,momentum=0.9,phi=0.1,v
             print("Iteration %d: f = %f" % (iter,current_best_f))
     # print(current_best_x)
     return current_best_x, current_best_f
-    
+

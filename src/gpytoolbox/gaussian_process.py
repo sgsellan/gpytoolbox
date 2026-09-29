@@ -102,6 +102,27 @@ class gaussian_process_precompute:
         precomputed_gaussian_process : instance of class gaussian_process_precompute
             Object that stores all necessary information to later evaluate the gaussian process at any given test points.
 
+        Examples
+        --------
+        ```python
+        import numpy as np
+        import gpytoolbox
+        # Choose a simple function and its gradient
+        def true_fun(x):
+            return 10*x
+        def true_grad(x):
+            return 10 + 0*x
+        # Training data
+        x_train = np.linspace(0,1,5)
+        y_train = true_fun(x_train)
+        y_grad = true_grad(x_train)
+        # Precompute the gaussian process once...
+        gp = gpytoolbox.gaussian_process_precompute(
+            np.reshape(x_train,(-1,1)), y_train, grad_y_train=y_grad)
+        # ...then evaluate it at as many sets of test points as we like
+        x_test = np.linspace(0,1,140)
+        y_test_mean, y_test_cov = gp.predict(np.reshape(x_test,(-1,1)))
+        ```
         """
         if verbose:
             import time
