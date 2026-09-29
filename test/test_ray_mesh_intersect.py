@@ -3,6 +3,7 @@ from .context import numpy as np
 from .context import unittest
 import gpytoolbox_bindings
 import time
+import warnings
 from unittest import mock
 
 _HAS_EMBREE = getattr(gpytoolbox_bindings, "_has_embree", True)
@@ -13,9 +14,13 @@ class TestRayMeshIntersect(unittest.TestCase):
         cam_pos = np.array([[1, 0.1, 0.1], [1, 0.2, 0.0]])
         cam_dir = np.array([[-1, 0, 0], [-1, 0, 0]])
         with mock.patch.object(gpytoolbox_bindings, "_has_embree", False):
-            fallback = gpytoolbox.ray_mesh_intersect(cam_pos, cam_dir, v, f)
-        portable = gpytoolbox.ray_mesh_intersect(
-            cam_pos, cam_dir, v, f, use_embree=False)
+            with self.assertWarnsRegex(UserWarning, "without Embree"):
+                fallback = gpytoolbox.ray_mesh_intersect(cam_pos, cam_dir, v, f)
+            # Explicitly choosing the native path must not warn.
+            with warnings.catch_warnings():
+                warnings.simplefilter("error", UserWarning)
+                portable = gpytoolbox.ray_mesh_intersect(
+                    cam_pos, cam_dir, v, f, use_embree=False)
 
         for actual, expected in zip(fallback, portable):
             np.testing.assert_allclose(actual, expected)
@@ -25,7 +30,8 @@ class TestRayMeshIntersect(unittest.TestCase):
         cam_pos = np.array([[1, 0.1, 0.1], [1, 0.2, 0.0]])
         cam_dir = np.array([[-1, 0, 0], [-1, 0, 0]])
         with mock.patch.object(gpytoolbox_bindings, "_has_embree", False):
-            intersector = gpytoolbox.ray_mesh_intersect_precompute(v, f)
+            with self.assertWarnsRegex(UserWarning, "without Embree"):
+                intersector = gpytoolbox.ray_mesh_intersect_precompute(v, f)
             actual = gpytoolbox.ray_mesh_intersect(
                 cam_pos, cam_dir, v, f, intersector=intersector)
         expected = gpytoolbox.ray_mesh_intersect(

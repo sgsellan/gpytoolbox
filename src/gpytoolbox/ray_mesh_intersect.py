@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 from gpytoolbox.ray_box_intersect import ray_box_intersect
 from gpytoolbox.ray_triangle_intersect import ray_triangle_intersect
@@ -64,8 +65,9 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
         face index list of a triangle mesh
     use_embree : bool, optional (default True)
         Whether to use the optimized C++ Embree implementation of ray-mesh
-        intersections. If False, or if GPyToolbox was built without Embree,
-        uses GPyToolbox's native AABB tree and intersection queries.
+        intersections. If False, uses GPyToolbox's native AABB tree and
+        intersection queries. If True but GPyToolbox was built without
+        Embree, warns and falls back to the native implementation.
     C : numpy double array, optional (default None)
         Matrix of AABB box centers (if None and use_embree=False, will be computed)
     W : numpy double array, optional (default None)
@@ -129,6 +131,11 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
                     )
                 )
             else:
+                warnings.warn(
+                    "GPyToolbox was built without Embree, so ray_mesh_intersect "
+                    "is falling back to its slower native AABB implementation. "
+                    "Pass use_embree=False to silence this warning.",
+                    stacklevel=2)
                 use_embree = False
     if not use_embree:
         ts = np.inf*np.ones(cam_pos.shape[0])

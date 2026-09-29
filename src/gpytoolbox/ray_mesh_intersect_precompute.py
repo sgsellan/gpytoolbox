@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 
 
@@ -5,8 +6,8 @@ class ray_mesh_intersect_precompute:
     """Precomputed intersector for repeated ray-mesh queries.
 
     Uses libigl's `igl::embree::EmbreeIntersector` when GPyToolbox was built
-    with Embree. Otherwise, it builds and reuses GPyToolbox's portable AABB
-    tree. Both backends avoid rebuilding their acceleration structure on
+    with Embree. Otherwise, it warns and falls back to GPyToolbox's portable
+    AABB tree. Both backends avoid rebuilding their acceleration structure on
     every `ray_mesh_intersect` call.
 
     Parameters
@@ -51,6 +52,11 @@ class ray_mesh_intersect_precompute:
             from gpytoolbox_bindings import _RayMeshIntersector_cpp_impl
             self._impl = _RayMeshIntersector_cpp_impl(V, F)
         else:
+            warnings.warn(
+                "GPyToolbox was built without Embree, so "
+                "ray_mesh_intersect_precompute is falling back to its slower "
+                "native AABB tree.",
+                stacklevel=2)
             from gpytoolbox.initialize_aabbtree import initialize_aabbtree
             C, W, CH, _, _, tri_ind, _ = initialize_aabbtree(V, F=F)
             self._aabb = (C, W, CH, tri_ind)

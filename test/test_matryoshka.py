@@ -57,8 +57,9 @@ class TestMatryoshka(unittest.TestCase):
         # is unavailable rather than losing the whole public operation.
         V, F = _unit_cube()
         with mock.patch.object(gpytoolbox_bindings, "_has_embree", False):
-            res = gpy.matryoshka(V, F, optimize='scale_only',
-                                 n_samples=50, seed=0)
+            with self.assertWarnsRegex(UserWarning, "without Embree"):
+                res = gpy.matryoshka(V, F, optimize='scale_only',
+                                     n_samples=50, seed=0)
         self.assertGreater(res['s'], 0.95)
 
     def test_sphere_rigid(self):
