@@ -1,0 +1,2 @@
+mkdocstrings
+mkdocstrings[python]
