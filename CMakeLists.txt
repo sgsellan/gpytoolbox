@@ -52,6 +52,9 @@ target_include_directories(PoissonRecon INTERFACE "${CMAKE_BINARY_DIR}/_deps/poi
 # Include nanoflann
 include(nanoflann)
 
+# Include CDT
+include(CDT)
+
 # Include webgpu
 include(webgpu)
 include(glfw3webgpu)
@@ -63,7 +66,7 @@ else()
 endif()
 
 # List of all libraries to link
-set(LIBRARIES_TO_LINK igl::core nanoflann PoissonRecon ${GL_LIBS})
+set(LIBRARIES_TO_LINK igl::core nanoflann CDT::CDT PoissonRecon ${GL_LIBS})
 if(LIBIGL_EMBREE)
 	list(APPEND LIBRARIES_TO_LINK igl::embree)
 endif()
@@ -79,6 +82,7 @@ add_library(cpytoolbox
 	src/cpp/read_obj.h
 	src/cpp/write_obj.h
 	src/cpp/point_cloud_to_mesh.h
+	src/cpp/triangulate_polygon.h
 	src/cpp/reach_for_the_arcs/outside_points_from_rasterization.h
 	src/cpp/reach_for_the_arcs/locally_make_feasible.h
 	src/cpp/reach_for_the_arcs/fine_tune_point_cloud_iter.h
@@ -109,6 +113,7 @@ add_library(cpytoolbox
 	src/cpp/read_obj.cpp
 	src/cpp/write_obj.cpp
 	src/cpp/point_cloud_to_mesh.cpp
+	src/cpp/triangulate_polygon.cpp
 	src/cpp/reach_for_the_arcs/outside_points_from_rasterization.cpp
 	src/cpp/reach_for_the_arcs/locally_make_feasible.cpp
 	src/cpp/reach_for_the_arcs/fine_tune_point_cloud_iter.cpp
@@ -183,6 +188,7 @@ pybind11_add_module(gpytoolbox_bindings
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs//binding_locally_make_feasible.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/reach_for_the_arcs//binding_fine_tune_point_cloud_iter.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/dual_contouring_of_signed_distance_data/binding_dcsdd.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cpp/binding_triangulate_polygon.cpp"
 )
 
 if(LIBIGL_EMBREE)
