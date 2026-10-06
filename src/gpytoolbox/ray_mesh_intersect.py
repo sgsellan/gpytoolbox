@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 from gpytoolbox.ray_box_intersect import ray_box_intersect
 from gpytoolbox.ray_triangle_intersect import ray_triangle_intersect
@@ -63,7 +64,10 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     F : (m,3) numpy int array
         face index list of a triangle mesh
     use_embree : bool, optional (default True)
-        Whether to use the much more optimzed C++ AABB embree implementation of ray mesh intersections. If False, uses gpytoolbox's native AABB tree and gpytoolbox's intersection queries.
+        Whether to use the optimized C++ Embree implementation of ray-mesh
+        intersections. If False, uses GPyToolbox's native AABB tree and
+        intersection queries. If True but GPyToolbox was built without
+        Embree, warns and falls back to the native implementation.
     C : numpy double array, optional (default None)
         Matrix of AABB box centers (if None and use_embree=False, will be computed)
     W : numpy double array, optional (default None)
@@ -73,10 +77,11 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     tri_ind : numpy int array, optional (default None)
         Vector of AABB element indices (-1 if *not* leaf node). If None and use_embree=False, will be computed
     intersector : gpytoolbox.ray_mesh_intersect_precompute, optional (default None)
-        Precomputed Embree intersector built via `gpytoolbox.ray_mesh_intersect_precompute(V, F)`.
-        When provided (and `use_embree=True`), reuses the persistent Embree scene
-        across calls instead of rebuilding it. V and F are still consulted only
-        for shape; the actual queries go through the cached intersector.
+        Precomputed intersector built via
+        `gpytoolbox.ray_mesh_intersect_precompute(V, F)`. When provided (and
+        `use_embree=True`), reuses the available Embree scene or portable AABB
+        tree across calls instead of rebuilding it. V and F are still consulted
+        only for shape; the actual queries go through the cached intersector.
 
     Returns
     -------
@@ -89,7 +94,8 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
 
     Examples
     --------
-    Standard one-shot call (rebuilds the Embree scene internally each time):
+    Standard one-shot call (rebuilds the available acceleration structure
+    internally each time):
     ```python
     from gpytoolbox import ray_mesh_intersect
     v,f = gpytoolbox.read_mesh("test/unit_tests_data/cube.obj")
@@ -98,9 +104,9 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
     t, ids, l = ray_mesh_intersect(cam_pos,cam_dir,v,f)
     ```
 
-    When making many calls against the same mesh, build the Embree
-    intersector once and reuse it via the `intersector=` kwarg to avoid
-    the O(n) construction cost on every call:
+    When making many calls against the same mesh, build the intersector once
+    and reuse it via the `intersector=` kwarg to avoid the O(n) construction
+    cost on every call:
     ```python
     v,f = gpytoolbox.read_mesh("bunny.obj")
     rmi = gpytoolbox.ray_mesh_intersect_precompute(v, f) # build once
@@ -114,13 +120,24 @@ def ray_mesh_intersect(cam_pos,cam_dir,V,F,use_embree=True,C=None,W=None,CH=None
         if intersector is not None:
             ts, ids, lambdas = intersector.intersect(cam_pos, cam_dir)
         else:
-            try:
-                from gpytoolbox_bindings import _ray_mesh_intersect_cpp_impl
-            except:
-                raise ImportError("Gpytoolbox cannot import its C++ ray_mesh_intersect binding.")
-
-            ts, ids, lambdas = _ray_mesh_intersect_cpp_impl(cam_pos.astype(np.float64),cam_dir.astype(np.float64),V.astype(np.float64),F.astype(np.int32))
-    else:
+            import gpytoolbox_bindings
+            if getattr(gpytoolbox_bindings, "_has_embree", True):
+                ts, ids, lambdas = (
+                    gpytoolbox_bindings._ray_mesh_intersect_cpp_impl(
+                        cam_pos.astype(np.float64),
+                        cam_dir.astype(np.float64),
+                        V.astype(np.float64),
+                        F.astype(np.int32),
+                    )
+                )
+            else:
+                warnings.warn(
+                    "GPyToolbox was built without Embree, so ray_mesh_intersect "
+                    "is falling back to its slower native AABB implementation. "
+                    "Pass use_embree=False to silence this warning.",
+                    stacklevel=2)
+                use_embree = False
+    if not use_embree:
         ts = np.inf*np.ones(cam_pos.shape[0])
         ids = -np.ones(cam_pos.shape[0],dtype=int)
         lambdas = np.zeros((cam_pos.shape[0],3))
