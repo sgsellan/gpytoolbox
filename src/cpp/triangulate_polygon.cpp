@@ -1,10 +1,30 @@
-// Triangulates a polygon with CDT (https://github.com/artem-ogre/CDT), which
-// does the constrained Delaunay triangulation and the refinement that a and q
-// need. What CDT does not do, and this file adds:
+// Triangulates the region a polygon encloses, with CDT
+// (https://github.com/artem-ogre/CDT).
+//
+//  V        the polygon's vertices, one xy per row. A vertex no edge of F
+//           refers to is triangulated along with the polygon, which is how a
+//           caller puts a point of their own in the output; it has to lie
+//           inside the polygon or this throws
+//  F        the polygon's edges, two indices into V per row, as many closed
+//           loops as needed. A loop inside another one is a hole, a loop
+//           inside a hole is filled again. No edges at all means the polygon
+//           is the convex hull of V
+//  a        the largest area an output triangle may have, 0 for no limit
+//  q        the smallest angle an output triangle may have, in radians,
+//           0 for no limit
+//  steiner  whether a and q may put new vertices on the polygon's boundary.
+//           If false, every edge of F is also an edge of the output, and a
+//           and q only hold where they can be met without splitting one
+//  V2, F2   the output triangle mesh: V2 is V, unmoved and in the same order,
+//           followed by whatever the refinement added, and F2 indexes into it
+//
+// CDT does the constrained Delaunay triangulation and the Delaunay refinement
+// that a and q need. What it does not do, and this file adds:
 //
 //  - CDT refines for one criterion at a time, so a and q alternate here.
-//  - CDT always splits a constraint edge encroached upon by a point it inserts,
-//    so steiner=false drops the points that caused a split afterwards.
+//  - CDT always splits a constraint edge encroached upon by a point it
+//    inserts, so steiner=false drops the points that caused a split
+//    afterwards.
 //  - CDT splits by halving, and halves again while the point is still not
 //    separated, leaving one piece far shorter than its neighbours and a
 //    triangle against it too thin for q. presplit hands it a boundary fine
@@ -49,16 +69,21 @@ bool encroaches(const std::vector<Point>& pts,
 }
 
 // segs cut into pieces no longer than the side of a triangle of area a, with
-// the points that cut them appended to pts
+// the points that cut them appended to pts. Without a there is no length to
+// aim for and nothing to do
 std::vector<CDT::Edge> presplit(std::vector<Point>& pts,
     const std::vector<CDT::Edge>& segs, const double a) {
     if(a<=0.) {
         return segs;
     }
+    // Proxy for the width of a triangle of area a, so this is the boundary resolution
+    // that a asks for
     const double target = std::sqrt(a);
     std::vector<CDT::Edge> out;
     for(std::size_t i=0; i<segs.size(); ++i) {
         const Point u = pts[segs[i].v1()], v = pts[segs[i].v2()]; // pts grows
+        // n equal pieces, as few as will all come out short enough, and never
+        // more points than are left in the budget
         std::size_t n = 1;
         if(pts.size()<max_refinement_vertices) {
             const double pieces = std::ceil(CDT::distance(u,v)/target);
@@ -114,8 +139,10 @@ Triangulation triangulate(const std::vector<Point>& pts,
             break;
         }
         const CDT::VertInd budget = CDT::VertInd(max_refinement_vertices-used);
-        // Each call resumes where the last left off, so a pass that inserts
-        // nothing had nothing left for either. Their order does not matter
+        // One criterion per call, a as the largest area allowed and q as the
+        // smallest angle. Each call resumes where the last left off, so a pass
+        // that inserts nothing had nothing left for either, and their order
+        // does not matter
         if(a>0.) {
             cdt.refineTriangles(budget, CDT::RefinementCriterion::LargestArea,
                 a, &erased, min_edge_length);
@@ -159,6 +186,7 @@ void triangulate_polygon(
     const bool steiner,
     Eigen::MatrixXd& V2,
     Eigen::MatrixXi& F2) {
+    // V and F in CDT's own types, which is what every step below works on
     std::vector<Point> pts;
     pts.reserve(V.rows());
     for(int i=0; i<V.rows(); ++i) {
@@ -169,6 +197,8 @@ void triangulate_polygon(
     for(int i=0; i<F.rows(); ++i) {
         segs.push_back(CDT::Edge(CDT::VertInd(F(i,0)),CDT::VertInd(F(i,1))));
     }
+    // With both limits off, the constrained Delaunay triangulation of V and F
+    // is already the answer and nothing here has to refine anything
     const bool refining = a>0. || q>0.;
 
     // The extent of the input is the only scale there is. A vertex within tol
@@ -180,6 +210,8 @@ void triangulate_polygon(
     const double tol = 1e-12*scale;
     const double min_edge_length = 1e-9*scale;
 
+    // The refinement needs a boundary to conform to, so an F that was empty
+    // becomes the hull that the triangulation covers anyway
     if(segs.empty() && refining) {
         segs = hull_edges(pts,tol);
     }
@@ -203,6 +235,7 @@ void triangulate_polygon(
         cdt = triangulate(kept,segs,0.,0.,tol,min_edge_length);
     }
 
+    // Which vertices the erase step left with a triangle on them
     std::vector<bool> referenced(cdt.vertices.size(), false);
     for(std::size_t t=0; t<cdt.triangles.size(); ++t) {
         for(int k=0; k<3; ++k) {
