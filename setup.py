@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import platform
+import shlex
 import subprocess
 import setuptools
 from setuptools import setup, Extension
@@ -42,7 +43,8 @@ class CMakeBuild(build_ext):
 
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
-        cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
+        cmake_args = shlex.split(os.environ.get('CMAKE_ARGS', ''))
+        cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
                       '-DPYTHON_EXECUTABLE=' + sys.executable]
 
         # This is horrible, I don't know other way of installing dependencies on the wheel dependencies
