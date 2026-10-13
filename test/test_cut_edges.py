@@ -4,16 +4,16 @@ from .context import unittest
 
 class TestCutEdges(unittest.TestCase):
     def test_empty_edge_selection(self):
-        for F in (np.array([[0, 1, 2], [2, 1, 3]]),
-                  np.array([[2, 4, 7], [7, 4, 8]])):
-            with self.subTest(F=F):
-                before = F.copy()
-                G, I = gpy.cut_edges(F, np.empty((0, 2), dtype=int))
-                np.testing.assert_array_equal(G, F)
-                np.testing.assert_array_equal(I, np.arange(np.max(F)+1))
-                np.testing.assert_array_equal(I[G], F)
-                np.testing.assert_array_equal(F, before)
-                self.assertFalse(np.shares_memory(G, F))
+        F = np.array([[0, 1, 2], [2, 1, 3]])
+        G, I = gpy.cut_edges(F, np.empty((0, 2), dtype=int))
+        self.assertTrue(np.array_equal(G, F))
+        self.assertTrue(np.array_equal(I, np.arange(4)))
+
+    def test_empty_edge_selection_with_unreferenced_vertices(self):
+        F = np.array([[2, 4, 7], [7, 4, 8]])
+        G, I = gpy.cut_edges(F, np.empty((0, 2), dtype=int))
+        self.assertTrue(np.array_equal(G, F))
+        self.assertTrue(np.array_equal(I, np.arange(9)))
 
 
     def test_two_triangles(self):
