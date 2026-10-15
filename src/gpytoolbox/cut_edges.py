@@ -46,7 +46,7 @@ def cut_edges(F,E):
     assert F.shape[1]==3, "Only works for triangle meshes."
     n = np.max(F)+1
     if E.size==0:
-        return np.arange(F.size[0]), np.arange(n)
+        return F.copy(), np.arange(n)
     assert E.shape[1]==2, "E is a (k,2) matrix."
 
     # This code is a translation of https://github.com/alecjacobson/gptoolbox/blob/master/mesh/cut_edges.m by Alec Jacobson
@@ -102,4 +102,3 @@ def cut_edges(F,E):
     G = IM.ravel(order='F')[FF]
 
     return G,I
-
