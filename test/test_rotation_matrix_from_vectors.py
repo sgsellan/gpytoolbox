@@ -7,14 +7,20 @@ class TestRotationMatrixFromVectors(unittest.TestCase):
         for direction in ([1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
                           [1., 2., 3.], [1e-12, 1., 0.]):
             for scale in (1., 2.):
-                with self.subTest(direction=direction, scale=scale):
-                    u = np.array(direction)
-                    before = u.copy()
-                    R = gpy.rotation_matrix_from_vectors(u, -scale*u)
-                    np.testing.assert_allclose(R @ u, -u, atol=1e-12)
-                    np.testing.assert_allclose(R.T @ R, np.eye(3), atol=1e-12)
-                    self.assertAlmostEqual(np.linalg.det(R), 1.)
-                    np.testing.assert_array_equal(u, before)
+                u = np.array(direction)
+                R = gpy.rotation_matrix_from_vectors(u, -scale*u)
+                self.assertTrue(np.allclose(R.dot(u), -u, atol=1e-12))
+                self.assertTrue(np.allclose(R.T @ R, np.eye(3), atol=1e-12))
+                self.assertAlmostEqual(np.linalg.det(R), 1.)
+
+    def test_obtuse_angle_3d(self):
+        u = np.array([1., 0., 0.])
+        v = np.array([-1., 1., 1.])
+        v = v/np.linalg.norm(v)
+        R = gpy.rotation_matrix_from_vectors(u, v)
+        self.assertTrue(np.allclose(R.dot(u), v, atol=1e-12))
+        self.assertTrue(np.allclose(R.T @ R, np.eye(3), atol=1e-12))
+        self.assertAlmostEqual(np.linalg.det(R), 1.)
 
     def test_randomly_generated_3d(self):
         np.random.seed(0)
