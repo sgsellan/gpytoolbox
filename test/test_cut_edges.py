@@ -3,6 +3,18 @@ from .context import numpy as np
 from .context import unittest
 
 class TestCutEdges(unittest.TestCase):
+    def test_empty_edge_selection(self):
+        F = np.array([[0, 1, 2], [2, 1, 3]])
+        G, I = gpy.cut_edges(F, np.empty((0, 2), dtype=int))
+        self.assertTrue(np.array_equal(G, F))
+        self.assertTrue(np.array_equal(I, np.arange(4)))
+
+    def test_empty_edge_selection_with_unreferenced_vertices(self):
+        F = np.array([[2, 4, 7], [7, 4, 8]])
+        G, I = gpy.cut_edges(F, np.empty((0, 2), dtype=int))
+        self.assertTrue(np.array_equal(G, F))
+        self.assertTrue(np.array_equal(I, np.arange(9)))
+
 
     def test_two_triangles(self):
         F = np.array([[0,1,2], [2,1,3]],dtype=int)
