@@ -3,6 +3,23 @@ from .context import numpy as np
 from .context import unittest
 
 class TestNormalizePoints(unittest.TestCase):
+    def test_preserves_input_positions(self):
+        v = np.array([[1., 2.], [3., 6.]])
+        u = gpytoolbox.normalize_points(v)
+        self.assertTrue(np.array_equal(v, np.array([[1., 2.], [3., 6.]])))
+        self.assertTrue(np.allclose(u, np.array([[-0.25, -0.5], [0.25, 0.5]])))
+
+    def test_read_only_points(self):
+        v = np.array([[1., 2.], [3., 6.]])
+        v.flags.writeable = False
+        u = gpytoolbox.normalize_points(v)
+        self.assertTrue(np.allclose(u, np.array([[-0.25, -0.5], [0.25, 0.5]])))
+
+    def test_strided_points_preserve_base_array(self):
+        v = np.arange(18, dtype=float).reshape(6, 3)
+        gpytoolbox.normalize_points(v[::2])
+        self.assertTrue(np.array_equal(v, np.arange(18).reshape(6, 3)))
+
     def test_points_bounded(self):
         # Test: 3D Mesh taken from the internet is centered at 0
         v,f = gpytoolbox.read_mesh("test/unit_tests_data/bunny.obj")
