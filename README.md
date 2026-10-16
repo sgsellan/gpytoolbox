@@ -160,7 +160,7 @@ library. We are thankful to them:
 - [Xiana Carrera](https://xianacarrera.github.io/) ([PR #184](https://github.com/sgsellan/gpytoolbox/pull/184))
 - [Carmen Rubio García](https://carmenrubiogarcia.com) ([PR #188](https://github.com/sgsellan/gpytoolbox/pull/188))
 - [Jeongseok Lee](https://jeongseok.dev) ([PR #185](https://github.com/sgsellan/gpytoolbox/pull/185))
-- [Anton Soloviev](https://github.com/antonsoo) ([PR #194](https://github.com/sgsellan/gpytoolbox/pull/194))
+- [Anton Soloviev](https://github.com/antonsoo) ([PR #193](https://github.com/sgsellan/gpytoolbox/pull/193), [PR #194](https://github.com/sgsellan/gpytoolbox/pull/194))
 
 
 
