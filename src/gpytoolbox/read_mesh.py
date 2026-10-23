@@ -17,7 +17,8 @@ def read_mesh(file,
     If you have the approproate C++ extensions installed, this will use a fast
     C++-based reader. If you do not, this will use a slow python reader.
     
-    Currently only supports triangle meshes.
+    For OBJ files, triangle, quad, and mixed triangle/quad meshes are
+    supported. Other formats (STL, PLY) currently only support triangle meshes.
 
     Parameters
     -------
@@ -45,17 +46,19 @@ def read_mesh(file,
     Returns
     ----------
     V : (n,3) numpy array
-        vertex list of a triangle mesh
-    F : (m,3) numpy int array
-        face index list of a triangle mesh (into V)
+        vertex list of a mesh
+    F : (m,3) or (m,4) numpy int array
+        face index list (into V); (m,3) for triangle meshes,
+        (m,4) for quad or mixed triangle/quad meshes (OBJ only). In a mixed
+        mesh, triangles are stored as (f0,f1,f2,-1).
     UV : (n_uv,2) numpy array, if requested
         vertex list for texture coordinates
-    Ft : (m,3) numpy int array, if requested
-        face index list for texture coordinates (into UV)
+    Ft : (m,3) or (m,4) numpy int array, if requested
+        face index list for texture coordinates (into UV), same shape as F
     N : (n_n,3) numpy array, if requested
         vertex list for normal coordinates
-    Fn : (m,3) numpy int array, if requested
-        face index list for normal coordinates (into N)
+    Fn : (m,3) or (m,4) numpy int array, if requested
+        face index list for normal coordinates (into N), same shape as F
     C : (n,4) or (m,4) numpy int array, if requested
         per-vertex or per-face colors
 
@@ -121,7 +124,7 @@ except Exception as e:
 
 def _read_obj(file,return_UV,return_N,reader):
     # Private helper function for reading an OBJ file.
-    # Currently, only triangle meshes are supported.
+    # Triangle and quad meshes are supported by both the C++ and Python readers.
 
     # Pick a reader default
     if reader is None:
@@ -136,7 +139,8 @@ def _read_obj(file,return_UV,return_N,reader):
             elif err == -7:
                 raise Exception(f"A line in {file} was ill-formed.")
             elif err == -8:
-                raise Exception(f"{file} does not seem to be a triangle mesh.")
+                raise Exception(f"{file} contains faces that are neither "
+                                f"triangles nor quads.")
             else:
                 raise Exception(f"Unknown error {err} reading obj file.")
     elif reader=="Python":
@@ -149,7 +153,7 @@ def _read_obj(file,return_UV,return_N,reader):
 
 def _read_obj_python(file,return_UV,return_N):
     # Private helper function for reading an OBJ file in pure Python.
-    # Currently, only triangle meshes are supported.
+    # Supports triangle, quad, and mixed triangle/quad meshes.
 
     V = None
     UV = None
@@ -200,7 +204,7 @@ def _read_obj_python(file,return_UV,return_N):
             elif s=='f':
                 #Special treatment to separate face/texture/normal
                 d = len(row)-1
-                assert d == 3, "Only triangle meshes supported"
+                assert d == 3 or d == 4, "Only triangle and quad faces supported"
                 f_split = [x.split('/') for x in row[1:]]
                 if F is None:
                     F = np.zeros((1,d), dtype=np.int64)
@@ -209,19 +213,32 @@ def _read_obj_python(file,return_UV,return_N):
                     if return_N:
                         Fn = np.zeros((1,d), dtype=np.int64)
                 else:
+                    if d > F.shape[1]:
+                        # First quad in a mesh that so far only had triangles:
+                        # pad the existing triangles with -1.
+                        pad = -np.ones((F.shape[0],1), dtype=np.int64)
+                        F = np.hstack((F,pad))
+                        if return_UV:
+                            Ft = np.hstack((Ft,pad))
+                        if return_N:
+                            Fn = np.hstack((Fn,pad))
                     F.resize((F.shape[0]+1,F.shape[1]))
                     if return_UV:
                         Ft.resize((Ft.shape[0]+1,F.shape[1]))
                     if return_N:
                         Fn.resize((Fn.shape[0]+1,F.shape[1]))
-                F[-1,:] = [x[0] for x in f_split]
-                F[-1,:] -= 1
+                # Triangles in a mixed triangle/quad mesh are padded with -1.
+                F[-1,:] = -1
+                F[-1,:d] = [x[0] for x in f_split]
+                F[-1,:d] -= 1
                 if return_UV:
-                    Ft[-1,:] = [x[1] if len(x)>1 and len(x[1])>0 else 0 for x in f_split]
-                    Ft[-1,:] -= 1
+                    Ft[-1,:] = -1
+                    Ft[-1,:d] = [x[1] if len(x)>1 and len(x[1])>0 else 0 for x in f_split]
+                    Ft[-1,:d] -= 1
                 if return_N:
-                    Fn[-1,:] = [x[2] if len(x)>2 and len(x[2])>0 else 0 for x in f_split]
-                    Fn[-1,:] -= 1
+                    Fn[-1,:] = -1
+                    Fn[-1,:d] = [x[2] if len(x)>2 and len(x[2])>0 else 0 for x in f_split]
+                    Fn[-1,:d] -= 1
 
     return V,F,UV,Ft,N,Fn
 
