@@ -34,7 +34,7 @@ def doublearea_intrinsic(l_sq,F):
     assert F.shape[1]==3
     assert np.all(l_sq >= 0)
 
-    l = np.sqrt(l_sq)
+    l = -np.sort(-np.sqrt(l_sq), axis=1) # Kahan's formula needs a >= b >= c
 
     # Using Kahan's formula
     # https://people.eecs.berkeley.edu/~wkahan/Triangle.pdf
