@@ -24,7 +24,8 @@ void binding_octree_marching_cubes(py::module& m)
            const Eigen::Vector3d& hi,
            int max_depth,
            bool binary_search,
-           int binary_search_steps)
+           int binary_search_steps,
+           bool psr)
         {
             omc::ScalarField f = [&](const std::vector<omc::Vec3>& points) {
                 Eigen::MatrixXd P(points.size(), 3);
@@ -56,6 +57,7 @@ void binding_octree_marching_cubes(py::module& m)
             options.interpolation = binary_search ? omc::Interpolation::BinarySearch
                                                   : omc::Interpolation::Linear;
             options.binary_search_steps = binary_search_steps;
+            options.method = psr ? omc::Method::PSR : omc::Method::Transvoxel;
 
             const omc::Mesh mesh = omc::marching_cubes(split, f, options);
 
@@ -73,5 +75,6 @@ void binding_octree_marching_cubes(py::module& m)
         py::arg("hi"),
         py::arg("max_depth"),
         py::arg("binary_search"),
-        py::arg("binary_search_steps"));
+        py::arg("binary_search_steps"),
+        py::arg("psr"));
 }

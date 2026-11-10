@@ -107,6 +107,7 @@ add_library(cpytoolbox
 	src/cpp/dual_contouring_of_signed_distance_data/hermite_update.h
 	src/cpp/dual_contouring_of_signed_distance_data/vertex_refinement.h
 	src/cpp/octree_marching_cubes/octree_mc.h
+	src/cpp/octree_marching_cubes/octree_mc_common.h
 	src/cpp/octree_marching_cubes/transvoxel_tables.h
 	# Source
 	src/cpp/upper_envelope.cpp
@@ -135,6 +136,8 @@ add_library(cpytoolbox
 	src/cpp/dual_contouring_of_signed_distance_data/hermite_update.cpp
 	src/cpp/dual_contouring_of_signed_distance_data/vertex_refinement.cpp
 	src/cpp/octree_marching_cubes/octree_mc.cpp
+	src/cpp/octree_marching_cubes/octree_mc_transvoxel.cpp
+	src/cpp/octree_marching_cubes/octree_mc_psr.cpp
 	src/cpp/swept_volume/fd_interpolate.cpp
 	src/cpp/swept_volume/gradient_descent_test.cpp
 	src/cpp/swept_volume/random_points_on_mesh.cpp
