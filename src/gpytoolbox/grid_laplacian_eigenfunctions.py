@@ -1,3 +1,5 @@
+from heapq import heappop, heappush
+
 import numpy as np
 
 # To-do: this should output values too.
@@ -58,29 +60,24 @@ def grid_laplacian_eigenfunctions(num_modes,gs,l):
     if dim==3:
         gx, gy, gz = np.meshgrid(np.linspace(0,l[0],gs[0]),np.linspace(0,l[1],gs[1]),np.linspace(0,l[2],gs[2]),indexing='ij')
         v = np.concatenate((np.reshape(gx,(-1, 1),order='F'),np.reshape(gy,(-1, 1),order='F'),np.reshape(gz,(-1, 1),order='F')),axis=1)
-        # This is ad-hoc so it's faster... We should come up with a smarter way of doing this.
-        num_in_each_dim = round(np.sqrt(num_modes//8))
-        # num_in_each_dim = num_modes
-        vals_debug = np.zeros(num_in_each_dim*num_in_each_dim*num_in_each_dim)
-        K_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) % num_in_each_dim
-        J_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) // num_in_each_dim % num_in_each_dim
-        I_vector = np.arange(num_in_each_dim*num_in_each_dim*num_in_each_dim) // (num_in_each_dim*num_in_each_dim)
+        # Visit frequency triples in increasing eigenvalue order. A fixed cube
+        # can miss modes on elongated boxes or contain fewer than num_modes.
+        candidates = [(0.0, (0, 0, 0))]
+        visited = {(0, 0, 0)}
+        vecs = np.empty((v.shape[0], num_modes))
+        for s in range(num_modes):
+            _, indices = heappop(candidates)
+            vecs[:, s], _ = psi(indices, l, v)
+            for axis in range(dim):
+                neighbor = list(indices)
+                neighbor[axis] += 1
+                neighbor = tuple(neighbor)
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    value = sum((np.pi**2.0) * (neighbor[d] / l[d])**2.0
+                                for d in range(dim))
+                    heappush(candidates, (value, neighbor))
 
-        ind_vectors = []
-        ind_vectors.append(I_vector)
-        ind_vectors.append(J_vector)
-        ind_vectors.append(K_vector)
-        for dd in range(dim):
-            vals_debug = vals_debug + (np.pi**2.0)*((ind_vectors[dd]/l[dd])**2.0)
-        # assert((vals_debug==vals).all())
-        order = np.argsort(vals_debug)
-        relevant_indices = order[0:num_modes]
-        vecs_debug = np.ones((v.shape[0],num_modes))
-        for s in range(len(relevant_indices)):
-            vecs_debug[:,s], _ = psi([I_vector[relevant_indices[s]],J_vector[relevant_indices[s]],K_vector[relevant_indices[s]]],l,v)
-        vecs = vecs_debug
-        vals = vals_debug
-        vals = vals[relevant_indices]
     else:
         gx, gy = np.meshgrid(np.linspace(0,l[0],gs[0]),np.linspace(0,l[1],gs[1]))
         # h = np.array([gx[1,1]-gx[0,0],gy[1,1]-gy[0,0]])
