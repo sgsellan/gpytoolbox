@@ -14,7 +14,7 @@ class TestRemeshBotsch(unittest.TestCase):
         # Boundary should be empty
         self.assertTrue(len(bd)==0)
         # Edge lengths should be "near" 0.01
-        edge_lengths = np.linalg.norm(u[E[0,:],:] - u[E[1,:],:],axis=1)
+        edge_lengths = np.linalg.norm(u[E[:,0],:] - u[E[:,1],:],axis=1)
         self.assertTrue(np.isclose(np.mean(edge_lengths)-0.01,0.0,atol=1e-3))
 
     # This example used to break the remesher     
