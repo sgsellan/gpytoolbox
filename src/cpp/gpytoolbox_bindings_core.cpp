@@ -22,8 +22,10 @@ void binding_marching_cubes(py::module& m);
 void binding_swept_volume(py::module& m);
 void binding_offset_surface(py::module& m);
 void binding_point_mesh_squared_distance(py::module& m);
+#ifdef GPYTOOLBOX_WITH_EMBREE
 void binding_ray_mesh_intersect(py::module& m);
 void binding_ray_mesh_intersector(py::module& m);
+#endif
 void binding_particle_swarm(py::module& m);
 void binding_read_stl(py::module& m);
 void binding_write_stl(py::module& m);
@@ -38,6 +40,7 @@ void binding_outside_points_from_rejection_sampling(py::module& m);
 void binding_locally_make_feasible(py::module& m);
 void binding_fine_tune_point_cloud_iter(py::module& m);
 void binding_dcsdd(py::module& m);
+void binding_triangulate_polygon(py::module& m);
 
 PYBIND11_MODULE(gpytoolbox_bindings, m) {
 
@@ -54,8 +57,13 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_swept_volume(m);
     binding_offset_surface(m);
     binding_point_mesh_squared_distance(m);
+#ifdef GPYTOOLBOX_WITH_EMBREE
     binding_ray_mesh_intersect(m);
     binding_ray_mesh_intersector(m);
+    m.attr("_has_embree") = true;
+#else
+    m.attr("_has_embree") = false;
+#endif
     binding_particle_swarm(m);
     binding_read_stl(m);
     binding_write_stl(m);
@@ -69,7 +77,7 @@ PYBIND11_MODULE(gpytoolbox_bindings, m) {
     binding_locally_make_feasible(m);
     binding_fine_tune_point_cloud_iter(m);
     binding_dcsdd(m);
+    binding_triangulate_polygon(m);
 
     m.def("help", [&]() {printf("hi"); });
 }
-

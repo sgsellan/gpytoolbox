@@ -3,6 +3,25 @@ from .context import numpy as np
 from .context import unittest
 
 class TestRotationMatrixFromVectors(unittest.TestCase):
+    def test_antiparallel_is_proper_rotation(self):
+        for direction in ([1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
+                          [1., 2., 3.], [1e-12, 1., 0.]):
+            for scale in (1., 2.):
+                u = np.array(direction)
+                R = gpy.rotation_matrix_from_vectors(u, -scale*u)
+                self.assertTrue(np.allclose(R.dot(u), -u, atol=1e-12))
+                self.assertTrue(np.allclose(R.T @ R, np.eye(3), atol=1e-12))
+                self.assertAlmostEqual(np.linalg.det(R), 1.)
+
+    def test_obtuse_angle_3d(self):
+        u = np.array([1., 0., 0.])
+        v = np.array([-1., 1., 1.])
+        v = v/np.linalg.norm(v)
+        R = gpy.rotation_matrix_from_vectors(u, v)
+        self.assertTrue(np.allclose(R.dot(u), v, atol=1e-12))
+        self.assertTrue(np.allclose(R.T @ R, np.eye(3), atol=1e-12))
+        self.assertAlmostEqual(np.linalg.det(R), 1.)
+
     def test_randomly_generated_3d(self):
         np.random.seed(0)
         for i in range(10000):

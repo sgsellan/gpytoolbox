@@ -17,7 +17,7 @@ and [Oded Stein](https://odedstein.com), University of Southern California
 
 This is a very young library of general geometry processing Python research
 utility functions that evolves from our personal student codebases. 
-It is compatible with Python 3.10, 3.11, 3.12 and 3.13.
+It is compatible with Python 3.10, 3.11, 3.12, 3.13 and 3.14.
 
 ## Installation
 
@@ -158,7 +158,10 @@ library. We are thankful to them:
 - [Dylan Rowe](https://github.com/d-r-o-w-e) ([PR #144](https://github.com/sgsellan/gpytoolbox/pull/144))
 - [Alice Wei](https://github.com/AAAAAliceeeeee) ([PR #157](https://github.com/sgsellan/gpytoolbox/pull/157))
 - [Xiana Carrera](https://xianacarrera.github.io/) ([PR #184](https://github.com/sgsellan/gpytoolbox/pull/184))
-
+- [Carmen Rubio García](https://carmenrubiogarcia.com) ([PR #188](https://github.com/sgsellan/gpytoolbox/pull/188))
+- [Jeongseok Lee](https://jeongseok.dev) ([PR #185](https://github.com/sgsellan/gpytoolbox/pull/185))
+- [Anton Soloviev](https://github.com/antonsoo) ([PR #193](https://github.com/sgsellan/gpytoolbox/pull/193), [PR #194](https://github.com/sgsellan/gpytoolbox/pull/194))
+- [Yotam Gingold](https://github.com/yig) ([PR #200](https://github.com/sgsellan/gpytoolbox/pull/200))
 
 
 

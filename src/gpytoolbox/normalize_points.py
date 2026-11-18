@@ -5,6 +5,8 @@ def normalize_points(v,center=None):
     
     Translate and scale and arbitrary point set so that it's contained tightly into a 1 by 1 # (by 1) cube, centered at zero by default. Simple yet useful to test code without worrying about scale-dependencies.
 
+    The input point positions are not modified.
+
     Parameters
     ----------
     v : (n,d) numpy double array
@@ -28,6 +30,8 @@ def normalize_points(v,center=None):
     ```
     """
     
+    v = v.copy()
+
     # Dimension:
     dim = v.shape[1]
     

@@ -1,4 +1,4 @@
-__version__ = '0.3.7'
+__version__ = '0.3.8'
 
 # This function depends on skimage 
 from .png2poly import png2poly
@@ -49,6 +49,7 @@ from .boundary_vertices import boundary_vertices
 from .halffaces import halffaces
 from .faces import faces
 from .boundary_faces import boundary_faces
+from .tetrahedron_edge_map import tetrahedron_edge_map
 from .min_quad_with_fixed import min_quad_with_fixed
 from .min_quad_with_fixed import min_quad_with_fixed_precompute
 from .fast_winding_number import fast_winding_number
@@ -145,3 +146,4 @@ from .dec_h1inv_intrinsic import dec_h1inv_intrinsic
 from .dec_h2_intrinsic import dec_h2_intrinsic
 from .dec_h2inv_intrinsic import dec_h2inv_intrinsic
 from .dual_contouring_of_signed_distance_data import dual_contouring_of_signed_distance_data
+from .triangulate_polygon import triangulate_polygon

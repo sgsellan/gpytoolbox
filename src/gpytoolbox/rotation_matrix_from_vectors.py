@@ -60,5 +60,13 @@ def rotation_matrix_from_vectors(vec1, vec2):
         # is it a reflection?
         R = np.eye(dim)
         if np.dot(a, b) < 0:
-            R = -R
+            if dim == 3:
+                # Rotate by pi about an axis perpendicular to a. Negating the
+                # identity in three dimensions would produce a reflection.
+                basis = np.eye(3)[np.argmin(np.abs(a))]
+                axis = np.cross(a, basis)
+                axis /= np.linalg.norm(axis)
+                R = 2 * np.outer(axis, axis) - R
+            else:
+                R = -R
         return R
