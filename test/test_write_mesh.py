@@ -49,6 +49,43 @@ class TestWriteMesh(unittest.TestCase):
                 self.assertTrue(filecmp.cmp("test/unit_tests_data/temp.UV.0.obj", "test/unit_tests_data/temp.UV.1.obj", shallow=False))
                 self.assertTrue(filecmp.cmp("test/unit_tests_data/temp.N.0.obj", "test/unit_tests_data/temp.N.1.obj", shallow=False))
 
+    def test_quad_obj_read_then_write(self):
+        # Roundtrip pure quad and mixed triangle/quad meshes, including texture
+        # coordinates and normals, through every writer/reader combination.
+        meshes = ["quad_cube.obj", "quad_cube_uv_n.obj", "mixed_tri_quad.obj"]
+        for mesh in meshes:
+            V,F,UV,Ft,N,Fn = gpy.read_mesh("test/unit_tests_data/" + mesh,
+                return_UV=True, return_N=True)
+            if UV.size == 0:
+                UV, Ft = None, None
+            if N.size == 0:
+                N, Fn = None, None
+            self.assertEqual(F.shape[1], 4)
+            for writer in ["C++", "Python", None]:
+                gpy.write_mesh("test/unit_tests_data/temp.quad.obj",
+                    V,F,UV,Ft,N,Fn,writer=writer)
+                for reader in ["Python", "C++", None]:
+                    V_2,F_2,UV_2,Ft_2,N_2,Fn_2 = \
+                    gpy.read_mesh("test/unit_tests_data/temp.quad.obj",
+                        return_UV=True, return_N=True, reader=reader)
+                    self.assertTrue(np.array_equal(V_2, V))
+                    self.assertTrue(np.array_equal(F_2, F))
+                    if UV is not None:
+                        self.assertTrue(np.array_equal(UV_2, UV))
+                        self.assertTrue(np.array_equal(Ft_2, Ft))
+                    if N is not None:
+                        self.assertTrue(np.array_equal(N_2, N))
+                        self.assertTrue(np.array_equal(Fn_2, Fn))
+
+        # Triangles in a mixed mesh are written as three-vertex faces, not
+        # with the -1 padding.
+        V,F = gpy.read_mesh("test/unit_tests_data/mixed_tri_quad.obj")
+        for writer in ["C++", "Python"]:
+            gpy.write_mesh("test/unit_tests_data/temp.quad.obj",V,F,writer=writer)
+            with open("test/unit_tests_data/temp.quad.obj") as f:
+                arities = [len(l.split())-1 for l in f if l.startswith("f ")]
+            self.assertEqual(arities, [3,4,4,3,4,4,4,3,3])
+
     def test_stl_read_then_write(self):
         stl_meshes = ["sphere_binary.stl", "fox_ascii.stl"]
         for mesh in stl_meshes:

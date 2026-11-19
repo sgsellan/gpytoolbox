@@ -83,12 +83,15 @@ int write_obj(
         }
     };
     for(int i=0; i<F.rows(); ++i) {
-        stream << "f ";
-        for(int j=0; j<F.cols()-1; ++j) {
-            write_F_element(i,j);
+        stream << "f";
+        for(int j=0; j<F.cols(); ++j) {
+            //Negative indices pad triangles in a mixed triangle/quad mesh.
+            if(F(i,j) < 0) {
+                continue;
+            }
             stream << " ";
+            write_F_element(i,j);
         }
-        write_F_element(i,F.cols()-1);
         stream << "\n";
     }
 

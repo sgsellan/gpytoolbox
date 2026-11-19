@@ -18,27 +18,30 @@ def write_mesh(file,
     If you have the approproate C++ extensions installed, this will use a fast
     C++-based writer. If you do not, this will use a slow python writer.
     
-    Currently only supports triangle meshes.
+    For OBJ files, triangle, quad, and mixed triangle/quad meshes are
+    supported. Other formats (STL, PLY) currently only support triangle meshes.
 
     Parameters
     ----------
     file : string
         the path the mesh will be written to
     V : (n,3) numpy array
-        vertex list of a triangle mesh
-    F : (m,3) numpy int array
-        face index list of a triangle mesh (into V)
+        vertex list of a mesh
+    F : (m,3) or (m,4) numpy int array
+        face index list (into V); (m,3) for triangle meshes,
+        (m,4) for quad or mixed triangle/quad meshes (OBJ only). In a mixed
+        mesh, triangles are stored as (f0,f1,f2,-1).
     UV : (n_uv,2) numpy array, optional (default None)
         vertex list for texture coordinates. Only supported for obj format.
-    Ft : (m,3) numpy int array, optional (default None)
-        face index list for texture coordinates (into UV).
+    Ft : (m,3) or (m,4) numpy int array, optional (default None)
+        face index list for texture coordinates (into UV), same shape as F.
         If this is not provided, but UV is provided such that n_uv==n, the function will assume that Ft is F.
         Only supported for obj format.
     N : (n_n,3) numpy array, optional (default None)
         vertex list for normal coordinates.
         Only supported for obj format.
-    Fn : (m,3) numpy int array, optional (default None)
-        face index list for normal coordinates (into N).
+    Fn : (m,3) or (m,4) numpy int array, optional (default None)
+        face index list for normal coordinates (into N), same shape as F.
         If this is not provided, but N is provided such that n_n==n, the function will assume that Fn is F.
         Only supported for obj format.
     C : (n,4) or (m,4) numpy int array with values in [0,255], optional (default None)
@@ -91,9 +94,9 @@ except Exception as e:
 
 def _write_obj(file,V,F,UV,Ft,N,Fn,writer):
     # Private helper function for writing an OBJ file.
-    # Currently, only triangle meshes are supported.
+    # Triangle and quad meshes are supported by both the C++ and Python writers.
 
-    # Pick a reader default
+    # Pick a writer default
     if writer is None:
         writer = "C++" if _CPP_WRITER_AVAILABLE else "Python"
 
@@ -131,7 +134,7 @@ def _write_obj(file,V,F,UV,Ft,N,Fn,writer):
 
 def _write_obj_python(file,V,F,UV,Ft,N,Fn):
     # Private helper function for writing an OBJ file in pure Python.
-    # Currently, only triangle meshes are supported.
+    # Supports triangle, quad, and mixed triangle/quad meshes.
 
     with open(file, 'w') as f:
         def write_row(identifier, x):
@@ -158,14 +161,16 @@ def _write_obj_python(file,V,F,UV,Ft,N,Fn):
         if Fn is not None:
             assert Fn.shape[0] == F.shape[0]
         for r in range(F.shape[0]):
+            # Negative indices pad triangles in a mixed triangle/quad mesh.
+            keep = F[r] >= 0
             if Ft is not None and Fn is not None:
-                fs = [f'{f+1}/{t+1}/{n+1}' for f,t,n in zip(F[r],Ft[r],Fn[r])]
+                fs = [f'{f+1}/{t+1}/{n+1}' for f,t,n in zip(F[r][keep],Ft[r][keep],Fn[r][keep])]
             elif Ft is not None:
-                fs = [f'{f+1}/{t+1}' for f,t in zip(F[r],Ft[r])]
+                fs = [f'{f+1}/{t+1}' for f,t in zip(F[r][keep],Ft[r][keep])]
             elif Fn is not None:
-                fs = [f'{f+1}//{n+1}' for f,n in zip(F[r],Fn[r])]
+                fs = [f'{f+1}//{n+1}' for f,n in zip(F[r][keep],Fn[r][keep])]
             else:
-                fs = [f'{f+1}' for f in F[r]]
+                fs = [f'{f+1}' for f in F[r][keep]]
             write_row('f', fs)
 
 def _write_stl(file,V,F,binary=True):
