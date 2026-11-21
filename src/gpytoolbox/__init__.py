@@ -147,3 +147,4 @@ from .dec_h2_intrinsic import dec_h2_intrinsic
 from .dec_h2inv_intrinsic import dec_h2inv_intrinsic
 from .dual_contouring_of_signed_distance_data import dual_contouring_of_signed_distance_data
 from .triangulate_polygon import triangulate_polygon
+from .octree_marching_cubes import octree_marching_cubes
